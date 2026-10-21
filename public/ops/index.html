@@ -1114,6 +1114,161 @@
       opacity: 1;
       transform: translateX(-50%) translateY(-6px);
     }
+    /* ==============================================================
+       SPRINT 3 & 4 STYLES: MECHANICALS & FAMILY HEALTH
+       ============================================================== */
+    .filter-size-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: monospace;
+      font-size: 1.05rem;
+      font-weight: 800;
+      background: #0f172a;
+      border: 2px solid #38bdf8;
+      color: #38bdf8;
+      padding: 6px 14px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(56, 189, 248, 0.2);
+    }
+    .countdown-widget {
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin: 10px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .pipeline-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      margin: 18px 0 14px;
+      padding: 0 4px;
+    }
+    .pipeline-track-line {
+      position: absolute;
+      top: 14px;
+      left: 24px;
+      right: 24px;
+      height: 3px;
+      background: #334155;
+      z-index: 1;
+    }
+    .pipeline-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      flex: 1;
+    }
+    .pipeline-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #1e293b;
+      border: 2px solid #64748b;
+      color: #94a3b8;
+      font-size: 0.75rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .pipeline-step.completed .pipeline-dot {
+      background: #059669;
+      border-color: #10b981;
+      color: #fff;
+    }
+    .pipeline-step.active .pipeline-dot {
+      background: #0284c7;
+      border-color: #38bdf8;
+      color: #fff;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+      transform: scale(1.1);
+    }
+    .pipeline-step.stalled .pipeline-dot {
+      background: #d97706;
+      border-color: #fbbf24;
+      color: #0f172a;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.7);
+    }
+    .pipeline-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-top: 6px;
+      white-space: nowrap;
+    }
+    .pipeline-step.active .pipeline-label,
+    .pipeline-step.completed .pipeline-label {
+      color: var(--text-main);
+    }
+    .pipeline-step.stalled .pipeline-label {
+      color: #fbbf24;
+    }
+    .referral-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+      transition: all 0.2s ease;
+    }
+    .referral-card.stalled-card {
+      border: 2px solid #f59e0b;
+      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.15);
+    }
+    .rx-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+      margin-top: 12px;
+    }
+    .rx-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .rx-card.rx-amber {
+      border-color: #f59e0b;
+      background: linear-gradient(145deg, #1e293b, #262118);
+    }
+    .rx-card.rx-red {
+      border-color: #f43f5e;
+      background: linear-gradient(145deg, #1e293b, #2b181c);
+    }
+    .family-checkup-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    .checkup-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .checkup-row:last-child {
+      border-bottom: none;
+    }
   </style>
 </head>
 <body>
@@ -1182,6 +1337,12 @@
       </button>
       <button class="tab-btn" onclick="switchTab('explorer')" id="tab-btn-explorer">
         🚙 2020 Explorer (2.3L)
+      </button>
+      <button class="tab-btn" onclick="switchTab('mechanicals')" id="tab-btn-mechanicals">
+        🏠 Home & Mechanicals
+      </button>
+      <button class="tab-btn" onclick="switchTab('family')" id="tab-btn-family">
+        👨‍👩‍👧‍👦 Family Health
       </button>
       <button class="tab-btn" onclick="switchTab('infiniti')" id="tab-btn-infiniti">
         🏎️ Infiniti
@@ -1673,7 +1834,330 @@
     </section>
 
     <!-- ============================================================== -->
-    <!-- TAB 3: INFINITI (PLACEHOLDER)                                 -->
+    <!-- TAB 3: HOME & MECHANICALS (SPRINT 3)                          -->
+    <!-- ============================================================== -->
+    <section id="tab-mechanicals" class="tab-view" style="display:none;">
+      
+      <div class="vehicle-hero" style="border-left: 4px solid #38bdf8;">
+        <span class="badge" style="background:#0369a1; color:#e0f2fe; margin-bottom:6px;">HOMESTEAD INFRASTRUCTURE</span>
+        <h2 style="font-size:1.4rem; font-weight:800;">🏠 Home & Mechanicals Command</h2>
+        <p style="font-size:0.82rem; color:var(--text-muted); margin-top:2px;">
+          Lennox HVAC & Heating, Water Treatment & Plumbing, and Kansas Winter Freeze Protection
+        </p>
+      </div>
+
+      <!-- 1. LENNOX HVAC & HEATING SYSTEM -->
+      <div class="specs-section">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+          <div>
+            <h3 style="font-size:1.15rem; font-weight:800; color:#38bdf8; display:flex; align-items:center; gap:8px;">
+              <span>🔥</span> Lennox HVAC & Heating System
+            </h3>
+            <p style="font-size:0.75rem; color:var(--text-muted);">
+              High-efficiency residential gas furnace and split air handler system
+            </p>
+          </div>
+          <span class="badge" style="background:rgba(56,189,248,0.15); color:#38bdf8; border:1px solid rgba(56,189,248,0.4);">
+            90-Day Cadence
+          </span>
+        </div>
+
+        <!-- Component 1A: Furnace Air Filter -->
+        <div class="task-card" style="border-left:3px solid #38bdf8;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;">
+            <div>
+              <div style="font-size:1rem; font-weight:700;">Furnace & Air Handler Air Filter</div>
+              <div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">
+                Strict Replacement Interval: <strong>90 Days</strong>
+              </div>
+            </div>
+            <div class="filter-size-badge">
+              <span>📏 16x25x1 MERV 8 or 11</span>
+            </div>
+          </div>
+
+          <div class="task-note-box" style="margin: 12px 0;">
+            <strong>Action Note:</strong> Filter slot is located at the return air drop on the furnace cabinet. 
+            Ensure airflow arrow printed on filter frame points <strong>toward the blower motor</strong>.
+          </div>
+
+          <div class="countdown-widget" id="hvac-filter-widget">
+            <div>
+              <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:700;">Filter Status</div>
+              <div id="hvac-filter-status" style="font-size:1.1rem; font-weight:800; color:#34d399; margin-top:2px;">
+                Calculating...
+              </div>
+              <div id="hvac-filter-meta" style="font-size:0.75rem; color:#94a3b8; margin-top:2px;">
+                Last Replaced: --
+              </div>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <input type="date" id="hvac-filter-date" class="modal-input" style="width:140px; padding:6px 10px; font-size:0.8rem;" onchange="updateHvacFilterDate()">
+              <button class="btn-primary" onclick="markHvacFilterReplacedToday()">Mark Replaced Today</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Component 1B: Seasonal Heating Cutover Checklist -->
+        <div class="task-card" style="margin-top:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-size:1rem; font-weight:700;">Seasonal Heating Cutover Checklist (Fall/Winter Readiness)</div>
+              <div style="font-size:0.78rem; color:var(--text-muted);">Annual Cadence • Hard Target: October (Before First Hard Freeze)</div>
+            </div>
+            <span class="tag tag-time">Annual</span>
+          </div>
+
+          <div class="task-note-box" style="margin: 12px 0; border-left-color:#fbbf24;">
+            <strong>Reference Specification Note:</strong> Lennox system with mechanical bolt-on TXV fitting (no brazing/torches). 
+            Serviced by <strong>Travis Mann (Mike Bryant Heating & Cooling)</strong>.
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:8px; margin:14px 0 8px;">
+            <label class="hero-item">
+              <input type="checkbox" id="hvac-cutover-1" onchange="saveMechanicalsState()">
+              <span>Set thermostat to Heat mode; verify burner ignition sequence, draft inducer, and flame sensor operation.</span>
+            </label>
+            <label class="hero-item">
+              <input type="checkbox" id="hvac-cutover-2" onchange="saveMechanicalsState()">
+              <span>Check exterior PVC exhaust and intake vent pipes outside for mud dauber / wasp nests, fallen leaves, or frost obstruction.</span>
+            </label>
+            <label class="hero-item">
+              <input type="checkbox" id="hvac-cutover-3" onchange="saveMechanicalsState()">
+              <span>Inspect condensate drain line and trap for sediment blockages or algae slime; flush with warm water/vinegar.</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. WATER MANAGEMENT & PLUMBING -->
+      <div class="specs-section">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+          <div>
+            <h3 style="font-size:1.15rem; font-weight:800; color:#38bdf8; display:flex; align-items:center; gap:8px;">
+              <span>💧</span> Water Management & Plumbing
+            </h3>
+            <p style="font-size:0.75rem; color:var(--text-muted);">
+              Sediment mitigation, water heater longevity, and ion-exchange softener maintenance
+            </p>
+          </div>
+          <span class="badge" style="background:rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.4);">
+            Plumbing Track
+          </span>
+        </div>
+
+        <!-- Component 2A: Water Heater Sediment Flush -->
+        <div class="task-card" style="border-left:3px solid #10b981;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;">
+            <div>
+              <div style="font-size:1rem; font-weight:700;">Water Heater Tank Annual Sediment Flush</div>
+              <div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">
+                Interval: <strong>12 Months</strong> • Removes mineral scaling from tank bottom
+              </div>
+            </div>
+            <span class="status-pill pill-ok" id="water-heater-status-pill">12-Mo Cadence</span>
+          </div>
+
+          <div class="countdown-widget" id="wh-flush-widget">
+            <div>
+              <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:700;">Flush Countdown</div>
+              <div id="wh-flush-status" style="font-size:1.1rem; font-weight:800; color:#34d399; margin-top:2px;">
+                Calculating...
+              </div>
+              <div id="wh-flush-meta" style="font-size:0.75rem; color:#94a3b8; margin-top:2px;">
+                Last Flushed: --
+              </div>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <input type="date" id="wh-flush-date" class="modal-input" style="width:140px; padding:6px 10px; font-size:0.8rem;" onchange="updateWhFlushDate()">
+              <button class="btn-primary" onclick="markWhFlushedToday()">Mark Flushed Today</button>
+            </div>
+          </div>
+
+          <button class="accordion-toggle" onclick="toggleAccordion('runsheet-water-heater')">
+            <span>View Step-by-Step Flush Execution Run-Sheet</span>
+            <span id="runsheet-water-heater-arrow">▼</span>
+          </button>
+          <div class="accordion-content" id="runsheet-water-heater">
+            <div class="runsheet-step">Shut off gas supply valve or turn thermostat dial down to <strong class="val-highlight">PILOT</strong> (or trip 240V breaker if electric).</div>
+            <div class="runsheet-step">Turn off cold water inlet shutoff valve located directly above water heater on cold line.</div>
+            <div class="runsheet-step">Connect standard heavy-duty garden hose to lower brass drain spigot at base of tank; route hose to basement floor drain, sump basin, or outdoors.</div>
+            <div class="runsheet-step">Open temperature and pressure (T&P) relief valve lever on top/side of tank to break interior vacuum and allow gravity drainage.</div>
+            <div class="runsheet-step">Open brass drain spigot with flathead screwdriver or pliers; drain <strong class="val-highlight">5 to 10 gallons</strong> until discharge water runs completely crystal clear with zero calcium carbonate flakes.</div>
+            <div class="runsheet-step">Close lower brass spigot tightly; remove garden hose; close T&P relief valve lever; turn cold water inlet valve back ON to refill tank completely.</div>
+            <div class="runsheet-step">Open hot water faucet upstairs until steady stream flows without air sputtering. Relight/turn gas thermostat back to <strong class="val-highlight">NORMAL / 120°F</strong>.</div>
+          </div>
+        </div>
+
+        <!-- Component 2B: Water Softener Salt Level -->
+        <div class="task-card" style="margin-top:14px; border-left:3px solid #0284c7;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;">
+            <div>
+              <div style="font-size:1rem; font-weight:700;">Whole-House Water Softener Salt Level</div>
+              <div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">
+                Interval: <strong>45 Days</strong> • Solar Salt Pellets & Brine Inspection
+              </div>
+            </div>
+            <span class="status-pill pill-ok" id="softener-status-pill">45-Day Cadence</span>
+          </div>
+
+          <div class="task-note-box" style="margin: 12px 0;">
+            <strong>Action Procedure:</strong> Open brine tank lid. Inspect for salt crust bridges using broom handle; 
+            break up any hard hollow crust down to water line. Refill with clean solar salt pellets up to level 4/line.
+          </div>
+
+          <div class="countdown-widget" id="softener-widget">
+            <div>
+              <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:700;">Softener Status</div>
+              <div id="softener-status" style="font-size:1.1rem; font-weight:800; color:#34d399; margin-top:2px;">
+                Calculating...
+              </div>
+              <div id="softener-meta" style="font-size:0.75rem; color:#94a3b8; margin-top:2px;">
+                Last Checked: --
+              </div>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <input type="date" id="softener-date" class="modal-input" style="width:140px; padding:6px 10px; font-size:0.8rem;" onchange="updateSoftenerDate()">
+              <button class="btn-primary" onclick="markSoftenerCheckedToday()">Mark Checked / Filled Today</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. KANSAS WINTER FREEZE PROTECTION -->
+      <div class="specs-section">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+          <div>
+            <h3 style="font-size:1.15rem; font-weight:800; color:#fb7185; display:flex; align-items:center; gap:8px;">
+              <span>❄️</span> Kansas Winter Freeze Protection
+            </h3>
+            <p style="font-size:0.75rem; color:var(--text-muted);">
+              Sub-zero blast mitigation for exterior plumbing, frost-proof sillcocks, and unconditioned crawlspaces
+            </p>
+          </div>
+          <span class="badge" style="background:rgba(244,63,94,0.15); color:#fb7185; border:1px solid rgba(244,63,94,0.4);">
+            Hard Target: NLT Nov 1
+          </span>
+        </div>
+
+        <div class="task-card" style="border-left:3px solid #f43f5e;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;">
+            <div>
+              <div style="font-size:1rem; font-weight:700;">Outdoor Spigots & Hose Bib Winterization</div>
+              <div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">
+                Annual Autumn Protocol • <strong style="color:#fb7185;">Hard Deadline: Not Later Than November 1</strong>
+              </div>
+            </div>
+            <span class="badge badge-pacing" id="winter-freeze-countdown-badge">Freeze Target: Nov 1</span>
+          </div>
+
+          <div class="task-note-box" style="margin: 12px 0; border-left-color:#f43f5e;">
+            <strong style="color:#fb7185;">CRITICAL PIPE-BURST WARNING:</strong> Leaving a garden hose connected to an exterior spigot traps water inside the sillcock body. Even frost-free bibs will burst inside the basement rim joist during a freeze if a hose is attached!
+          </div>
+
+          <button class="accordion-toggle" onclick="toggleAccordion('runsheet-winter-spigots')">
+            <span>View 4-Step Spigot Drain Run-Sheet</span>
+            <span id="runsheet-winter-spigots-arrow">▼</span>
+          </button>
+          <div class="accordion-content" id="runsheet-winter-spigots">
+            <div class="runsheet-step"><strong>Step 1:</strong> Disconnect all garden hoses, quick-connect brass couplers, splitters, and timer valves from every exterior spigot. Coil and stow hoses in garage/shed.</div>
+            <div class="runsheet-step"><strong>Step 2:</strong> Go down into basement / mechanical utility room. Locate the dedicated interior brass ball shutoff valves feeding each exterior hose bib run. Turn levers 90° to <strong class="val-highlight">OFF</strong> position.</div>
+            <div class="runsheet-step"><strong>Step 3:</strong> Walk outside to every outdoor spigot. Open valves completely to drain trapped water from line. If interior ball valve has small brass knurled bleeder cap, loosen cap over small bucket inside basement to drain remaining vacuum water. Leave outside spigots OPEN for winter.</div>
+            <div class="runsheet-step"><strong>Step 4:</strong> Inspect foam insulation pipe jackets and fiberglass batts along exterior rim joists. Fit insulated styrofoam frost covers over exterior bibs if severe sub-zero cold wind is forecast.</div>
+          </div>
+
+          <div style="margin-top:14px; border-top:1px dashed var(--border); padding-top:10px;">
+            <label class="hero-item">
+              <input type="checkbox" id="winterize-done-toggle" onchange="saveMechanicalsState()">
+              <span style="font-weight:700; color:#34d399;">Spigot Winterization Fully Executed for Current Season (Hoses Disconnected & Drained)</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- TAB 4: FAMILY HEALTH & LOGISTICS (SPRINT 4)                   -->
+    <!-- ============================================================== -->
+    <section id="tab-family" class="tab-view" style="display:none;">
+      
+      <div class="vehicle-hero" style="border-left: 4px solid #a78bfa;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;">
+          <div>
+            <span class="badge" style="background:#581c87; color:#e9d5ff; margin-bottom:6px;">PERSONNEL & WELLNESS</span>
+            <h2 style="font-size:1.4rem; font-weight:800;">👨‍👩‍👧‍👦 Family Health & Logistics</h2>
+            <p style="font-size:0.82rem; color:var(--text-muted); margin-top:2px;">
+              Tricare Referral Pipeline, Prescription Refill Lifelines, and Routine Family Checkups (Josh, Brit, Lincoln, Annabel, Sally Jo)
+            </p>
+          </div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button class="btn-header" onclick="openAddReferralModal()">+ New Referral</button>
+            <button class="btn-header" onclick="openAddRxModal()">+ New Prescription</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1. TRICARE REFERRAL PIPELINE TRACKER -->
+      <div class="specs-section">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+          <div>
+            <h3 style="font-size:1.15rem; font-weight:800; color:#a78bfa; display:flex; align-items:center; gap:8px;">
+              <span>📑</span> Tricare Referral Pipeline Tracker
+            </h3>
+            <p style="font-size:0.75rem; color:var(--text-muted);">
+              Active military specialty authorizations: Requested &rarr; Approved &rarr; Contacted &rarr; Scheduled &rarr; Completed
+            </p>
+          </div>
+          <button class="btn-header" onclick="openAddReferralModal()">+ Add Referral</button>
+        </div>
+
+        <div id="referrals-container">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- 2. PRESCRIPTION REFILL COUNTDOWN -->
+      <div class="specs-section">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+          <div>
+            <h3 style="font-size:1.15rem; font-weight:800; color:#38bdf8; display:flex; align-items:center; gap:8px;">
+              <span>💊</span> Prescription Refill Countdown
+            </h3>
+            <p style="font-size:0.75rem; color:var(--text-muted);">
+              Active maintenance medications: Card turns <strong style="color:#fbbf24;">AMBER</strong> 7 days prior to run-out to beat the weekend cutoff
+            </p>
+          </div>
+          <button class="btn-header" onclick="openAddRxModal()">+ Add Prescription</button>
+        </div>
+
+        <div class="rx-grid" id="rx-container">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- 3. ROUTINE CHECKUP CADENCES -->
+      <div class="specs-section">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+          <div>
+            <h3 style="font-size:1.15rem; font-weight:800; color:#34d399; display:flex; align-items:center; gap:8px;">
+              <span>🩺</span> Routine Checkup Cadences
+            </h3>
+            <p style="font-size:0.75rem; color:var(--text-muted);">
+              Annual Physical (12 mo), Dental Cleaning (6 mo), and Vision / Eye Exam (12 mo) across all 5 family members
+            </p>
+          </div>
+        </div>
+
+        <div id="family-checkups-container">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- TAB 5: INFINITI (PLACEHOLDER)                                 -->
     <!-- ============================================================== -->
     <section id="tab-infiniti" class="tab-view" style="display:none;">
       <div class="placeholder-card">
@@ -1726,13 +2210,17 @@
       <span class="dock-icon">🚙</span>
       <span>Explorer</span>
     </button>
-    <button class="dock-btn" id="dock-btn-infiniti" onclick="switchTab('infiniti')">
-      <span class="dock-icon">🏎️</span>
-      <span>Infiniti</span>
+    <button class="dock-btn" id="dock-btn-mechanicals" onclick="switchTab('mechanicals')">
+      <span class="dock-icon">🏠</span>
+      <span>Home</span>
+    </button>
+    <button class="dock-btn" id="dock-btn-family" onclick="switchTab('family')">
+      <span class="dock-icon">👨‍👩‍👧‍👦</span>
+      <span>Family</span>
     </button>
     <button class="dock-btn" id="dock-btn-trailer" onclick="switchTab('trailer')">
       <span class="dock-icon">🚜</span>
-      <span>Trailer</span>
+      <span>Fleet</span>
     </button>
   </div>
 
@@ -1798,6 +2286,93 @@
       <div class="modal-actions">
         <button class="btn-secondary" onclick="closeAddTaskModal()">Cancel</button>
         <button class="btn-primary" onclick="saveCustomTask()">Create Task</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== ADD REFERRAL MODAL ==================== -->
+  <div class="modal-overlay" id="add-referral-modal">
+    <div class="modal-card">
+      <h3 class="modal-title">Add Tricare Specialty Referral</h3>
+      <div class="modal-field">
+        <label class="modal-label">Family Member</label>
+        <select id="new-ref-person" class="modal-input">
+          <option value="Josh">Josh</option>
+          <option value="Brit">Brit</option>
+          <option value="Lincoln">Lincoln</option>
+          <option value="Annabel">Annabel</option>
+          <option value="Sally Jo">Sally Jo</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Specialty & Clinic / Physician</label>
+        <input type="text" id="new-ref-clinic" class="modal-input" placeholder="e.g. KC Urology Care PA (Dr. Holmes)">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Clinic Phone Number</label>
+        <input type="tel" id="new-ref-phone" class="modal-input" placeholder="e.g. (816) 531-1234">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Tricare Auth ID / Reference</label>
+        <input type="text" id="new-ref-auth" class="modal-input" placeholder="e.g. #0011620737">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Initial Stage</label>
+        <select id="new-ref-stage" class="modal-input">
+          <option value="1">1. Requested</option>
+          <option value="2" selected>2. Approved</option>
+          <option value="3">3. Clinic Contacted</option>
+          <option value="4">4. Appt Scheduled</option>
+          <option value="5">5. Completed</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Action Notes / Status</label>
+        <textarea id="new-ref-note" class="modal-input" rows="2" placeholder="e.g. Waiting on scheduler callback, need prior records..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeAddReferralModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveNewReferral()">Save Referral</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== ADD PRESCRIPTION MODAL ==================== -->
+  <div class="modal-overlay" id="add-rx-modal">
+    <div class="modal-card">
+      <h3 class="modal-title">Add Recurring Prescription</h3>
+      <div class="modal-field">
+        <label class="modal-label">Person</label>
+        <select id="new-rx-person" class="modal-input">
+          <option value="Josh">Josh</option>
+          <option value="Brit">Brit</option>
+          <option value="Lincoln">Lincoln</option>
+          <option value="Annabel">Annabel</option>
+          <option value="Sally Jo">Sally Jo</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Medication Name & Strength</label>
+        <input type="text" id="new-rx-name" class="modal-input" placeholder="e.g. Daily Multivitamin / Maintenance Rx">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Last Filled Date</label>
+        <input type="date" id="new-rx-date" class="modal-input">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Days Supply</label>
+        <select id="new-rx-supply" class="modal-input">
+          <option value="30" selected>30 Days</option>
+          <option value="90">90 Days</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Pharmacy & Phone</label>
+        <input type="text" id="new-rx-pharmacy" class="modal-input" placeholder="e.g. Munson Army Health / Price Chopper (816-682-1234)">
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeAddRxModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveNewRx()">Save Prescription</button>
       </div>
     </div>
   </div>
@@ -1950,7 +2525,7 @@
        2. TAB NAVIGATION SYSTEM
        ============================================================== */
     function switchTab(tabId) {
-      const tabs = ['checklist', 'explorer', 'infiniti', 'trailer'];
+      const tabs = ['checklist', 'explorer', 'mechanicals', 'family', 'infiniti', 'trailer'];
       tabs.forEach(t => {
         const view = document.getElementById(`tab-${t}`);
         const navBtn = document.getElementById(`tab-btn-${t}`);
@@ -2648,6 +3223,678 @@
 
 
     /* ==============================================================
+       7B. SPRINT 3: HOME & MECHANICALS ENGINE
+       ============================================================== */
+    const MECHANICALS_STORAGE_KEY = 'bb_ops_mechanicals_v1';
+
+    function getMechanicalsState() {
+      try {
+        return JSON.parse(localStorage.getItem(MECHANICALS_STORAGE_KEY) || '{}');
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveMechanicalsState() {
+      const state = getMechanicalsState();
+      state.hvacFilterDate = document.getElementById('hvac-filter-date').value;
+      state.whFlushDate = document.getElementById('wh-flush-date').value;
+      state.softenerDate = document.getElementById('softener-date').value;
+      state.cutover1 = document.getElementById('hvac-cutover-1').checked;
+      state.cutover2 = document.getElementById('hvac-cutover-2').checked;
+      state.cutover3 = document.getElementById('hvac-cutover-3').checked;
+      state.winterizeDone = document.getElementById('winterize-done-toggle').checked;
+
+      localStorage.setItem(MECHANICALS_STORAGE_KEY, JSON.stringify(state));
+      updateMechanicalsUI();
+    }
+
+    function initMechanicals() {
+      const state = getMechanicalsState();
+
+      // Defaults if not previously set
+      const defaultFilterDate = state.hvacFilterDate || '2026-08-15';
+      const defaultWhDate = state.whFlushDate || '2025-11-10';
+      const defaultSoftenerDate = state.softenerDate || '2026-09-20';
+
+      document.getElementById('hvac-filter-date').value = defaultFilterDate;
+      document.getElementById('wh-flush-date').value = defaultWhDate;
+      document.getElementById('softener-date').value = defaultSoftenerDate;
+
+      if (state.cutover1) document.getElementById('hvac-cutover-1').checked = true;
+      if (state.cutover2) document.getElementById('hvac-cutover-2').checked = true;
+      if (state.cutover3) document.getElementById('hvac-cutover-3').checked = true;
+      if (state.winterizeDone) document.getElementById('winterize-done-toggle').checked = true;
+
+      updateMechanicalsUI();
+    }
+
+    function updateMechanicalsUI() {
+      const today = new Date();
+      today.setHours(0,0,0,0);
+
+      // 1. HVAC Filter (90 days)
+      const filterDateVal = document.getElementById('hvac-filter-date').value;
+      if (filterDateVal) {
+        const filterDate = new Date(filterDateVal + 'T00:00:00');
+        const elapsedDays = Math.floor((today - filterDate) / (1000 * 60 * 60 * 24));
+        const daysRemaining = 90 - elapsedDays;
+        const statusEl = document.getElementById('hvac-filter-status');
+        const metaEl = document.getElementById('hvac-filter-meta');
+
+        metaEl.textContent = `Last Replaced: ${filterDate.toLocaleDateString()} (${elapsedDays} days ago)`;
+        if (daysRemaining <= 0) {
+          statusEl.textContent = `OVERDUE BY ${Math.abs(daysRemaining)} DAYS`;
+          statusEl.style.color = '#fb7185';
+        } else if (daysRemaining <= 10) {
+          statusEl.textContent = `REPLACE SOON (${daysRemaining} Days Left)`;
+          statusEl.style.color = '#fbbf24';
+        } else {
+          statusEl.textContent = `GOOD (${daysRemaining} Days Remaining)`;
+          statusEl.style.color = '#34d399';
+        }
+      }
+
+      // 2. Water Heater Sediment Flush (365 days)
+      const whDateVal = document.getElementById('wh-flush-date').value;
+      if (whDateVal) {
+        const whDate = new Date(whDateVal + 'T00:00:00');
+        const elapsedDays = Math.floor((today - whDate) / (1000 * 60 * 60 * 24));
+        const daysRemaining = 365 - elapsedDays;
+        const statusEl = document.getElementById('wh-flush-status');
+        const metaEl = document.getElementById('wh-flush-meta');
+        const pill = document.getElementById('water-heater-status-pill');
+
+        metaEl.textContent = `Last Flushed: ${whDate.toLocaleDateString()} (${elapsedDays} days ago)`;
+        if (daysRemaining <= 0) {
+          statusEl.textContent = `OVERDUE BY ${Math.abs(daysRemaining)} DAYS`;
+          statusEl.style.color = '#fb7185';
+          pill.className = 'status-pill pill-overdue';
+          pill.textContent = 'Flush Overdue';
+        } else if (daysRemaining <= 30) {
+          statusEl.textContent = `FLUSH DUE SOON (${daysRemaining} Days Left)`;
+          statusEl.style.color = '#fbbf24';
+          pill.className = 'status-pill pill-due';
+          pill.textContent = 'Due Soon';
+        } else {
+          statusEl.textContent = `GOOD (${daysRemaining} Days Remaining)`;
+          statusEl.style.color = '#34d399';
+          pill.className = 'status-pill pill-ok';
+          pill.textContent = 'OK';
+        }
+      }
+
+      // 3. Water Softener Salt (45 days)
+      const softDateVal = document.getElementById('softener-date').value;
+      if (softDateVal) {
+        const softDate = new Date(softDateVal + 'T00:00:00');
+        const elapsedDays = Math.floor((today - softDate) / (1000 * 60 * 60 * 24));
+        const daysRemaining = 45 - elapsedDays;
+        const statusEl = document.getElementById('softener-status');
+        const metaEl = document.getElementById('softener-meta');
+        const pill = document.getElementById('softener-status-pill');
+
+        metaEl.textContent = `Last Inspected: ${softDate.toLocaleDateString()} (${elapsedDays} days ago)`;
+        if (daysRemaining <= 0) {
+          statusEl.textContent = `CHECK SALT NOW (${Math.abs(daysRemaining)}d overdue)`;
+          statusEl.style.color = '#fb7185';
+          pill.className = 'status-pill pill-overdue';
+          pill.textContent = 'Check Salt';
+        } else if (daysRemaining <= 7) {
+          statusEl.textContent = `SALT CHECK DUE (${daysRemaining} Days Left)`;
+          statusEl.style.color = '#fbbf24';
+          pill.className = 'status-pill pill-due';
+          pill.textContent = 'Check Soon';
+        } else {
+          statusEl.textContent = `GOOD (${daysRemaining} Days Remaining)`;
+          statusEl.style.color = '#34d399';
+          pill.className = 'status-pill pill-ok';
+          pill.textContent = 'OK';
+        }
+      }
+
+      // 4. Winterization Countdown to Nov 1
+      const currentYear = today.getFullYear();
+      let targetNov1 = new Date(currentYear, 10, 1); // Month is 0-indexed: 10 = November
+      if (today > targetNov1 && today.getMonth() > 10) {
+        targetNov1 = new Date(currentYear + 1, 10, 1);
+      }
+      const daysToFreeze = Math.ceil((targetNov1 - today) / (1000 * 60 * 60 * 24));
+      const winterBadge = document.getElementById('winter-freeze-countdown-badge');
+      const isDone = document.getElementById('winterize-done-toggle')?.checked;
+
+      if (isDone) {
+        winterBadge.className = 'badge badge-offline';
+        winterBadge.textContent = '✓ Winterized for Season';
+      } else if (daysToFreeze < 0) {
+        winterBadge.className = 'badge badge-pacing';
+        winterBadge.style.color = '#fb7185';
+        winterBadge.textContent = '⚠️ PAST NOV 1 DEADLINE';
+      } else {
+        winterBadge.className = 'badge badge-pacing';
+        winterBadge.textContent = `❄️ ${daysToFreeze} Days Until Nov 1 Deadline`;
+      }
+    }
+
+    function markHvacFilterReplacedToday() {
+      const todayStr = new Date().toISOString().split('T')[0];
+      document.getElementById('hvac-filter-date').value = todayStr;
+      saveMechanicalsState();
+      showToast('Furnace filter marked replaced today!');
+    }
+    function updateHvacFilterDate() { saveMechanicalsState(); }
+
+    function markWhFlushedToday() {
+      const todayStr = new Date().toISOString().split('T')[0];
+      document.getElementById('wh-flush-date').value = todayStr;
+      saveMechanicalsState();
+      showToast('Water heater marked flushed today!');
+    }
+    function updateWhFlushDate() { saveMechanicalsState(); }
+
+    function markSoftenerCheckedToday() {
+      const todayStr = new Date().toISOString().split('T')[0];
+      document.getElementById('softener-date').value = todayStr;
+      saveMechanicalsState();
+      showToast('Water softener marked inspected & filled today!');
+    }
+    function updateSoftenerDate() { saveMechanicalsState(); }
+
+
+    /* ==============================================================
+       7C. SPRINT 4: FAMILY HEALTH & LOGISTICS ENGINE
+       ============================================================== */
+    const REFERRALS_STORAGE_KEY = 'bb_ops_tricare_referrals_v1';
+    const RX_STORAGE_KEY = 'bb_ops_rx_list_v1';
+    const CHECKUPS_STORAGE_KEY = 'bb_ops_checkups_v1';
+
+    const STAGE_NAMES = [
+      '1. Requested',
+      '2. Approved',
+      '3. Clinic Contacted',
+      '4. Appt Scheduled',
+      '5. Completed'
+    ];
+
+    const DEFAULT_REFERRALS = [
+      {
+        id: 'ref-josh-urology',
+        person: 'Josh',
+        clinic: 'KC Urology Care PA (Dr. Holmes)',
+        phone: '(816) 531-1234',
+        auth: '#0011620737',
+        stage: 2, // Approved
+        stalled: true,
+        note: 'STALLED: Approved > 7 days without booked appointment. Action: Call scheduling desk to lock in appointment date/time.'
+      },
+      {
+        id: 'ref-lincoln-psych',
+        person: 'Lincoln',
+        clinic: 'Alive Family Psychiatry',
+        phone: '(816) 407-9596',
+        auth: '#0011492041',
+        stage: 3, // Clinic Contacted
+        stalled: false,
+        code: 'UePj-jdYn-CeAn-qPFJ',
+        codeUrl: 'https://portal.kareo.com/code',
+        note: 'Active specialty care. Follow-up consultation cadence and statement reconciliation.'
+      }
+    ];
+
+    let familyReferrals = [];
+
+    function initReferrals() {
+      const saved = localStorage.getItem(REFERRALS_STORAGE_KEY);
+      if (saved) {
+        try { familyReferrals = JSON.parse(saved); } catch(e) { familyReferrals = [...DEFAULT_REFERRALS]; }
+      } else {
+        familyReferrals = [...DEFAULT_REFERRALS];
+      }
+      renderReferrals();
+    }
+
+    function saveReferrals() {
+      localStorage.setItem(REFERRALS_STORAGE_KEY, JSON.stringify(familyReferrals));
+      renderReferrals();
+    }
+
+    function renderReferrals() {
+      const container = document.getElementById('referrals-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (familyReferrals.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-muted);">No active specialty referrals. Tap "+ Add Referral" to log one.</div>`;
+        return;
+      }
+
+      familyReferrals.forEach(ref => {
+        const card = document.createElement('div');
+        card.className = `referral-card ${ref.stalled ? 'stalled-card' : ''}`;
+
+        // 5-stage stepper HTML
+        let stepsHtml = '';
+        for (let s = 1; s <= 5; s++) {
+          let stepClass = '';
+          if (s < ref.stage) stepClass = 'completed';
+          else if (s === ref.stage) stepClass = ref.stalled ? 'stalled' : 'active';
+
+          stepsHtml += `
+            <div class="pipeline-step ${stepClass}">
+              <div class="pipeline-dot">${s < ref.stage ? '✓' : s}</div>
+              <div class="pipeline-label">${STAGE_NAMES[s-1].split('. ')[1]}</div>
+            </div>
+          `;
+        }
+
+        let stalledActionBtn = '';
+        if (ref.stalled && ref.phone) {
+          const cleanPhone = ref.phone.replace(/[^0-9]/g, '');
+          stalledActionBtn = `
+            <a href="tel:${cleanPhone}" class="btn-call" style="padding:6px 12px; font-size:0.8rem; background:#f59e0b; color:#0f172a; margin-top:8px;">
+              📞 Call Scheduling Desk: ${ref.phone}
+            </a>
+          `;
+        }
+
+        let codeSnippet = '';
+        if (ref.code) {
+          codeSnippet = `
+            <div style="margin-top:8px;">
+              <div class="action-code-badge">
+                <span>Code:</span> <strong>${ref.code}</strong>
+                <button class="btn-copy" onclick="copyToClipboard('${ref.code}', 'Portal Code')">Copy</button>
+              </div>
+              ${ref.codeUrl ? `<a href="${ref.codeUrl}" target="_blank" rel="noopener noreferrer" style="font-size:0.75rem; color:#38bdf8; margin-left:8px; text-decoration:underline;">portal.kareo.com/code ↗</a>` : ''}
+            </div>
+          `;
+        }
+
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px;">
+            <div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span class="tag" style="background:#0284c7; color:#fff; font-weight:700;">${ref.person}</span>
+                <span style="font-size:1rem; font-weight:800; color:var(--text-main);">${ref.clinic}</span>
+              </div>
+              <div style="font-size:0.78rem; color:var(--text-muted); margin-top:4px;">
+                Auth ID: <strong style="color:#38bdf8; font-family:monospace;">${ref.auth || 'Pending'}</strong> • 
+                Phone: <strong style="color:#f8fafc;">${ref.phone || 'N/A'}</strong>
+              </div>
+            </div>
+            ${ref.stalled ? `<span class="badge badge-pacing" style="background:rgba(245,158,11,0.2); color:#fbbf24; border:1px solid #f59e0b;">⚠️ STALLED (&gt;7 Days)</span>` : `<span class="status-pill pill-ok">Stage ${ref.stage}/5</span>`}
+          </div>
+
+          <!-- Stepper Track -->
+          <div class="pipeline-container">
+            <div class="pipeline-track-line"></div>
+            ${stepsHtml}
+          </div>
+
+          <div class="task-note-box" style="margin:8px 0; border-left-color:${ref.stalled ? '#f59e0b' : '#38bdf8'};">
+            ${ref.note || 'Specialty care authorization track.'}
+            ${codeSnippet}
+            ${stalledActionBtn}
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px; flex-wrap:wrap; gap:8px;">
+            <div style="display:flex; gap:6px;">
+              <button class="btn-header" onclick="advanceReferralStage('${ref.id}')" title="Advance to next stage">⏩ Advance Stage</button>
+              ${ref.stage > 1 ? `<button class="btn-header" style="color:var(--text-muted);" onclick="stepBackReferralStage('${ref.id}')" title="Step back">⏪ Back</button>` : ''}
+              ${ref.stalled ? `<button class="btn-header" style="color:#34d399;" onclick="clearReferralStall('${ref.id}')">✓ Clear Stall</button>` : ''}
+            </div>
+            <button class="btn-copy" style="color:#fb7185; border-color:rgba(251,113,133,0.3);" onclick="deleteReferral('${ref.id}')">Delete</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function advanceReferralStage(id) {
+      const ref = familyReferrals.find(r => r.id === id);
+      if (ref && ref.stage < 5) {
+        ref.stage++;
+        if (ref.stage >= 4) ref.stalled = false;
+        saveReferrals();
+        showToast(`Referral advanced to ${STAGE_NAMES[ref.stage-1]}`);
+      }
+    }
+
+    function stepBackReferralStage(id) {
+      const ref = familyReferrals.find(r => r.id === id);
+      if (ref && ref.stage > 1) {
+        ref.stage--;
+        saveReferrals();
+      }
+    }
+
+    function clearReferralStall(id) {
+      const ref = familyReferrals.find(r => r.id === id);
+      if (ref) {
+        ref.stalled = false;
+        saveReferrals();
+        showToast('Stall alert cleared.');
+      }
+    }
+
+    function deleteReferral(id) {
+      if (confirm('Delete this referral record?')) {
+        familyReferrals = familyReferrals.filter(r => r.id !== id);
+        saveReferrals();
+        showToast('Referral removed.');
+      }
+    }
+
+    function openAddReferralModal() {
+      document.getElementById('new-ref-clinic').value = '';
+      document.getElementById('new-ref-phone').value = '';
+      document.getElementById('new-ref-auth').value = '';
+      document.getElementById('new-ref-note').value = '';
+      document.getElementById('add-referral-modal').classList.add('open');
+    }
+    function closeAddReferralModal() {
+      document.getElementById('add-referral-modal').classList.remove('open');
+    }
+    function saveNewReferral() {
+      const person = document.getElementById('new-ref-person').value;
+      const clinic = document.getElementById('new-ref-clinic').value.trim();
+      const phone = document.getElementById('new-ref-phone').value.trim();
+      const auth = document.getElementById('new-ref-auth').value.trim();
+      const stage = parseInt(document.getElementById('new-ref-stage').value, 10);
+      const note = document.getElementById('new-ref-note').value.trim();
+
+      if (!clinic) {
+        alert('Please enter a specialty or clinic name.');
+        return;
+      }
+
+      const newRef = {
+        id: 'ref-' + Date.now(),
+        person,
+        clinic,
+        phone,
+        auth,
+        stage,
+        stalled: false,
+        note: note || 'Specialty care authorization track.'
+      };
+
+      familyReferrals.unshift(newRef);
+      saveReferrals();
+      closeAddReferralModal();
+      showToast('New referral added!');
+    }
+
+
+    /* ==============================================================
+       7D. PRESCRIPTION REFILL COUNTDOWN ENGINE
+       ============================================================== */
+    const DEFAULT_RX = [
+      {
+        id: 'rx-lincoln-daily',
+        person: 'Lincoln',
+        name: 'Maintenance Prescription',
+        lastFilled: '2026-10-01',
+        supplyDays: 30,
+        pharmacy: 'Price Chopper Pharmacy (816-682-1234)'
+      },
+      {
+        id: 'rx-josh-daily',
+        person: 'Josh',
+        name: 'Daily Allergy / Maintenance',
+        lastFilled: '2026-08-01',
+        supplyDays: 90,
+        pharmacy: 'Munson Army Health Center Pharmacy (913-684-6000)'
+      },
+      {
+        id: 'rx-brit-daily',
+        person: 'Brit',
+        name: 'Daily Multivitamin & Wellness Rx',
+        lastFilled: '2026-09-25',
+        supplyDays: 30,
+        pharmacy: 'Munson Army Health Center Pharmacy (913-684-6000)'
+      }
+    ];
+
+    let familyRx = [];
+
+    function initRxLedger() {
+      const saved = localStorage.getItem(RX_STORAGE_KEY);
+      if (saved) {
+        try { familyRx = JSON.parse(saved); } catch(e) { familyRx = [...DEFAULT_RX]; }
+      } else {
+        familyRx = [...DEFAULT_RX];
+      }
+      renderRxLedger();
+    }
+
+    function saveRxLedger() {
+      localStorage.setItem(RX_STORAGE_KEY, JSON.stringify(familyRx));
+      renderRxLedger();
+    }
+
+    function renderRxLedger() {
+      const container = document.getElementById('rx-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (familyRx.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-muted); grid-column:1/-1;">No prescriptions logged. Tap "+ Add Prescription".</div>`;
+        return;
+      }
+
+      const today = new Date();
+      today.setHours(0,0,0,0);
+
+      familyRx.forEach(rx => {
+        const fillDate = new Date(rx.lastFilled + 'T00:00:00');
+        const elapsedDays = Math.floor((today - fillDate) / (1000 * 60 * 60 * 24));
+        const daysRemaining = rx.supplyDays - elapsedDays;
+
+        let statusClass = 'pill-ok';
+        let cardClass = '';
+        let statusText = `${daysRemaining} Days Left`;
+
+        if (daysRemaining <= 0) {
+          statusClass = 'pill-overdue';
+          cardClass = 'rx-red';
+          statusText = `OUT OF MEDS (${Math.abs(daysRemaining)}d OVERDUE)`;
+        } else if (daysRemaining <= 7) {
+          statusClass = 'pill-due';
+          cardClass = 'rx-amber';
+          statusText = `REFILL DUE (<${daysRemaining}d Left)`;
+        }
+
+        const card = document.createElement('div');
+        card.className = `rx-card ${cardClass}`;
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+            <div>
+              <span class="tag" style="background:#0284c7; color:#fff; font-weight:700;">${rx.person}</span>
+              <div style="font-size:1rem; font-weight:800; margin-top:4px; color:var(--text-main);">${rx.name}</div>
+            </div>
+            <span class="status-pill ${statusClass}">${statusText}</span>
+          </div>
+
+          <div style="font-size:0.75rem; color:var(--text-muted); margin:6px 0;">
+            Supply: <strong>${rx.supplyDays} Days</strong> • Last Filled: <strong>${rx.lastFilled}</strong> (${elapsedDays}d ago)
+          </div>
+
+          ${daysRemaining <= 7 ? `
+            <div style="background:rgba(245,158,11,0.15); border:1px solid #f59e0b; padding:8px; border-radius:8px; font-size:0.75rem; color:#fbbf24; margin:6px 0; font-weight:600;">
+              ⚠️ Call in refill now to clear pharmacy authorization before the weekend!
+            </div>
+          ` : ''}
+
+          <div style="font-size:0.75rem; color:#cbd5e1; margin-top:4px;">
+            Pharmacy: <strong>${rx.pharmacy || 'Standard Pharmacy'}</strong>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px; gap:8px;">
+            <button class="btn-primary" style="font-size:0.78rem; padding:6px 10px;" onclick="markRxRefilledToday('${rx.id}')">
+              ✓ Mark Refilled Today
+            </button>
+            <button class="btn-copy" style="color:#fb7185; border-color:rgba(251,113,133,0.3);" onclick="deleteRx('${rx.id}')">Delete</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function markRxRefilledToday(id) {
+      const rx = familyRx.find(r => r.id === id);
+      if (rx) {
+        const todayStr = new Date().toISOString().split('T')[0];
+        rx.lastFilled = todayStr;
+        saveRxLedger();
+        showToast(`${rx.name} marked refilled today!`);
+      }
+    }
+
+    function deleteRx(id) {
+      if (confirm('Delete this prescription?')) {
+        familyRx = familyRx.filter(r => r.id !== id);
+        saveRxLedger();
+        showToast('Prescription removed.');
+      }
+    }
+
+    function openAddRxModal() {
+      document.getElementById('new-rx-name').value = '';
+      document.getElementById('new-rx-date').value = new Date().toISOString().split('T')[0];
+      document.getElementById('new-rx-pharmacy').value = '';
+      document.getElementById('add-rx-modal').classList.add('open');
+    }
+    function closeAddRxModal() {
+      document.getElementById('add-rx-modal').classList.remove('open');
+    }
+    function saveNewRx() {
+      const person = document.getElementById('new-rx-person').value;
+      const name = document.getElementById('new-rx-name').value.trim();
+      const lastFilled = document.getElementById('new-rx-date').value;
+      const supplyDays = parseInt(document.getElementById('new-rx-supply').value, 10);
+      const pharmacy = document.getElementById('new-rx-pharmacy').value.trim();
+
+      if (!name) {
+        alert('Please enter medication name.');
+        return;
+      }
+
+      const newRxItem = {
+        id: 'rx-' + Date.now(),
+        person,
+        name,
+        lastFilled: lastFilled || new Date().toISOString().split('T')[0],
+        supplyDays,
+        pharmacy: pharmacy || 'Local Pharmacy'
+      };
+
+      familyRx.unshift(newRxItem);
+      saveRxLedger();
+      closeAddRxModal();
+      showToast('New prescription added!');
+    }
+
+
+    /* ==============================================================
+       7E. ROUTINE CHECKUP CADENCES ENGINE
+       ============================================================== */
+    const FAMILY_MEMBERS = ['Josh', 'Brit', 'Lincoln', 'Annabel', 'Sally Jo'];
+
+    const CHECKUP_TYPES = [
+      { id: 'physical', label: 'Annual Physical / Well-Child Check', intervalDays: 365, intervalLabel: '12 Months' },
+      { id: 'dental',   label: 'Dental Cleaning',                   intervalDays: 180, intervalLabel: '6 Months' },
+      { id: 'vision',   label: 'Vision / Eye Exam',                 intervalDays: 365, intervalLabel: '12 Months' }
+    ];
+
+    function getCheckupHistory() {
+      try {
+        return JSON.parse(localStorage.getItem(CHECKUPS_STORAGE_KEY) || '{}');
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function initCheckups() {
+      renderCheckups();
+    }
+
+    function renderCheckups() {
+      const container = document.getElementById('family-checkups-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const history = getCheckupHistory();
+      const today = new Date();
+      today.setHours(0,0,0,0);
+
+      FAMILY_MEMBERS.forEach(person => {
+        const card = document.createElement('div');
+        card.className = 'family-checkup-card';
+        
+        let rowsHtml = '';
+        CHECKUP_TYPES.forEach(type => {
+          const key = `${person}_${type.id}`;
+          const lastDateStr = history[key] || '';
+          let statusPill = `<span class="status-pill pill-due">Needs Log</span>`;
+          let metaText = `Cadence: ${type.intervalLabel}`;
+
+          if (lastDateStr) {
+            const lastDate = new Date(lastDateStr + 'T00:00:00');
+            const elapsedDays = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
+            const daysRemaining = type.intervalDays - elapsedDays;
+
+            if (daysRemaining <= 0) {
+              statusPill = `<span class="status-pill pill-overdue">OVERDUE (${Math.abs(daysRemaining)}d)</span>`;
+            } else if (daysRemaining <= 30) {
+              statusPill = `<span class="status-pill pill-due">Due Soon (${daysRemaining}d)</span>`;
+            } else {
+              statusPill = `<span class="status-pill pill-ok">OK (${daysRemaining}d left)</span>`;
+            }
+            metaText = `Last: ${lastDate.toLocaleDateString()} (${elapsedDays}d ago)`;
+          }
+
+          rowsHtml += `
+            <div class="checkup-row">
+              <div>
+                <strong style="color:var(--text-main); font-size:0.9rem;">${type.label}</strong>
+                <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">${metaText}</div>
+              </div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                ${statusPill}
+                <button class="btn-copy" onclick="logCheckupToday('${person}', '${type.id}')" title="Log completed today">
+                  ✓ Done Today
+                </button>
+              </div>
+            </div>
+          `;
+        });
+
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:8px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="brand-icon" style="width:30px; height:30px; font-size:0.9rem;">👤</span>
+              <span style="font-size:1.1rem; font-weight:800; color:#f8fafc;">${person}</span>
+            </div>
+            <span class="badge" style="background:#1e293b; color:#94a3b8;">Preventative Health</span>
+          </div>
+          <div>${rowsHtml}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function logCheckupToday(person, typeId) {
+      const history = getCheckupHistory();
+      const key = `${person}_${typeId}`;
+      history[key] = new Date().toISOString().split('T')[0];
+      localStorage.setItem(CHECKUPS_STORAGE_KEY, JSON.stringify(history));
+      renderCheckups();
+      showToast(`Logged ${person}'s checkup as completed today!`);
+    }
+
+
+    /* ==============================================================
        9. SERVICE WORKER REGISTRATION & NETWORK MONITOR (SPRINT 2)
        ============================================================== */
     function updateNetworkStatus() {
@@ -2693,6 +3940,10 @@
       initScratchpad();
       initOdometer();
       renderFuses();
+      initMechanicals();
+      initReferrals();
+      initRxLedger();
+      initCheckups();
       updateNetworkStatus();
     });
   </script>

@@ -1,0 +1,3951 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Household Ops">
+  <meta name="theme-color" content="#0f172a">
+  <link rel="manifest" href="manifest.json">
+  <title>Household Planner & Shop Guide</title>
+  <style>
+    /* CSS Reset & Variables */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    :root {
+      --bg-dark: #0f172a;
+      --bg-card: #1e293b;
+      --bg-card-sub: #162032;
+      --bg-card-hover: #27354f;
+      --border: #334155;
+      --border-focus: #38bdf8;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --amber: #f59e0b;
+      --amber-light: rgba(245, 158, 11, 0.15);
+      --emerald: #10b981;
+      --emerald-light: rgba(16, 185, 129, 0.15);
+      --sky: #0284c7;
+      --sky-light: rgba(2, 132, 199, 0.15);
+      --rose: #f43f5e;
+      --rose-light: rgba(244, 63, 94, 0.15);
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font);
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-bottom: 90px;
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 3px;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    /* Top Sticky Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(15, 23, 42, 0.94);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 16px;
+    }
+    .header-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #0f172a;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+    }
+    .brand-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .brand-subtitle {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 9999px;
+      border: 1px solid transparent;
+    }
+    .badge-offline {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #34d399;
+    }
+    .badge-pacing {
+      background: rgba(245, 158, 11, 0.2);
+      border-color: rgba(245, 158, 11, 0.5);
+      color: #fbbf24;
+      animation: pulse-border 2s infinite;
+    }
+    @keyframes pulse-border {
+      0%, 100% { border-color: rgba(245, 158, 11, 0.4); }
+      50% { border-color: rgba(245, 158, 11, 1); }
+    }
+    .btn-header {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .btn-header:hover {
+      background: var(--border);
+    }
+
+    /* Tabs Bar */
+    .tabs-nav {
+      display: flex;
+      gap: 8px;
+      background: #131d2e;
+      padding: 6px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin: 16px 0 20px;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      flex: 1;
+      min-width: 130px;
+      text-align: center;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .tab-btn.active {
+      background: var(--bg-card);
+      color: #38bdf8;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      border: 1px solid var(--border);
+    }
+
+    /* Hero Card for Pacing Item */
+    .hero-card {
+      background: linear-gradient(145deg, #1e293b, #172338);
+      border: 2px solid #f59e0b;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+      position: relative;
+      box-shadow: 0 8px 24px rgba(245, 158, 11, 0.12);
+    }
+    .hero-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hero-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #fbbf24;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .hero-times {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.7);
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      margin: 14px 0;
+    }
+    .time-slot {
+      display: flex;
+      flex-direction: column;
+    }
+    .time-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+    .time-val {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-top: 2px;
+    }
+    .hero-cta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .btn-call {
+      background: #10b981;
+      color: #042f2e;
+      font-weight: 700;
+      padding: 10px 18px;
+      border-radius: 10px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      transition: all 0.2s ease;
+    }
+    .btn-call:hover {
+      background: #34d399;
+      transform: translateY(-1px);
+    }
+    .hero-checklist {
+      margin-top: 14px;
+      border-top: 1px dashed rgba(245, 158, 11, 0.3);
+      padding-top: 14px;
+    }
+    .hero-checklist-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #fbbf24;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .hero-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: #e2e8f0;
+      margin-bottom: 6px;
+    }
+    .hero-item input[type="checkbox"] {
+      accent-color: #f59e0b;
+      width: 17px;
+      height: 17px;
+      cursor: pointer;
+    }
+
+    /* Filter Chips */
+    .filter-section {
+      margin-bottom: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .filter-group:last-child {
+      margin-bottom: 0;
+    }
+    .filter-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      width: 75px;
+      flex-shrink: 0;
+    }
+    .chips-wrap {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .chip {
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 9999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .chip:hover {
+      background: var(--border);
+      color: var(--text-main);
+    }
+    .chip.active {
+      background: #0284c7;
+      border-color: #38bdf8;
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.4);
+    }
+
+    /* Tasks List */
+    .tasks-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .tasks-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .task-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+      position: relative;
+    }
+    .task-card:hover {
+      border-color: #475569;
+    }
+    .task-card.completed {
+      opacity: 0.55;
+      background: #162032;
+    }
+    .task-card.completed .task-title {
+      text-decoration: line-through;
+      color: #64748b;
+    }
+    .task-card-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .task-checkbox {
+      margin-top: 3px;
+      width: 20px;
+      height: 20px;
+      accent-color: #0284c7;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .task-content {
+      flex: 1;
+    }
+    .task-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+    .task-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg-card-sub);
+    }
+    .tag-time {
+      color: #38bdf8;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    .tag-loc {
+      color: #a78bfa;
+      border-color: rgba(167, 139, 250, 0.3);
+    }
+    .task-note-box {
+      background: var(--bg-card-sub);
+      border-left: 3px solid #38bdf8;
+      padding: 10px 12px;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      line-height: 1.45;
+      margin-top: 8px;
+    }
+    .action-code-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #0f172a;
+      border: 1px solid #38bdf8;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: #38bdf8;
+      margin-top: 6px;
+    }
+    .btn-copy {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #f8fafc;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 6px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-copy:hover {
+      background: #38bdf8;
+      color: #0f172a;
+    }
+
+    /* Scratchpad Section */
+    .scratchpad-wrap {
+      margin-top: 30px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+    }
+    .scratchpad-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .scratchpad-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--amber);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .save-indicator {
+      font-size: 0.72rem;
+      color: #34d399;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .scratchpad-textarea {
+      width: 100%;
+      min-height: 120px;
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      font-family: var(--font);
+      font-size: 0.88rem;
+      color: var(--text-main);
+      resize: vertical;
+      line-height: 1.5;
+    }
+    .scratchpad-textarea:focus {
+      outline: none;
+      border-color: var(--amber);
+    }
+    .btn-archive {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #0f172a;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25);
+    }
+    .btn-archive:hover {
+      background: #fbbf24;
+      transform: translateY(-1px);
+    }
+    .archive-drawer-btn {
+      width: 100%;
+      background: var(--bg-card-sub);
+      border: 1px dashed var(--border);
+      color: var(--text-muted);
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 14px;
+      transition: all 0.15s ease;
+    }
+    .archive-drawer-btn:hover {
+      background: #1e293b;
+      color: var(--text-main);
+      border-color: #475569;
+    }
+    .archive-drawer-content {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .archive-drawer-content.hidden-drawer {
+      display: none !important;
+    }
+    .archive-card {
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--amber);
+      border-radius: 10px;
+      padding: 12px;
+      position: relative;
+    }
+    .archive-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .archive-card-date {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      font-weight: 600;
+    }
+    .archive-card-text {
+      font-size: 0.85rem;
+      color: #e2e8f0;
+      white-space: pre-wrap;
+      line-height: 1.45;
+    }
+
+    /* Tab 2: Ford Explorer Styles */
+    .vehicle-hero {
+      background: linear-gradient(135deg, #1e293b, #111d2e);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .odometer-card {
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+    .odometer-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .odometer-input {
+      background: #0f172a;
+      border: 2px solid #38bdf8;
+      border-radius: 10px;
+      color: #f8fafc;
+      font-size: 1.5rem;
+      font-weight: 800;
+      font-family: monospace;
+      padding: 8px 14px;
+      width: 160px;
+      text-align: right;
+    }
+    .odometer-input:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.3);
+    }
+    .quick-mileage-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .quick-mileage-btn:hover {
+      color: #38bdf8;
+      border-color: #38bdf8;
+    }
+
+    /* Maintenance Triage Grid */
+    .triage-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .triage-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+    }
+    .triage-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+    .triage-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .status-pill {
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .pill-ok {
+      background: var(--emerald-light);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+    .pill-due {
+      background: var(--amber-light);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+    .pill-overdue {
+      background: var(--rose-light);
+      color: #fb7185;
+      border: 1px solid rgba(244, 63, 94, 0.4);
+    }
+    .progress-bar-wrap {
+      width: 100%;
+      height: 6px;
+      background: #0f172a;
+      border-radius: 3px;
+      overflow: hidden;
+      margin: 8px 0;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: #38bdf8;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+    .triage-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    /* Accordion Run-Sheets */
+    .accordion-toggle {
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border);
+      color: #38bdf8;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-top: auto;
+    }
+    .accordion-toggle:hover {
+      background: #1a273e;
+    }
+    .accordion-content {
+      display: none;
+      padding: 12px 6px 4px;
+      font-size: 0.82rem;
+      color: #cbd5e1;
+      border-top: 1px dashed var(--border);
+      margin-top: 8px;
+    }
+    .accordion-content.open {
+      display: block;
+    }
+    .runsheet-step {
+      margin-bottom: 8px;
+      line-height: 1.4;
+      padding-left: 14px;
+      position: relative;
+    }
+    .runsheet-step::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: var(--amber);
+      font-weight: bold;
+    }
+
+    /* Spec Tables */
+    .specs-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 24px;
+    }
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 12px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      text-align: left;
+    }
+    th {
+      background: var(--bg-card-sub);
+      color: var(--text-muted);
+      font-weight: 700;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+    }
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #1e293b;
+      color: #e2e8f0;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .val-highlight {
+      color: #38bdf8;
+      font-weight: 700;
+      font-family: monospace;
+    }
+    .torque-highlight {
+      color: #fbbf24;
+      font-weight: 700;
+      font-family: monospace;
+    }
+
+    /* Fuse Box Lookup */
+    .fuse-search-wrap {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+      margin-bottom: 12px;
+    }
+    .search-input {
+      flex: 1;
+      min-width: 220px;
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: var(--text-main);
+      font-size: 0.85rem;
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: #38bdf8;
+    }
+
+    /* Placeholder Tabs */
+    .placeholder-card {
+      background: var(--bg-card);
+      border: 1px dashed var(--border);
+      border-radius: 16px;
+      padding: 40px 20px;
+      text-align: center;
+      margin: 30px 0;
+    }
+    .placeholder-icon {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+      opacity: 0.7;
+    }
+    .placeholder-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+    .placeholder-sub {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      max-width: 480px;
+      margin: 0 auto 16px;
+      line-height: 1.5;
+    }
+
+    /* Bottom Dock Bar (Mobile friendly) */
+    .bottom-dock {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(15, 23, 42, 0.96);
+      backdrop-filter: blur(14px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 12px;
+      z-index: 35;
+    }
+    .dock-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 8px;
+      transition: color 0.15s;
+    }
+    .dock-btn.active {
+      color: #38bdf8;
+    }
+    .dock-icon {
+      font-size: 1.2rem;
+    }
+
+    /* PIN Lock Screen Overlay */
+    #pin-lock-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #0f172a;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      user-select: none;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    #pin-lock-overlay.hidden-lock {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .pin-box {
+      max-width: 340px;
+      width: 100%;
+      text-align: center;
+    }
+    .pin-icon {
+      width: 56px;
+      height: 56px;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #f59e0b;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      margin: 0 auto 16px;
+      box-shadow: 0 4px 20px rgba(245, 158, 11, 0.2);
+    }
+    .pin-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+      letter-spacing: -0.02em;
+    }
+    .pin-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+    .pin-dots {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .pin-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: transparent;
+      transition: all 0.15s ease;
+    }
+    .pin-dot.filled {
+      background: #38bdf8;
+      border-color: #38bdf8;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+      transform: scale(1.1);
+    }
+    .pin-keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .key-btn {
+      height: 60px;
+      border-radius: 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      font-size: 1.35rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.1s ease;
+      touch-action: manipulation;
+    }
+    .key-btn:active {
+      background: #334155;
+      transform: scale(0.96);
+    }
+    .key-btn-sub {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    .pin-error {
+      color: #fb7185;
+      font-size: 0.8rem;
+      font-weight: 600;
+      min-height: 20px;
+      margin-bottom: 8px;
+    }
+    .shake {
+      animation: shake 0.35s ease;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+
+    /* Modal for PIN Change */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.open {
+      display: flex;
+    }
+    .modal-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      max-width: 400px;
+      width: 100%;
+    }
+    .modal-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .modal-field {
+      margin-bottom: 14px;
+    }
+    .modal-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: block;
+    }
+    .modal-input {
+      width: 100%;
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: var(--text-main);
+      font-size: 0.9rem;
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.82rem;
+    }
+    .btn-primary {
+      background: #0284c7;
+      border: none;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    /* Toast Notification */
+    #toast {
+      position: fixed;
+      bottom: 75px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e293b;
+      border: 1px solid #38bdf8;
+      color: #f8fafc;
+      padding: 10px 18px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-6px);
+    }
+    /* ==============================================================
+       SPRINT 3 & 4 STYLES: MECHANICALS & FAMILY HEALTH
+       ============================================================== */
+    .filter-size-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: monospace;
+      font-size: 1.05rem;
+      font-weight: 800;
+      background: #0f172a;
+      border: 2px solid #38bdf8;
+      color: #38bdf8;
+      padding: 6px 14px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(56, 189, 248, 0.2);
+    }
+    .countdown-widget {
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin: 10px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .pipeline-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      margin: 18px 0 14px;
+      padding: 0 4px;
+    }
+    .pipeline-track-line {
+      position: absolute;
+      top: 14px;
+      left: 24px;
+      right: 24px;
+      height: 3px;
+      background: #334155;
+      z-index: 1;
+    }
+    .pipeline-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      flex: 1;
+    }
+    .pipeline-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #1e293b;
+      border: 2px solid #64748b;
+      color: #94a3b8;
+      font-size: 0.75rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .pipeline-step.completed .pipeline-dot {
+      background: #059669;
+      border-color: #10b981;
+      color: #fff;
+    }
+    .pipeline-step.active .pipeline-dot {
+      background: #0284c7;
+      border-color: #38bdf8;
+      color: #fff;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+      transform: scale(1.1);
+    }
+    .pipeline-step.stalled .pipeline-dot {
+      background: #d97706;
+      border-color: #fbbf24;
+      color: #0f172a;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.7);
+    }
+    .pipeline-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-top: 6px;
+      white-space: nowrap;
+    }
+    .pipeline-step.active .pipeline-label,
+    .pipeline-step.completed .pipeline-label {
+      color: var(--text-main);
+    }
+    .pipeline-step.stalled .pipeline-label {
+      color: #fbbf24;
+    }
+    .referral-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+      transition: all 0.2s ease;
+    }
+    .referral-card.stalled-card {
+      border: 2px solid #f59e0b;
+      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.15);
+    }
+    .rx-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+      margin-top: 12px;
+    }
+    .rx-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .rx-card.rx-amber {
+      border-color: #f59e0b;
+      background: linear-gradient(145deg, #1e293b, #262118);
+    }
+    .rx-card.rx-red {
+      border-color: #f43f5e;
+      background: linear-gradient(145deg, #1e293b, #2b181c);
+    }
+    .family-checkup-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    .checkup-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .checkup-row:last-child {
+      border-bottom: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== SPRINT 2: PIN LOCK SCREEN ==================== -->
+  <div id="pin-lock-overlay">
+    <div class="pin-box">
+      <div class="pin-icon">🔒</div>
+      <h1 class="pin-title">Household Ops</h1>
+      <p class="pin-sub">Confidential Family Medical & Shop Operations</p>
+      
+      <div class="pin-error" id="pin-error-msg"></div>
+
+      <div class="pin-dots" id="pin-dots-container">
+        <div class="pin-dot" id="dot-0"></div>
+        <div class="pin-dot" id="dot-1"></div>
+        <div class="pin-dot" id="dot-2"></div>
+        <div class="pin-dot" id="dot-3"></div>
+      </div>
+
+      <div class="pin-keypad">
+        <button class="key-btn" onclick="handleKeyClick('1')">1</button>
+        <button class="key-btn" onclick="handleKeyClick('2')">2</button>
+        <button class="key-btn" onclick="handleKeyClick('3')">3</button>
+        <button class="key-btn" onclick="handleKeyClick('4')">4</button>
+        <button class="key-btn" onclick="handleKeyClick('5')">5</button>
+        <button class="key-btn" onclick="handleKeyClick('6')">6</button>
+        <button class="key-btn" onclick="handleKeyClick('7')">7</button>
+        <button class="key-btn" onclick="handleKeyClick('8')">8</button>
+        <button class="key-btn" onclick="handleKeyClick('9')">9</button>
+        <button class="key-btn key-btn-sub" onclick="handleKeyClear()">CLR</button>
+        <button class="key-btn" onclick="handleKeyClick('0')">0</button>
+        <button class="key-btn key-btn-sub" onclick="handleKeyBackspace()">⌫</button>
+      </div>
+
+      <p style="font-size:0.75rem; color:#64748b; margin-top:8px;">Default passcode: 1234</p>
+    </div>
+  </div>
+
+  <!-- ==================== MAIN APPLICATION ==================== -->
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-icon">⚙️</div>
+        <div>
+          <div class="brand-title">Household Ops & Shop</div>
+          <div class="brand-subtitle">Executive Command Center</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span class="badge badge-offline" id="network-badge">
+          <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#10b981;"></span>
+          <span id="network-text">Offline Ready</span>
+        </span>
+        <button class="btn-header" onclick="openPinModal()" title="Change PIN">🔑 PIN</button>
+        <button class="btn-header" onclick="lockDashboard()" title="Lock Screen">🔒 Lock</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Tab Selectors -->
+    <nav class="tabs-nav" aria-label="Dashboard Tabs">
+      <button class="tab-btn active" onclick="switchTab('checklist')" id="tab-btn-checklist">
+        📋 Today's Checklist
+      </button>
+      <button class="tab-btn" onclick="switchTab('explorer')" id="tab-btn-explorer">
+        🚙 2020 Explorer (2.3L)
+      </button>
+      <button class="tab-btn" onclick="switchTab('mechanicals')" id="tab-btn-mechanicals">
+        🏠 Home & Mechanicals
+      </button>
+      <button class="tab-btn" onclick="switchTab('family')" id="tab-btn-family">
+        👨‍👩‍👧‍👦 Family Health
+      </button>
+      <button class="tab-btn" onclick="switchTab('infiniti')" id="tab-btn-infiniti">
+        🏎️ Infiniti
+      </button>
+      <button class="tab-btn" onclick="switchTab('trailer')" id="tab-btn-trailer">
+        🚜 Utility Trailer
+      </button>
+    </nav>
+
+    <!-- ============================================================== -->
+    <!-- TAB 1: TODAY'S CHECKLIST                                      -->
+    <!-- ============================================================== -->
+    <section id="tab-checklist" class="tab-view">
+      
+      <!-- HERO CARD: St. Joseph Sleep Study -->
+      <div class="hero-card">
+        <div class="hero-header">
+          <div>
+            <span class="badge badge-pacing" style="margin-bottom:6px;">⚠️ CRITICAL PACING ITEM</span>
+            <h2 class="hero-title">St. Joseph Sleep Study</h2>
+          </div>
+          <a href="tel:8169432820" class="btn-call">
+            📞 Call Pre-Reg: 816-943-2820
+          </a>
+        </div>
+
+        <p style="font-size:0.88rem; color:#cbd5e1; line-height:1.45;">
+          Mandatory hospital sleep laboratory diagnostic protocol. Pacing anchor for Thursday evening arrival through Friday morning release.
+        </p>
+
+        <div class="hero-times">
+          <div class="time-slot">
+            <span class="time-label">Session 1 • Check-In Arrival</span>
+            <span class="time-val" style="color:#fbbf24;">Thu Oct 22 @ 7:30 PM</span>
+          </div>
+          <div class="time-slot">
+            <span class="time-label">Session 2 • Morning Release</span>
+            <span class="time-val" style="color:#34d399;">Fri Oct 23 @ 7:00 AM</span>
+          </div>
+          <div class="time-slot">
+            <span class="time-label">Pre-Registration Desk</span>
+            <span class="time-val">816-943-2820</span>
+          </div>
+        </div>
+
+        <div class="hero-checklist">
+          <div class="hero-checklist-title">Pre-Flight Patient Prep Checklist</div>
+          <label class="hero-item">
+            <input type="checkbox" id="sleep-prep-1" onchange="saveHeroPrepState()">
+            <span>Complete hospital pre-registration call (816-943-2820) prior to arrival</span>
+          </label>
+          <label class="hero-item">
+            <input type="checkbox" id="sleep-prep-2" onchange="saveHeroPrepState()">
+            <span>Pack loose 2-piece sleeping attire (no silk/satin; button-up/t-shirt preferred)</span>
+          </label>
+          <label class="hero-item">
+            <input type="checkbox" id="sleep-prep-3" onchange="saveHeroPrepState()">
+            <span>Clean scalp/hair without gels, oils, or hairspray (for electrode adhesion)</span>
+          </label>
+          <label class="hero-item">
+            <input type="checkbox" id="sleep-prep-4" onchange="saveHeroPrepState()">
+            <span>Bring photo ID, insurance card, CPAP gear/mask (if applicable), & daily medications</span>
+          </label>
+          <label class="hero-item">
+            <input type="checkbox" id="sleep-prep-5" onchange="saveHeroPrepState()">
+            <span>Zero caffeine intake after 12:00 PM Thursday</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- FILTER CHIPS -->
+      <div class="filter-section">
+        <div class="filter-group">
+          <span class="filter-label">Duration:</span>
+          <div class="chips-wrap" id="time-chips">
+            <button class="chip active" onclick="setTimeFilter('all')">All Time</button>
+            <button class="chip" onclick="setTimeFilter('15m')">15m</button>
+            <button class="chip" onclick="setTimeFilter('30-45m')">30-45m</button>
+            <button class="chip" onclick="setTimeFilter('1-2h')">1-2h</button>
+          </div>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">Location:</span>
+          <div class="chips-wrap" id="loc-chips">
+            <button class="chip active" onclick="setLocFilter('all')">All Locations</button>
+            <button class="chip" onclick="setLocFilter('Desk/Phone')">Desk/Phone</button>
+            <button class="chip" onclick="setLocFilter('Garage/Hands-On')">Garage/Hands-On</button>
+            <button class="chip" onclick="setLocFilter('Town Errands')">Town Errands</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TASKS LIST -->
+      <div class="tasks-header">
+        <h3 class="tasks-title">
+          <span>Active Tasks</span>
+          <span class="badge" id="tasks-progress-badge" style="background:#1e293b; color:#38bdf8; border:1px solid #334155;">0 / 3 Done</span>
+        </h3>
+        <button class="btn-header" onclick="openAddTaskModal()">+ Add Custom Task</button>
+      </div>
+
+      <div id="tasks-container">
+        <!-- Rendered dynamically via JS -->
+      </div>
+
+      <!-- NEXT SPRINT SCRATCHPAD & ARCHIVE -->
+      <div class="scratchpad-wrap">
+        <div class="scratchpad-header">
+          <div class="scratchpad-title">
+            <span>📝</span> Next Sprint Scratchpad
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <div class="save-indicator" id="scratchpad-saved-badge">
+              <span>✓</span> Auto-saved locally
+            </div>
+            <button class="btn-archive" onclick="archiveCurrentScratchpad()" title="Archive to permanent log and clear text box">
+              <span>📁</span> Archive Note
+            </button>
+          </div>
+        </div>
+        <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:10px;">
+          Jot down upcoming tasks, hardware purchase lists, or future sprint notes. Tapping <strong>Archive Note</strong> saves it to your permanent backlog and clears the box so your daily view stays 100% clutter-free.
+        </p>
+        <textarea 
+          class="scratchpad-textarea" 
+          id="scratchpad-input" 
+          placeholder="e.g. Pick up M14x1.5 spare lug nuts at O'Reilly; schedule Infiniti transmission drain & fill; order Motorcraft Yellow coolant..."
+          oninput="handleScratchpadInput()"></textarea>
+
+        <!-- Archived Notes Drawer -->
+        <button class="archive-drawer-btn" onclick="toggleArchiveDrawer()" type="button">
+          <span id="archive-drawer-label">📁 View Archived Notes (0 items)</span>
+          <span id="archive-drawer-arrow">▼</span>
+        </button>
+        <div id="archive-drawer-content" class="archive-drawer-content hidden-drawer">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- TAB 2: 2020 FORD EXPLORER (2.3L ECOBOOST)                     -->
+    <!-- ============================================================== -->
+    <section id="tab-explorer" class="tab-view" style="display:none;">
+      
+      <div class="vehicle-hero">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;">
+          <div>
+            <span class="badge" style="background:#0369a1; color:#e0f2fe; margin-bottom:6px;">PRIMARY FLEET WORKHORSE</span>
+            <h2 style="font-size:1.4rem; font-weight:800;">2020 Ford Explorer (2.3L EcoBoost)</h2>
+            <p style="font-size:0.82rem; color:var(--text-muted); margin-top:2px;">
+              Engine: 2.3L Twin-Scroll Turbo I-4 • Transmission: 10-Speed 10R60/10R80 Automatic • Platform: CD6 RWD/AWD
+            </p>
+          </div>
+          <span class="badge" style="background:#1e293b; border:1px solid #334155; color:#94a3b8;">OEM Spec Manual v3</span>
+        </div>
+
+        <!-- Odometer Input Box -->
+        <div class="odometer-card">
+          <div>
+            <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--text-muted);">Current Odometer (Miles)</div>
+            <div style="font-size:0.8rem; color:#cbd5e1; margin-top:2px;">Dynamic intervals update automatically across all maintenance tracks</div>
+          </div>
+          <div class="odometer-input-wrap">
+            <input 
+              type="number" 
+              id="odometer-input" 
+              class="odometer-input" 
+              value="52400" 
+              step="100" 
+              oninput="handleOdometerChange()">
+            <div style="display:flex; flex-direction:column; gap:4px;">
+              <button class="quick-mileage-btn" onclick="addOdometer(500)">+500</button>
+              <button class="quick-mileage-btn" onclick="addOdometer(1000)">+1k</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRIAGE CARDS (INTERVAL TRACKER) -->
+      <h3 style="font-size:1.05rem; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+        <span>🔧</span> Service Triage & Next Intervals
+      </h3>
+
+      <div class="triage-grid" id="triage-cards-container">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- MASTER RUN-SHEETS -->
+      <h3 style="font-size:1.05rem; font-weight:700; margin:24px 0 12px; display:flex; align-items:center; gap:8px;">
+        <span>📋</span> Expandable Execution Run-Sheets
+      </h3>
+
+      <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:28px;">
+        
+        <!-- Run-sheet 1: Engine Oil -->
+        <div class="task-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-weight:700; font-size:0.95rem;">Engine Oil & Filter Replacement</div>
+              <div style="font-size:0.78rem; color:var(--text-muted);">Capacity: 5.2 - 5.7 qts 5W-30 • Filter: Motorcraft FL-910S</div>
+            </div>
+            <span class="tag tag-time">30-45m</span>
+          </div>
+          <button class="accordion-toggle" onclick="toggleAccordion('runsheet-oil')">
+            <span>View Step-by-Step Procedure & Torque</span>
+            <span id="runsheet-oil-arrow">▼</span>
+          </button>
+          <div class="accordion-content" id="runsheet-oil">
+            <div class="runsheet-step">Drive onto ramps or position front jack stands; engage parking brake and chock rear tires.</div>
+            <div class="runsheet-step">Drop lower belly pan undertray: remove four 8mm screws and three plastic push-clips.</div>
+            <div class="runsheet-step">Position 10+ quart drain pan under oil pan drain plug. Remove drain plug with 15mm box wrench. Allow 15 min hot drain.</div>
+            <div class="runsheet-step">Inspect magnetic drain plug for excessive swarf. Clean threads thoroughly. Reinstall with fresh crush gasket and torque to <strong class="torque-highlight">20 lb-ft (27 Nm)</strong>. Do not over-torque aluminum pan threads.</div>
+            <div class="runsheet-step">Loosen Motorcraft FL-910S filter. Catch drain overflow. Clean filter mounting boss on engine block.</div>
+            <div class="runsheet-step">Lightly coat rubber gasket of new FL-910S with clean 5W-30 oil. Spin on until gasket makes contact with face, then hand-tighten an additional 3/4 to 1 full turn. Never use wrench to tighten.</div>
+            <div class="runsheet-step">Pour in 5.2 quarts of Motorcraft SAE 5W-30 Full Synthetic (WSS-M2C961-A1). Check dipstick; top off toward 5.7 qts maximum line as needed.</div>
+            <div class="runsheet-step">Start engine and idle for 2 minutes. Check drain plug and filter perimeter for leaks. Reinstall undertray.</div>
+            <div class="runsheet-step"><strong>IOLM Reset:</strong> Turn ignition ON (engine off). In cluster steering controls: Menu &gt; Settings &gt; Vehicle Maintenance &gt; Oil Life &gt; Hold OK until display resets to 100%.</div>
+          </div>
+        </div>
+
+        <!-- Run-sheet 2: Tire Rotation -->
+        <div class="task-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-weight:700; font-size:0.95rem;">Tire Rotation & Cold Inflation</div>
+              <div style="font-size:0.78rem; color:var(--text-muted);">Pattern: Forward Cross / Modified X • Cold Pressure: 35 PSI</div>
+            </div>
+            <span class="tag tag-time">30m</span>
+          </div>
+          <button class="accordion-toggle" onclick="toggleAccordion('runsheet-tire')">
+            <span>View Step-by-Step Procedure & Torque</span>
+            <span id="runsheet-tire-arrow">▼</span>
+          </button>
+          <div class="accordion-content" id="runsheet-tire">
+            <div class="runsheet-step">Loosen lug nuts 1/2 turn using 21mm socket while tires are on ground.</div>
+            <div class="runsheet-step">Raise Explorer safely onto 4 heavy-duty jack stands positioned under reinforced factory lift notches.</div>
+            <div class="runsheet-step"><strong>AWD / RWD Rotation Pattern:</strong> Front tires move straight back to the rear on the same side. Rear tires cross over to opposite front corners (Rear Left &rarr; Front Right; Rear Right &rarr; Front Left).</div>
+            <div class="runsheet-step">Inspect brake pads through caliper inspection window (minimum friction material 3mm). Wire-brush light surface rust from wheel hub centering ring.</div>
+            <div class="runsheet-step">Mount wheels. Hand-thread all M14x1.5 lug nuts. Snug in star pattern.</div>
+            <div class="runsheet-step">Lower vehicle to ground. Using calibrated torque wrench, tighten in progressive star pattern to <strong class="torque-highlight">100 lb-ft</strong> (baseline ref) / <strong class="torque-highlight">150 lb-ft (204 Nm)</strong> (OEM CD6 M14 factory specification).</div>
+            <div class="runsheet-step">Check cold tire pressure across all four road tires to <strong class="val-highlight">35 PSI</strong>. Check compact spare tire to <strong class="val-highlight">60 PSI</strong>.</div>
+            <div class="runsheet-step"><strong>Mandatory OPSEC Check:</strong> Recheck and retorque all wheel lug nuts within 100 miles of driving.</div>
+          </div>
+        </div>
+
+        <!-- Run-sheet 3: Spark Plugs -->
+        <div class="task-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-weight:700; font-size:0.95rem;">Spark Plug Service (CYFS-12Y-PT)</div>
+              <div style="font-size:0.78rem; color:var(--text-muted);">Motorcraft SP-578 • Gap: 0.028 - 0.031 in • Torque: 133 lb-in</div>
+            </div>
+            <span class="tag tag-time">45-60m</span>
+          </div>
+          <button class="accordion-toggle" onclick="toggleAccordion('runsheet-plugs')">
+            <span>View Step-by-Step Procedure & Torque</span>
+            <span id="runsheet-plugs-arrow">▼</span>
+          </button>
+          <div class="accordion-content" id="runsheet-plugs">
+            <div class="runsheet-step"><strong>Pre-Condition:</strong> Engine must be completely COLD to prevent aluminum cylinder head thread galling or stripping. Disconnect 12V AGM negative battery terminal.</div>
+            <div class="runsheet-step">Remove plastic engine decorative cover by pulling up firmly on rubber mounting grommets.</div>
+            <div class="runsheet-step">Carefully release red locking slide tabs on coil-on-plug (COP) electrical connectors. Disconnect all 4 harness plugs.</div>
+            <div class="runsheet-step">Remove the 8mm retaining bolt from each ignition coil. Twist and pull coils upward. Inspect rubber boots for carbon tracking or oil seepage from valve cover gasket.</div>
+            <div class="runsheet-step">Blow compressed air down each spark plug tube to clear loose grit and sand before plug removal.</div>
+            <div class="runsheet-step">Using 5/8" magnetic spark plug socket and 6" extension, unthread old spark plugs.</div>
+            <div class="runsheet-step">Inspect new Motorcraft SP-578 (CYFS-12Y-PT) plugs. Verify electrode gap with wire feeler gauge to <strong class="val-highlight">0.028 – 0.031 in (0.7 – 0.8 mm)</strong>. Do not force or lever against fine iridium tip.</div>
+            <div class="runsheet-step">Thread plugs in entirely by hand using the socket extension to guarantee zero cross-threading.</div>
+            <div class="runsheet-step">Torque each plug to <strong class="torque-highlight">133 lb-in (11 lb-ft / 15 Nm)</strong> with an inch-pound torque wrench. Never use impact or uncalibrated ratchets.</div>
+            <div class="runsheet-step">Apply a pea-sized dab of dielectric grease inside the tip of each coil boot. Reinstall coils, snug 8mm bolts to <strong class="torque-highlight">71 lb-in (8 Nm)</strong>, reconnect harness clips, and reinstall engine cover.</div>
+          </div>
+        </div>
+
+        <!-- Run-sheet 4: Air Filters -->
+        <div class="task-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-weight:700; font-size:0.95rem;">Engine & Cabin Air Filter Replacement</div>
+              <div style="font-size:0.78rem; color:var(--text-muted);">Engine: FA-1884 • Cabin: FP-89</div>
+            </div>
+            <span class="tag tag-time">15-20m</span>
+          </div>
+          <button class="accordion-toggle" onclick="toggleAccordion('runsheet-filters')">
+            <span>View Step-by-Step Procedure</span>
+            <span id="runsheet-filters-arrow">▼</span>
+          </button>
+          <div class="accordion-content" id="runsheet-filters">
+            <div class="runsheet-step"><strong>Engine Air Filter (FA-1884):</strong> Locate airbox on driver's side front of engine compartment. Release the two metal spring clamps on front edge of housing. Lift airbox lid, withdraw old pleated element. Vacuum leaf debris from bottom of airbox housing. Seat new FA-1884 filter, ensuring perimeter sealing rubber fits into housing groove. Re-engage rear alignment tabs and snap clamps closed.</div>
+            <div class="runsheet-step"><strong>Cabin Air Filter (FP-89):</strong> Open glove box. Empty contents. Unhook the slow-drop string damper on the right outer side. Squeeze both side walls inward to disengage travel stops and let glove box swing down fully.</div>
+            <div class="runsheet-step">Locate cabin filter access door. Squeeze release tabs on both ends of cover and pull cover forward.</div>
+            <div class="runsheet-step">Slide old filter out horizontally. Note direction of airflow arrow (MUST POINT DOWNWARD toward blower impeller). Slide in fresh Motorcraft FP-89 filter. Snap access door securely. Re-engage glove box stops and reconnect dampener arm.</div>
+          </div>
+        </div>
+
+        <!-- Run-sheet 5: Transmission Fluid -->
+        <div class="task-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-weight:700; font-size:0.95rem;">10-Speed Transmission Service (10R60/10R80)</div>
+              <div style="font-size:0.78rem; color:var(--text-muted);">Fluid: Motorcraft MERCON ULV (XT-12-QULV) • Service Fill: ~6.5 qts</div>
+            </div>
+            <span class="tag tag-time">1-2h</span>
+          </div>
+          <button class="accordion-toggle" onclick="toggleAccordion('runsheet-trans')">
+            <span>View Step-by-Step Procedure & Warnings</span>
+            <span id="runsheet-trans-arrow">▼</span>
+          </button>
+          <div class="accordion-content" id="runsheet-trans">
+            <div class="runsheet-step"><strong style="color:#fb7185;">CRITICAL OPERATIONAL MANDATE:</strong> This 10-speed transmission requires <strong class="val-highlight">Motorcraft MERCON ULV</strong>. Under NO circumstances use MERCON V, MERCON LV, or universal multi-vehicle ATF. The low viscosity formula is essential for valve body solenoids; incorrect fluid causes clutch pack failure.</div>
+            <div class="runsheet-step">Level vehicle on 4-post hoist or 4 jack stands with spirit level on transmission pan rail.</div>
+            <div class="runsheet-step">Loosen transmission pan perimeter bolts slowly from rear to front to tilt pan and catch draining fluid in wide catch tub (~6.0 to 7.0 quarts will drain).</div>
+            <div class="runsheet-step">Remove pan and internal filter. Clean round pan magnet of fine clutch dusting. Clean pan mating surface. Install fresh OEM transmission filter and new pan gasket.</div>
+            <div class="runsheet-step">Torque transmission pan bolts evenly in crisscross pattern to <strong class="torque-highlight">106 lb-in (12 Nm)</strong>.</div>
+            <div class="runsheet-step">Refill through transmission case fill port / dipstick cap on right side using hand pump and 6.0 qts fresh MERCON ULV.</div>
+            <div class="runsheet-step"><strong>Temperature Check Procedure:</strong> Connect OBD-II scanner. Start engine and idle through P-R-N-D gear selections holding each for 5 seconds. Warm transmission fluid until TFT reads between <strong class="val-highlight">195°F and 205°F (91°C – 96°C)</strong>. With engine running in Park, check fluid level against mini-dipstick crosshatch. Top off precisely to hot mark.</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- MASTER FLUIDS & TORQUE SPEC TABLES -->
+      <div class="specs-section">
+        <h3 style="font-size:1.05rem; font-weight:700; margin-bottom:4px; display:flex; align-items:center; gap:8px;">
+          <span>📊</span> Master Fluids & Lubricant Capacities
+        </h3>
+        <p style="font-size:0.75rem; color:var(--text-muted);">Factory engineering specifications verified against 2020 Explorer Manual (Third-Printing)</p>
+        
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Component / System</th>
+                <th>Recommended Fluid / Lubricant</th>
+                <th>Capacity (Quarts / Oz)</th>
+                <th>Factory Specification</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Engine Oil & Filter</strong></td>
+                <td>Motorcraft SAE 5W-30 Synthetic Blend (FL-910S)</td>
+                <td><span class="val-highlight">5.7 qts</span> (ref) / 5.2 qts I-4</td>
+                <td>WSS-M2C961-A1 / API SP</td>
+              </tr>
+              <tr>
+                <td><strong>10-Speed Transmission</strong></td>
+                <td>Motorcraft MERCON ULV (XT-12-QULV)</td>
+                <td><span class="val-highlight">6.5 qts</span> (svc) / 12.6 qts dry</td>
+                <td>WSS-M2C949-A (MERCON ULV)</td>
+              </tr>
+              <tr>
+                <td><strong>Engine Coolant (P-OAT)</strong></td>
+                <td>Motorcraft Yellow Prediluted 50/50 (VC-13DL-G)</td>
+                <td><span class="val-highlight">11.5 qts</span> (Tow) / 10.8 qts</td>
+                <td>WSS-M97B57-A2</td>
+              </tr>
+              <tr>
+                <td><strong>Hydraulic Brake System</strong></td>
+                <td>Motorcraft DOT 4 LV High Performance (PM-20)</td>
+                <td><span class="val-highlight">1.0 qt</span> (flush approx)</td>
+                <td>WSS-M6C65-A2</td>
+              </tr>
+              <tr>
+                <td><strong>A/C System Refrigerant</strong></td>
+                <td>R-1234yf Refrigerant (YN-33-A)</td>
+                <td><span class="val-highlight">35.0 oz</span> (0.99 kg)</td>
+                <td>WSS-M2C300-A2</td>
+              </tr>
+              <tr>
+                <td><strong>Fuel Tank</strong></td>
+                <td>Regular Unleaded (87 Octane min / 91+ Towing)</td>
+                <td><span class="val-highlight">17.9 Gallons</span> (67.8 L)</td>
+                <td>Capless Easy Fuel</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- MASTER TORQUE SPECIFICATION TABLE -->
+      <div class="specs-section">
+        <h3 style="font-size:1.05rem; font-weight:700; margin-bottom:4px; display:flex; align-items:center; gap:8px;">
+          <span>🔩</span> Master Fastener Torque Specifications
+        </h3>
+        <p style="font-size:0.75rem; color:var(--text-muted);">Calibrated shop manual torque values</p>
+        
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Fastener / Application</th>
+                <th>Thread / Socket Size</th>
+                <th>Factory Torque Specification</th>
+                <th>Engineering Protocol Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Wheel Lug Nuts</strong></td>
+                <td>M14 x 1.5 (21mm socket)</td>
+                <td><span class="torque-highlight">100 lb-ft</span> (ref) / <span class="torque-highlight">150 lb-ft (204 Nm)</span></td>
+                <td>CD6 platform uses M14 studs. Retorque within 100 miles.</td>
+              </tr>
+              <tr>
+                <td><strong>Engine Oil Drain Plug</strong></td>
+                <td>15mm Hex / Flange</td>
+                <td><span class="torque-highlight">20 lb-ft (27 Nm)</span></td>
+                <td>Aluminum pan. Always verify crush gasket integrity.</td>
+              </tr>
+              <tr>
+                <td><strong>Spark Plugs</strong></td>
+                <td>5/8" Magnetic (SP-578)</td>
+                <td><span class="torque-highlight">133 lb-in (11 lb-ft / 15 Nm)</span></td>
+                <td>Cold engine only. Gap checked to 0.028 – 0.031 in.</td>
+              </tr>
+              <tr>
+                <td><strong>Brake Caliper Anchor Brackets</strong></td>
+                <td>Heavy Caliper Bolts</td>
+                <td><span class="torque-highlight">115 lb-ft (156 Nm)</span></td>
+                <td>Caliper to knuckle mounting bolts. High-stress anchor.</td>
+              </tr>
+              <tr>
+                <td><strong>Brake Caliper Slide Guide Pins</strong></td>
+                <td>Slider Pin Bolts</td>
+                <td><span class="torque-highlight">24 lb-ft (32 Nm)</span></td>
+                <td>Lube guide pins with high-temp silicone brake grease.</td>
+              </tr>
+              <tr>
+                <td><strong>Ignition Coil Retaining Bolts</strong></td>
+                <td>8mm Hex</td>
+                <td><span class="torque-highlight">71 lb-in (8 Nm)</span></td>
+                <td>Thread into composite valve cover inserts. Do not over-tighten.</td>
+              </tr>
+              <tr>
+                <td><strong>Engine Oil Filter (FL-910S)</strong></td>
+                <td>Spin-on cartridge</td>
+                <td><span class="torque-highlight">Hand-tight + 3/4 to 1 turn</span></td>
+                <td>Lightly lube O-ring with fresh engine oil.</td>
+              </tr>
+              <tr>
+                <td><strong>Undertray Fasteners</strong></td>
+                <td>8mm Hex Screws</td>
+                <td><span class="torque-highlight">71 lb-in (8 Nm / snug)</span></td>
+                <td>Speed nuts in radiator support. Hand snug.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- COMMON FUSE BOX LOOKUP TABLE -->
+      <div class="specs-section">
+        <h3 style="font-size:1.05rem; font-weight:700; margin-bottom:4px; display:flex; align-items:center; gap:8px;">
+          <span>⚡</span> Common Fuse Box Lookup
+        </h3>
+        <p style="font-size:0.75rem; color:var(--text-muted);">Quick-reference electrical distribution for rapid troubleshooting</p>
+
+        <div class="fuse-search-wrap">
+          <input 
+            type="text" 
+            id="fuse-search-input" 
+            class="search-input" 
+            placeholder="Search fuse by circuit, name, or number (e.g., fuel, horn, 14)..."
+            oninput="handleFuseSearch()">
+          <div class="chips-wrap" id="fuse-location-filter">
+            <button class="chip active" onclick="setFuseFilter('all')">All Fuses</button>
+            <button class="chip" onclick="setFuseFilter('engine')">Engine Bay</button>
+            <button class="chip" onclick="setFuseFilter('cabin')">Passenger Compartment</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Location</th>
+                <th>Fuse #</th>
+                <th>Rating</th>
+                <th>Circuit Protected / Function</th>
+              </tr>
+            </thead>
+            <tbody id="fuse-table-body">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- TAB 3: HOME & MECHANICALS (SPRINT 3)                          -->
+    <!-- ============================================================== -->
+    <section id="tab-mechanicals" class="tab-view" style="display:none;">
+      
+      <div class="vehicle-hero" style="border-left: 4px solid #38bdf8;">
+        <span class="badge" style="background:#0369a1; color:#e0f2fe; margin-bottom:6px;">HOMESTEAD INFRASTRUCTURE</span>
+        <h2 style="font-size:1.4rem; font-weight:800;">🏠 Home & Mechanicals Command</h2>
+        <p style="font-size:0.82rem; color:var(--text-muted); margin-top:2px;">
+          Lennox HVAC & Heating, Water Treatment & Plumbing, and Kansas Winter Freeze Protection
+        </p>
+      </div>
+
+      <!-- 1. LENNOX HVAC & HEATING SYSTEM -->
+      <div class="specs-section">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+          <div>
+            <h3 style="font-size:1.15rem; font-weight:800; color:#38bdf8; display:flex; align-items:center; gap:8px;">
+              <span>🔥</span> Lennox HVAC & Heating System
+            </h3>
+            <p style="font-size:0.75rem; color:var(--text-muted);">
+              High-efficiency residential gas furnace and split air handler system
+            </p>
+          </div>
+          <span class="badge" style="background:rgba(56,189,248,0.15); color:#38bdf8; border:1px solid rgba(56,189,248,0.4);">
+            90-Day Cadence
+          </span>
+        </div>
+
+        <!-- Component 1A: Furnace Air Filter -->
+        <div class="task-card" style="border-left:3px solid #38bdf8;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;">
+            <div>
+              <div style="font-size:1rem; font-weight:700;">Furnace & Air Handler Air Filter</div>
+              <div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">
+                Strict Replacement Interval: <strong>90 Days</strong>
+              </div>
+            </div>
+            <div class="filter-size-badge">
+              <span>📏 16x25x1 MERV 8 or 11</span>
+            </div>
+          </div>
+
+          <div class="task-note-box" style="margin: 12px 0;">
+            <strong>Action Note:</strong> Filter slot is located at the return air drop on the furnace cabinet. 
+            Ensure airflow arrow printed on filter frame points <strong>toward the blower motor</strong>.
+          </div>
+
+          <div class="countdown-widget" id="hvac-filter-widget">
+            <div>
+              <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:700;">Filter Status</div>
+              <div id="hvac-filter-status" style="font-size:1.1rem; font-weight:800; color:#34d399; margin-top:2px;">
+                Calculating...
+              </div>
+              <div id="hvac-filter-meta" style="font-size:0.75rem; color:#94a3b8; margin-top:2px;">
+                Last Replaced: --
+              </div>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <input type="date" id="hvac-filter-date" class="modal-input" style="width:140px; padding:6px 10px; font-size:0.8rem;" onchange="updateHvacFilterDate()">
+              <button class="btn-primary" onclick="markHvacFilterReplacedToday()">Mark Replaced Today</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Component 1B: Seasonal Heating Cutover Checklist -->
+        <div class="task-card" style="margin-top:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-size:1rem; font-weight:700;">Seasonal Heating Cutover Checklist (Fall/Winter Readiness)</div>
+              <div style="font-size:0.78rem; color:var(--text-muted);">Annual Cadence • Hard Target: October (Before First Hard Freeze)</div>
+            </div>
+            <span class="tag tag-time">Annual</span>
+          </div>
+
+          <div class="task-note-box" style="margin: 12px 0; border-left-color:#fbbf24;">
+            <strong>Reference Specification Note:</strong> Lennox system with mechanical bolt-on TXV fitting (no brazing/torches). 
+            Serviced by <strong>Travis Mann (Mike Bryant Heating & Cooling)</strong>.
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:8px; margin:14px 0 8px;">
+            <label class="hero-item">
+              <input type="checkbox" id="hvac-cutover-1" onchange="saveMechanicalsState()">
+              <span>Set thermostat to Heat mode; verify burner ignition sequence, draft inducer, and flame sensor operation.</span>
+            </label>
+            <label class="hero-item">
+              <input type="checkbox" id="hvac-cutover-2" onchange="saveMechanicalsState()">
+              <span>Check exterior PVC exhaust and intake vent pipes outside for mud dauber / wasp nests, fallen leaves, or frost obstruction.</span>
+            </label>
+            <label class="hero-item">
+              <input type="checkbox" id="hvac-cutover-3" onchange="saveMechanicalsState()">
+              <span>Inspect condensate drain line and trap for sediment blockages or algae slime; flush with warm water/vinegar.</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. WATER MANAGEMENT & PLUMBING -->
+      <div class="specs-section">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+          <div>
+            <h3 style="font-size:1.15rem; font-weight:800; color:#38bdf8; display:flex; align-items:center; gap:8px;">
+              <span>💧</span> Water Management & Plumbing
+            </h3>
+            <p style="font-size:0.75rem; color:var(--text-muted);">
+              Sediment mitigation, water heater longevity, and ion-exchange softener maintenance
+            </p>
+          </div>
+          <span class="badge" style="background:rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.4);">
+            Plumbing Track
+          </span>
+        </div>
+
+        <!-- Component 2A: Water Heater Sediment Flush -->
+        <div class="task-card" style="border-left:3px solid #10b981;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;">
+            <div>
+              <div style="font-size:1rem; font-weight:700;">Water Heater Tank Annual Sediment Flush</div>
+              <div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">
+                Interval: <strong>12 Months</strong> • Removes mineral scaling from tank bottom
+              </div>
+            </div>
+            <span class="status-pill pill-ok" id="water-heater-status-pill">12-Mo Cadence</span>
+          </div>
+
+          <div class="countdown-widget" id="wh-flush-widget">
+            <div>
+              <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:700;">Flush Countdown</div>
+              <div id="wh-flush-status" style="font-size:1.1rem; font-weight:800; color:#34d399; margin-top:2px;">
+                Calculating...
+              </div>
+              <div id="wh-flush-meta" style="font-size:0.75rem; color:#94a3b8; margin-top:2px;">
+                Last Flushed: --
+              </div>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <input type="date" id="wh-flush-date" class="modal-input" style="width:140px; padding:6px 10px; font-size:0.8rem;" onchange="updateWhFlushDate()">
+              <button class="btn-primary" onclick="markWhFlushedToday()">Mark Flushed Today</button>
+            </div>
+          </div>
+
+          <button class="accordion-toggle" onclick="toggleAccordion('runsheet-water-heater')">
+            <span>View Step-by-Step Flush Execution Run-Sheet</span>
+            <span id="runsheet-water-heater-arrow">▼</span>
+          </button>
+          <div class="accordion-content" id="runsheet-water-heater">
+            <div class="runsheet-step">Shut off gas supply valve or turn thermostat dial down to <strong class="val-highlight">PILOT</strong> (or trip 240V breaker if electric).</div>
+            <div class="runsheet-step">Turn off cold water inlet shutoff valve located directly above water heater on cold line.</div>
+            <div class="runsheet-step">Connect standard heavy-duty garden hose to lower brass drain spigot at base of tank; route hose to basement floor drain, sump basin, or outdoors.</div>
+            <div class="runsheet-step">Open temperature and pressure (T&P) relief valve lever on top/side of tank to break interior vacuum and allow gravity drainage.</div>
+            <div class="runsheet-step">Open brass drain spigot with flathead screwdriver or pliers; drain <strong class="val-highlight">5 to 10 gallons</strong> until discharge water runs completely crystal clear with zero calcium carbonate flakes.</div>
+            <div class="runsheet-step">Close lower brass spigot tightly; remove garden hose; close T&P relief valve lever; turn cold water inlet valve back ON to refill tank completely.</div>
+            <div class="runsheet-step">Open hot water faucet upstairs until steady stream flows without air sputtering. Relight/turn gas thermostat back to <strong class="val-highlight">NORMAL / 120°F</strong>.</div>
+          </div>
+        </div>
+
+        <!-- Component 2B: Water Softener Salt Level -->
+        <div class="task-card" style="margin-top:14px; border-left:3px solid #0284c7;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;">
+            <div>
+              <div style="font-size:1rem; font-weight:700;">Whole-House Water Softener Salt Level</div>
+              <div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">
+                Interval: <strong>45 Days</strong> • Solar Salt Pellets & Brine Inspection
+              </div>
+            </div>
+            <span class="status-pill pill-ok" id="softener-status-pill">45-Day Cadence</span>
+          </div>
+
+          <div class="task-note-box" style="margin: 12px 0;">
+            <strong>Action Procedure:</strong> Open brine tank lid. Inspect for salt crust bridges using broom handle; 
+            break up any hard hollow crust down to water line. Refill with clean solar salt pellets up to level 4/line.
+          </div>
+
+          <div class="countdown-widget" id="softener-widget">
+            <div>
+              <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:700;">Softener Status</div>
+              <div id="softener-status" style="font-size:1.1rem; font-weight:800; color:#34d399; margin-top:2px;">
+                Calculating...
+              </div>
+              <div id="softener-meta" style="font-size:0.75rem; color:#94a3b8; margin-top:2px;">
+                Last Checked: --
+              </div>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <input type="date" id="softener-date" class="modal-input" style="width:140px; padding:6px 10px; font-size:0.8rem;" onchange="updateSoftenerDate()">
+              <button class="btn-primary" onclick="markSoftenerCheckedToday()">Mark Checked / Filled Today</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. KANSAS WINTER FREEZE PROTECTION -->
+      <div class="specs-section">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+          <div>
+            <h3 style="font-size:1.15rem; font-weight:800; color:#fb7185; display:flex; align-items:center; gap:8px;">
+              <span>❄️</span> Kansas Winter Freeze Protection
+            </h3>
+            <p style="font-size:0.75rem; color:var(--text-muted);">
+              Sub-zero blast mitigation for exterior plumbing, frost-proof sillcocks, and unconditioned crawlspaces
+            </p>
+          </div>
+          <span class="badge" style="background:rgba(244,63,94,0.15); color:#fb7185; border:1px solid rgba(244,63,94,0.4);">
+            Hard Target: NLT Nov 1
+          </span>
+        </div>
+
+        <div class="task-card" style="border-left:3px solid #f43f5e;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;">
+            <div>
+              <div style="font-size:1rem; font-weight:700;">Outdoor Spigots & Hose Bib Winterization</div>
+              <div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">
+                Annual Autumn Protocol • <strong style="color:#fb7185;">Hard Deadline: Not Later Than November 1</strong>
+              </div>
+            </div>
+            <span class="badge badge-pacing" id="winter-freeze-countdown-badge">Freeze Target: Nov 1</span>
+          </div>
+
+          <div class="task-note-box" style="margin: 12px 0; border-left-color:#f43f5e;">
+            <strong style="color:#fb7185;">CRITICAL PIPE-BURST WARNING:</strong> Leaving a garden hose connected to an exterior spigot traps water inside the sillcock body. Even frost-free bibs will burst inside the basement rim joist during a freeze if a hose is attached!
+          </div>
+
+          <button class="accordion-toggle" onclick="toggleAccordion('runsheet-winter-spigots')">
+            <span>View 4-Step Spigot Drain Run-Sheet</span>
+            <span id="runsheet-winter-spigots-arrow">▼</span>
+          </button>
+          <div class="accordion-content" id="runsheet-winter-spigots">
+            <div class="runsheet-step"><strong>Step 1:</strong> Disconnect all garden hoses, quick-connect brass couplers, splitters, and timer valves from every exterior spigot. Coil and stow hoses in garage/shed.</div>
+            <div class="runsheet-step"><strong>Step 2:</strong> Go down into basement / mechanical utility room. Locate the dedicated interior brass ball shutoff valves feeding each exterior hose bib run. Turn levers 90° to <strong class="val-highlight">OFF</strong> position.</div>
+            <div class="runsheet-step"><strong>Step 3:</strong> Walk outside to every outdoor spigot. Open valves completely to drain trapped water from line. If interior ball valve has small brass knurled bleeder cap, loosen cap over small bucket inside basement to drain remaining vacuum water. Leave outside spigots OPEN for winter.</div>
+            <div class="runsheet-step"><strong>Step 4:</strong> Inspect foam insulation pipe jackets and fiberglass batts along exterior rim joists. Fit insulated styrofoam frost covers over exterior bibs if severe sub-zero cold wind is forecast.</div>
+          </div>
+
+          <div style="margin-top:14px; border-top:1px dashed var(--border); padding-top:10px;">
+            <label class="hero-item">
+              <input type="checkbox" id="winterize-done-toggle" onchange="saveMechanicalsState()">
+              <span style="font-weight:700; color:#34d399;">Spigot Winterization Fully Executed for Current Season (Hoses Disconnected & Drained)</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- TAB 4: FAMILY HEALTH & LOGISTICS (SPRINT 4)                   -->
+    <!-- ============================================================== -->
+    <section id="tab-family" class="tab-view" style="display:none;">
+      
+      <div class="vehicle-hero" style="border-left: 4px solid #a78bfa;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;">
+          <div>
+            <span class="badge" style="background:#581c87; color:#e9d5ff; margin-bottom:6px;">PERSONNEL & WELLNESS</span>
+            <h2 style="font-size:1.4rem; font-weight:800;">👨‍👩‍👧‍👦 Family Health & Logistics</h2>
+            <p style="font-size:0.82rem; color:var(--text-muted); margin-top:2px;">
+              Tricare Referral Pipeline, Prescription Refill Lifelines, and Routine Family Checkups (Josh, Brit, Lincoln, Annabel, Sally Jo)
+            </p>
+          </div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button class="btn-header" onclick="openAddReferralModal()">+ New Referral</button>
+            <button class="btn-header" onclick="openAddRxModal()">+ New Prescription</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1. TRICARE REFERRAL PIPELINE TRACKER -->
+      <div class="specs-section">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+          <div>
+            <h3 style="font-size:1.15rem; font-weight:800; color:#a78bfa; display:flex; align-items:center; gap:8px;">
+              <span>📑</span> Tricare Referral Pipeline Tracker
+            </h3>
+            <p style="font-size:0.75rem; color:var(--text-muted);">
+              Active military specialty authorizations: Requested &rarr; Approved &rarr; Contacted &rarr; Scheduled &rarr; Completed
+            </p>
+          </div>
+          <button class="btn-header" onclick="openAddReferralModal()">+ Add Referral</button>
+        </div>
+
+        <div id="referrals-container">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- 2. PRESCRIPTION REFILL COUNTDOWN -->
+      <div class="specs-section">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+          <div>
+            <h3 style="font-size:1.15rem; font-weight:800; color:#38bdf8; display:flex; align-items:center; gap:8px;">
+              <span>💊</span> Prescription Refill Countdown
+            </h3>
+            <p style="font-size:0.75rem; color:var(--text-muted);">
+              Active maintenance medications: Card turns <strong style="color:#fbbf24;">AMBER</strong> 7 days prior to run-out to beat the weekend cutoff
+            </p>
+          </div>
+          <button class="btn-header" onclick="openAddRxModal()">+ Add Prescription</button>
+        </div>
+
+        <div class="rx-grid" id="rx-container">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- 3. ROUTINE CHECKUP CADENCES -->
+      <div class="specs-section">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+          <div>
+            <h3 style="font-size:1.15rem; font-weight:800; color:#34d399; display:flex; align-items:center; gap:8px;">
+              <span>🩺</span> Routine Checkup Cadences
+            </h3>
+            <p style="font-size:0.75rem; color:var(--text-muted);">
+              Annual Physical (12 mo), Dental Cleaning (6 mo), and Vision / Eye Exam (12 mo) across all 5 family members
+            </p>
+          </div>
+        </div>
+
+        <div id="family-checkups-container">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- TAB 5: INFINITI (PLACEHOLDER)                                 -->
+    <!-- ============================================================== -->
+    <section id="tab-infiniti" class="tab-view" style="display:none;">
+      <div class="placeholder-card">
+        <div class="placeholder-icon">🏎️</div>
+        <h2 class="placeholder-title">Infiniti Fleet Dossier</h2>
+        <span class="badge" style="background:#1e293b; color:#a78bfa; border:1px solid #475569; margin-bottom:14px;">
+          Scheduled for Sprint 3 Roadmap Integration
+        </span>
+        <p class="placeholder-sub">
+          Secondary executive vehicle maintenance profile, diagnostic checklists, service history, and bespoke torque specifications will be synchronized into this view.
+        </p>
+        <div style="display:inline-flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+          <div class="tag" style="background:#1e293b; padding:8px 14px;">Transmission ATF Spec</div>
+          <div class="tag" style="background:#1e293b; padding:8px 14px;">Brake Service Cadence</div>
+          <div class="tag" style="background:#1e293b; padding:8px 14px;">Suspension Bushings</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- TAB 4: UTILITY TRAILER (PLACEHOLDER)                         -->
+    <!-- ============================================================== -->
+    <section id="tab-trailer" class="tab-view" style="display:none;">
+      <div class="placeholder-card">
+        <div class="placeholder-icon">🚜</div>
+        <h2 class="placeholder-title">Utility & Hauling Trailer</h2>
+        <span class="badge" style="background:#1e293b; color:#34d399; border:1px solid #475569; margin-bottom:14px;">
+          Scheduled for Sprint 3 Roadmap Integration
+        </span>
+        <p class="placeholder-sub">
+          Homestead hauling asset tracking: wheel hub bearing repack intervals (annual / 12,000 mi), 5-lug lug nut torques (90 lb-ft), cold tire pressures (50 PSI), and 4-pin/7-pin electrical harness diagnostics.
+        </p>
+        <div style="display:inline-flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+          <div class="tag" style="background:#1e293b; padding:8px 14px;">Bearing Repack Checklist</div>
+          <div class="tag" style="background:#1e293b; padding:8px 14px;">90 lb-ft Lug Torque</div>
+          <div class="tag" style="background:#1e293b; padding:8px 14px;">7-Pin RV Pinout</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== MOBILE BOTTOM DOCK ==================== -->
+  <div class="bottom-dock">
+    <button class="dock-btn active" id="dock-btn-checklist" onclick="switchTab('checklist')">
+      <span class="dock-icon">📋</span>
+      <span>Checklist</span>
+    </button>
+    <button class="dock-btn" id="dock-btn-explorer" onclick="switchTab('explorer')">
+      <span class="dock-icon">🚙</span>
+      <span>Explorer</span>
+    </button>
+    <button class="dock-btn" id="dock-btn-mechanicals" onclick="switchTab('mechanicals')">
+      <span class="dock-icon">🏠</span>
+      <span>Home</span>
+    </button>
+    <button class="dock-btn" id="dock-btn-family" onclick="switchTab('family')">
+      <span class="dock-icon">👨‍👩‍👧‍👦</span>
+      <span>Family</span>
+    </button>
+    <button class="dock-btn" id="dock-btn-trailer" onclick="switchTab('trailer')">
+      <span class="dock-icon">🚜</span>
+      <span>Fleet</span>
+    </button>
+  </div>
+
+  <!-- ==================== CHANGE PIN MODAL ==================== -->
+  <div class="modal-overlay" id="pin-modal">
+    <div class="modal-card">
+      <h3 class="modal-title">Change Passcode PIN</h3>
+      <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:14px;">
+        Update the 4-digit security code stored in your browser's local storage.
+      </p>
+      <div class="modal-field">
+        <label class="modal-label">Current PIN</label>
+        <input type="password" id="input-current-pin" class="modal-input" maxlength="4" placeholder="1234">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">New 4-Digit PIN</label>
+        <input type="password" id="input-new-pin" class="modal-input" maxlength="4" placeholder="e.g. 5678">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Confirm New PIN</label>
+        <input type="password" id="input-confirm-pin" class="modal-input" maxlength="4" placeholder="e.g. 5678">
+      </div>
+      <div class="pin-error" id="modal-pin-error"></div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closePinModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveNewPin()">Save Passcode</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== ADD TASK MODAL ==================== -->
+  <div class="modal-overlay" id="add-task-modal">
+    <div class="modal-card">
+      <h3 class="modal-title">Add Custom Task</h3>
+      <div class="modal-field">
+        <label class="modal-label">Task Title</label>
+        <input type="text" id="new-task-title" class="modal-input" placeholder="e.g., Replace garage floodlight bulb">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Estimated Time</label>
+        <select id="new-task-time" class="modal-input">
+          <option value="15m">15m</option>
+          <option value="30-45m" selected>30-45m</option>
+          <option value="1-2h">1-2h</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Location / Posture</label>
+        <select id="new-task-loc" class="modal-input">
+          <option value="Desk/Phone" selected>Desk/Phone</option>
+          <option value="Garage/Hands-On">Garage/Hands-On</option>
+          <option value="Town Errands">Town Errands</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Action Code or Reference (Optional)</label>
+        <input type="text" id="new-task-code" class="modal-input" placeholder="e.g., Code, Account #, or Phone">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Action Notes</label>
+        <textarea id="new-task-note" class="modal-input" rows="3" placeholder="Execution instructions or context..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeAddTaskModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveCustomTask()">Create Task</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== ADD REFERRAL MODAL ==================== -->
+  <div class="modal-overlay" id="add-referral-modal">
+    <div class="modal-card">
+      <h3 class="modal-title">Add Tricare Specialty Referral</h3>
+      <div class="modal-field">
+        <label class="modal-label">Family Member</label>
+        <select id="new-ref-person" class="modal-input">
+          <option value="Josh">Josh</option>
+          <option value="Brit">Brit</option>
+          <option value="Lincoln">Lincoln</option>
+          <option value="Annabel">Annabel</option>
+          <option value="Sally Jo">Sally Jo</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Specialty & Clinic / Physician</label>
+        <input type="text" id="new-ref-clinic" class="modal-input" placeholder="e.g. KC Urology Care PA (Dr. Holmes)">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Clinic Phone Number</label>
+        <input type="tel" id="new-ref-phone" class="modal-input" placeholder="e.g. (816) 531-1234">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Tricare Auth ID / Reference</label>
+        <input type="text" id="new-ref-auth" class="modal-input" placeholder="e.g. #0011620737">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Initial Stage</label>
+        <select id="new-ref-stage" class="modal-input">
+          <option value="1">1. Requested</option>
+          <option value="2" selected>2. Approved</option>
+          <option value="3">3. Clinic Contacted</option>
+          <option value="4">4. Appt Scheduled</option>
+          <option value="5">5. Completed</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Action Notes / Status</label>
+        <textarea id="new-ref-note" class="modal-input" rows="2" placeholder="e.g. Waiting on scheduler callback, need prior records..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeAddReferralModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveNewReferral()">Save Referral</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== ADD PRESCRIPTION MODAL ==================== -->
+  <div class="modal-overlay" id="add-rx-modal">
+    <div class="modal-card">
+      <h3 class="modal-title">Add Recurring Prescription</h3>
+      <div class="modal-field">
+        <label class="modal-label">Person</label>
+        <select id="new-rx-person" class="modal-input">
+          <option value="Josh">Josh</option>
+          <option value="Brit">Brit</option>
+          <option value="Lincoln">Lincoln</option>
+          <option value="Annabel">Annabel</option>
+          <option value="Sally Jo">Sally Jo</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Medication Name & Strength</label>
+        <input type="text" id="new-rx-name" class="modal-input" placeholder="e.g. Daily Multivitamin / Maintenance Rx">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Last Filled Date</label>
+        <input type="date" id="new-rx-date" class="modal-input">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Days Supply</label>
+        <select id="new-rx-supply" class="modal-input">
+          <option value="30" selected>30 Days</option>
+          <option value="90">90 Days</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Pharmacy & Phone</label>
+        <input type="text" id="new-rx-pharmacy" class="modal-input" placeholder="e.g. Munson Army Health / Price Chopper (816-682-1234)">
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeAddRxModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveNewRx()">Save Prescription</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast">Code copied to clipboard!</div>
+
+  <!-- ==================== JAVASCRIPT APPLICATION LOGIC ==================== -->
+  <script>
+    /* ==============================================================
+       1. PIN PROTECTION & OPSEC ENGINE (SPRINT 2)
+       ============================================================== */
+    const PIN_STORAGE_KEY = 'bb_ops_pin';
+    const AUTH_SESSION_KEY = 'bb_ops_auth_token';
+    const DEFAULT_PIN = '1234';
+
+    let enteredPin = '';
+
+    function getStoredPin() {
+      return localStorage.getItem(PIN_STORAGE_KEY) || DEFAULT_PIN;
+    }
+
+    function checkInitialAuth() {
+      const isAuth = sessionStorage.getItem(AUTH_SESSION_KEY);
+      const overlay = document.getElementById('pin-lock-overlay');
+      if (isAuth === 'true') {
+        overlay.classList.add('hidden-lock');
+      } else {
+        overlay.classList.remove('hidden-lock');
+      }
+    }
+
+    function updatePinDots() {
+      for (let i = 0; i < 4; i++) {
+        const dot = document.getElementById(`dot-${i}`);
+        if (i < enteredPin.length) {
+          dot.classList.add('filled');
+        } else {
+          dot.classList.remove('filled');
+        }
+      }
+    }
+
+    function handleKeyClick(num) {
+      if (enteredPin.length < 4) {
+        enteredPin += num;
+        updatePinDots();
+        if (enteredPin.length === 4) {
+          verifyPin();
+        }
+      }
+    }
+
+    function handleKeyClear() {
+      enteredPin = '';
+      updatePinDots();
+      document.getElementById('pin-error-msg').textContent = '';
+    }
+
+    function handleKeyBackspace() {
+      if (enteredPin.length > 0) {
+        enteredPin = enteredPin.slice(0, -1);
+        updatePinDots();
+        document.getElementById('pin-error-msg').textContent = '';
+      }
+    }
+
+    function verifyPin() {
+      const correctPin = getStoredPin();
+      const errorMsg = document.getElementById('pin-error-msg');
+      const dotsContainer = document.getElementById('pin-dots-container');
+
+      if (enteredPin === correctPin) {
+        sessionStorage.setItem(AUTH_SESSION_KEY, 'true');
+        document.getElementById('pin-lock-overlay').classList.add('hidden-lock');
+        enteredPin = '';
+        updatePinDots();
+        errorMsg.textContent = '';
+        showToast('Dashboard Unlocked');
+      } else {
+        errorMsg.textContent = 'Incorrect PIN. Try again.';
+        dotsContainer.classList.add('shake');
+        setTimeout(() => {
+          dotsContainer.classList.remove('shake');
+          enteredPin = '';
+          updatePinDots();
+        }, 500);
+      }
+    }
+
+    function lockDashboard() {
+      sessionStorage.removeItem(AUTH_SESSION_KEY);
+      enteredPin = '';
+      updatePinDots();
+      document.getElementById('pin-error-msg').textContent = '';
+      document.getElementById('pin-lock-overlay').classList.remove('hidden-lock');
+    }
+
+    // Physical keyboard listener for PIN
+    window.addEventListener('keydown', (e) => {
+      const overlay = document.getElementById('pin-lock-overlay');
+      if (!overlay.classList.contains('hidden-lock')) {
+        if (e.key >= '0' && e.key <= '9') {
+          handleKeyClick(e.key);
+        } else if (e.key === 'Backspace') {
+          handleKeyBackspace();
+        } else if (e.key === 'Escape') {
+          handleKeyClear();
+        }
+      }
+    });
+
+    // PIN Change Modal
+    function openPinModal() {
+      document.getElementById('modal-pin-error').textContent = '';
+      document.getElementById('input-current-pin').value = '';
+      document.getElementById('input-new-pin').value = '';
+      document.getElementById('input-confirm-pin').value = '';
+      document.getElementById('pin-modal').classList.add('open');
+    }
+    function closePinModal() {
+      document.getElementById('pin-modal').classList.remove('open');
+    }
+    function saveNewPin() {
+      const current = document.getElementById('input-current-pin').value;
+      const newP = document.getElementById('input-new-pin').value;
+      const confirmP = document.getElementById('input-confirm-pin').value;
+      const err = document.getElementById('modal-pin-error');
+
+      if (current !== getStoredPin()) {
+        err.textContent = 'Current PIN is incorrect.';
+        return;
+      }
+      if (!/^\d{4}$/.test(newP)) {
+        err.textContent = 'New PIN must be exactly 4 digits.';
+        return;
+      }
+      if (newP !== confirmP) {
+        err.textContent = 'New PINs do not match.';
+        return;
+      }
+
+      localStorage.setItem(PIN_STORAGE_KEY, newP);
+      closePinModal();
+      showToast('PIN successfully changed!');
+    }
+
+
+    /* ==============================================================
+       2. TAB NAVIGATION SYSTEM
+       ============================================================== */
+    function switchTab(tabId) {
+      const tabs = ['checklist', 'explorer', 'mechanicals', 'family', 'infiniti', 'trailer'];
+      tabs.forEach(t => {
+        const view = document.getElementById(`tab-${t}`);
+        const navBtn = document.getElementById(`tab-btn-${t}`);
+        const dockBtn = document.getElementById(`dock-btn-${t}`);
+        if (t === tabId) {
+          view.style.display = 'block';
+          navBtn?.classList.add('active');
+          dockBtn?.classList.add('active');
+        } else {
+          view.style.display = 'none';
+          navBtn?.classList.remove('active');
+          dockBtn?.classList.remove('active');
+        }
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+
+    /* ==============================================================
+       3. TOAST & CLIPBOARD HELPER
+       ============================================================== */
+    let toastTimeout;
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2400);
+    }
+
+    function copyToClipboard(text, label = 'Code') {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast(`${label} copied to clipboard!`);
+        }).catch(() => fallbackCopy(text, label));
+      } else {
+        fallbackCopy(text, label);
+      }
+    }
+
+    function fallbackCopy(text, label) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast(`${label} copied!`);
+    }
+
+
+    /* ==============================================================
+       4. HERO CARD PREPARATION CHECKLIST
+       ============================================================== */
+    const HERO_PREP_KEY = 'bb_ops_hero_prep_state';
+    function loadHeroPrepState() {
+      const saved = JSON.parse(localStorage.getItem(HERO_PREP_KEY) || '{}');
+      for (let i = 1; i <= 5; i++) {
+        const cb = document.getElementById(`sleep-prep-${i}`);
+        if (cb && saved[`sleep-prep-${i}`]) {
+          cb.checked = true;
+        }
+      }
+    }
+    function saveHeroPrepState() {
+      const state = {};
+      for (let i = 1; i <= 5; i++) {
+        const cb = document.getElementById(`sleep-prep-${i}`);
+        if (cb) state[`sleep-prep-${i}`] = cb.checked;
+      }
+      localStorage.setItem(HERO_PREP_KEY, JSON.stringify(state));
+    }
+
+
+    /* ==============================================================
+       5. TASK MANAGEMENT & FILTERING ENGINE
+       ============================================================== */
+    const TASKS_STORAGE_KEY = 'bb_ops_tasks_list';
+    
+    // Baseline required active tasks from prompt
+    const DEFAULT_TASKS = [
+      {
+        id: 'task-lincoln',
+        title: 'Lincoln psychiatry bill',
+        time: '15m',
+        loc: 'Desk/Phone',
+        code: 'UePj-jdYn-CeAn-qPFJ',
+        note: 'Check current balance on Lincoln statement. Reconcile copay against insurance EOB. Enter authorization billing code UePj-jdYn-CeAn-qPFJ in portal or provide to billing desk.',
+        completed: false
+      },
+      {
+        id: 'task-carl',
+        title: 'Carl HVAC $100 cash call',
+        time: '30-45m',
+        loc: 'Town Errands',
+        code: '$100 Cash Required',
+        note: 'Withdraw $100 cash from local ATM/bank envelope before arrival. Coordinate service entry window. Review heating/furnace diagnostic check and filter sizing on site.',
+        completed: false
+      },
+      {
+        id: 'task-kcurology',
+        title: 'KC Urology referral follow-up',
+        time: '15m',
+        loc: 'Desk/Phone',
+        code: 'Referral Order',
+        note: 'Contact KC Urology clinical coordinator. Verify receipt of faxed clinical referral order and insurance pre-authorization. Lock in scheduled date/time for intake appointment.',
+        completed: false
+      }
+    ];
+
+    let currentTasks = [];
+    let activeTimeFilter = 'all';
+    let activeLocFilter = 'all';
+
+    function initTasks() {
+      const saved = localStorage.getItem(TASKS_STORAGE_KEY);
+      if (saved) {
+        try {
+          currentTasks = JSON.parse(saved);
+        } catch (e) {
+          currentTasks = [...DEFAULT_TASKS];
+        }
+      } else {
+        currentTasks = [...DEFAULT_TASKS];
+      }
+      renderTasks();
+    }
+
+    function saveTasksToStorage() {
+      localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(currentTasks));
+      renderTasks();
+    }
+
+    function toggleTaskComplete(taskId) {
+      const t = currentTasks.find(item => item.id === taskId);
+      if (t) {
+        t.completed = !t.completed;
+        saveTasksToStorage();
+      }
+    }
+
+    function setTimeFilter(timeVal) {
+      activeTimeFilter = timeVal;
+      document.querySelectorAll('#time-chips .chip').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${timeVal}'`));
+      });
+      renderTasks();
+    }
+
+    function setLocFilter(locVal) {
+      activeLocFilter = locVal;
+      document.querySelectorAll('#loc-chips .chip').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${locVal}'`));
+      });
+      renderTasks();
+    }
+
+    function renderTasks() {
+      const container = document.getElementById('tasks-container');
+      container.innerHTML = '';
+
+      const filtered = currentTasks.filter(task => {
+        const matchTime = (activeTimeFilter === 'all') || (task.time === activeTimeFilter);
+        const matchLoc = (activeLocFilter === 'all') || (task.loc === activeLocFilter);
+        return matchTime && matchLoc;
+      });
+
+      // Update progress badge
+      const doneCount = currentTasks.filter(t => t.completed).length;
+      document.getElementById('tasks-progress-badge').textContent = `${doneCount} / ${currentTasks.length} Done`;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding:32px 16px; background:var(--bg-card); border-radius:14px; border:1px dashed var(--border); color:var(--text-muted);">
+            No tasks match the active filters (${activeTimeFilter} • ${activeLocFilter}).
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(task => {
+        const card = document.createElement('div');
+        card.className = `task-card ${task.completed ? 'completed' : ''}`;
+        
+        let codeHtml = '';
+        if (task.code) {
+          codeHtml = `
+            <div class="action-code-badge">
+              <span>Code:</span> <strong>${task.code}</strong>
+              <button class="btn-copy" onclick="copyToClipboard('${task.code}', 'Code')">Copy</button>
+            </div>
+          `;
+        }
+
+        card.innerHTML = `
+          <div class="task-card-top">
+            <input 
+              type="checkbox" 
+              class="task-checkbox" 
+              ${task.completed ? 'checked' : ''} 
+              onchange="toggleTaskComplete('${task.id}')">
+            <div class="task-content">
+              <div class="task-title">${task.title}</div>
+              <div class="task-meta">
+                <span class="tag tag-time">⏱️ ${task.time}</span>
+                <span class="tag tag-loc">📍 ${task.loc}</span>
+              </div>
+              <div class="task-note-box">
+                ${task.note}
+                ${codeHtml}
+              </div>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Custom Task Modal
+    function openAddTaskModal() {
+      document.getElementById('new-task-title').value = '';
+      document.getElementById('new-task-code').value = '';
+      document.getElementById('new-task-note').value = '';
+      document.getElementById('add-task-modal').classList.add('open');
+    }
+    function closeAddTaskModal() {
+      document.getElementById('add-task-modal').classList.remove('open');
+    }
+    function saveCustomTask() {
+      const title = document.getElementById('new-task-title').value.trim();
+      const time = document.getElementById('new-task-time').value;
+      const loc = document.getElementById('new-task-loc').value;
+      const code = document.getElementById('new-task-code').value.trim();
+      const note = document.getElementById('new-task-note').value.trim();
+
+      if (!title) {
+        alert('Please enter a task title.');
+        return;
+      }
+
+      const newTask = {
+        id: 'task-' + Date.now(),
+        title,
+        time,
+        loc,
+        code,
+        note: note || 'Standard operational task.',
+        completed: false
+      };
+
+      currentTasks.push(newTask);
+      saveTasksToStorage();
+      closeAddTaskModal();
+      showToast('Custom task added!');
+    }
+
+
+    /* ==============================================================
+       6. NEXT SPRINT SCRATCHPAD & ARCHIVE ENGINE
+       ============================================================== */
+    const SCRATCHPAD_KEY = 'bb_ops_scratchpad_content';
+    const ARCHIVE_LIST_KEY = 'bb_ops_archive_list';
+    const OFFLINE_QUEUE_KEY = 'bb_ops_archive_offline_queue';
+    let scratchpadTimer;
+
+    function initScratchpad() {
+      const saved = localStorage.getItem(SCRATCHPAD_KEY);
+      if (saved) {
+        document.getElementById('scratchpad-input').value = saved;
+      }
+      renderArchiveDrawer();
+      drainOfflineArchiveQueue();
+    }
+
+    function handleScratchpadInput() {
+      const indicator = document.getElementById('scratchpad-saved-badge');
+      indicator.style.opacity = '0.4';
+      indicator.innerHTML = '<span>⏳</span> Saving...';
+
+      clearTimeout(scratchpadTimer);
+      scratchpadTimer = setTimeout(() => {
+        const text = document.getElementById('scratchpad-input').value;
+        localStorage.setItem(SCRATCHPAD_KEY, text);
+        indicator.style.opacity = '1';
+        indicator.innerHTML = '<span>✓</span> Auto-saved locally';
+      }, 400);
+    }
+
+    function getArchiveList() {
+      try {
+        return JSON.parse(localStorage.getItem(ARCHIVE_LIST_KEY) || '[]');
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveArchiveList(list) {
+      localStorage.setItem(ARCHIVE_LIST_KEY, JSON.stringify(list));
+      renderArchiveDrawer();
+    }
+
+    function archiveCurrentScratchpad() {
+      const ta = document.getElementById('scratchpad-input');
+      const text = (ta.value || '').trim();
+
+      if (!text) {
+        showToast('Scratchpad is empty.');
+        return;
+      }
+
+      const now = new Date();
+      const dateFormatted = now.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      }) + ' • ' + now.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit'
+      });
+
+      const newItem = {
+        id: 'archive-' + Date.now(),
+        text: text,
+        timestamp: now.toISOString(),
+        displayDate: dateFormatted
+      };
+
+      // 1. Add to local archive list (newest first)
+      const list = getArchiveList();
+      list.unshift(newItem);
+      saveArchiveList(list);
+
+      // 2. Clear the active scratchpad text box
+      ta.value = '';
+      localStorage.removeItem(SCRATCHPAD_KEY);
+
+      // 3. Reset auto-save indicator
+      const indicator = document.getElementById('scratchpad-saved-badge');
+      indicator.innerHTML = '<span>✓</span> Cleared & Archived';
+
+      // 4. Sync to server / cloud file
+      syncArchiveItemToServer(newItem);
+
+      showToast('✓ Note archived & scratchpad cleared!');
+    }
+
+    function syncArchiveItemToServer(item) {
+      if (!navigator.onLine) {
+        queueOfflineArchiveItem(item);
+        return;
+      }
+
+      fetch('/api/archive', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(item)
+      })
+      .then(res => res.json())
+      .then(data => {
+        console.log('[ARCHIVE_SYNC_SUCCESS]', data);
+      })
+      .catch(err => {
+        console.warn('[ARCHIVE_SYNC_OFFLINE_QUEUED]', err);
+        queueOfflineArchiveItem(item);
+      });
+    }
+
+    function queueOfflineArchiveItem(item) {
+      try {
+        const queue = JSON.parse(localStorage.getItem(OFFLINE_QUEUE_KEY) || '[]');
+        queue.push(item);
+        localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(queue));
+      } catch (e) {}
+    }
+
+    function drainOfflineArchiveQueue() {
+      if (!navigator.onLine) return;
+      try {
+        const queue = JSON.parse(localStorage.getItem(OFFLINE_QUEUE_KEY) || '[]');
+        if (queue.length === 0) return;
+
+        queue.forEach(item => {
+          fetch('/api/archive', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(item)
+          }).catch(() => {});
+        });
+
+        localStorage.removeItem(OFFLINE_QUEUE_KEY);
+      } catch (e) {}
+    }
+
+    window.addEventListener('online', drainOfflineArchiveQueue);
+
+    function toggleArchiveDrawer() {
+      const drawer = document.getElementById('archive-drawer-content');
+      const arrow = document.getElementById('archive-drawer-arrow');
+      const isHidden = drawer.classList.contains('hidden-drawer');
+
+      if (isHidden) {
+        drawer.classList.remove('hidden-drawer');
+        arrow.textContent = '▲';
+      } else {
+        drawer.classList.add('hidden-drawer');
+        arrow.textContent = '▼';
+      }
+    }
+
+    function renderArchiveDrawer() {
+      const list = getArchiveList();
+      const label = document.getElementById('archive-drawer-label');
+      const container = document.getElementById('archive-drawer-content');
+      if (!label || !container) return;
+
+      label.textContent = `📁 View Archived Notes (${list.length} item${list.length === 1 ? '' : 's'})`;
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding:16px; color:var(--text-muted); font-size:0.8rem; background:var(--bg-card-sub); border-radius:8px;">
+            No archived notes yet. Type above and tap <strong>Archive Note</strong>.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = '';
+      list.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'archive-card';
+        card.innerHTML = `
+          <div class="archive-card-header">
+            <span class="archive-card-date">🗓️ ${item.displayDate || item.timestamp}</span>
+            <div style="display:flex; gap:6px;">
+              <button class="btn-copy" onclick="copyArchiveItem('${item.id}')">Copy</button>
+              <button class="btn-copy" style="color:#fb7185; border-color:rgba(251,113,133,0.3);" onclick="deleteArchiveItem('${item.id}')">Delete</button>
+            </div>
+          </div>
+          <div class="archive-card-text">${escapeHtml(item.text)}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function copyArchiveItem(id) {
+      const item = getArchiveList().find(i => i.id === id);
+      if (item) {
+        copyToClipboard(item.text, 'Archived Note');
+      }
+    }
+
+    function deleteArchiveItem(id) {
+      let list = getArchiveList();
+      list = list.filter(i => i.id !== id);
+      saveArchiveList(list);
+      showToast('Archived note removed.');
+    }
+
+    function escapeHtml(str) {
+      return (str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+
+    /* ==============================================================
+       7. 2020 FORD EXPLORER (2.3L) ENGINE & INTERVAL CALCULATOR
+       ============================================================== */
+    const ODOMETER_KEY = 'bb_ops_explorer_odometer';
+    
+    // Interval schedules (Miles)
+    const MAINTENANCE_SCHEDULES = [
+      {
+        id: 'oil',
+        name: 'Engine Oil & Filter (5W-30 / FL-910S)',
+        interval: 7500,
+        warningThreshold: 1000,
+        desc: 'Motorcraft 5W-30 Full Synthetic, 5.2 - 5.7 qts. IOLM reset.'
+      },
+      {
+        id: 'tires',
+        name: 'Tire Rotation & Pressure Check',
+        interval: 7500,
+        warningThreshold: 1000,
+        desc: 'Forward cross pattern. Cold PSI: 35. Torque: 100 / 150 lb-ft.'
+      },
+      {
+        id: 'cabin_air',
+        name: 'Cabin Air Filter (FP-89)',
+        interval: 20000,
+        warningThreshold: 2000,
+        desc: 'Glovebox damper drop. Airflow arrow points down.'
+      },
+      {
+        id: 'engine_air',
+        name: 'Engine Air Filter (FA-1884)',
+        interval: 30000,
+        warningThreshold: 3000,
+        desc: 'Air cleaner box clips. Inspect pleats for dust/grit.'
+      },
+      {
+        id: 'brake_fluid',
+        name: 'Brake Fluid Flush (DOT 4 LV)',
+        interval: 30000,
+        warningThreshold: 3000,
+        desc: '3-Year mandate. WSS-M6C65-A2 High Performance DOT 4 LV.'
+      },
+      {
+        id: 'spark_plugs',
+        name: 'Spark Plugs (Motorcraft SP-578)',
+        interval: 60000,
+        warningThreshold: 5000,
+        desc: 'Gap 0.028-0.031 in. Torque: 133 lb-in (11 lb-ft).'
+      },
+      {
+        id: 'transmission',
+        name: '10-Speed ATF Pan Service (MERCON ULV)',
+        interval: 60000,
+        warningThreshold: 5000,
+        desc: 'Motorcraft MERCON ULV only (~6.5 qts). Temp check 195-205°F.'
+      },
+      {
+        id: 'coolant',
+        name: 'Coolant Flush (Motorcraft Yellow)',
+        interval: 100000,
+        warningThreshold: 8000,
+        desc: 'Yellow P-OAT 50/50 prediluted. 11.5 qt (tow) capacity.'
+      }
+    ];
+
+    function initOdometer() {
+      const saved = localStorage.getItem(ODOMETER_KEY) || '52400';
+      document.getElementById('odometer-input').value = saved;
+      updateMaintenanceTriage(parseInt(saved, 10));
+    }
+
+    function handleOdometerChange() {
+      const val = parseInt(document.getElementById('odometer-input').value, 10) || 0;
+      localStorage.setItem(ODOMETER_KEY, val);
+      updateMaintenanceTriage(val);
+    }
+
+    function addOdometer(miles) {
+      const input = document.getElementById('odometer-input');
+      const current = parseInt(input.value, 10) || 0;
+      const updated = current + miles;
+      input.value = updated;
+      localStorage.setItem(ODOMETER_KEY, updated);
+      updateMaintenanceTriage(updated);
+      showToast(`Odometer updated to ${updated.toLocaleString()} mi`);
+    }
+
+    function updateMaintenanceTriage(currentOdo) {
+      const container = document.getElementById('triage-cards-container');
+      container.innerHTML = '';
+
+      MAINTENANCE_SCHEDULES.forEach(item => {
+        // Calculate cycle
+        const cycleCount = Math.floor(currentOdo / item.interval);
+        const nextDue = (cycleCount + 1) * item.interval;
+        const milesRemaining = nextDue - currentOdo;
+        const milesIntoCycle = currentOdo % item.interval;
+        const percentElapsed = Math.min(100, Math.round((milesIntoCycle / item.interval) * 100));
+
+        let pillClass = 'pill-ok';
+        let pillText = 'OK';
+        let barColor = '#38bdf8';
+
+        if (milesRemaining <= 0) {
+          pillClass = 'pill-overdue';
+          pillText = `OVERDUE (${Math.abs(milesRemaining).toLocaleString()} MI)`;
+          barColor = '#f43f5e';
+        } else if (milesRemaining <= item.warningThreshold) {
+          pillClass = 'pill-due';
+          pillText = `DUE SOON (${milesRemaining.toLocaleString()} MI)`;
+          barColor = '#f59e0b';
+        } else {
+          pillText = `${milesRemaining.toLocaleString()} MI REMAINING`;
+        }
+
+        const card = document.createElement('div');
+        card.className = 'triage-card';
+        card.innerHTML = `
+          <div class="triage-header">
+            <span class="triage-name">${item.name}</span>
+            <span class="status-pill ${pillClass}">${pillText}</span>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" style="width:${percentElapsed}%; background:${barColor};"></div>
+          </div>
+          <div class="triage-meta">
+            <span>Next Target: <strong>${nextDue.toLocaleString()} mi</strong></span>
+            <span>Cycle: every ${item.interval.toLocaleString()} mi</span>
+          </div>
+          <div style="font-size:0.75rem; color:#94a3b8; margin-top:2px;">
+            ${item.desc}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function toggleAccordion(id) {
+      const content = document.getElementById(id);
+      const arrow = document.getElementById(`${id}-arrow`);
+      if (content.classList.contains('open')) {
+        content.classList.remove('open');
+        if (arrow) arrow.textContent = '▼';
+      } else {
+        content.classList.add('open');
+        if (arrow) arrow.textContent = '▲';
+      }
+    }
+
+
+    /* ==============================================================
+       8. COMMON FUSE BOX DATABASE & LOOKUP
+       ============================================================== */
+    const FUSE_CATALOG = [
+      { loc: 'Engine Bay', num: '2', amp: '20A', desc: 'Power outlet main console bin / 12V Aux power' },
+      { loc: 'Engine Bay', num: '3', amp: '40A', desc: 'Body control module - battery power in feed 2' },
+      { loc: 'Engine Bay', num: '4', amp: '30A', desc: 'Fuel pump relay power feed' },
+      { loc: 'Engine Bay', num: '5', amp: '5A',  desc: 'Powertrain control module (PCM) keep alive power' },
+      { loc: 'Engine Bay', num: '6', amp: '20A', desc: 'Powertrain control module (PCM) main power' },
+      { loc: 'Engine Bay', num: '7', amp: '20A', desc: 'Canister vent solenoid, oxygen sensors, purge valve' },
+      { loc: 'Engine Bay', num: '8', amp: '20A', desc: 'Cooling fan relay coil, active grille shutters' },
+      { loc: 'Engine Bay', num: '9', amp: '20A', desc: 'Ignition coils' },
+      { loc: 'Engine Bay', num: '13', amp: '40A', desc: 'Front blower motor HVAC relay' },
+      { loc: 'Engine Bay', num: '14', amp: '15A', desc: 'Transmission oil pump, A/C compressor variable clutch' },
+      { loc: 'Engine Bay', num: '16', amp: '15A', desc: 'Electric horn relay' },
+      { loc: 'Engine Bay', num: '23', amp: '15A', desc: 'Starter motor solenoid / relay' },
+      { loc: 'Engine Bay', num: '28', amp: '30A', desc: 'Wiper motor washer pump relay' },
+      { loc: 'Engine Bay', num: '45', amp: '30A', desc: 'Electric trailer brake controller (Tow pkg)' },
+      { loc: 'Passenger Compartment', num: '2', amp: '10A', desc: 'Driver door switch illumination, push button start' },
+      { loc: 'Passenger Compartment', num: '10', amp: '20A', desc: 'Heated steering wheel module' },
+      { loc: 'Passenger Compartment', num: '15', amp: '15A', desc: 'OBD-II Data link connector (DLC) / Diagnostic gateway' },
+      { loc: 'Passenger Compartment', num: '20', amp: '7.5A', desc: 'Restraints control module (Airbag indicator)' },
+      { loc: 'Passenger Compartment', num: '24', amp: '30A', desc: 'Driver power seat motor' },
+      { loc: 'Passenger Compartment', num: '32', amp: '10A', desc: 'Instrument cluster display screen' },
+      { loc: 'Passenger Compartment', num: '36', amp: '15A', desc: 'Audio unit / SYNC 3 touchscreen display' },
+      { loc: 'Passenger Compartment', num: '41', amp: '20A', desc: 'Rear passenger 12V auxiliary power point' }
+    ];
+
+    let activeFuseFilter = 'all';
+
+    function setFuseFilter(loc) {
+      activeFuseFilter = loc;
+      document.querySelectorAll('#fuse-location-filter .chip').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${loc}'`));
+      });
+      renderFuses();
+    }
+
+    function handleFuseSearch() {
+      renderFuses();
+    }
+
+    function renderFuses() {
+      const q = (document.getElementById('fuse-search-input').value || '').toLowerCase().trim();
+      const tbody = document.getElementById('fuse-table-body');
+      tbody.innerHTML = '';
+
+      const filtered = FUSE_CATALOG.filter(f => {
+        const matchLoc = (activeFuseFilter === 'all') || 
+                         (activeFuseFilter === 'engine' && f.loc.includes('Engine')) ||
+                         (activeFuseFilter === 'cabin' && f.loc.includes('Passenger'));
+        const matchText = !q || f.num.toLowerCase().includes(q) || 
+                          f.amp.toLowerCase().includes(q) || 
+                          f.desc.toLowerCase().includes(q) ||
+                          f.loc.toLowerCase().includes(q);
+        return matchLoc && matchText;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:20px;">No matching fuses found.</td></tr>`;
+        return;
+      }
+
+      filtered.forEach(f => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><span class="tag" style="background:#1e293b;">${f.loc}</span></td>
+          <td><strong style="color:#38bdf8; font-family:monospace;">#${f.num}</strong></td>
+          <td><span class="badge" style="background:rgba(245,158,11,0.15); color:#fbbf24; border:1px solid rgba(245,158,11,0.3); font-family:monospace;">${f.amp}</span></td>
+          <td>${f.desc}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+
+    /* ==============================================================
+       7B. SPRINT 3: HOME & MECHANICALS ENGINE
+       ============================================================== */
+    const MECHANICALS_STORAGE_KEY = 'bb_ops_mechanicals_v1';
+
+    function getMechanicalsState() {
+      try {
+        return JSON.parse(localStorage.getItem(MECHANICALS_STORAGE_KEY) || '{}');
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveMechanicalsState() {
+      const state = getMechanicalsState();
+      state.hvacFilterDate = document.getElementById('hvac-filter-date').value;
+      state.whFlushDate = document.getElementById('wh-flush-date').value;
+      state.softenerDate = document.getElementById('softener-date').value;
+      state.cutover1 = document.getElementById('hvac-cutover-1').checked;
+      state.cutover2 = document.getElementById('hvac-cutover-2').checked;
+      state.cutover3 = document.getElementById('hvac-cutover-3').checked;
+      state.winterizeDone = document.getElementById('winterize-done-toggle').checked;
+
+      localStorage.setItem(MECHANICALS_STORAGE_KEY, JSON.stringify(state));
+      updateMechanicalsUI();
+    }
+
+    function initMechanicals() {
+      const state = getMechanicalsState();
+
+      // Defaults if not previously set
+      const defaultFilterDate = state.hvacFilterDate || '2026-08-15';
+      const defaultWhDate = state.whFlushDate || '2025-11-10';
+      const defaultSoftenerDate = state.softenerDate || '2026-09-20';
+
+      document.getElementById('hvac-filter-date').value = defaultFilterDate;
+      document.getElementById('wh-flush-date').value = defaultWhDate;
+      document.getElementById('softener-date').value = defaultSoftenerDate;
+
+      if (state.cutover1) document.getElementById('hvac-cutover-1').checked = true;
+      if (state.cutover2) document.getElementById('hvac-cutover-2').checked = true;
+      if (state.cutover3) document.getElementById('hvac-cutover-3').checked = true;
+      if (state.winterizeDone) document.getElementById('winterize-done-toggle').checked = true;
+
+      updateMechanicalsUI();
+    }
+
+    function updateMechanicalsUI() {
+      const today = new Date();
+      today.setHours(0,0,0,0);
+
+      // 1. HVAC Filter (90 days)
+      const filterDateVal = document.getElementById('hvac-filter-date').value;
+      if (filterDateVal) {
+        const filterDate = new Date(filterDateVal + 'T00:00:00');
+        const elapsedDays = Math.floor((today - filterDate) / (1000 * 60 * 60 * 24));
+        const daysRemaining = 90 - elapsedDays;
+        const statusEl = document.getElementById('hvac-filter-status');
+        const metaEl = document.getElementById('hvac-filter-meta');
+
+        metaEl.textContent = `Last Replaced: ${filterDate.toLocaleDateString()} (${elapsedDays} days ago)`;
+        if (daysRemaining <= 0) {
+          statusEl.textContent = `OVERDUE BY ${Math.abs(daysRemaining)} DAYS`;
+          statusEl.style.color = '#fb7185';
+        } else if (daysRemaining <= 10) {
+          statusEl.textContent = `REPLACE SOON (${daysRemaining} Days Left)`;
+          statusEl.style.color = '#fbbf24';
+        } else {
+          statusEl.textContent = `GOOD (${daysRemaining} Days Remaining)`;
+          statusEl.style.color = '#34d399';
+        }
+      }
+
+      // 2. Water Heater Sediment Flush (365 days)
+      const whDateVal = document.getElementById('wh-flush-date').value;
+      if (whDateVal) {
+        const whDate = new Date(whDateVal + 'T00:00:00');
+        const elapsedDays = Math.floor((today - whDate) / (1000 * 60 * 60 * 24));
+        const daysRemaining = 365 - elapsedDays;
+        const statusEl = document.getElementById('wh-flush-status');
+        const metaEl = document.getElementById('wh-flush-meta');
+        const pill = document.getElementById('water-heater-status-pill');
+
+        metaEl.textContent = `Last Flushed: ${whDate.toLocaleDateString()} (${elapsedDays} days ago)`;
+        if (daysRemaining <= 0) {
+          statusEl.textContent = `OVERDUE BY ${Math.abs(daysRemaining)} DAYS`;
+          statusEl.style.color = '#fb7185';
+          pill.className = 'status-pill pill-overdue';
+          pill.textContent = 'Flush Overdue';
+        } else if (daysRemaining <= 30) {
+          statusEl.textContent = `FLUSH DUE SOON (${daysRemaining} Days Left)`;
+          statusEl.style.color = '#fbbf24';
+          pill.className = 'status-pill pill-due';
+          pill.textContent = 'Due Soon';
+        } else {
+          statusEl.textContent = `GOOD (${daysRemaining} Days Remaining)`;
+          statusEl.style.color = '#34d399';
+          pill.className = 'status-pill pill-ok';
+          pill.textContent = 'OK';
+        }
+      }
+
+      // 3. Water Softener Salt (45 days)
+      const softDateVal = document.getElementById('softener-date').value;
+      if (softDateVal) {
+        const softDate = new Date(softDateVal + 'T00:00:00');
+        const elapsedDays = Math.floor((today - softDate) / (1000 * 60 * 60 * 24));
+        const daysRemaining = 45 - elapsedDays;
+        const statusEl = document.getElementById('softener-status');
+        const metaEl = document.getElementById('softener-meta');
+        const pill = document.getElementById('softener-status-pill');
+
+        metaEl.textContent = `Last Inspected: ${softDate.toLocaleDateString()} (${elapsedDays} days ago)`;
+        if (daysRemaining <= 0) {
+          statusEl.textContent = `CHECK SALT NOW (${Math.abs(daysRemaining)}d overdue)`;
+          statusEl.style.color = '#fb7185';
+          pill.className = 'status-pill pill-overdue';
+          pill.textContent = 'Check Salt';
+        } else if (daysRemaining <= 7) {
+          statusEl.textContent = `SALT CHECK DUE (${daysRemaining} Days Left)`;
+          statusEl.style.color = '#fbbf24';
+          pill.className = 'status-pill pill-due';
+          pill.textContent = 'Check Soon';
+        } else {
+          statusEl.textContent = `GOOD (${daysRemaining} Days Remaining)`;
+          statusEl.style.color = '#34d399';
+          pill.className = 'status-pill pill-ok';
+          pill.textContent = 'OK';
+        }
+      }
+
+      // 4. Winterization Countdown to Nov 1
+      const currentYear = today.getFullYear();
+      let targetNov1 = new Date(currentYear, 10, 1); // Month is 0-indexed: 10 = November
+      if (today > targetNov1 && today.getMonth() > 10) {
+        targetNov1 = new Date(currentYear + 1, 10, 1);
+      }
+      const daysToFreeze = Math.ceil((targetNov1 - today) / (1000 * 60 * 60 * 24));
+      const winterBadge = document.getElementById('winter-freeze-countdown-badge');
+      const isDone = document.getElementById('winterize-done-toggle')?.checked;
+
+      if (isDone) {
+        winterBadge.className = 'badge badge-offline';
+        winterBadge.textContent = '✓ Winterized for Season';
+      } else if (daysToFreeze < 0) {
+        winterBadge.className = 'badge badge-pacing';
+        winterBadge.style.color = '#fb7185';
+        winterBadge.textContent = '⚠️ PAST NOV 1 DEADLINE';
+      } else {
+        winterBadge.className = 'badge badge-pacing';
+        winterBadge.textContent = `❄️ ${daysToFreeze} Days Until Nov 1 Deadline`;
+      }
+    }
+
+    function markHvacFilterReplacedToday() {
+      const todayStr = new Date().toISOString().split('T')[0];
+      document.getElementById('hvac-filter-date').value = todayStr;
+      saveMechanicalsState();
+      showToast('Furnace filter marked replaced today!');
+    }
+    function updateHvacFilterDate() { saveMechanicalsState(); }
+
+    function markWhFlushedToday() {
+      const todayStr = new Date().toISOString().split('T')[0];
+      document.getElementById('wh-flush-date').value = todayStr;
+      saveMechanicalsState();
+      showToast('Water heater marked flushed today!');
+    }
+    function updateWhFlushDate() { saveMechanicalsState(); }
+
+    function markSoftenerCheckedToday() {
+      const todayStr = new Date().toISOString().split('T')[0];
+      document.getElementById('softener-date').value = todayStr;
+      saveMechanicalsState();
+      showToast('Water softener marked inspected & filled today!');
+    }
+    function updateSoftenerDate() { saveMechanicalsState(); }
+
+
+    /* ==============================================================
+       7C. SPRINT 4: FAMILY HEALTH & LOGISTICS ENGINE
+       ============================================================== */
+    const REFERRALS_STORAGE_KEY = 'bb_ops_tricare_referrals_v1';
+    const RX_STORAGE_KEY = 'bb_ops_rx_list_v1';
+    const CHECKUPS_STORAGE_KEY = 'bb_ops_checkups_v1';
+
+    const STAGE_NAMES = [
+      '1. Requested',
+      '2. Approved',
+      '3. Clinic Contacted',
+      '4. Appt Scheduled',
+      '5. Completed'
+    ];
+
+    const DEFAULT_REFERRALS = [
+      {
+        id: 'ref-josh-urology',
+        person: 'Josh',
+        clinic: 'KC Urology Care PA (Dr. Holmes)',
+        phone: '(816) 531-1234',
+        auth: '#0011620737',
+        stage: 2, // Approved
+        stalled: true,
+        note: 'STALLED: Approved > 7 days without booked appointment. Action: Call scheduling desk to lock in appointment date/time.'
+      },
+      {
+        id: 'ref-lincoln-psych',
+        person: 'Lincoln',
+        clinic: 'Alive Family Psychiatry',
+        phone: '(816) 407-9596',
+        auth: '#0011492041',
+        stage: 3, // Clinic Contacted
+        stalled: false,
+        code: 'UePj-jdYn-CeAn-qPFJ',
+        codeUrl: 'https://portal.kareo.com/code',
+        note: 'Active specialty care. Follow-up consultation cadence and statement reconciliation.'
+      }
+    ];
+
+    let familyReferrals = [];
+
+    function initReferrals() {
+      const saved = localStorage.getItem(REFERRALS_STORAGE_KEY);
+      if (saved) {
+        try { familyReferrals = JSON.parse(saved); } catch(e) { familyReferrals = [...DEFAULT_REFERRALS]; }
+      } else {
+        familyReferrals = [...DEFAULT_REFERRALS];
+      }
+      renderReferrals();
+    }
+
+    function saveReferrals() {
+      localStorage.setItem(REFERRALS_STORAGE_KEY, JSON.stringify(familyReferrals));
+      renderReferrals();
+    }
+
+    function renderReferrals() {
+      const container = document.getElementById('referrals-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (familyReferrals.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-muted);">No active specialty referrals. Tap "+ Add Referral" to log one.</div>`;
+        return;
+      }
+
+      familyReferrals.forEach(ref => {
+        const card = document.createElement('div');
+        card.className = `referral-card ${ref.stalled ? 'stalled-card' : ''}`;
+
+        // 5-stage stepper HTML
+        let stepsHtml = '';
+        for (let s = 1; s <= 5; s++) {
+          let stepClass = '';
+          if (s < ref.stage) stepClass = 'completed';
+          else if (s === ref.stage) stepClass = ref.stalled ? 'stalled' : 'active';
+
+          stepsHtml += `
+            <div class="pipeline-step ${stepClass}">
+              <div class="pipeline-dot">${s < ref.stage ? '✓' : s}</div>
+              <div class="pipeline-label">${STAGE_NAMES[s-1].split('. ')[1]}</div>
+            </div>
+          `;
+        }
+
+        let stalledActionBtn = '';
+        if (ref.stalled && ref.phone) {
+          const cleanPhone = ref.phone.replace(/[^0-9]/g, '');
+          stalledActionBtn = `
+            <a href="tel:${cleanPhone}" class="btn-call" style="padding:6px 12px; font-size:0.8rem; background:#f59e0b; color:#0f172a; margin-top:8px;">
+              📞 Call Scheduling Desk: ${ref.phone}
+            </a>
+          `;
+        }
+
+        let codeSnippet = '';
+        if (ref.code) {
+          codeSnippet = `
+            <div style="margin-top:8px;">
+              <div class="action-code-badge">
+                <span>Code:</span> <strong>${ref.code}</strong>
+                <button class="btn-copy" onclick="copyToClipboard('${ref.code}', 'Portal Code')">Copy</button>
+              </div>
+              ${ref.codeUrl ? `<a href="${ref.codeUrl}" target="_blank" rel="noopener noreferrer" style="font-size:0.75rem; color:#38bdf8; margin-left:8px; text-decoration:underline;">portal.kareo.com/code ↗</a>` : ''}
+            </div>
+          `;
+        }
+
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px;">
+            <div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span class="tag" style="background:#0284c7; color:#fff; font-weight:700;">${ref.person}</span>
+                <span style="font-size:1rem; font-weight:800; color:var(--text-main);">${ref.clinic}</span>
+              </div>
+              <div style="font-size:0.78rem; color:var(--text-muted); margin-top:4px;">
+                Auth ID: <strong style="color:#38bdf8; font-family:monospace;">${ref.auth || 'Pending'}</strong> • 
+                Phone: <strong style="color:#f8fafc;">${ref.phone || 'N/A'}</strong>
+              </div>
+            </div>
+            ${ref.stalled ? `<span class="badge badge-pacing" style="background:rgba(245,158,11,0.2); color:#fbbf24; border:1px solid #f59e0b;">⚠️ STALLED (&gt;7 Days)</span>` : `<span class="status-pill pill-ok">Stage ${ref.stage}/5</span>`}
+          </div>
+
+          <!-- Stepper Track -->
+          <div class="pipeline-container">
+            <div class="pipeline-track-line"></div>
+            ${stepsHtml}
+          </div>
+
+          <div class="task-note-box" style="margin:8px 0; border-left-color:${ref.stalled ? '#f59e0b' : '#38bdf8'};">
+            ${ref.note || 'Specialty care authorization track.'}
+            ${codeSnippet}
+            ${stalledActionBtn}
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px; flex-wrap:wrap; gap:8px;">
+            <div style="display:flex; gap:6px;">
+              <button class="btn-header" onclick="advanceReferralStage('${ref.id}')" title="Advance to next stage">⏩ Advance Stage</button>
+              ${ref.stage > 1 ? `<button class="btn-header" style="color:var(--text-muted);" onclick="stepBackReferralStage('${ref.id}')" title="Step back">⏪ Back</button>` : ''}
+              ${ref.stalled ? `<button class="btn-header" style="color:#34d399;" onclick="clearReferralStall('${ref.id}')">✓ Clear Stall</button>` : ''}
+            </div>
+            <button class="btn-copy" style="color:#fb7185; border-color:rgba(251,113,133,0.3);" onclick="deleteReferral('${ref.id}')">Delete</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function advanceReferralStage(id) {
+      const ref = familyReferrals.find(r => r.id === id);
+      if (ref && ref.stage < 5) {
+        ref.stage++;
+        if (ref.stage >= 4) ref.stalled = false;
+        saveReferrals();
+        showToast(`Referral advanced to ${STAGE_NAMES[ref.stage-1]}`);
+      }
+    }
+
+    function stepBackReferralStage(id) {
+      const ref = familyReferrals.find(r => r.id === id);
+      if (ref && ref.stage > 1) {
+        ref.stage--;
+        saveReferrals();
+      }
+    }
+
+    function clearReferralStall(id) {
+      const ref = familyReferrals.find(r => r.id === id);
+      if (ref) {
+        ref.stalled = false;
+        saveReferrals();
+        showToast('Stall alert cleared.');
+      }
+    }
+
+    function deleteReferral(id) {
+      if (confirm('Delete this referral record?')) {
+        familyReferrals = familyReferrals.filter(r => r.id !== id);
+        saveReferrals();
+        showToast('Referral removed.');
+      }
+    }
+
+    function openAddReferralModal() {
+      document.getElementById('new-ref-clinic').value = '';
+      document.getElementById('new-ref-phone').value = '';
+      document.getElementById('new-ref-auth').value = '';
+      document.getElementById('new-ref-note').value = '';
+      document.getElementById('add-referral-modal').classList.add('open');
+    }
+    function closeAddReferralModal() {
+      document.getElementById('add-referral-modal').classList.remove('open');
+    }
+    function saveNewReferral() {
+      const person = document.getElementById('new-ref-person').value;
+      const clinic = document.getElementById('new-ref-clinic').value.trim();
+      const phone = document.getElementById('new-ref-phone').value.trim();
+      const auth = document.getElementById('new-ref-auth').value.trim();
+      const stage = parseInt(document.getElementById('new-ref-stage').value, 10);
+      const note = document.getElementById('new-ref-note').value.trim();
+
+      if (!clinic) {
+        alert('Please enter a specialty or clinic name.');
+        return;
+      }
+
+      const newRef = {
+        id: 'ref-' + Date.now(),
+        person,
+        clinic,
+        phone,
+        auth,
+        stage,
+        stalled: false,
+        note: note || 'Specialty care authorization track.'
+      };
+
+      familyReferrals.unshift(newRef);
+      saveReferrals();
+      closeAddReferralModal();
+      showToast('New referral added!');
+    }
+
+
+    /* ==============================================================
+       7D. PRESCRIPTION REFILL COUNTDOWN ENGINE
+       ============================================================== */
+    const DEFAULT_RX = [
+      {
+        id: 'rx-lincoln-daily',
+        person: 'Lincoln',
+        name: 'Maintenance Prescription',
+        lastFilled: '2026-10-01',
+        supplyDays: 30,
+        pharmacy: 'Price Chopper Pharmacy (816-682-1234)'
+      },
+      {
+        id: 'rx-josh-daily',
+        person: 'Josh',
+        name: 'Daily Allergy / Maintenance',
+        lastFilled: '2026-08-01',
+        supplyDays: 90,
+        pharmacy: 'Munson Army Health Center Pharmacy (913-684-6000)'
+      },
+      {
+        id: 'rx-brit-daily',
+        person: 'Brit',
+        name: 'Daily Multivitamin & Wellness Rx',
+        lastFilled: '2026-09-25',
+        supplyDays: 30,
+        pharmacy: 'Munson Army Health Center Pharmacy (913-684-6000)'
+      }
+    ];
+
+    let familyRx = [];
+
+    function initRxLedger() {
+      const saved = localStorage.getItem(RX_STORAGE_KEY);
+      if (saved) {
+        try { familyRx = JSON.parse(saved); } catch(e) { familyRx = [...DEFAULT_RX]; }
+      } else {
+        familyRx = [...DEFAULT_RX];
+      }
+      renderRxLedger();
+    }
+
+    function saveRxLedger() {
+      localStorage.setItem(RX_STORAGE_KEY, JSON.stringify(familyRx));
+      renderRxLedger();
+    }
+
+    function renderRxLedger() {
+      const container = document.getElementById('rx-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (familyRx.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-muted); grid-column:1/-1;">No prescriptions logged. Tap "+ Add Prescription".</div>`;
+        return;
+      }
+
+      const today = new Date();
+      today.setHours(0,0,0,0);
+
+      familyRx.forEach(rx => {
+        const fillDate = new Date(rx.lastFilled + 'T00:00:00');
+        const elapsedDays = Math.floor((today - fillDate) / (1000 * 60 * 60 * 24));
+        const daysRemaining = rx.supplyDays - elapsedDays;
+
+        let statusClass = 'pill-ok';
+        let cardClass = '';
+        let statusText = `${daysRemaining} Days Left`;
+
+        if (daysRemaining <= 0) {
+          statusClass = 'pill-overdue';
+          cardClass = 'rx-red';
+          statusText = `OUT OF MEDS (${Math.abs(daysRemaining)}d OVERDUE)`;
+        } else if (daysRemaining <= 7) {
+          statusClass = 'pill-due';
+          cardClass = 'rx-amber';
+          statusText = `REFILL DUE (<${daysRemaining}d Left)`;
+        }
+
+        const card = document.createElement('div');
+        card.className = `rx-card ${cardClass}`;
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+            <div>
+              <span class="tag" style="background:#0284c7; color:#fff; font-weight:700;">${rx.person}</span>
+              <div style="font-size:1rem; font-weight:800; margin-top:4px; color:var(--text-main);">${rx.name}</div>
+            </div>
+            <span class="status-pill ${statusClass}">${statusText}</span>
+          </div>
+
+          <div style="font-size:0.75rem; color:var(--text-muted); margin:6px 0;">
+            Supply: <strong>${rx.supplyDays} Days</strong> • Last Filled: <strong>${rx.lastFilled}</strong> (${elapsedDays}d ago)
+          </div>
+
+          ${daysRemaining <= 7 ? `
+            <div style="background:rgba(245,158,11,0.15); border:1px solid #f59e0b; padding:8px; border-radius:8px; font-size:0.75rem; color:#fbbf24; margin:6px 0; font-weight:600;">
+              ⚠️ Call in refill now to clear pharmacy authorization before the weekend!
+            </div>
+          ` : ''}
+
+          <div style="font-size:0.75rem; color:#cbd5e1; margin-top:4px;">
+            Pharmacy: <strong>${rx.pharmacy || 'Standard Pharmacy'}</strong>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px; gap:8px;">
+            <button class="btn-primary" style="font-size:0.78rem; padding:6px 10px;" onclick="markRxRefilledToday('${rx.id}')">
+              ✓ Mark Refilled Today
+            </button>
+            <button class="btn-copy" style="color:#fb7185; border-color:rgba(251,113,133,0.3);" onclick="deleteRx('${rx.id}')">Delete</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function markRxRefilledToday(id) {
+      const rx = familyRx.find(r => r.id === id);
+      if (rx) {
+        const todayStr = new Date().toISOString().split('T')[0];
+        rx.lastFilled = todayStr;
+        saveRxLedger();
+        showToast(`${rx.name} marked refilled today!`);
+      }
+    }
+
+    function deleteRx(id) {
+      if (confirm('Delete this prescription?')) {
+        familyRx = familyRx.filter(r => r.id !== id);
+        saveRxLedger();
+        showToast('Prescription removed.');
+      }
+    }
+
+    function openAddRxModal() {
+      document.getElementById('new-rx-name').value = '';
+      document.getElementById('new-rx-date').value = new Date().toISOString().split('T')[0];
+      document.getElementById('new-rx-pharmacy').value = '';
+      document.getElementById('add-rx-modal').classList.add('open');
+    }
+    function closeAddRxModal() {
+      document.getElementById('add-rx-modal').classList.remove('open');
+    }
+    function saveNewRx() {
+      const person = document.getElementById('new-rx-person').value;
+      const name = document.getElementById('new-rx-name').value.trim();
+      const lastFilled = document.getElementById('new-rx-date').value;
+      const supplyDays = parseInt(document.getElementById('new-rx-supply').value, 10);
+      const pharmacy = document.getElementById('new-rx-pharmacy').value.trim();
+
+      if (!name) {
+        alert('Please enter medication name.');
+        return;
+      }
+
+      const newRxItem = {
+        id: 'rx-' + Date.now(),
+        person,
+        name,
+        lastFilled: lastFilled || new Date().toISOString().split('T')[0],
+        supplyDays,
+        pharmacy: pharmacy || 'Local Pharmacy'
+      };
+
+      familyRx.unshift(newRxItem);
+      saveRxLedger();
+      closeAddRxModal();
+      showToast('New prescription added!');
+    }
+
+
+    /* ==============================================================
+       7E. ROUTINE CHECKUP CADENCES ENGINE
+       ============================================================== */
+    const FAMILY_MEMBERS = ['Josh', 'Brit', 'Lincoln', 'Annabel', 'Sally Jo'];
+
+    const CHECKUP_TYPES = [
+      { id: 'physical', label: 'Annual Physical / Well-Child Check', intervalDays: 365, intervalLabel: '12 Months' },
+      { id: 'dental',   label: 'Dental Cleaning',                   intervalDays: 180, intervalLabel: '6 Months' },
+      { id: 'vision',   label: 'Vision / Eye Exam',                 intervalDays: 365, intervalLabel: '12 Months' }
+    ];
+
+    function getCheckupHistory() {
+      try {
+        return JSON.parse(localStorage.getItem(CHECKUPS_STORAGE_KEY) || '{}');
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function initCheckups() {
+      renderCheckups();
+    }
+
+    function renderCheckups() {
+      const container = document.getElementById('family-checkups-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const history = getCheckupHistory();
+      const today = new Date();
+      today.setHours(0,0,0,0);
+
+      FAMILY_MEMBERS.forEach(person => {
+        const card = document.createElement('div');
+        card.className = 'family-checkup-card';
+        
+        let rowsHtml = '';
+        CHECKUP_TYPES.forEach(type => {
+          const key = `${person}_${type.id}`;
+          const lastDateStr = history[key] || '';
+          let statusPill = `<span class="status-pill pill-due">Needs Log</span>`;
+          let metaText = `Cadence: ${type.intervalLabel}`;
+
+          if (lastDateStr) {
+            const lastDate = new Date(lastDateStr + 'T00:00:00');
+            const elapsedDays = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
+            const daysRemaining = type.intervalDays - elapsedDays;
+
+            if (daysRemaining <= 0) {
+              statusPill = `<span class="status-pill pill-overdue">OVERDUE (${Math.abs(daysRemaining)}d)</span>`;
+            } else if (daysRemaining <= 30) {
+              statusPill = `<span class="status-pill pill-due">Due Soon (${daysRemaining}d)</span>`;
+            } else {
+              statusPill = `<span class="status-pill pill-ok">OK (${daysRemaining}d left)</span>`;
+            }
+            metaText = `Last: ${lastDate.toLocaleDateString()} (${elapsedDays}d ago)`;
+          }
+
+          rowsHtml += `
+            <div class="checkup-row">
+              <div>
+                <strong style="color:var(--text-main); font-size:0.9rem;">${type.label}</strong>
+                <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">${metaText}</div>
+              </div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                ${statusPill}
+                <button class="btn-copy" onclick="logCheckupToday('${person}', '${type.id}')" title="Log completed today">
+                  ✓ Done Today
+                </button>
+              </div>
+            </div>
+          `;
+        });
+
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:8px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="brand-icon" style="width:30px; height:30px; font-size:0.9rem;">👤</span>
+              <span style="font-size:1.1rem; font-weight:800; color:#f8fafc;">${person}</span>
+            </div>
+            <span class="badge" style="background:#1e293b; color:#94a3b8;">Preventative Health</span>
+          </div>
+          <div>${rowsHtml}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function logCheckupToday(person, typeId) {
+      const history = getCheckupHistory();
+      const key = `${person}_${typeId}`;
+      history[key] = new Date().toISOString().split('T')[0];
+      localStorage.setItem(CHECKUPS_STORAGE_KEY, JSON.stringify(history));
+      renderCheckups();
+      showToast(`Logged ${person}'s checkup as completed today!`);
+    }
+
+
+    /* ==============================================================
+       9. SERVICE WORKER REGISTRATION & NETWORK MONITOR (SPRINT 2)
+       ============================================================== */
+    function updateNetworkStatus() {
+      const badge = document.getElementById('network-badge');
+      const text = document.getElementById('network-text');
+      if (navigator.onLine) {
+        badge.className = 'badge badge-offline';
+        badge.querySelector('span').style.background = '#10b981';
+        text.textContent = 'Offline Ready';
+      } else {
+        badge.className = 'badge';
+        badge.style.background = 'rgba(244, 63, 94, 0.2)';
+        badge.style.borderColor = 'rgba(244, 63, 94, 0.5)';
+        badge.style.color = '#fb7185';
+        badge.querySelector('span').style.background = '#f43f5e';
+        text.textContent = 'Airplane / Offline Active';
+      }
+    }
+
+    window.addEventListener('online', updateNetworkStatus);
+    window.addEventListener('offline', updateNetworkStatus);
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then((reg) => {
+            console.log('[PWA] Service Worker registered successfully with scope:', reg.scope);
+          })
+          .catch((err) => {
+            console.warn('[PWA] Service Worker registration failed (normal on file:// scheme):', err);
+          });
+      });
+    }
+
+
+    /* ==============================================================
+       10. APPLICATION BOOTSTRAPPER
+       ============================================================== */
+    document.addEventListener('DOMContentLoaded', () => {
+      checkInitialAuth();
+      loadHeroPrepState();
+      initTasks();
+      initScratchpad();
+      initOdometer();
+      renderFuses();
+      initMechanicals();
+      initReferrals();
+      initRxLedger();
+      initCheckups();
+      updateNetworkStatus();
+    });
+  </script>
+</body>
+</html>
