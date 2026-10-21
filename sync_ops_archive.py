@@ -1,4 +1,4 @@
-"""
+r"""
 sync_ops_archive.py
 Synchronizes archived scratchpad entries from Vercel /api/archive into
 the local Markdown backlog file G:\My Drive\pleasant-ridge-gazette\data\ops_backlog.md
@@ -8,6 +8,12 @@ import sys
 import json
 import urllib.request
 from datetime import datetime
+
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
 
 API_URL = "https://pleasant-ridge-gazette.vercel.app/api/archive"
 BACKLOG_MD = os.path.join(os.path.dirname(__file__), "data", "ops_backlog.md")
