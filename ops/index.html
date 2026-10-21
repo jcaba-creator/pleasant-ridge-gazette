@@ -1,0 +1,2429 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Household Ops">
+  <meta name="theme-color" content="#0f172a">
+  <link rel="manifest" href="manifest.json">
+  <title>Household Planner & Shop Guide</title>
+  <style>
+    /* CSS Reset & Variables */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    :root {
+      --bg-dark: #0f172a;
+      --bg-card: #1e293b;
+      --bg-card-sub: #162032;
+      --bg-card-hover: #27354f;
+      --border: #334155;
+      --border-focus: #38bdf8;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --amber: #f59e0b;
+      --amber-light: rgba(245, 158, 11, 0.15);
+      --emerald: #10b981;
+      --emerald-light: rgba(16, 185, 129, 0.15);
+      --sky: #0284c7;
+      --sky-light: rgba(2, 132, 199, 0.15);
+      --rose: #f43f5e;
+      --rose-light: rgba(244, 63, 94, 0.15);
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font);
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-bottom: 90px;
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 3px;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    /* Top Sticky Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(15, 23, 42, 0.94);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 16px;
+    }
+    .header-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #0f172a;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+    }
+    .brand-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .brand-subtitle {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 9999px;
+      border: 1px solid transparent;
+    }
+    .badge-offline {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #34d399;
+    }
+    .badge-pacing {
+      background: rgba(245, 158, 11, 0.2);
+      border-color: rgba(245, 158, 11, 0.5);
+      color: #fbbf24;
+      animation: pulse-border 2s infinite;
+    }
+    @keyframes pulse-border {
+      0%, 100% { border-color: rgba(245, 158, 11, 0.4); }
+      50% { border-color: rgba(245, 158, 11, 1); }
+    }
+    .btn-header {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .btn-header:hover {
+      background: var(--border);
+    }
+
+    /* Tabs Bar */
+    .tabs-nav {
+      display: flex;
+      gap: 8px;
+      background: #131d2e;
+      padding: 6px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin: 16px 0 20px;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      flex: 1;
+      min-width: 130px;
+      text-align: center;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .tab-btn.active {
+      background: var(--bg-card);
+      color: #38bdf8;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      border: 1px solid var(--border);
+    }
+
+    /* Hero Card for Pacing Item */
+    .hero-card {
+      background: linear-gradient(145deg, #1e293b, #172338);
+      border: 2px solid #f59e0b;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+      position: relative;
+      box-shadow: 0 8px 24px rgba(245, 158, 11, 0.12);
+    }
+    .hero-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hero-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #fbbf24;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .hero-times {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.7);
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      margin: 14px 0;
+    }
+    .time-slot {
+      display: flex;
+      flex-direction: column;
+    }
+    .time-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+    .time-val {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-top: 2px;
+    }
+    .hero-cta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .btn-call {
+      background: #10b981;
+      color: #042f2e;
+      font-weight: 700;
+      padding: 10px 18px;
+      border-radius: 10px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      transition: all 0.2s ease;
+    }
+    .btn-call:hover {
+      background: #34d399;
+      transform: translateY(-1px);
+    }
+    .hero-checklist {
+      margin-top: 14px;
+      border-top: 1px dashed rgba(245, 158, 11, 0.3);
+      padding-top: 14px;
+    }
+    .hero-checklist-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #fbbf24;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .hero-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: #e2e8f0;
+      margin-bottom: 6px;
+    }
+    .hero-item input[type="checkbox"] {
+      accent-color: #f59e0b;
+      width: 17px;
+      height: 17px;
+      cursor: pointer;
+    }
+
+    /* Filter Chips */
+    .filter-section {
+      margin-bottom: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .filter-group:last-child {
+      margin-bottom: 0;
+    }
+    .filter-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      width: 75px;
+      flex-shrink: 0;
+    }
+    .chips-wrap {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .chip {
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 9999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .chip:hover {
+      background: var(--border);
+      color: var(--text-main);
+    }
+    .chip.active {
+      background: #0284c7;
+      border-color: #38bdf8;
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.4);
+    }
+
+    /* Tasks List */
+    .tasks-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .tasks-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .task-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+      position: relative;
+    }
+    .task-card:hover {
+      border-color: #475569;
+    }
+    .task-card.completed {
+      opacity: 0.55;
+      background: #162032;
+    }
+    .task-card.completed .task-title {
+      text-decoration: line-through;
+      color: #64748b;
+    }
+    .task-card-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .task-checkbox {
+      margin-top: 3px;
+      width: 20px;
+      height: 20px;
+      accent-color: #0284c7;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .task-content {
+      flex: 1;
+    }
+    .task-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+    .task-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg-card-sub);
+    }
+    .tag-time {
+      color: #38bdf8;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    .tag-loc {
+      color: #a78bfa;
+      border-color: rgba(167, 139, 250, 0.3);
+    }
+    .task-note-box {
+      background: var(--bg-card-sub);
+      border-left: 3px solid #38bdf8;
+      padding: 10px 12px;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      line-height: 1.45;
+      margin-top: 8px;
+    }
+    .action-code-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #0f172a;
+      border: 1px solid #38bdf8;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: #38bdf8;
+      margin-top: 6px;
+    }
+    .btn-copy {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #f8fafc;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 6px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-copy:hover {
+      background: #38bdf8;
+      color: #0f172a;
+    }
+
+    /* Scratchpad Section */
+    .scratchpad-wrap {
+      margin-top: 30px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+    }
+    .scratchpad-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .scratchpad-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--amber);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .save-indicator {
+      font-size: 0.72rem;
+      color: #34d399;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .scratchpad-textarea {
+      width: 100%;
+      min-height: 120px;
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      font-family: var(--font);
+      font-size: 0.88rem;
+      color: var(--text-main);
+      resize: vertical;
+      line-height: 1.5;
+    }
+    .scratchpad-textarea:focus {
+      outline: none;
+      border-color: var(--amber);
+    }
+
+    /* Tab 2: Ford Explorer Styles */
+    .vehicle-hero {
+      background: linear-gradient(135deg, #1e293b, #111d2e);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .odometer-card {
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+    .odometer-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .odometer-input {
+      background: #0f172a;
+      border: 2px solid #38bdf8;
+      border-radius: 10px;
+      color: #f8fafc;
+      font-size: 1.5rem;
+      font-weight: 800;
+      font-family: monospace;
+      padding: 8px 14px;
+      width: 160px;
+      text-align: right;
+    }
+    .odometer-input:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.3);
+    }
+    .quick-mileage-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .quick-mileage-btn:hover {
+      color: #38bdf8;
+      border-color: #38bdf8;
+    }
+
+    /* Maintenance Triage Grid */
+    .triage-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .triage-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+    }
+    .triage-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+    .triage-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .status-pill {
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .pill-ok {
+      background: var(--emerald-light);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+    .pill-due {
+      background: var(--amber-light);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+    .pill-overdue {
+      background: var(--rose-light);
+      color: #fb7185;
+      border: 1px solid rgba(244, 63, 94, 0.4);
+    }
+    .progress-bar-wrap {
+      width: 100%;
+      height: 6px;
+      background: #0f172a;
+      border-radius: 3px;
+      overflow: hidden;
+      margin: 8px 0;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: #38bdf8;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+    .triage-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    /* Accordion Run-Sheets */
+    .accordion-toggle {
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border);
+      color: #38bdf8;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-top: auto;
+    }
+    .accordion-toggle:hover {
+      background: #1a273e;
+    }
+    .accordion-content {
+      display: none;
+      padding: 12px 6px 4px;
+      font-size: 0.82rem;
+      color: #cbd5e1;
+      border-top: 1px dashed var(--border);
+      margin-top: 8px;
+    }
+    .accordion-content.open {
+      display: block;
+    }
+    .runsheet-step {
+      margin-bottom: 8px;
+      line-height: 1.4;
+      padding-left: 14px;
+      position: relative;
+    }
+    .runsheet-step::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: var(--amber);
+      font-weight: bold;
+    }
+
+    /* Spec Tables */
+    .specs-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 24px;
+    }
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 12px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      text-align: left;
+    }
+    th {
+      background: var(--bg-card-sub);
+      color: var(--text-muted);
+      font-weight: 700;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+    }
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #1e293b;
+      color: #e2e8f0;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .val-highlight {
+      color: #38bdf8;
+      font-weight: 700;
+      font-family: monospace;
+    }
+    .torque-highlight {
+      color: #fbbf24;
+      font-weight: 700;
+      font-family: monospace;
+    }
+
+    /* Fuse Box Lookup */
+    .fuse-search-wrap {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+      margin-bottom: 12px;
+    }
+    .search-input {
+      flex: 1;
+      min-width: 220px;
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: var(--text-main);
+      font-size: 0.85rem;
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: #38bdf8;
+    }
+
+    /* Placeholder Tabs */
+    .placeholder-card {
+      background: var(--bg-card);
+      border: 1px dashed var(--border);
+      border-radius: 16px;
+      padding: 40px 20px;
+      text-align: center;
+      margin: 30px 0;
+    }
+    .placeholder-icon {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+      opacity: 0.7;
+    }
+    .placeholder-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+    .placeholder-sub {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      max-width: 480px;
+      margin: 0 auto 16px;
+      line-height: 1.5;
+    }
+
+    /* Bottom Dock Bar (Mobile friendly) */
+    .bottom-dock {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(15, 23, 42, 0.96);
+      backdrop-filter: blur(14px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 12px;
+      z-index: 35;
+    }
+    .dock-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 8px;
+      transition: color 0.15s;
+    }
+    .dock-btn.active {
+      color: #38bdf8;
+    }
+    .dock-icon {
+      font-size: 1.2rem;
+    }
+
+    /* PIN Lock Screen Overlay */
+    #pin-lock-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #0f172a;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      user-select: none;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    #pin-lock-overlay.hidden-lock {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .pin-box {
+      max-width: 340px;
+      width: 100%;
+      text-align: center;
+    }
+    .pin-icon {
+      width: 56px;
+      height: 56px;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #f59e0b;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      margin: 0 auto 16px;
+      box-shadow: 0 4px 20px rgba(245, 158, 11, 0.2);
+    }
+    .pin-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+      letter-spacing: -0.02em;
+    }
+    .pin-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+    .pin-dots {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .pin-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: transparent;
+      transition: all 0.15s ease;
+    }
+    .pin-dot.filled {
+      background: #38bdf8;
+      border-color: #38bdf8;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+      transform: scale(1.1);
+    }
+    .pin-keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .key-btn {
+      height: 60px;
+      border-radius: 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      font-size: 1.35rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.1s ease;
+      touch-action: manipulation;
+    }
+    .key-btn:active {
+      background: #334155;
+      transform: scale(0.96);
+    }
+    .key-btn-sub {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    .pin-error {
+      color: #fb7185;
+      font-size: 0.8rem;
+      font-weight: 600;
+      min-height: 20px;
+      margin-bottom: 8px;
+    }
+    .shake {
+      animation: shake 0.35s ease;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+
+    /* Modal for PIN Change */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.open {
+      display: flex;
+    }
+    .modal-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      max-width: 400px;
+      width: 100%;
+    }
+    .modal-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .modal-field {
+      margin-bottom: 14px;
+    }
+    .modal-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: block;
+    }
+    .modal-input {
+      width: 100%;
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: var(--text-main);
+      font-size: 0.9rem;
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.82rem;
+    }
+    .btn-primary {
+      background: #0284c7;
+      border: none;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    /* Toast Notification */
+    #toast {
+      position: fixed;
+      bottom: 75px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e293b;
+      border: 1px solid #38bdf8;
+      color: #f8fafc;
+      padding: 10px 18px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-6px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== SPRINT 2: PIN LOCK SCREEN ==================== -->
+  <div id="pin-lock-overlay">
+    <div class="pin-box">
+      <div class="pin-icon">🔒</div>
+      <h1 class="pin-title">Household Ops</h1>
+      <p class="pin-sub">Confidential Family Medical & Shop Operations</p>
+      
+      <div class="pin-error" id="pin-error-msg"></div>
+
+      <div class="pin-dots" id="pin-dots-container">
+        <div class="pin-dot" id="dot-0"></div>
+        <div class="pin-dot" id="dot-1"></div>
+        <div class="pin-dot" id="dot-2"></div>
+        <div class="pin-dot" id="dot-3"></div>
+      </div>
+
+      <div class="pin-keypad">
+        <button class="key-btn" onclick="handleKeyClick('1')">1</button>
+        <button class="key-btn" onclick="handleKeyClick('2')">2</button>
+        <button class="key-btn" onclick="handleKeyClick('3')">3</button>
+        <button class="key-btn" onclick="handleKeyClick('4')">4</button>
+        <button class="key-btn" onclick="handleKeyClick('5')">5</button>
+        <button class="key-btn" onclick="handleKeyClick('6')">6</button>
+        <button class="key-btn" onclick="handleKeyClick('7')">7</button>
+        <button class="key-btn" onclick="handleKeyClick('8')">8</button>
+        <button class="key-btn" onclick="handleKeyClick('9')">9</button>
+        <button class="key-btn key-btn-sub" onclick="handleKeyClear()">CLR</button>
+        <button class="key-btn" onclick="handleKeyClick('0')">0</button>
+        <button class="key-btn key-btn-sub" onclick="handleKeyBackspace()">⌫</button>
+      </div>
+
+      <p style="font-size:0.75rem; color:#64748b; margin-top:8px;">Default passcode: 1234</p>
+    </div>
+  </div>
+
+  <!-- ==================== MAIN APPLICATION ==================== -->
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-icon">⚙️</div>
+        <div>
+          <div class="brand-title">Household Ops & Shop</div>
+          <div class="brand-subtitle">Executive Command Center</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span class="badge badge-offline" id="network-badge">
+          <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#10b981;"></span>
+          <span id="network-text">Offline Ready</span>
+        </span>
+        <button class="btn-header" onclick="openPinModal()" title="Change PIN">🔑 PIN</button>
+        <button class="btn-header" onclick="lockDashboard()" title="Lock Screen">🔒 Lock</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Tab Selectors -->
+    <nav class="tabs-nav" aria-label="Dashboard Tabs">
+      <button class="tab-btn active" onclick="switchTab('checklist')" id="tab-btn-checklist">
+        📋 Today's Checklist
+      </button>
+      <button class="tab-btn" onclick="switchTab('explorer')" id="tab-btn-explorer">
+        🚙 2020 Explorer (2.3L)
+      </button>
+      <button class="tab-btn" onclick="switchTab('infiniti')" id="tab-btn-infiniti">
+        🏎️ Infiniti
+      </button>
+      <button class="tab-btn" onclick="switchTab('trailer')" id="tab-btn-trailer">
+        🚜 Utility Trailer
+      </button>
+    </nav>
+
+    <!-- ============================================================== -->
+    <!-- TAB 1: TODAY'S CHECKLIST                                      -->
+    <!-- ============================================================== -->
+    <section id="tab-checklist" class="tab-view">
+      
+      <!-- HERO CARD: St. Joseph Sleep Study -->
+      <div class="hero-card">
+        <div class="hero-header">
+          <div>
+            <span class="badge badge-pacing" style="margin-bottom:6px;">⚠️ CRITICAL PACING ITEM</span>
+            <h2 class="hero-title">St. Joseph Sleep Study</h2>
+          </div>
+          <a href="tel:8169432820" class="btn-call">
+            📞 Call Pre-Reg: 816-943-2820
+          </a>
+        </div>
+
+        <p style="font-size:0.88rem; color:#cbd5e1; line-height:1.45;">
+          Mandatory hospital sleep laboratory diagnostic protocol. Pacing anchor for Thursday evening arrival through Friday morning release.
+        </p>
+
+        <div class="hero-times">
+          <div class="time-slot">
+            <span class="time-label">Session 1 • Check-In Arrival</span>
+            <span class="time-val" style="color:#fbbf24;">Thu Oct 22 @ 7:30 PM</span>
+          </div>
+          <div class="time-slot">
+            <span class="time-label">Session 2 • Morning Release</span>
+            <span class="time-val" style="color:#34d399;">Fri Oct 23 @ 7:00 AM</span>
+          </div>
+          <div class="time-slot">
+            <span class="time-label">Pre-Registration Desk</span>
+            <span class="time-val">816-943-2820</span>
+          </div>
+        </div>
+
+        <div class="hero-checklist">
+          <div class="hero-checklist-title">Pre-Flight Patient Prep Checklist</div>
+          <label class="hero-item">
+            <input type="checkbox" id="sleep-prep-1" onchange="saveHeroPrepState()">
+            <span>Complete hospital pre-registration call (816-943-2820) prior to arrival</span>
+          </label>
+          <label class="hero-item">
+            <input type="checkbox" id="sleep-prep-2" onchange="saveHeroPrepState()">
+            <span>Pack loose 2-piece sleeping attire (no silk/satin; button-up/t-shirt preferred)</span>
+          </label>
+          <label class="hero-item">
+            <input type="checkbox" id="sleep-prep-3" onchange="saveHeroPrepState()">
+            <span>Clean scalp/hair without gels, oils, or hairspray (for electrode adhesion)</span>
+          </label>
+          <label class="hero-item">
+            <input type="checkbox" id="sleep-prep-4" onchange="saveHeroPrepState()">
+            <span>Bring photo ID, insurance card, CPAP gear/mask (if applicable), & daily medications</span>
+          </label>
+          <label class="hero-item">
+            <input type="checkbox" id="sleep-prep-5" onchange="saveHeroPrepState()">
+            <span>Zero caffeine intake after 12:00 PM Thursday</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- FILTER CHIPS -->
+      <div class="filter-section">
+        <div class="filter-group">
+          <span class="filter-label">Duration:</span>
+          <div class="chips-wrap" id="time-chips">
+            <button class="chip active" onclick="setTimeFilter('all')">All Time</button>
+            <button class="chip" onclick="setTimeFilter('15m')">15m</button>
+            <button class="chip" onclick="setTimeFilter('30-45m')">30-45m</button>
+            <button class="chip" onclick="setTimeFilter('1-2h')">1-2h</button>
+          </div>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">Location:</span>
+          <div class="chips-wrap" id="loc-chips">
+            <button class="chip active" onclick="setLocFilter('all')">All Locations</button>
+            <button class="chip" onclick="setLocFilter('Desk/Phone')">Desk/Phone</button>
+            <button class="chip" onclick="setLocFilter('Garage/Hands-On')">Garage/Hands-On</button>
+            <button class="chip" onclick="setLocFilter('Town Errands')">Town Errands</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TASKS LIST -->
+      <div class="tasks-header">
+        <h3 class="tasks-title">
+          <span>Active Tasks</span>
+          <span class="badge" id="tasks-progress-badge" style="background:#1e293b; color:#38bdf8; border:1px solid #334155;">0 / 3 Done</span>
+        </h3>
+        <button class="btn-header" onclick="openAddTaskModal()">+ Add Custom Task</button>
+      </div>
+
+      <div id="tasks-container">
+        <!-- Rendered dynamically via JS -->
+      </div>
+
+      <!-- NEXT SPRINT SCRATCHPAD -->
+      <div class="scratchpad-wrap">
+        <div class="scratchpad-header">
+          <div class="scratchpad-title">
+            <span>📝</span> Next Sprint Scratchpad
+          </div>
+          <div class="save-indicator" id="scratchpad-saved-badge">
+            <span>✓</span> Auto-saved locally
+          </div>
+        </div>
+        <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:10px;">
+          Jot down upcoming tasks, hardware purchase lists, or future sprint notes. Saves automatically to local browser storage.
+        </p>
+        <textarea 
+          class="scratchpad-textarea" 
+          id="scratchpad-input" 
+          placeholder="e.g. Pick up M14x1.5 spare lug nuts at O'Reilly; schedule Infiniti transmission drain & fill; order Motorcraft Yellow coolant..."
+          oninput="handleScratchpadInput()"></textarea>
+      </div>
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- TAB 2: 2020 FORD EXPLORER (2.3L ECOBOOST)                     -->
+    <!-- ============================================================== -->
+    <section id="tab-explorer" class="tab-view" style="display:none;">
+      
+      <div class="vehicle-hero">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;">
+          <div>
+            <span class="badge" style="background:#0369a1; color:#e0f2fe; margin-bottom:6px;">PRIMARY FLEET WORKHORSE</span>
+            <h2 style="font-size:1.4rem; font-weight:800;">2020 Ford Explorer (2.3L EcoBoost)</h2>
+            <p style="font-size:0.82rem; color:var(--text-muted); margin-top:2px;">
+              Engine: 2.3L Twin-Scroll Turbo I-4 • Transmission: 10-Speed 10R60/10R80 Automatic • Platform: CD6 RWD/AWD
+            </p>
+          </div>
+          <span class="badge" style="background:#1e293b; border:1px solid #334155; color:#94a3b8;">OEM Spec Manual v3</span>
+        </div>
+
+        <!-- Odometer Input Box -->
+        <div class="odometer-card">
+          <div>
+            <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--text-muted);">Current Odometer (Miles)</div>
+            <div style="font-size:0.8rem; color:#cbd5e1; margin-top:2px;">Dynamic intervals update automatically across all maintenance tracks</div>
+          </div>
+          <div class="odometer-input-wrap">
+            <input 
+              type="number" 
+              id="odometer-input" 
+              class="odometer-input" 
+              value="52400" 
+              step="100" 
+              oninput="handleOdometerChange()">
+            <div style="display:flex; flex-direction:column; gap:4px;">
+              <button class="quick-mileage-btn" onclick="addOdometer(500)">+500</button>
+              <button class="quick-mileage-btn" onclick="addOdometer(1000)">+1k</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRIAGE CARDS (INTERVAL TRACKER) -->
+      <h3 style="font-size:1.05rem; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+        <span>🔧</span> Service Triage & Next Intervals
+      </h3>
+
+      <div class="triage-grid" id="triage-cards-container">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- MASTER RUN-SHEETS -->
+      <h3 style="font-size:1.05rem; font-weight:700; margin:24px 0 12px; display:flex; align-items:center; gap:8px;">
+        <span>📋</span> Expandable Execution Run-Sheets
+      </h3>
+
+      <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:28px;">
+        
+        <!-- Run-sheet 1: Engine Oil -->
+        <div class="task-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-weight:700; font-size:0.95rem;">Engine Oil & Filter Replacement</div>
+              <div style="font-size:0.78rem; color:var(--text-muted);">Capacity: 5.2 - 5.7 qts 5W-30 • Filter: Motorcraft FL-910S</div>
+            </div>
+            <span class="tag tag-time">30-45m</span>
+          </div>
+          <button class="accordion-toggle" onclick="toggleAccordion('runsheet-oil')">
+            <span>View Step-by-Step Procedure & Torque</span>
+            <span id="runsheet-oil-arrow">▼</span>
+          </button>
+          <div class="accordion-content" id="runsheet-oil">
+            <div class="runsheet-step">Drive onto ramps or position front jack stands; engage parking brake and chock rear tires.</div>
+            <div class="runsheet-step">Drop lower belly pan undertray: remove four 8mm screws and three plastic push-clips.</div>
+            <div class="runsheet-step">Position 10+ quart drain pan under oil pan drain plug. Remove drain plug with 15mm box wrench. Allow 15 min hot drain.</div>
+            <div class="runsheet-step">Inspect magnetic drain plug for excessive swarf. Clean threads thoroughly. Reinstall with fresh crush gasket and torque to <strong class="torque-highlight">20 lb-ft (27 Nm)</strong>. Do not over-torque aluminum pan threads.</div>
+            <div class="runsheet-step">Loosen Motorcraft FL-910S filter. Catch drain overflow. Clean filter mounting boss on engine block.</div>
+            <div class="runsheet-step">Lightly coat rubber gasket of new FL-910S with clean 5W-30 oil. Spin on until gasket makes contact with face, then hand-tighten an additional 3/4 to 1 full turn. Never use wrench to tighten.</div>
+            <div class="runsheet-step">Pour in 5.2 quarts of Motorcraft SAE 5W-30 Full Synthetic (WSS-M2C961-A1). Check dipstick; top off toward 5.7 qts maximum line as needed.</div>
+            <div class="runsheet-step">Start engine and idle for 2 minutes. Check drain plug and filter perimeter for leaks. Reinstall undertray.</div>
+            <div class="runsheet-step"><strong>IOLM Reset:</strong> Turn ignition ON (engine off). In cluster steering controls: Menu &gt; Settings &gt; Vehicle Maintenance &gt; Oil Life &gt; Hold OK until display resets to 100%.</div>
+          </div>
+        </div>
+
+        <!-- Run-sheet 2: Tire Rotation -->
+        <div class="task-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-weight:700; font-size:0.95rem;">Tire Rotation & Cold Inflation</div>
+              <div style="font-size:0.78rem; color:var(--text-muted);">Pattern: Forward Cross / Modified X • Cold Pressure: 35 PSI</div>
+            </div>
+            <span class="tag tag-time">30m</span>
+          </div>
+          <button class="accordion-toggle" onclick="toggleAccordion('runsheet-tire')">
+            <span>View Step-by-Step Procedure & Torque</span>
+            <span id="runsheet-tire-arrow">▼</span>
+          </button>
+          <div class="accordion-content" id="runsheet-tire">
+            <div class="runsheet-step">Loosen lug nuts 1/2 turn using 21mm socket while tires are on ground.</div>
+            <div class="runsheet-step">Raise Explorer safely onto 4 heavy-duty jack stands positioned under reinforced factory lift notches.</div>
+            <div class="runsheet-step"><strong>AWD / RWD Rotation Pattern:</strong> Front tires move straight back to the rear on the same side. Rear tires cross over to opposite front corners (Rear Left &rarr; Front Right; Rear Right &rarr; Front Left).</div>
+            <div class="runsheet-step">Inspect brake pads through caliper inspection window (minimum friction material 3mm). Wire-brush light surface rust from wheel hub centering ring.</div>
+            <div class="runsheet-step">Mount wheels. Hand-thread all M14x1.5 lug nuts. Snug in star pattern.</div>
+            <div class="runsheet-step">Lower vehicle to ground. Using calibrated torque wrench, tighten in progressive star pattern to <strong class="torque-highlight">100 lb-ft</strong> (baseline ref) / <strong class="torque-highlight">150 lb-ft (204 Nm)</strong> (OEM CD6 M14 factory specification).</div>
+            <div class="runsheet-step">Check cold tire pressure across all four road tires to <strong class="val-highlight">35 PSI</strong>. Check compact spare tire to <strong class="val-highlight">60 PSI</strong>.</div>
+            <div class="runsheet-step"><strong>Mandatory OPSEC Check:</strong> Recheck and retorque all wheel lug nuts within 100 miles of driving.</div>
+          </div>
+        </div>
+
+        <!-- Run-sheet 3: Spark Plugs -->
+        <div class="task-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-weight:700; font-size:0.95rem;">Spark Plug Service (CYFS-12Y-PT)</div>
+              <div style="font-size:0.78rem; color:var(--text-muted);">Motorcraft SP-578 • Gap: 0.028 - 0.031 in • Torque: 133 lb-in</div>
+            </div>
+            <span class="tag tag-time">45-60m</span>
+          </div>
+          <button class="accordion-toggle" onclick="toggleAccordion('runsheet-plugs')">
+            <span>View Step-by-Step Procedure & Torque</span>
+            <span id="runsheet-plugs-arrow">▼</span>
+          </button>
+          <div class="accordion-content" id="runsheet-plugs">
+            <div class="runsheet-step"><strong>Pre-Condition:</strong> Engine must be completely COLD to prevent aluminum cylinder head thread galling or stripping. Disconnect 12V AGM negative battery terminal.</div>
+            <div class="runsheet-step">Remove plastic engine decorative cover by pulling up firmly on rubber mounting grommets.</div>
+            <div class="runsheet-step">Carefully release red locking slide tabs on coil-on-plug (COP) electrical connectors. Disconnect all 4 harness plugs.</div>
+            <div class="runsheet-step">Remove the 8mm retaining bolt from each ignition coil. Twist and pull coils upward. Inspect rubber boots for carbon tracking or oil seepage from valve cover gasket.</div>
+            <div class="runsheet-step">Blow compressed air down each spark plug tube to clear loose grit and sand before plug removal.</div>
+            <div class="runsheet-step">Using 5/8" magnetic spark plug socket and 6" extension, unthread old spark plugs.</div>
+            <div class="runsheet-step">Inspect new Motorcraft SP-578 (CYFS-12Y-PT) plugs. Verify electrode gap with wire feeler gauge to <strong class="val-highlight">0.028 – 0.031 in (0.7 – 0.8 mm)</strong>. Do not force or lever against fine iridium tip.</div>
+            <div class="runsheet-step">Thread plugs in entirely by hand using the socket extension to guarantee zero cross-threading.</div>
+            <div class="runsheet-step">Torque each plug to <strong class="torque-highlight">133 lb-in (11 lb-ft / 15 Nm)</strong> with an inch-pound torque wrench. Never use impact or uncalibrated ratchets.</div>
+            <div class="runsheet-step">Apply a pea-sized dab of dielectric grease inside the tip of each coil boot. Reinstall coils, snug 8mm bolts to <strong class="torque-highlight">71 lb-in (8 Nm)</strong>, reconnect harness clips, and reinstall engine cover.</div>
+          </div>
+        </div>
+
+        <!-- Run-sheet 4: Air Filters -->
+        <div class="task-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-weight:700; font-size:0.95rem;">Engine & Cabin Air Filter Replacement</div>
+              <div style="font-size:0.78rem; color:var(--text-muted);">Engine: FA-1884 • Cabin: FP-89</div>
+            </div>
+            <span class="tag tag-time">15-20m</span>
+          </div>
+          <button class="accordion-toggle" onclick="toggleAccordion('runsheet-filters')">
+            <span>View Step-by-Step Procedure</span>
+            <span id="runsheet-filters-arrow">▼</span>
+          </button>
+          <div class="accordion-content" id="runsheet-filters">
+            <div class="runsheet-step"><strong>Engine Air Filter (FA-1884):</strong> Locate airbox on driver's side front of engine compartment. Release the two metal spring clamps on front edge of housing. Lift airbox lid, withdraw old pleated element. Vacuum leaf debris from bottom of airbox housing. Seat new FA-1884 filter, ensuring perimeter sealing rubber fits into housing groove. Re-engage rear alignment tabs and snap clamps closed.</div>
+            <div class="runsheet-step"><strong>Cabin Air Filter (FP-89):</strong> Open glove box. Empty contents. Unhook the slow-drop string damper on the right outer side. Squeeze both side walls inward to disengage travel stops and let glove box swing down fully.</div>
+            <div class="runsheet-step">Locate cabin filter access door. Squeeze release tabs on both ends of cover and pull cover forward.</div>
+            <div class="runsheet-step">Slide old filter out horizontally. Note direction of airflow arrow (MUST POINT DOWNWARD toward blower impeller). Slide in fresh Motorcraft FP-89 filter. Snap access door securely. Re-engage glove box stops and reconnect dampener arm.</div>
+          </div>
+        </div>
+
+        <!-- Run-sheet 5: Transmission Fluid -->
+        <div class="task-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-weight:700; font-size:0.95rem;">10-Speed Transmission Service (10R60/10R80)</div>
+              <div style="font-size:0.78rem; color:var(--text-muted);">Fluid: Motorcraft MERCON ULV (XT-12-QULV) • Service Fill: ~6.5 qts</div>
+            </div>
+            <span class="tag tag-time">1-2h</span>
+          </div>
+          <button class="accordion-toggle" onclick="toggleAccordion('runsheet-trans')">
+            <span>View Step-by-Step Procedure & Warnings</span>
+            <span id="runsheet-trans-arrow">▼</span>
+          </button>
+          <div class="accordion-content" id="runsheet-trans">
+            <div class="runsheet-step"><strong style="color:#fb7185;">CRITICAL OPERATIONAL MANDATE:</strong> This 10-speed transmission requires <strong class="val-highlight">Motorcraft MERCON ULV</strong>. Under NO circumstances use MERCON V, MERCON LV, or universal multi-vehicle ATF. The low viscosity formula is essential for valve body solenoids; incorrect fluid causes clutch pack failure.</div>
+            <div class="runsheet-step">Level vehicle on 4-post hoist or 4 jack stands with spirit level on transmission pan rail.</div>
+            <div class="runsheet-step">Loosen transmission pan perimeter bolts slowly from rear to front to tilt pan and catch draining fluid in wide catch tub (~6.0 to 7.0 quarts will drain).</div>
+            <div class="runsheet-step">Remove pan and internal filter. Clean round pan magnet of fine clutch dusting. Clean pan mating surface. Install fresh OEM transmission filter and new pan gasket.</div>
+            <div class="runsheet-step">Torque transmission pan bolts evenly in crisscross pattern to <strong class="torque-highlight">106 lb-in (12 Nm)</strong>.</div>
+            <div class="runsheet-step">Refill through transmission case fill port / dipstick cap on right side using hand pump and 6.0 qts fresh MERCON ULV.</div>
+            <div class="runsheet-step"><strong>Temperature Check Procedure:</strong> Connect OBD-II scanner. Start engine and idle through P-R-N-D gear selections holding each for 5 seconds. Warm transmission fluid until TFT reads between <strong class="val-highlight">195°F and 205°F (91°C – 96°C)</strong>. With engine running in Park, check fluid level against mini-dipstick crosshatch. Top off precisely to hot mark.</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- MASTER FLUIDS & TORQUE SPEC TABLES -->
+      <div class="specs-section">
+        <h3 style="font-size:1.05rem; font-weight:700; margin-bottom:4px; display:flex; align-items:center; gap:8px;">
+          <span>📊</span> Master Fluids & Lubricant Capacities
+        </h3>
+        <p style="font-size:0.75rem; color:var(--text-muted);">Factory engineering specifications verified against 2020 Explorer Manual (Third-Printing)</p>
+        
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Component / System</th>
+                <th>Recommended Fluid / Lubricant</th>
+                <th>Capacity (Quarts / Oz)</th>
+                <th>Factory Specification</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Engine Oil & Filter</strong></td>
+                <td>Motorcraft SAE 5W-30 Synthetic Blend (FL-910S)</td>
+                <td><span class="val-highlight">5.7 qts</span> (ref) / 5.2 qts I-4</td>
+                <td>WSS-M2C961-A1 / API SP</td>
+              </tr>
+              <tr>
+                <td><strong>10-Speed Transmission</strong></td>
+                <td>Motorcraft MERCON ULV (XT-12-QULV)</td>
+                <td><span class="val-highlight">6.5 qts</span> (svc) / 12.6 qts dry</td>
+                <td>WSS-M2C949-A (MERCON ULV)</td>
+              </tr>
+              <tr>
+                <td><strong>Engine Coolant (P-OAT)</strong></td>
+                <td>Motorcraft Yellow Prediluted 50/50 (VC-13DL-G)</td>
+                <td><span class="val-highlight">11.5 qts</span> (Tow) / 10.8 qts</td>
+                <td>WSS-M97B57-A2</td>
+              </tr>
+              <tr>
+                <td><strong>Hydraulic Brake System</strong></td>
+                <td>Motorcraft DOT 4 LV High Performance (PM-20)</td>
+                <td><span class="val-highlight">1.0 qt</span> (flush approx)</td>
+                <td>WSS-M6C65-A2</td>
+              </tr>
+              <tr>
+                <td><strong>A/C System Refrigerant</strong></td>
+                <td>R-1234yf Refrigerant (YN-33-A)</td>
+                <td><span class="val-highlight">35.0 oz</span> (0.99 kg)</td>
+                <td>WSS-M2C300-A2</td>
+              </tr>
+              <tr>
+                <td><strong>Fuel Tank</strong></td>
+                <td>Regular Unleaded (87 Octane min / 91+ Towing)</td>
+                <td><span class="val-highlight">17.9 Gallons</span> (67.8 L)</td>
+                <td>Capless Easy Fuel</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- MASTER TORQUE SPECIFICATION TABLE -->
+      <div class="specs-section">
+        <h3 style="font-size:1.05rem; font-weight:700; margin-bottom:4px; display:flex; align-items:center; gap:8px;">
+          <span>🔩</span> Master Fastener Torque Specifications
+        </h3>
+        <p style="font-size:0.75rem; color:var(--text-muted);">Calibrated shop manual torque values</p>
+        
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Fastener / Application</th>
+                <th>Thread / Socket Size</th>
+                <th>Factory Torque Specification</th>
+                <th>Engineering Protocol Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Wheel Lug Nuts</strong></td>
+                <td>M14 x 1.5 (21mm socket)</td>
+                <td><span class="torque-highlight">100 lb-ft</span> (ref) / <span class="torque-highlight">150 lb-ft (204 Nm)</span></td>
+                <td>CD6 platform uses M14 studs. Retorque within 100 miles.</td>
+              </tr>
+              <tr>
+                <td><strong>Engine Oil Drain Plug</strong></td>
+                <td>15mm Hex / Flange</td>
+                <td><span class="torque-highlight">20 lb-ft (27 Nm)</span></td>
+                <td>Aluminum pan. Always verify crush gasket integrity.</td>
+              </tr>
+              <tr>
+                <td><strong>Spark Plugs</strong></td>
+                <td>5/8" Magnetic (SP-578)</td>
+                <td><span class="torque-highlight">133 lb-in (11 lb-ft / 15 Nm)</span></td>
+                <td>Cold engine only. Gap checked to 0.028 – 0.031 in.</td>
+              </tr>
+              <tr>
+                <td><strong>Brake Caliper Anchor Brackets</strong></td>
+                <td>Heavy Caliper Bolts</td>
+                <td><span class="torque-highlight">115 lb-ft (156 Nm)</span></td>
+                <td>Caliper to knuckle mounting bolts. High-stress anchor.</td>
+              </tr>
+              <tr>
+                <td><strong>Brake Caliper Slide Guide Pins</strong></td>
+                <td>Slider Pin Bolts</td>
+                <td><span class="torque-highlight">24 lb-ft (32 Nm)</span></td>
+                <td>Lube guide pins with high-temp silicone brake grease.</td>
+              </tr>
+              <tr>
+                <td><strong>Ignition Coil Retaining Bolts</strong></td>
+                <td>8mm Hex</td>
+                <td><span class="torque-highlight">71 lb-in (8 Nm)</span></td>
+                <td>Thread into composite valve cover inserts. Do not over-tighten.</td>
+              </tr>
+              <tr>
+                <td><strong>Engine Oil Filter (FL-910S)</strong></td>
+                <td>Spin-on cartridge</td>
+                <td><span class="torque-highlight">Hand-tight + 3/4 to 1 turn</span></td>
+                <td>Lightly lube O-ring with fresh engine oil.</td>
+              </tr>
+              <tr>
+                <td><strong>Undertray Fasteners</strong></td>
+                <td>8mm Hex Screws</td>
+                <td><span class="torque-highlight">71 lb-in (8 Nm / snug)</span></td>
+                <td>Speed nuts in radiator support. Hand snug.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- COMMON FUSE BOX LOOKUP TABLE -->
+      <div class="specs-section">
+        <h3 style="font-size:1.05rem; font-weight:700; margin-bottom:4px; display:flex; align-items:center; gap:8px;">
+          <span>⚡</span> Common Fuse Box Lookup
+        </h3>
+        <p style="font-size:0.75rem; color:var(--text-muted);">Quick-reference electrical distribution for rapid troubleshooting</p>
+
+        <div class="fuse-search-wrap">
+          <input 
+            type="text" 
+            id="fuse-search-input" 
+            class="search-input" 
+            placeholder="Search fuse by circuit, name, or number (e.g., fuel, horn, 14)..."
+            oninput="handleFuseSearch()">
+          <div class="chips-wrap" id="fuse-location-filter">
+            <button class="chip active" onclick="setFuseFilter('all')">All Fuses</button>
+            <button class="chip" onclick="setFuseFilter('engine')">Engine Bay</button>
+            <button class="chip" onclick="setFuseFilter('cabin')">Passenger Compartment</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Location</th>
+                <th>Fuse #</th>
+                <th>Rating</th>
+                <th>Circuit Protected / Function</th>
+              </tr>
+            </thead>
+            <tbody id="fuse-table-body">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- TAB 3: INFINITI (PLACEHOLDER)                                 -->
+    <!-- ============================================================== -->
+    <section id="tab-infiniti" class="tab-view" style="display:none;">
+      <div class="placeholder-card">
+        <div class="placeholder-icon">🏎️</div>
+        <h2 class="placeholder-title">Infiniti Fleet Dossier</h2>
+        <span class="badge" style="background:#1e293b; color:#a78bfa; border:1px solid #475569; margin-bottom:14px;">
+          Scheduled for Sprint 3 Roadmap Integration
+        </span>
+        <p class="placeholder-sub">
+          Secondary executive vehicle maintenance profile, diagnostic checklists, service history, and bespoke torque specifications will be synchronized into this view.
+        </p>
+        <div style="display:inline-flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+          <div class="tag" style="background:#1e293b; padding:8px 14px;">Transmission ATF Spec</div>
+          <div class="tag" style="background:#1e293b; padding:8px 14px;">Brake Service Cadence</div>
+          <div class="tag" style="background:#1e293b; padding:8px 14px;">Suspension Bushings</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- TAB 4: UTILITY TRAILER (PLACEHOLDER)                         -->
+    <!-- ============================================================== -->
+    <section id="tab-trailer" class="tab-view" style="display:none;">
+      <div class="placeholder-card">
+        <div class="placeholder-icon">🚜</div>
+        <h2 class="placeholder-title">Utility & Hauling Trailer</h2>
+        <span class="badge" style="background:#1e293b; color:#34d399; border:1px solid #475569; margin-bottom:14px;">
+          Scheduled for Sprint 3 Roadmap Integration
+        </span>
+        <p class="placeholder-sub">
+          Homestead hauling asset tracking: wheel hub bearing repack intervals (annual / 12,000 mi), 5-lug lug nut torques (90 lb-ft), cold tire pressures (50 PSI), and 4-pin/7-pin electrical harness diagnostics.
+        </p>
+        <div style="display:inline-flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+          <div class="tag" style="background:#1e293b; padding:8px 14px;">Bearing Repack Checklist</div>
+          <div class="tag" style="background:#1e293b; padding:8px 14px;">90 lb-ft Lug Torque</div>
+          <div class="tag" style="background:#1e293b; padding:8px 14px;">7-Pin RV Pinout</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== MOBILE BOTTOM DOCK ==================== -->
+  <div class="bottom-dock">
+    <button class="dock-btn active" id="dock-btn-checklist" onclick="switchTab('checklist')">
+      <span class="dock-icon">📋</span>
+      <span>Checklist</span>
+    </button>
+    <button class="dock-btn" id="dock-btn-explorer" onclick="switchTab('explorer')">
+      <span class="dock-icon">🚙</span>
+      <span>Explorer</span>
+    </button>
+    <button class="dock-btn" id="dock-btn-infiniti" onclick="switchTab('infiniti')">
+      <span class="dock-icon">🏎️</span>
+      <span>Infiniti</span>
+    </button>
+    <button class="dock-btn" id="dock-btn-trailer" onclick="switchTab('trailer')">
+      <span class="dock-icon">🚜</span>
+      <span>Trailer</span>
+    </button>
+  </div>
+
+  <!-- ==================== CHANGE PIN MODAL ==================== -->
+  <div class="modal-overlay" id="pin-modal">
+    <div class="modal-card">
+      <h3 class="modal-title">Change Passcode PIN</h3>
+      <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:14px;">
+        Update the 4-digit security code stored in your browser's local storage.
+      </p>
+      <div class="modal-field">
+        <label class="modal-label">Current PIN</label>
+        <input type="password" id="input-current-pin" class="modal-input" maxlength="4" placeholder="1234">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">New 4-Digit PIN</label>
+        <input type="password" id="input-new-pin" class="modal-input" maxlength="4" placeholder="e.g. 5678">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Confirm New PIN</label>
+        <input type="password" id="input-confirm-pin" class="modal-input" maxlength="4" placeholder="e.g. 5678">
+      </div>
+      <div class="pin-error" id="modal-pin-error"></div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closePinModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveNewPin()">Save Passcode</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== ADD TASK MODAL ==================== -->
+  <div class="modal-overlay" id="add-task-modal">
+    <div class="modal-card">
+      <h3 class="modal-title">Add Custom Task</h3>
+      <div class="modal-field">
+        <label class="modal-label">Task Title</label>
+        <input type="text" id="new-task-title" class="modal-input" placeholder="e.g., Replace garage floodlight bulb">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Estimated Time</label>
+        <select id="new-task-time" class="modal-input">
+          <option value="15m">15m</option>
+          <option value="30-45m" selected>30-45m</option>
+          <option value="1-2h">1-2h</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Location / Posture</label>
+        <select id="new-task-loc" class="modal-input">
+          <option value="Desk/Phone" selected>Desk/Phone</option>
+          <option value="Garage/Hands-On">Garage/Hands-On</option>
+          <option value="Town Errands">Town Errands</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Action Code or Reference (Optional)</label>
+        <input type="text" id="new-task-code" class="modal-input" placeholder="e.g., Code, Account #, or Phone">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Action Notes</label>
+        <textarea id="new-task-note" class="modal-input" rows="3" placeholder="Execution instructions or context..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeAddTaskModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveCustomTask()">Create Task</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast">Code copied to clipboard!</div>
+
+  <!-- ==================== JAVASCRIPT APPLICATION LOGIC ==================== -->
+  <script>
+    /* ==============================================================
+       1. PIN PROTECTION & OPSEC ENGINE (SPRINT 2)
+       ============================================================== */
+    const PIN_STORAGE_KEY = 'bb_ops_pin';
+    const AUTH_SESSION_KEY = 'bb_ops_auth_token';
+    const DEFAULT_PIN = '1234';
+
+    let enteredPin = '';
+
+    function getStoredPin() {
+      return localStorage.getItem(PIN_STORAGE_KEY) || DEFAULT_PIN;
+    }
+
+    function checkInitialAuth() {
+      const isAuth = sessionStorage.getItem(AUTH_SESSION_KEY);
+      const overlay = document.getElementById('pin-lock-overlay');
+      if (isAuth === 'true') {
+        overlay.classList.add('hidden-lock');
+      } else {
+        overlay.classList.remove('hidden-lock');
+      }
+    }
+
+    function updatePinDots() {
+      for (let i = 0; i < 4; i++) {
+        const dot = document.getElementById(`dot-${i}`);
+        if (i < enteredPin.length) {
+          dot.classList.add('filled');
+        } else {
+          dot.classList.remove('filled');
+        }
+      }
+    }
+
+    function handleKeyClick(num) {
+      if (enteredPin.length < 4) {
+        enteredPin += num;
+        updatePinDots();
+        if (enteredPin.length === 4) {
+          verifyPin();
+        }
+      }
+    }
+
+    function handleKeyClear() {
+      enteredPin = '';
+      updatePinDots();
+      document.getElementById('pin-error-msg').textContent = '';
+    }
+
+    function handleKeyBackspace() {
+      if (enteredPin.length > 0) {
+        enteredPin = enteredPin.slice(0, -1);
+        updatePinDots();
+        document.getElementById('pin-error-msg').textContent = '';
+      }
+    }
+
+    function verifyPin() {
+      const correctPin = getStoredPin();
+      const errorMsg = document.getElementById('pin-error-msg');
+      const dotsContainer = document.getElementById('pin-dots-container');
+
+      if (enteredPin === correctPin) {
+        sessionStorage.setItem(AUTH_SESSION_KEY, 'true');
+        document.getElementById('pin-lock-overlay').classList.add('hidden-lock');
+        enteredPin = '';
+        updatePinDots();
+        errorMsg.textContent = '';
+        showToast('Dashboard Unlocked');
+      } else {
+        errorMsg.textContent = 'Incorrect PIN. Try again.';
+        dotsContainer.classList.add('shake');
+        setTimeout(() => {
+          dotsContainer.classList.remove('shake');
+          enteredPin = '';
+          updatePinDots();
+        }, 500);
+      }
+    }
+
+    function lockDashboard() {
+      sessionStorage.removeItem(AUTH_SESSION_KEY);
+      enteredPin = '';
+      updatePinDots();
+      document.getElementById('pin-error-msg').textContent = '';
+      document.getElementById('pin-lock-overlay').classList.remove('hidden-lock');
+    }
+
+    // Physical keyboard listener for PIN
+    window.addEventListener('keydown', (e) => {
+      const overlay = document.getElementById('pin-lock-overlay');
+      if (!overlay.classList.contains('hidden-lock')) {
+        if (e.key >= '0' && e.key <= '9') {
+          handleKeyClick(e.key);
+        } else if (e.key === 'Backspace') {
+          handleKeyBackspace();
+        } else if (e.key === 'Escape') {
+          handleKeyClear();
+        }
+      }
+    });
+
+    // PIN Change Modal
+    function openPinModal() {
+      document.getElementById('modal-pin-error').textContent = '';
+      document.getElementById('input-current-pin').value = '';
+      document.getElementById('input-new-pin').value = '';
+      document.getElementById('input-confirm-pin').value = '';
+      document.getElementById('pin-modal').classList.add('open');
+    }
+    function closePinModal() {
+      document.getElementById('pin-modal').classList.remove('open');
+    }
+    function saveNewPin() {
+      const current = document.getElementById('input-current-pin').value;
+      const newP = document.getElementById('input-new-pin').value;
+      const confirmP = document.getElementById('input-confirm-pin').value;
+      const err = document.getElementById('modal-pin-error');
+
+      if (current !== getStoredPin()) {
+        err.textContent = 'Current PIN is incorrect.';
+        return;
+      }
+      if (!/^\d{4}$/.test(newP)) {
+        err.textContent = 'New PIN must be exactly 4 digits.';
+        return;
+      }
+      if (newP !== confirmP) {
+        err.textContent = 'New PINs do not match.';
+        return;
+      }
+
+      localStorage.setItem(PIN_STORAGE_KEY, newP);
+      closePinModal();
+      showToast('PIN successfully changed!');
+    }
+
+
+    /* ==============================================================
+       2. TAB NAVIGATION SYSTEM
+       ============================================================== */
+    function switchTab(tabId) {
+      const tabs = ['checklist', 'explorer', 'infiniti', 'trailer'];
+      tabs.forEach(t => {
+        const view = document.getElementById(`tab-${t}`);
+        const navBtn = document.getElementById(`tab-btn-${t}`);
+        const dockBtn = document.getElementById(`dock-btn-${t}`);
+        if (t === tabId) {
+          view.style.display = 'block';
+          navBtn?.classList.add('active');
+          dockBtn?.classList.add('active');
+        } else {
+          view.style.display = 'none';
+          navBtn?.classList.remove('active');
+          dockBtn?.classList.remove('active');
+        }
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+
+    /* ==============================================================
+       3. TOAST & CLIPBOARD HELPER
+       ============================================================== */
+    let toastTimeout;
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2400);
+    }
+
+    function copyToClipboard(text, label = 'Code') {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast(`${label} copied to clipboard!`);
+        }).catch(() => fallbackCopy(text, label));
+      } else {
+        fallbackCopy(text, label);
+      }
+    }
+
+    function fallbackCopy(text, label) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast(`${label} copied!`);
+    }
+
+
+    /* ==============================================================
+       4. HERO CARD PREPARATION CHECKLIST
+       ============================================================== */
+    const HERO_PREP_KEY = 'bb_ops_hero_prep_state';
+    function loadHeroPrepState() {
+      const saved = JSON.parse(localStorage.getItem(HERO_PREP_KEY) || '{}');
+      for (let i = 1; i <= 5; i++) {
+        const cb = document.getElementById(`sleep-prep-${i}`);
+        if (cb && saved[`sleep-prep-${i}`]) {
+          cb.checked = true;
+        }
+      }
+    }
+    function saveHeroPrepState() {
+      const state = {};
+      for (let i = 1; i <= 5; i++) {
+        const cb = document.getElementById(`sleep-prep-${i}`);
+        if (cb) state[`sleep-prep-${i}`] = cb.checked;
+      }
+      localStorage.setItem(HERO_PREP_KEY, JSON.stringify(state));
+    }
+
+
+    /* ==============================================================
+       5. TASK MANAGEMENT & FILTERING ENGINE
+       ============================================================== */
+    const TASKS_STORAGE_KEY = 'bb_ops_tasks_list';
+    
+    // Baseline required active tasks from prompt
+    const DEFAULT_TASKS = [
+      {
+        id: 'task-lincoln',
+        title: 'Lincoln psychiatry bill',
+        time: '15m',
+        loc: 'Desk/Phone',
+        code: 'UePj-jdYn-CeAn-qPFJ',
+        note: 'Check current balance on Lincoln statement. Reconcile copay against insurance EOB. Enter authorization billing code UePj-jdYn-CeAn-qPFJ in portal or provide to billing desk.',
+        completed: false
+      },
+      {
+        id: 'task-carl',
+        title: 'Carl HVAC $100 cash call',
+        time: '30-45m',
+        loc: 'Town Errands',
+        code: '$100 Cash Required',
+        note: 'Withdraw $100 cash from local ATM/bank envelope before arrival. Coordinate service entry window. Review heating/furnace diagnostic check and filter sizing on site.',
+        completed: false
+      },
+      {
+        id: 'task-kcurology',
+        title: 'KC Urology referral follow-up',
+        time: '15m',
+        loc: 'Desk/Phone',
+        code: 'Referral Order',
+        note: 'Contact KC Urology clinical coordinator. Verify receipt of faxed clinical referral order and insurance pre-authorization. Lock in scheduled date/time for intake appointment.',
+        completed: false
+      }
+    ];
+
+    let currentTasks = [];
+    let activeTimeFilter = 'all';
+    let activeLocFilter = 'all';
+
+    function initTasks() {
+      const saved = localStorage.getItem(TASKS_STORAGE_KEY);
+      if (saved) {
+        try {
+          currentTasks = JSON.parse(saved);
+        } catch (e) {
+          currentTasks = [...DEFAULT_TASKS];
+        }
+      } else {
+        currentTasks = [...DEFAULT_TASKS];
+      }
+      renderTasks();
+    }
+
+    function saveTasksToStorage() {
+      localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(currentTasks));
+      renderTasks();
+    }
+
+    function toggleTaskComplete(taskId) {
+      const t = currentTasks.find(item => item.id === taskId);
+      if (t) {
+        t.completed = !t.completed;
+        saveTasksToStorage();
+      }
+    }
+
+    function setTimeFilter(timeVal) {
+      activeTimeFilter = timeVal;
+      document.querySelectorAll('#time-chips .chip').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${timeVal}'`));
+      });
+      renderTasks();
+    }
+
+    function setLocFilter(locVal) {
+      activeLocFilter = locVal;
+      document.querySelectorAll('#loc-chips .chip').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${locVal}'`));
+      });
+      renderTasks();
+    }
+
+    function renderTasks() {
+      const container = document.getElementById('tasks-container');
+      container.innerHTML = '';
+
+      const filtered = currentTasks.filter(task => {
+        const matchTime = (activeTimeFilter === 'all') || (task.time === activeTimeFilter);
+        const matchLoc = (activeLocFilter === 'all') || (task.loc === activeLocFilter);
+        return matchTime && matchLoc;
+      });
+
+      // Update progress badge
+      const doneCount = currentTasks.filter(t => t.completed).length;
+      document.getElementById('tasks-progress-badge').textContent = `${doneCount} / ${currentTasks.length} Done`;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding:32px 16px; background:var(--bg-card); border-radius:14px; border:1px dashed var(--border); color:var(--text-muted);">
+            No tasks match the active filters (${activeTimeFilter} • ${activeLocFilter}).
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(task => {
+        const card = document.createElement('div');
+        card.className = `task-card ${task.completed ? 'completed' : ''}`;
+        
+        let codeHtml = '';
+        if (task.code) {
+          codeHtml = `
+            <div class="action-code-badge">
+              <span>Code:</span> <strong>${task.code}</strong>
+              <button class="btn-copy" onclick="copyToClipboard('${task.code}', 'Code')">Copy</button>
+            </div>
+          `;
+        }
+
+        card.innerHTML = `
+          <div class="task-card-top">
+            <input 
+              type="checkbox" 
+              class="task-checkbox" 
+              ${task.completed ? 'checked' : ''} 
+              onchange="toggleTaskComplete('${task.id}')">
+            <div class="task-content">
+              <div class="task-title">${task.title}</div>
+              <div class="task-meta">
+                <span class="tag tag-time">⏱️ ${task.time}</span>
+                <span class="tag tag-loc">📍 ${task.loc}</span>
+              </div>
+              <div class="task-note-box">
+                ${task.note}
+                ${codeHtml}
+              </div>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Custom Task Modal
+    function openAddTaskModal() {
+      document.getElementById('new-task-title').value = '';
+      document.getElementById('new-task-code').value = '';
+      document.getElementById('new-task-note').value = '';
+      document.getElementById('add-task-modal').classList.add('open');
+    }
+    function closeAddTaskModal() {
+      document.getElementById('add-task-modal').classList.remove('open');
+    }
+    function saveCustomTask() {
+      const title = document.getElementById('new-task-title').value.trim();
+      const time = document.getElementById('new-task-time').value;
+      const loc = document.getElementById('new-task-loc').value;
+      const code = document.getElementById('new-task-code').value.trim();
+      const note = document.getElementById('new-task-note').value.trim();
+
+      if (!title) {
+        alert('Please enter a task title.');
+        return;
+      }
+
+      const newTask = {
+        id: 'task-' + Date.now(),
+        title,
+        time,
+        loc,
+        code,
+        note: note || 'Standard operational task.',
+        completed: false
+      };
+
+      currentTasks.push(newTask);
+      saveTasksToStorage();
+      closeAddTaskModal();
+      showToast('Custom task added!');
+    }
+
+
+    /* ==============================================================
+       6. NEXT SPRINT SCRATCHPAD (DEBOUNCED AUTO-SAVE)
+       ============================================================== */
+    const SCRATCHPAD_KEY = 'bb_ops_scratchpad_content';
+    let scratchpadTimer;
+
+    function initScratchpad() {
+      const saved = localStorage.getItem(SCRATCHPAD_KEY);
+      if (saved) {
+        document.getElementById('scratchpad-input').value = saved;
+      }
+    }
+
+    function handleScratchpadInput() {
+      const indicator = document.getElementById('scratchpad-saved-badge');
+      indicator.style.opacity = '0.4';
+      indicator.innerHTML = '<span>⏳</span> Saving...';
+
+      clearTimeout(scratchpadTimer);
+      scratchpadTimer = setTimeout(() => {
+        const text = document.getElementById('scratchpad-input').value;
+        localStorage.setItem(SCRATCHPAD_KEY, text);
+        indicator.style.opacity = '1';
+        indicator.innerHTML = '<span>✓</span> Auto-saved locally';
+      }, 400);
+    }
+
+
+    /* ==============================================================
+       7. 2020 FORD EXPLORER (2.3L) ENGINE & INTERVAL CALCULATOR
+       ============================================================== */
+    const ODOMETER_KEY = 'bb_ops_explorer_odometer';
+    
+    // Interval schedules (Miles)
+    const MAINTENANCE_SCHEDULES = [
+      {
+        id: 'oil',
+        name: 'Engine Oil & Filter (5W-30 / FL-910S)',
+        interval: 7500,
+        warningThreshold: 1000,
+        desc: 'Motorcraft 5W-30 Full Synthetic, 5.2 - 5.7 qts. IOLM reset.'
+      },
+      {
+        id: 'tires',
+        name: 'Tire Rotation & Pressure Check',
+        interval: 7500,
+        warningThreshold: 1000,
+        desc: 'Forward cross pattern. Cold PSI: 35. Torque: 100 / 150 lb-ft.'
+      },
+      {
+        id: 'cabin_air',
+        name: 'Cabin Air Filter (FP-89)',
+        interval: 20000,
+        warningThreshold: 2000,
+        desc: 'Glovebox damper drop. Airflow arrow points down.'
+      },
+      {
+        id: 'engine_air',
+        name: 'Engine Air Filter (FA-1884)',
+        interval: 30000,
+        warningThreshold: 3000,
+        desc: 'Air cleaner box clips. Inspect pleats for dust/grit.'
+      },
+      {
+        id: 'brake_fluid',
+        name: 'Brake Fluid Flush (DOT 4 LV)',
+        interval: 30000,
+        warningThreshold: 3000,
+        desc: '3-Year mandate. WSS-M6C65-A2 High Performance DOT 4 LV.'
+      },
+      {
+        id: 'spark_plugs',
+        name: 'Spark Plugs (Motorcraft SP-578)',
+        interval: 60000,
+        warningThreshold: 5000,
+        desc: 'Gap 0.028-0.031 in. Torque: 133 lb-in (11 lb-ft).'
+      },
+      {
+        id: 'transmission',
+        name: '10-Speed ATF Pan Service (MERCON ULV)',
+        interval: 60000,
+        warningThreshold: 5000,
+        desc: 'Motorcraft MERCON ULV only (~6.5 qts). Temp check 195-205°F.'
+      },
+      {
+        id: 'coolant',
+        name: 'Coolant Flush (Motorcraft Yellow)',
+        interval: 100000,
+        warningThreshold: 8000,
+        desc: 'Yellow P-OAT 50/50 prediluted. 11.5 qt (tow) capacity.'
+      }
+    ];
+
+    function initOdometer() {
+      const saved = localStorage.getItem(ODOMETER_KEY) || '52400';
+      document.getElementById('odometer-input').value = saved;
+      updateMaintenanceTriage(parseInt(saved, 10));
+    }
+
+    function handleOdometerChange() {
+      const val = parseInt(document.getElementById('odometer-input').value, 10) || 0;
+      localStorage.setItem(ODOMETER_KEY, val);
+      updateMaintenanceTriage(val);
+    }
+
+    function addOdometer(miles) {
+      const input = document.getElementById('odometer-input');
+      const current = parseInt(input.value, 10) || 0;
+      const updated = current + miles;
+      input.value = updated;
+      localStorage.setItem(ODOMETER_KEY, updated);
+      updateMaintenanceTriage(updated);
+      showToast(`Odometer updated to ${updated.toLocaleString()} mi`);
+    }
+
+    function updateMaintenanceTriage(currentOdo) {
+      const container = document.getElementById('triage-cards-container');
+      container.innerHTML = '';
+
+      MAINTENANCE_SCHEDULES.forEach(item => {
+        // Calculate cycle
+        const cycleCount = Math.floor(currentOdo / item.interval);
+        const nextDue = (cycleCount + 1) * item.interval;
+        const milesRemaining = nextDue - currentOdo;
+        const milesIntoCycle = currentOdo % item.interval;
+        const percentElapsed = Math.min(100, Math.round((milesIntoCycle / item.interval) * 100));
+
+        let pillClass = 'pill-ok';
+        let pillText = 'OK';
+        let barColor = '#38bdf8';
+
+        if (milesRemaining <= 0) {
+          pillClass = 'pill-overdue';
+          pillText = `OVERDUE (${Math.abs(milesRemaining).toLocaleString()} MI)`;
+          barColor = '#f43f5e';
+        } else if (milesRemaining <= item.warningThreshold) {
+          pillClass = 'pill-due';
+          pillText = `DUE SOON (${milesRemaining.toLocaleString()} MI)`;
+          barColor = '#f59e0b';
+        } else {
+          pillText = `${milesRemaining.toLocaleString()} MI REMAINING`;
+        }
+
+        const card = document.createElement('div');
+        card.className = 'triage-card';
+        card.innerHTML = `
+          <div class="triage-header">
+            <span class="triage-name">${item.name}</span>
+            <span class="status-pill ${pillClass}">${pillText}</span>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" style="width:${percentElapsed}%; background:${barColor};"></div>
+          </div>
+          <div class="triage-meta">
+            <span>Next Target: <strong>${nextDue.toLocaleString()} mi</strong></span>
+            <span>Cycle: every ${item.interval.toLocaleString()} mi</span>
+          </div>
+          <div style="font-size:0.75rem; color:#94a3b8; margin-top:2px;">
+            ${item.desc}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function toggleAccordion(id) {
+      const content = document.getElementById(id);
+      const arrow = document.getElementById(`${id}-arrow`);
+      if (content.classList.contains('open')) {
+        content.classList.remove('open');
+        if (arrow) arrow.textContent = '▼';
+      } else {
+        content.classList.add('open');
+        if (arrow) arrow.textContent = '▲';
+      }
+    }
+
+
+    /* ==============================================================
+       8. COMMON FUSE BOX DATABASE & LOOKUP
+       ============================================================== */
+    const FUSE_CATALOG = [
+      { loc: 'Engine Bay', num: '2', amp: '20A', desc: 'Power outlet main console bin / 12V Aux power' },
+      { loc: 'Engine Bay', num: '3', amp: '40A', desc: 'Body control module - battery power in feed 2' },
+      { loc: 'Engine Bay', num: '4', amp: '30A', desc: 'Fuel pump relay power feed' },
+      { loc: 'Engine Bay', num: '5', amp: '5A',  desc: 'Powertrain control module (PCM) keep alive power' },
+      { loc: 'Engine Bay', num: '6', amp: '20A', desc: 'Powertrain control module (PCM) main power' },
+      { loc: 'Engine Bay', num: '7', amp: '20A', desc: 'Canister vent solenoid, oxygen sensors, purge valve' },
+      { loc: 'Engine Bay', num: '8', amp: '20A', desc: 'Cooling fan relay coil, active grille shutters' },
+      { loc: 'Engine Bay', num: '9', amp: '20A', desc: 'Ignition coils' },
+      { loc: 'Engine Bay', num: '13', amp: '40A', desc: 'Front blower motor HVAC relay' },
+      { loc: 'Engine Bay', num: '14', amp: '15A', desc: 'Transmission oil pump, A/C compressor variable clutch' },
+      { loc: 'Engine Bay', num: '16', amp: '15A', desc: 'Electric horn relay' },
+      { loc: 'Engine Bay', num: '23', amp: '15A', desc: 'Starter motor solenoid / relay' },
+      { loc: 'Engine Bay', num: '28', amp: '30A', desc: 'Wiper motor washer pump relay' },
+      { loc: 'Engine Bay', num: '45', amp: '30A', desc: 'Electric trailer brake controller (Tow pkg)' },
+      { loc: 'Passenger Compartment', num: '2', amp: '10A', desc: 'Driver door switch illumination, push button start' },
+      { loc: 'Passenger Compartment', num: '10', amp: '20A', desc: 'Heated steering wheel module' },
+      { loc: 'Passenger Compartment', num: '15', amp: '15A', desc: 'OBD-II Data link connector (DLC) / Diagnostic gateway' },
+      { loc: 'Passenger Compartment', num: '20', amp: '7.5A', desc: 'Restraints control module (Airbag indicator)' },
+      { loc: 'Passenger Compartment', num: '24', amp: '30A', desc: 'Driver power seat motor' },
+      { loc: 'Passenger Compartment', num: '32', amp: '10A', desc: 'Instrument cluster display screen' },
+      { loc: 'Passenger Compartment', num: '36', amp: '15A', desc: 'Audio unit / SYNC 3 touchscreen display' },
+      { loc: 'Passenger Compartment', num: '41', amp: '20A', desc: 'Rear passenger 12V auxiliary power point' }
+    ];
+
+    let activeFuseFilter = 'all';
+
+    function setFuseFilter(loc) {
+      activeFuseFilter = loc;
+      document.querySelectorAll('#fuse-location-filter .chip').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${loc}'`));
+      });
+      renderFuses();
+    }
+
+    function handleFuseSearch() {
+      renderFuses();
+    }
+
+    function renderFuses() {
+      const q = (document.getElementById('fuse-search-input').value || '').toLowerCase().trim();
+      const tbody = document.getElementById('fuse-table-body');
+      tbody.innerHTML = '';
+
+      const filtered = FUSE_CATALOG.filter(f => {
+        const matchLoc = (activeFuseFilter === 'all') || 
+                         (activeFuseFilter === 'engine' && f.loc.includes('Engine')) ||
+                         (activeFuseFilter === 'cabin' && f.loc.includes('Passenger'));
+        const matchText = !q || f.num.toLowerCase().includes(q) || 
+                          f.amp.toLowerCase().includes(q) || 
+                          f.desc.toLowerCase().includes(q) ||
+                          f.loc.toLowerCase().includes(q);
+        return matchLoc && matchText;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:20px;">No matching fuses found.</td></tr>`;
+        return;
+      }
+
+      filtered.forEach(f => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><span class="tag" style="background:#1e293b;">${f.loc}</span></td>
+          <td><strong style="color:#38bdf8; font-family:monospace;">#${f.num}</strong></td>
+          <td><span class="badge" style="background:rgba(245,158,11,0.15); color:#fbbf24; border:1px solid rgba(245,158,11,0.3); font-family:monospace;">${f.amp}</span></td>
+          <td>${f.desc}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+
+    /* ==============================================================
+       9. SERVICE WORKER REGISTRATION & NETWORK MONITOR (SPRINT 2)
+       ============================================================== */
+    function updateNetworkStatus() {
+      const badge = document.getElementById('network-badge');
+      const text = document.getElementById('network-text');
+      if (navigator.onLine) {
+        badge.className = 'badge badge-offline';
+        badge.querySelector('span').style.background = '#10b981';
+        text.textContent = 'Offline Ready';
+      } else {
+        badge.className = 'badge';
+        badge.style.background = 'rgba(244, 63, 94, 0.2)';
+        badge.style.borderColor = 'rgba(244, 63, 94, 0.5)';
+        badge.style.color = '#fb7185';
+        badge.querySelector('span').style.background = '#f43f5e';
+        text.textContent = 'Airplane / Offline Active';
+      }
+    }
+
+    window.addEventListener('online', updateNetworkStatus);
+    window.addEventListener('offline', updateNetworkStatus);
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then((reg) => {
+            console.log('[PWA] Service Worker registered successfully with scope:', reg.scope);
+          })
+          .catch((err) => {
+            console.warn('[PWA] Service Worker registration failed (normal on file:// scheme):', err);
+          });
+      });
+    }
+
+
+    /* ==============================================================
+       10. APPLICATION BOOTSTRAPPER
+       ============================================================== */
+    document.addEventListener('DOMContentLoaded', () => {
+      checkInitialAuth();
+      loadHeroPrepState();
+      initTasks();
+      initScratchpad();
+      initOdometer();
+      renderFuses();
+      updateNetworkStatus();
+    });
+  </script>
+</body>
+</html>

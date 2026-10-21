@@ -23,6 +23,8 @@ if not exist "%~dp0public\arcade" mkdir "%~dp0public\arcade"
 xcopy /Y /Q /E "G:\My Drive\449-arcade\*.*" "%~dp0arcade\"
 xcopy /Y /Q /E "G:\My Drive\449-arcade\*.*" "%~dp0public\arcade\"
 copy /Y "%~dp0arcade\breaker_vault.html" "%~dp0public\breaker_vault.html" >nul 2>&1
+if not exist "%~dp0public\ops" mkdir "%~dp0public\ops"
+xcopy /Y /Q /E "%~dp0ops\*.*" "%~dp0public\ops\" >nul 2>&1
 
 echo.
 echo [3/3] Publishing to live web on Vercel...
@@ -34,5 +36,6 @@ echo [SUCCESS] Live sites deployed!
 echo Main Gazette:  https://pleasant-ridge-gazette.vercel.app
 echo 449 Arcade:    https://pleasant-ridge-gazette.vercel.app/arcade
 echo Breaker Vault: https://pleasant-ridge-gazette.vercel.app/breaker_vault
+echo Ops Dashboard: https://pleasant-ridge-gazette.vercel.app/ops
 echo ========================================================
 ping 127.0.0.1 -n 4 >nul
