@@ -1,0 +1,618 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Rainbow Unicorn Rescue</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: linear-gradient(135deg, #1a0033 0%, #0d001a 100%);
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: flex-start; height: 100dvh; max-height: 100dvh; padding-top: max(8px, env(safe-area-inset-top));
+    font-family: 'Segoe UI', sans-serif; overflow: hidden;
+    touch-action: none; user-select: none;
+  }
+  #header {
+    width: 100%; display: flex; justify-content: space-between;
+    align-items: center; padding: 8px 16px;
+    background: rgba(255,255,255,0.05); backdrop-filter: blur(4px);
+  }
+  #score-display {
+    color: #fff; font-size: 18px; font-weight: bold;
+    text-shadow: 0 0 10px #ff88ff;
+  }
+  #high-score-display {
+    color: #ffd700; font-size: 14px;
+    text-shadow: 0 0 8px #ffd700;
+  }
+  #lives-display {
+    color: #ff6666; font-size: 18px;
+  }
+  #canvas-wrapper {
+    position: relative; flex: 1;
+    display: flex; align-items: center; justify-content: center;
+    width: 100%;
+  }
+  canvas {
+    display: block;
+    image-rendering: pixelated;
+    border: 2px solid rgba(255,100,255,0.3);
+    box-shadow: 0 0 40px rgba(255,100,255,0.2);
+    max-width: 100%; max-height: 100%;
+  }
+  #controls {
+    width: 100%; max-width: 480px;
+    display: flex; justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    padding-bottom: max(32px, calc(env(safe-area-inset-bottom) + 16px));
+    margin-bottom: 10px;
+    gap: 12px;
+  }
+  .btn-group { display: flex; gap: 10px; }
+  .ctrl-btn {
+    width: 70px; height: 70px; border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.4);
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(6px);
+    color: #fff; font-size: 28px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: background 0.1s, transform 0.1s;
+    -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  }
+  .ctrl-btn:active, .ctrl-btn.pressed {
+    background: rgba(255,100,255,0.4);
+    transform: scale(0.92);
+    border-color: #ff88ff;
+  }
+  #btn-jump { background: rgba(100,200,255,0.15); font-size: 32px; }
+  #btn-shield { background: rgba(255,200,50,0.15); font-size: 26px; }
+  #overlay {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(10,0,20,0.88);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    color: #fff; text-align: center; padding: 20px;
+    z-index: 10;
+  }
+  #overlay h1 {
+    font-size: clamp(28px, 6vw, 48px);
+    background: linear-gradient(90deg, #ff88ff, #88ffff, #ffff88, #ff88ff);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; margin-bottom: 12px;
+    text-shadow: none; animation: shimmer 3s linear infinite;
+    background-size: 200%;
+  }
+  @keyframes shimmer {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+  #overlay p { color: #ccaaff; margin-bottom: 8px; font-size: 15px; }
+  #overlay .hs { color: #ffd700; font-size: 18px; margin: 8px 0 16px; }
+  #start-btn {
+    padding: 14px 40px; font-size: 20px; font-weight: bold;
+    border: none; border-radius: 30px; cursor: pointer;
+    background: linear-gradient(90deg, #cc44ff, #4488ff);
+    color: #fff; box-shadow: 0 6px 20px rgba(150,80,255,0.5);
+    transition: transform 0.15s, box-shadow 0.15s;
+    margin-top: 8px;
+  }
+  #start-btn:hover { transform: scale(1.06); box-shadow: 0 8px 28px rgba(150,80,255,0.7); }
+  .star { position: absolute; border-radius: 50%; background: #fff; opacity: 0; animation: twinkle 3s infinite; }
+  @keyframes twinkle {
+    0%,100% { opacity: 0; transform: scale(0.5); }
+    50% { opacity: 1; transform: scale(1); }
+  }
+
+  .back-arcade-link {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.35);
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 11.5px;
+    font-weight: 800;
+    padding: 5px 12px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.15s ease;
+    z-index: 100;
+  }
+  .back-arcade-link:hover {
+    background: rgba(255,255,255,0.3);
+    transform: scale(1.05);
+  }
+  .overlay-back-btn {
+    margin-top: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: #ccaaff;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 18px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    transition: all 0.15s ease;
+  }
+  .overlay-back-btn:hover {
+    background: rgba(255,255,255,0.2);
+    color: #ffffff;
+    transform: scale(1.04);
+  }
+
+</style>
+  <script src="telemetry.js"></script>
+</head>
+<body>
+
+<div id="header">
+  <a href="/arcade/" class="back-arcade-link">&larr; Arcade</a>
+  <div id="score-display">Score: <span id="score">0</span></div>
+  <div id="high-score-display">Best: <span id="high-score">0</span></div>
+  <div id="lives-display" id="lives">&#x2665; <span id="lives-count">3</span></div>
+</div>
+
+<div id="canvas-wrapper">
+  <canvas id="gameCanvas" width="480" height="320"></canvas>
+  <div id="overlay">
+    <h1>🦄 Rainbow Unicorn Rescue 🦄</h1>
+    <p>Save the star-foals from the Shadow Wolves!</p>
+    <p>Jump over obstacles &amp; collect rainbow stars.</p>
+    <div class="hs">🏆 Best Score: <span id="hs-display">0</span></div>
+    <button id="start-btn">✨ Start Game ✨</button>
+    <p style="margin-top:14px;font-size:12px;color:#8866aa;">Arrow Keys / WASD &bull; Space to Jump &bull; Touch Controls Below</p>
+    <div><a href="/arcade/" class="overlay-back-btn">&larr; Return to Arcade Main Menu</a></div>
+  </div>
+</div>
+
+<div id="controls">
+  <div class="btn-group">
+    <div class="ctrl-btn" id="btn-left">◀</div>
+    <div class="ctrl-btn" id="btn-right">▶</div>
+  </div>
+  <div class="ctrl-btn" id="btn-jump">🦄</div>
+  <div class="ctrl-btn" id="btn-shield">🛡</div>
+</div>
+
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+// ── High Score (localStorage) ────────────────────────────────
+const HS_KEY = 'rur_high_score';
+let highScore = parseInt(localStorage.getItem(HS_KEY) || '0');
+document.getElementById('high-score').textContent = highScore;
+document.getElementById('hs-display').textContent = highScore;
+
+// ── Game State ───────────────────────────────────────────────
+const W = canvas.width, H = canvas.height;
+const GROUND = H - 48;
+let score = 0, lives = 3, gameRunning = false, frame = 0;
+let speedMult = 1;
+
+// ── Unicorn ──────────────────────────────────────────────────
+const UNI = {
+  x: 80, y: GROUND, w: 48, h: 48,
+  vy: 0, vx: 0, onGround: true,
+  shielded: false, shieldTimer: 0,
+  invincible: false, invTimer: 0,
+  reset() {
+    this.y = GROUND; this.vy = 0; this.vx = 0;
+    this.onGround = true; this.shielded = false;
+    this.shieldTimer = 0; this.invincible = false; this.invTimer = 0;
+  }
+};
+
+const GRAVITY = 0.55;
+const JUMP_FORCE = -13;
+const MOVE_SPEED = 3.5;
+
+// ── Keys ─────────────────────────────────────────────────────
+const keys = {};
+window.addEventListener('keydown', e => {
+  keys[e.code] = true;
+  if (['Space','ArrowUp','KeyW'].includes(e.code)) e.preventDefault();
+});
+window.addEventListener('keyup', e => { keys[e.code] = false; });
+
+// ── Touch Controls ───────────────────────────────────────────
+function addTouchBtn(id, keyCode) {
+  const btn = document.getElementById(id);
+  const press = () => { keys[keyCode] = true; btn.classList.add('pressed'); };
+  const release = () => { keys[keyCode] = false; btn.classList.remove('pressed'); };
+  btn.addEventListener('touchstart', e => { e.preventDefault(); press(); }, {passive:false});
+  btn.addEventListener('touchend', e => { e.preventDefault(); release(); }, {passive:false});
+  btn.addEventListener('touchcancel', e => { e.preventDefault(); release(); }, {passive:false});
+  btn.addEventListener('mousedown', press);
+  btn.addEventListener('mouseup', release);
+  btn.addEventListener('mouseleave', release);
+}
+addTouchBtn('btn-left', 'ArrowLeft');
+addTouchBtn('btn-right', 'ArrowRight');
+addTouchBtn('btn-jump', 'Space');
+addTouchBtn('btn-shield', 'ShiftLeft');
+
+// ── Particles ─────────────────────────────────────────────────
+let particles = [];
+function spawnParticles(x, y, color, count=10) {
+  for (let i=0; i<count; i++) {
+    particles.push({
+      x, y,
+      vx: (Math.random()-0.5)*5,
+      vy: (Math.random()-0.5)*5 - 2,
+      life: 40 + Math.random()*20,
+      maxLife: 60,
+      r: 3 + Math.random()*4,
+      color
+    });
+  }
+}
+
+// ── Obstacles ─────────────────────────────────────────────────
+let obstacles = [];
+const OBSTACLE_TYPES = [
+  { w:24, h:40, color:'#6633aa', label:'🐺' }, // shadow wolf
+  { w:18, h:28, color:'#440066', label:'🌑' }, // dark moon shard
+  { w:30, h:20, color:'#220033', label:'🕸' }  // web trap
+];
+let obstacleTimer = 0;
+let obstacleInterval = 90;
+
+function spawnObstacle() {
+  const type = OBSTACLE_TYPES[Math.floor(Math.random()*OBSTACLE_TYPES.length)];
+  obstacles.push({ x: W+20, y: GROUND + UNI.h - type.h, ...type, speed: 3.5*speedMult });
+}
+
+// ── Stars / Collectibles ──────────────────────────────────────
+let stars = [];
+let starTimer = 0;
+const STAR_COLORS = ['#ff88ff','#88ffff','#ffff44','#ff8844','#88ff88'];
+
+function spawnStar() {
+  const x = W + 10;
+  const y = GROUND - 30 - Math.random()*80;
+  stars.push({ x, y, r:10, color: STAR_COLORS[Math.floor(Math.random()*STAR_COLORS.length)], speed: 3*speedMult, angle:0 });
+}
+
+// ── Background Elements ───────────────────────────────────────
+let bgStars = [];
+for (let i=0; i<60; i++) {
+  bgStars.push({ x:Math.random()*W, y:Math.random()*(H-60), r:Math.random()*1.5+0.5, speed:Math.random()*0.3+0.1 });
+}
+
+let clouds = [];
+for (let i=0; i<5; i++) {
+  clouds.push({ x:Math.random()*W, y:30+Math.random()*60, w:60+Math.random()*60, speed:0.4+Math.random()*0.3 });
+}
+
+// ── Draw Helpers ──────────────────────────────────────────────
+function drawUnicorn(x, y, shielded, inv) {
+  const t = frame;
+  // Body
+  const bob = Math.sin(t*0.15)*2;
+  ctx.save();
+  if (inv && Math.floor(t/4)%2===0) { ctx.globalAlpha = 0.5; }
+  // Mane rainbow
+  const rainbowCols = ['#ff4444','#ff8844','#ffff44','#44ff44','#4488ff','#cc44ff'];
+  for (let i=0; i<6; i++) {
+    ctx.fillStyle = rainbowCols[i];
+    ctx.fillRect(x+20, y+bob+4+i*3, 6, 3);
+  }
+  // Body
+  ctx.fillStyle = '#fff0ff';
+  ctx.beginPath();
+  ctx.ellipse(x+24, y+28+bob, 18, 14, 0, 0, Math.PI*2);
+  ctx.fill();
+  // Head
+  ctx.fillStyle = '#fff0ff';
+  ctx.beginPath();
+  ctx.ellipse(x+40, y+16+bob, 11, 9, 0.3, 0, Math.PI*2);
+  ctx.fill();
+  // Horn
+  ctx.strokeStyle = '#ffd700';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(x+46, y+8+bob);
+  ctx.lineTo(x+52, y-2+bob);
+  ctx.stroke();
+  // Eye
+  ctx.fillStyle = '#330055';
+  ctx.beginPath();
+  ctx.arc(x+43, y+14+bob, 2, 0, Math.PI*2);
+  ctx.fill();
+  // Legs
+  ctx.fillStyle = '#eeddff';
+  const legAnim = Math.sin(t*0.2)*5;
+  ctx.fillRect(x+12, y+36+bob, 6, 12-legAnim);
+  ctx.fillRect(x+20, y+36+bob, 6, 12+legAnim);
+  ctx.fillRect(x+28, y+36+bob, 6, 12-legAnim);
+  ctx.fillRect(x+36, y+36+bob, 6, 12+legAnim);
+  // Tail
+  ctx.strokeStyle = ['#ff88ff','#88ffff','#ffff88'][Math.floor(t/8)%3];
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(x+6, y+28+bob);
+  ctx.quadraticCurveTo(x-8, y+20+bob+Math.sin(t*0.1)*8, x+2, y+38+bob);
+  ctx.stroke();
+  // Shield
+  if (shielded) {
+    ctx.strokeStyle = 'rgba(100,200,255,0.7)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.ellipse(x+24, y+24+bob, 28, 26, 0, 0, Math.PI*2);
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(100,200,255,0.15)';
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawObstacle(obs) {
+  ctx.fillStyle = obs.color;
+  ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
+  ctx.font = `${Math.min(obs.w,obs.h)*0.8}px serif`;
+  ctx.textAlign = 'center';
+  ctx.fillText(obs.label, obs.x+obs.w/2, obs.y+obs.h*0.85);
+}
+
+function drawStar(star) {
+  star.angle += 0.05;
+  ctx.save();
+  ctx.translate(star.x, star.y);
+  ctx.rotate(star.angle);
+  ctx.fillStyle = star.color;
+  ctx.shadowBlur = 12;
+  ctx.shadowColor = star.color;
+  for (let i=0; i<5; i++) {
+    ctx.rotate((Math.PI*2)/5);
+    ctx.beginPath();
+    ctx.moveTo(0, -star.r);
+    ctx.lineTo(star.r*0.35, -star.r*0.35);
+    ctx.lineTo(star.r, 0);
+    ctx.lineTo(star.r*0.35, star.r*0.35);
+    ctx.lineTo(0, star.r);
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawBackground() {
+  // Sky gradient
+  const grad = ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0, '#0a0022');
+  grad.addColorStop(0.7, '#1a0040');
+  grad.addColorStop(1, '#2d0066');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,W,H);
+
+  // Background stars
+  ctx.fillStyle = '#ffffff';
+  bgStars.forEach(s => {
+    s.x -= s.speed;
+    if (s.x < 0) s.x = W;
+    const twinkle = 0.5 + 0.5*Math.sin(frame*0.05 + s.x);
+    ctx.globalAlpha = twinkle;
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+    ctx.fill();
+  });
+  ctx.globalAlpha = 1;
+
+  // Clouds (rainbow tinted)
+  clouds.forEach((c,i) => {
+    c.x -= c.speed;
+    if (c.x + c.w < 0) c.x = W + c.w;
+    ctx.fillStyle = `hsla(${(frame*0.5+i*60)%360},60%,70%,0.12)`;
+    ctx.beginPath();
+    ctx.ellipse(c.x, c.y, c.w/2, 15, 0, 0, Math.PI*2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(c.x-c.w/4, c.y+5, c.w/3, 12, 0, 0, Math.PI*2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(c.x+c.w/4, c.y+5, c.w/3, 12, 0, 0, Math.PI*2);
+    ctx.fill();
+  });
+
+  // Ground
+  const gGrad = ctx.createLinearGradient(0,GROUND+UNI.h,0,H);
+  gGrad.addColorStop(0,'#4a1080');
+  gGrad.addColorStop(1,'#1a0040');
+  ctx.fillStyle = gGrad;
+  ctx.fillRect(0, GROUND+UNI.h, W, H-(GROUND+UNI.h));
+
+  // Ground glow line
+  ctx.strokeStyle = '#cc44ff';
+  ctx.lineWidth = 2;
+  ctx.shadowBlur = 10;
+  ctx.shadowColor = '#cc44ff';
+  ctx.beginPath();
+  ctx.moveTo(0, GROUND+UNI.h);
+  ctx.lineTo(W, GROUND+UNI.h);
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+}
+
+// ── Collision ─────────────────────────────────────────────────
+function rectsOverlap(ax,ay,aw,ah,bx,by,bw,bh) {
+  return ax < bx+bw && ax+aw > bx && ay < by+bh && ay+ah > by;
+}
+
+// ── HUD Update ────────────────────────────────────────────────
+function updateHUD() {
+  document.getElementById('score').textContent = score;
+  document.getElementById('high-score').textContent = highScore;
+  document.getElementById('lives-count').textContent = lives;
+}
+
+// ── Main Game Loop ────────────────────────────────────────────
+function gameLoop() {
+  if (!gameRunning) return;
+  frame++;
+
+  // Speed ramp
+  speedMult = 1 + Math.floor(score/200)*0.15;
+
+  // ── Input ──
+  if ((keys['ArrowLeft']||keys['KeyA']) && UNI.x > 20) UNI.vx = -MOVE_SPEED;
+  else if ((keys['ArrowRight']||keys['KeyD']) && UNI.x < W-UNI.w-20) UNI.vx = MOVE_SPEED;
+  else UNI.vx *= 0.8;
+
+  if ((keys['Space']||keys['ArrowUp']||keys['KeyW']) && UNI.onGround) {
+    UNI.vy = JUMP_FORCE;
+    UNI.onGround = false;
+    spawnParticles(UNI.x+24, UNI.y+UNI.h, '#cc88ff', 8);
+  }
+
+  // Shield
+  if ((keys['ShiftLeft']||keys['ShiftRight']) && !UNI.shielded) {
+    UNI.shielded = true;
+    UNI.shieldTimer = 180;
+  }
+  if (UNI.shielded) {
+    UNI.shieldTimer--;
+    if (UNI.shieldTimer <= 0) UNI.shielded = false;
+  }
+  if (UNI.invincible) {
+    UNI.invTimer--;
+    if (UNI.invTimer <= 0) UNI.invincible = false;
+  }
+
+  // Physics
+  UNI.vy += GRAVITY;
+  UNI.x += UNI.vx;
+  UNI.y += UNI.vy;
+  if (UNI.y >= GROUND) { UNI.y = GROUND; UNI.vy = 0; UNI.onGround = true; }
+
+  // ── Spawn ──
+  obstacleTimer++;
+  if (obstacleTimer >= obstacleInterval) {
+    spawnObstacle();
+    obstacleTimer = 0;
+    obstacleInterval = Math.max(45, 90 - Math.floor(score/100)*3);
+  }
+  starTimer++;
+  if (starTimer >= 120) { spawnStar(); starTimer = 0; }
+
+  // ── Update Obstacles ──
+  obstacles = obstacles.filter(obs => {
+    obs.x -= obs.speed;
+    if (rectsOverlap(UNI.x+6, UNI.y+6, UNI.w-12, UNI.h-6, obs.x+4, obs.y+4, obs.w-8, obs.h-4)) {
+      if (UNI.shielded) {
+        spawnParticles(obs.x+obs.w/2, obs.y, '#88aaff', 12);
+        return false;
+      } else if (!UNI.invincible) {
+        lives--;
+        UNI.invincible = true; UNI.invTimer = 120;
+        spawnParticles(UNI.x+24, UNI.y+24, '#ff4444', 15);
+        updateHUD();
+        if (lives <= 0) { endGame(); return false; }
+        return false;
+      }
+    }
+    return obs.x + obs.w > 0;
+  });
+
+  // ── Update Stars ──
+  stars = stars.filter(star => {
+    star.x -= star.speed;
+    if (rectsOverlap(UNI.x+4, UNI.y+4, UNI.w-8, UNI.h-8, star.x-star.r, star.y-star.r, star.r*2, star.r*2)) {
+      score += 10;
+      spawnParticles(star.x, star.y, star.color, 10);
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem(HS_KEY, highScore);
+      }
+      updateHUD();
+      return false;
+    }
+    return star.x + star.r > 0;
+  });
+
+  // Passive score
+  if (frame % 30 === 0) { score += 1; if (score > highScore) { highScore = score; localStorage.setItem(HS_KEY, highScore); } updateHUD(); }
+
+  // ── Update Particles ──
+  particles = particles.filter(p => {
+    p.x += p.vx; p.y += p.vy; p.vy += 0.15; p.life--;
+    return p.life > 0;
+  });
+
+  // ── Draw ──
+  drawBackground();
+
+  // Particles
+  particles.forEach(p => {
+    ctx.globalAlpha = p.life/p.maxLife;
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    ctx.fill();
+  });
+  ctx.globalAlpha = 1;
+
+  // Obstacles
+  obstacles.forEach(drawObstacle);
+
+  // Stars
+  stars.forEach(drawStar);
+
+  // Unicorn
+  drawUnicorn(UNI.x, UNI.y, UNI.shielded, UNI.invincible);
+
+  // Shield cooldown bar
+  if (UNI.shielded) {
+    ctx.fillStyle = 'rgba(100,200,255,0.3)';
+    ctx.fillRect(UNI.x, UNI.y-8, UNI.w*(UNI.shieldTimer/180), 5);
+    ctx.strokeStyle = '#88ccff';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(UNI.x, UNI.y-8, UNI.w, 5);
+  }
+
+  requestAnimationFrame(gameLoop);
+}
+
+// ── Start / End ───────────────────────────────────────────────
+function startGame() {
+  score = 0; lives = 3; frame = 0; speedMult = 1;
+  obstacles = []; stars = []; particles = [];
+  obstacleTimer = 0; obstacleInterval = 90; starTimer = 0;
+  UNI.reset();
+  updateHUD();
+  document.getElementById('overlay').style.display = 'none';
+  gameRunning = true;
+  requestAnimationFrame(gameLoop);
+}
+
+function endGame() {
+  gameRunning = false;
+  if (score > highScore) {
+    highScore = score;
+    localStorage.setItem(HS_KEY, highScore);
+  }
+  document.getElementById('hs-display').textContent = highScore;
+  document.getElementById('high-score').textContent = highScore;
+  const overlay = document.getElementById('overlay');
+  overlay.querySelector('h1').textContent = score > 0 ? '💫 Game Over! 💫' : '🦄 Rainbow Unicorn Rescue 🦄';
+  overlay.querySelector('.hs').innerHTML = `🏆 Best Score: <span id="hs-display">${highScore}</span>`;
+  overlay.querySelector('#start-btn').textContent = '✨ Play Again ✨';
+  overlay.style.display = 'flex';
+}
+
+document.getElementById('start-btn').addEventListener('click', startGame);
+
+// Initial draw
+drawBackground();
+</script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+{
+  "version": 2,
+  "cleanUrls": false,
+  "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/449_decision_tool.html",
+      "destination": "/449_decision_tool.html"
+    },
+    {
+      "source": "/449_decision_tool",
+      "destination": "/449_decision_tool.html"
+    },
+    {
+      "source": "/449-decision-tool",
+      "destination": "/449_decision_tool.html"
+    },
+    {
+      "source": "/arcade",
+      "destination": "/arcade/index.html"
+    },
+    {
+      "source": "/arcade/",
+      "destination": "/arcade/index.html"
+    },
+    {
+      "source": "/sparkle.html",
+      "destination": "/arcade/sparkle.html"
+    },
+    {
+      "source": "/sparkle",
+      "destination": "/arcade/sparkle.html"
+    },
+    {
+      "source": "/unicorn.html",
+      "destination": "/arcade/unicorn.html"
+    },
+    {
+      "source": "/unicorn",
+      "destination": "/arcade/unicorn.html"
+    },
+    {
+      "source": "/pokeguess.html",
+      "destination": "/arcade/pokeguess.html"
+    },
+    {
+      "source": "/pokeguess",
+      "destination": "/arcade/pokeguess.html"
+    },
+    {
+      "source": "/starfall.html",
+      "destination": "/arcade/starfall.html"
+    },
+    {
+      "source": "/starfall",
+      "destination": "/arcade/starfall.html"
+    },
+    {
+      "source": "/phonics.html",
+      "destination": "/arcade/phonics.html"
+    },
+    {
+      "source": "/phonics",
+      "destination": "/arcade/phonics.html"
+    },
+    {
+      "source": "/homestead.html",
+      "destination": "/arcade/homestead.html"
+    },
+    {
+      "source": "/homestead",
+      "destination": "/arcade/homestead.html"
+    },
+    {
+      "source": "/breaker_vault.html",
+      "destination": "/arcade/breaker_vault.html"
+    },
+    {
+      "source": "/breaker_vault",
+      "destination": "/arcade/breaker_vault.html"
+    },
+    {
+      "source": "/breaker-vault",
+      "destination": "/arcade/breaker_vault.html"
+    },
+    {
+      "source": "/escape",
+      "destination": "/arcade/breaker_vault.html"
+    },
+    {
+      "source": "/project-k9-volt.html",
+      "destination": "/arcade/project-k9-volt.html"
+    },
+    {
+      "source": "/project-k9-volt",
+      "destination": "/arcade/project-k9-volt.html"
+    },
+    {
+      "source": "/k9-volt",
+      "destination": "/arcade/project-k9-volt.html"
+    },
+    {
+      "source": "/k9",
+      "destination": "/arcade/project-k9-volt.html"
+    },
+    {
+      "source": "/corgi",
+      "destination": "/arcade/project-k9-volt.html"
+    },
+    {
+      "source": "/groceries",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/market-basket",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/procurement",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/school",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/usd449",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/dispatch",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/schools",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/outings",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/recon",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/weekend",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/dates",
+      "destination": "/index.html"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/pathogen-radar",
+      "schedule": "0 20 * * *"
+    }
+  ]
+}

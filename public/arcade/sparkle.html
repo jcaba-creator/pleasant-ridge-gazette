@@ -1,0 +1,1580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Starfall Sparkle Rescue | Pre-K & Kindergarten Early Learning</title>
+  <style>
+    :root {
+      --ocean-blue: #38bdf8;
+      --ocean-deep: #0284c7;
+      --grass-green: #4ade80;
+      --grass-deep: #16a34a;
+      --sand-gold: #fde047;
+      --border-dark: #1e293b;
+      --bg-cream: #fefce8;
+      --purple-accent: #9333ea;
+      --pink-accent: #ec4899;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+
+    html, body {
+      font-family: -apple-system, BlinkMacSystemFont, "Comic Sans MS", "Chalkboard SE", "Segoe UI", sans-serif;
+      background: #e0f2fe linear-gradient(180deg, #e0f2fe 0%, #fef3c7 100%);
+      height: 100dvh;
+      max-height: 100dvh;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      overflow: hidden;
+      position: relative;
+      padding-top: max(8px, env(safe-area-inset-top));
+      padding-bottom: max(36px, calc(env(safe-area-inset-bottom) + 20px));
+      padding-left: 12px;
+      padding-right: 12px;
+      box-sizing: border-box;
+    }
+
+    /* Top HUD */
+    header.game-header {
+      width: 100%;
+      max-width: 920px;
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 50;
+    }
+
+    .btn-return {
+      background: #ffffff;
+      border: 3px solid var(--border-dark);
+      box-shadow: 3px 3px 0px var(--border-dark);
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 15px;
+      color: var(--border-dark);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+    .btn-return:active {
+      transform: scale(0.95);
+    }
+
+    .level-indicator {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .module-dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid var(--border-dark);
+      background: #e2e8f0;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .dot.active {
+      background: var(--pink-accent);
+      transform: scale(1.3);
+      box-shadow: 0 0 8px rgba(236, 72, 153, 0.6);
+    }
+
+    .dot.done {
+      background: #10b981;
+    }
+
+    .btn-speaker {
+      background: #facc15;
+      border: 3px solid var(--border-dark);
+      box-shadow: 3px 3px 0px var(--border-dark);
+      border-radius: 50%;
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      animation: pulseAttention 3s infinite;
+    }
+    .btn-speaker:active {
+      transform: scale(0.92);
+      box-shadow: 1px 1px 0px var(--border-dark);
+    }
+
+    @keyframes pulseAttention {
+      0%, 80%, 100% { transform: scale(1); }
+      85% { transform: scale(1.1) rotate(-5deg); }
+      90% { transform: scale(1.1) rotate(5deg); }
+      95% { transform: scale(1.05); }
+    }
+
+    /* Main Stage */
+    main#stage {
+      position: relative;
+      width: 95vw;
+      max-width: 880px;
+      height: 74vh;
+      max-height: 620px;
+      background: #ffffff;
+      border: 4px solid var(--border-dark);
+      border-radius: 32px;
+      box-shadow: 8px 8px 0px var(--border-dark);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Subtitle Banner for visual/teacher convenience */
+    .speech-banner {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.95);
+      border: 2px solid var(--border-dark);
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 800;
+      color: #334155;
+      z-index: 40;
+      pointer-events: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      white-space: nowrap;
+      max-width: 90%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* MODULE 1: The Magic Island */
+    #mod1-island {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      position: relative;
+    }
+
+    .zone-water {
+      background: linear-gradient(180deg, var(--ocean-blue) 0%, var(--ocean-deep) 100%);
+      border-right: 4px dashed rgba(255, 255, 255, 0.6);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 50px;
+      position: relative;
+      transition: filter 0.2s;
+    }
+
+    .zone-grass {
+      background: linear-gradient(180deg, var(--grass-green) 0%, var(--grass-deep) 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 50px;
+      position: relative;
+      transition: filter 0.2s;
+    }
+
+    .zone-label {
+      background: rgba(255, 255, 255, 0.92);
+      border: 3px solid var(--border-dark);
+      padding: 8px 20px;
+      border-radius: 999px;
+      font-size: 20px;
+      font-weight: 900;
+      box-shadow: 3px 3px 0px var(--border-dark);
+      pointer-events: none;
+    }
+
+    .zone-pulse {
+      animation: pulseZone 1s infinite alternate;
+    }
+
+    @keyframes pulseZone {
+      0% { filter: brightness(1); }
+      100% { filter: brightness(1.15) drop-shadow(0 0 12px #facc15); }
+    }
+
+    /* Draggable Animals */
+    .critter {
+      width: 76px;
+      height: 76px;
+      font-size: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      cursor: grab;
+      user-select: none;
+      touch-action: none;
+      z-index: 25;
+      transition: transform 0.1s ease;
+      filter: drop-shadow(2px 6px 8px rgba(0,0,0,0.3));
+    }
+
+    .critter.dragging {
+      transform: scale(1.35) rotate(-6deg);
+      z-index: 100;
+      cursor: grabbing;
+      filter: drop-shadow(4px 12px 16px rgba(0,0,0,0.4));
+    }
+
+    .critter.highlighted {
+      animation: bounceHighlight 0.6s infinite alternate;
+      filter: drop-shadow(0 0 18px #facc15) drop-shadow(0 0 30px #f59e0b);
+    }
+
+    @keyframes bounceHighlight {
+      0% { transform: scale(1.15); }
+      100% { transform: scale(1.4) translateY(-10px); }
+    }
+
+    /* Counting Prompt Overlay */
+    .counting-bar {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ffffff;
+      border: 4px solid var(--border-dark);
+      border-radius: 24px;
+      box-shadow: 6px 6px 0px var(--border-dark);
+      padding: 14px 28px;
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      z-index: 35;
+      animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .num-btn {
+      width: 68px;
+      height: 68px;
+      border-radius: 18px;
+      border: 3px solid var(--border-dark);
+      background: #fde047;
+      font-size: 34px;
+      font-weight: 900;
+      box-shadow: 4px 4px 0px var(--border-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .num-btn:active {
+      transform: scale(0.92);
+      box-shadow: 1px 1px 0px var(--border-dark);
+    }
+
+    /* MODULE 2: Castle Shapes */
+    #mod2-castle {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-around;
+      padding: 30px 20px 20px;
+      background: #faf5ff;
+      position: relative;
+    }
+
+    .castle-blueprint {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 18px;
+      border-radius: 24px;
+      animation: blueprintGlow 2.5s infinite alternate ease-in-out;
+    }
+
+    @keyframes blueprintGlow {
+      0% { filter: drop-shadow(0 0 6px rgba(147, 51, 234, 0.35)); }
+      100% { filter: drop-shadow(0 0 20px rgba(147, 51, 234, 0.85)); }
+    }
+
+    .slot-roof-svg {
+      width: 180px;
+      height: 110px;
+      overflow: visible;
+      transition: all 0.3s ease;
+    }
+
+    .slot-roof-svg polygon {
+      fill: rgba(147, 51, 234, 0.08);
+      stroke: #9333ea;
+      stroke-width: 4;
+      stroke-dasharray: 8 6;
+      transition: all 0.3s ease;
+    }
+
+    .slot-roof-svg.snapped polygon {
+      fill: #ec4899;
+      stroke: var(--border-dark);
+      stroke-dasharray: 0;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25));
+    }
+
+    .slot-room {
+      width: 170px;
+      height: 170px;
+      border: 4px dashed #9333ea;
+      background: rgba(147, 51, 234, 0.08);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .slot-room.snapped {
+      border: 4px solid var(--border-dark);
+      background: #3b82f6;
+      box-shadow: inset 0 -12px 0 rgba(0,0,0,0.15);
+    }
+
+    .castle-door {
+      width: 44px;
+      height: 64px;
+      background: #92400e;
+      border: 3px solid var(--border-dark);
+      border-radius: 24px 24px 0 0;
+      position: absolute;
+      bottom: 0;
+      display: none;
+    }
+
+    .unicorn-mascot {
+      font-size: 50px;
+      position: absolute;
+      top: -30px;
+      display: none;
+      animation: popUnicorn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes popUnicorn {
+      0% { transform: translateY(20px) scale(0.2); opacity: 0; }
+      100% { transform: translateY(-30px) scale(1.3); opacity: 1; }
+    }
+
+    .shape-tray {
+      display: flex;
+      gap: 36px;
+      align-items: center;
+      justify-content: center;
+      width: 90%;
+      max-width: 520px;
+      padding: 14px 20px;
+      background: #f3e8ff;
+      border: 3px solid var(--border-dark);
+      border-radius: 24px;
+      box-shadow: 4px 4px 0px var(--border-dark);
+    }
+
+    .shape-item {
+      cursor: grab;
+      touch-action: none;
+      filter: drop-shadow(4px 4px 0px var(--border-dark));
+      transition: transform 0.1s ease;
+    }
+    .shape-item:active {
+      cursor: grabbing;
+      transform: scale(1.08);
+    }
+
+    .shape-triangle-svg {
+      width: 140px;
+      height: 90px;
+      display: block;
+    }
+
+    .shape-triangle-svg polygon {
+      fill: #ec4899;
+      stroke: var(--border-dark);
+      stroke-width: 3;
+    }
+
+    .shape-square {
+      width: 130px;
+      height: 130px;
+      background: #3b82f6;
+      border: 3px solid var(--border-dark);
+      border-radius: 14px;
+      box-shadow: inset 0 -8px 0 rgba(0,0,0,0.15);
+    }
+
+    /* MODULE 3: The Star Bridge */
+    #mod3-bridge {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 40px 20px 24px;
+      background: linear-gradient(180deg, #1e1b4b 0%, #312e81 100%);
+      color: #fff;
+      position: relative;
+    }
+
+    .chasm-scene {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0;
+      position: relative;
+    }
+
+    .cliff {
+      font-size: 60px;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+      position: relative;
+      z-index: 10;
+    }
+
+    #monkey-walker {
+      transition: transform 0.4s ease-in-out;
+      display: inline-block;
+    }
+
+    .bridge-track {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 3px solid rgba(255, 255, 255, 0.35);
+      padding: 12px 14px;
+      border-radius: 24px;
+      margin: 0 12px;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .bridge-item {
+      font-size: 42px;
+      filter: drop-shadow(0 2px 6px rgba(250, 204, 21, 0.6));
+    }
+
+    .bridge-slot {
+      width: 64px;
+      height: 64px;
+      border: 3px dashed #facc15;
+      border-radius: 16px;
+      background: rgba(250, 204, 21, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 38px;
+      color: #fde047;
+      animation: slotPulse 1.5s infinite alternate;
+      transition: all 0.3s;
+    }
+
+    @keyframes slotPulse {
+      0% { transform: scale(1); border-color: #facc15; }
+      100% { transform: scale(1.08); border-color: #ffffff; }
+    }
+
+    .pattern-options {
+      display: flex;
+      gap: 28px;
+      padding: 16px 36px;
+      background: rgba(255, 255, 255, 0.16);
+      border: 3px solid rgba(255, 255, 255, 0.35);
+      border-radius: 28px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+    }
+
+    .pattern-opt {
+      font-size: 52px;
+      cursor: grab;
+      touch-action: none;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+      transition: transform 0.1s;
+    }
+    .pattern-opt:active {
+      transform: scale(1.25);
+    }
+
+    /* MODULE 4: Bear Balloons */
+    #mod4-bears {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 40px 16px 20px;
+      background: linear-gradient(180deg, #bae6fd 0%, #fef08a 100%);
+      position: relative;
+    }
+
+    .clouds-row {
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .cloud-target {
+      width: 135px;
+      height: 95px;
+      background: #ffffff;
+      border: 4px solid var(--border-dark);
+      border-radius: 50px;
+      box-shadow: 4px 4px 0px var(--border-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      font-weight: 900;
+      color: var(--border-dark);
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .cloud-target.matched {
+      background: #86efac;
+      border-color: #15803d;
+      transform: scale(1.1);
+      box-shadow: 0 0 16px #4ade80;
+    }
+
+    .bears-row {
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      max-width: 600px;
+      padding-bottom: 34px;
+      margin-bottom: 10px;
+    }
+
+    .bear-balloon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: grab;
+      touch-action: none;
+      filter: drop-shadow(2px 6px 8px rgba(0,0,0,0.25));
+      transition: transform 0.1s ease;
+    }
+    .bear-balloon:active {
+      transform: scale(1.1);
+    }
+
+    .balloon {
+      width: 64px;
+      height: 76px;
+      border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+      background: #ec4899;
+      border: 3px solid var(--border-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+      font-weight: 900;
+      color: #ffffff;
+      box-shadow: inset -4px -4px 0 rgba(0,0,0,0.15);
+    }
+
+    .balloon.b-blue { background: #3b82f6; }
+    .balloon.b-green { background: #10b981; }
+
+    .bear-icon {
+      font-size: 46px;
+      margin-top: -6px;
+    }
+
+    /* Massive Sparkle Shower Confetti */
+    #sparkle-shower {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 999;
+      display: none;
+    }
+
+    .sparkle-particle {
+      position: absolute;
+      font-size: 38px;
+      animation: fallDown 2.8s forwards ease-in;
+    }
+
+    @keyframes fallDown {
+      0% {
+        transform: translateY(-60px) rotate(0deg) scale(0.6);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(115vh) rotate(720deg) scale(1.6);
+        opacity: 0;
+      }
+    }
+
+    /* Win Banner */
+    .win-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.96);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      z-index: 120;
+      display: none;
+      text-align: center;
+      padding: 20px;
+      animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .win-overlay h2 {
+      font-size: 44px;
+      font-weight: 900;
+      color: #9333ea;
+      text-shadow: 2px 2px 0px #facc15;
+    }
+
+    .btn-replay {
+      background: #f59e0b;
+      border: 4px solid var(--border-dark);
+      box-shadow: 4px 4px 0px var(--border-dark);
+      padding: 16px 38px;
+      font-size: 26px;
+      font-weight: 900;
+      border-radius: 999px;
+      cursor: pointer;
+      color: var(--border-dark);
+      transition: transform 0.1s;
+    }
+    .btn-replay:active {
+      transform: scale(0.95);
+      box-shadow: 1px 1px 0px var(--border-dark);
+    }
+  </style>
+  <script src="telemetry.js"></script>
+</head>
+<body>
+
+  <!-- Top Navigation & Audio Control -->
+  <header class="game-header">
+    <a href="/arcade/" class="btn-return">← 449 Arcade</a>
+
+    <div class="level-indicator">
+      <div style="display:flex; background:rgba(0,0,0,0.12); padding:3px; border-radius:999px; margin-right:8px; gap:3px;">
+        <button id="btn-round-1" onclick="setSparkleRound(1)" style="border:none; padding:4px 10px; border-radius:999px; font-weight:900; font-size:12px; cursor:pointer; background:#f43f5e; color:#fff;">Round 1</button>
+        <button id="btn-round-2" onclick="setSparkleRound(2)" style="border:none; padding:4px 10px; border-radius:999px; font-weight:900; font-size:12px; cursor:pointer; background:transparent; color:#334155;">Round 2</button>
+        <button id="btn-round-3" onclick="setSparkleRound(3)" style="border:none; padding:4px 10px; border-radius:999px; font-weight:900; font-size:12px; cursor:pointer; background:transparent; color:#334155;">Round 3</button>
+      </div>
+      <div class="module-dots">
+        <div class="dot active" id="dot-0"></div>
+        <div class="dot" id="dot-1"></div>
+        <div class="dot" id="dot-2"></div>
+        <div class="dot" id="dot-3"></div>
+      </div>
+    </div>
+
+    <button class="btn-speaker" id="btn-speak" title="Repeat Voice Instructions">🔊</button>
+  </header>
+
+  <!-- Interactive Stage -->
+  <main id="stage">
+    
+    <!-- Speech Subtitle Banner -->
+    <div class="speech-banner" id="speech-banner">Put the sea friends in the water, and the land friends on the grass!</div>
+
+    <!-- MODULE 1: The Magic Island -->
+    <div id="mod1-island" style="display: grid;">
+      <div class="zone-water" id="zone-water">
+        <div class="zone-label">🌊 Ocean</div>
+      </div>
+      <div class="zone-grass" id="zone-grass">
+        <div class="zone-label">🌿 Grass</div>
+      </div>
+
+      <!-- Scatting Critters: Sea (🐬, 🧜‍♀️) on grass & Land (🐎, 🐎, 🐄) on water to sort -->
+      <div class="critter" id="c-dolphin" data-type="sea" data-name="dolphin" style="top: 35%; left: 62%;">🐬</div>
+      <div class="critter" id="c-mermaid" data-type="sea" data-name="mermaid" style="top: 66%; left: 70%;">🧜‍♀️</div>
+      <div class="critter" id="c-horse1" data-type="land" data-kind="horse" data-name="horse" style="top: 28%; left: 18%;">🐎</div>
+      <div class="critter" id="c-horse2" data-type="land" data-kind="horse" data-name="horse" style="top: 52%; left: 28%;">🐎</div>
+      <div class="critter" id="c-cow" data-type="land" data-kind="cow" data-name="cow" style="top: 74%; left: 14%;">🐄</div>
+
+      <!-- Counting Prompt Bar -->
+      <div class="counting-bar" id="counting-bar" style="display: none;">
+        <span style="font-size: 26px; font-weight: 900;">🐎 ?</span>
+        <button class="num-btn" onclick="checkCount(1)">1</button>
+        <button class="num-btn" onclick="checkCount(2)">2</button>
+        <button class="num-btn" onclick="checkCount(3)">3</button>
+      </div>
+    </div>
+
+    <!-- MODULE 2: Unicorn Castle -->
+    <div id="mod2-castle" style="display: none;">
+      <div class="castle-blueprint">
+        <!-- SVG Glowing Dashed Roof Blueprint -->
+        <svg class="slot-roof-svg" id="slot-roof" viewBox="0 0 180 110">
+          <polygon points="90,10 10,100 170,100" />
+        </svg>
+
+        <!-- Square Room Blueprint -->
+        <div class="slot-room" id="slot-room">
+          <div class="castle-door" id="castle-door"></div>
+          <div class="unicorn-mascot" id="unicorn-mascot">🦄</div>
+        </div>
+      </div>
+
+      <!-- Shape Tray -->
+      <div class="shape-tray">
+        <!-- Draggable Triangle -->
+        <div class="shape-item" id="drag-triangle" data-shape="triangle">
+          <svg class="shape-triangle-svg" viewBox="0 0 140 90">
+            <polygon points="70,5 5,85 135,85" />
+          </svg>
+        </div>
+
+        <!-- Draggable Square -->
+        <div class="shape-item shape-square" id="drag-square" data-shape="square"></div>
+      </div>
+    </div>
+
+    <!-- MODULE 3: The Star Bridge -->
+    <div id="mod3-bridge" style="display: none;">
+      <div class="chasm-scene">
+        <div class="cliff"><span id="monkey-walker">🐒</span></div>
+        <div class="bridge-track">
+          <div class="bridge-item">⭐</div>
+          <div class="bridge-item">✨</div>
+          <div class="bridge-item">⭐</div>
+          <div class="bridge-item">✨</div>
+          <div class="bridge-item">⭐</div>
+          <div class="bridge-slot" id="bridge-slot" data-accept="sparkle">?</div>
+        </div>
+        <div class="cliff">🏰</div>
+      </div>
+
+      <div class="pattern-options">
+        <div class="pattern-opt" id="opt-moon" data-kind="moon">🌙</div>
+        <div class="pattern-opt" id="opt-sparkle" data-kind="sparkle">✨</div>
+        <div class="pattern-opt" id="opt-heart" data-kind="heart">💖</div>
+      </div>
+    </div>
+
+    <!-- MODULE 4: Bear Balloons -->
+    <div id="mod4-bears" style="display: none;">
+      <div class="clouds-row">
+        <div class="cloud-target" id="cloud-A" data-letter="A">A</div>
+        <div class="cloud-target" id="cloud-B" data-letter="B">B</div>
+        <div class="cloud-target" id="cloud-C" data-letter="C">C</div>
+      </div>
+
+      <div class="bears-row">
+        <div class="bear-balloon" id="bear-b" data-letter="B">
+          <div class="balloon b-blue">b</div>
+          <div class="bear-icon">🐻</div>
+        </div>
+        <div class="bear-balloon" id="bear-a" data-letter="A">
+          <div class="balloon">a</div>
+          <div class="bear-icon">🐻</div>
+        </div>
+        <div class="bear-balloon" id="bear-c" data-letter="C">
+          <div class="balloon b-green">c</div>
+          <div class="bear-icon">🐻</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Win & Celebration Screen -->
+    <div class="win-overlay" id="win-screen">
+      <div style="font-size: 72px;">🦄✨🎉</div>
+      <h2>SPARKLE HERO!</h2>
+      <p style="font-size: 22px; font-weight: 700; color: #475569;">You rescued the Starfall Kingdom!</p>
+      <button class="btn-replay" id="btn-next-round" onclick="advanceSparkleRound()" style="margin-bottom:8px;">Next Round &rarr; 🌟</button>
+      <button class="btn-replay" onclick="location.reload()" style="background:#e2e8f0; color:#334155; font-size:16px; padding:10px 24px;">Replay Current Round 🔄</button>
+    </div>
+
+  </main>
+
+  <!-- Massive Sparkle Shower Container -->
+  <div id="sparkle-shower"></div>
+
+  <script>
+    // =============================================================
+    // STARFALL SPARKLE RESCUE - MULTI-ROUND PROGRESSION ENGINE
+    // Pre-K / Kindergarten Spoken Audio & Dual Touch/Drag Interaction
+    // =============================================================
+
+    const ROUND_DATA = {
+      1: {
+        name: "Round 1: Meadow Kingdom",
+        critters: [
+          { id: "c1", emoji: "🐬", type: "sea", kind: "dolphin", top: "35%", left: "62%" },
+          { id: "c2", emoji: "🧜‍♀️", type: "sea", kind: "mermaid", top: "66%", left: "70%" },
+          { id: "c3", emoji: "🐎", type: "land", kind: "horse", top: "28%", left: "18%" },
+          { id: "c4", emoji: "🐎", type: "land", kind: "horse", top: "52%", left: "28%" },
+          { id: "c5", emoji: "🐄", type: "land", kind: "cow", top: "74%", left: "14%" }
+        ],
+        countQuestion: "How many horses are there? Tap the number!",
+        countAnswer: 2,
+        countSymbol: "🐎 ?",
+        countOptions: [1, 2, 3],
+        comparePrompt: "Which side has MORE animals? Tap the water or the grass.",
+        moreSide: "grass",
+        bridgePattern: ["⭐", "✨", "⭐", "✨", "⭐"],
+        bridgeMissing: "✨",
+        bridgeOptions: [
+          { emoji: "🌙", kind: "moon" },
+          { emoji: "✨", kind: "sparkle" },
+          { emoji: "💖", kind: "heart" }
+        ],
+        letters: [
+          { upper: "A", lower: "a", color: "" },
+          { upper: "B", lower: "b", color: "b-blue" },
+          { upper: "C", lower: "c", color: "b-green" }
+        ]
+      },
+      2: {
+        name: "Round 2: Crystal Lagoon",
+        critters: [
+          { id: "c1", emoji: "🐙", type: "sea", kind: "octopus", top: "30%", left: "66%" },
+          { id: "c2", emoji: "🐠", type: "sea", kind: "fish", top: "55%", left: "76%" },
+          { id: "c3", emoji: "🐬", type: "sea", kind: "dolphin", top: "72%", left: "60%" },
+          { id: "c4", emoji: "🐑", type: "land", kind: "sheep", top: "30%", left: "20%" },
+          { id: "c5", emoji: "🐑", type: "land", kind: "sheep", top: "65%", left: "18%" }
+        ],
+        countQuestion: "How many sea friends are swimming? Tap the number!",
+        countAnswer: 3,
+        countSymbol: "🌊 ?",
+        countOptions: [2, 3, 4],
+        comparePrompt: "Which side has MORE animals? Tap the water or the grass.",
+        moreSide: "water",
+        bridgePattern: ["⭐", "💖", "✨", "⭐", "💖"],
+        bridgeMissing: "✨",
+        bridgeOptions: [
+          { emoji: "⭐", kind: "star" },
+          { emoji: "✨", kind: "sparkle" },
+          { emoji: "🦄", kind: "unicorn" }
+        ],
+        letters: [
+          { upper: "D", lower: "d", color: "" },
+          { upper: "E", lower: "e", color: "b-blue" },
+          { upper: "F", lower: "f", color: "b-green" }
+        ]
+      },
+      3: {
+        name: "Round 3: Starfall Citadel",
+        critters: [
+          { id: "c1", emoji: "🐳", type: "sea", kind: "whale", top: "32%", left: "66%" },
+          { id: "c2", emoji: "🐠", type: "sea", kind: "fish", top: "60%", left: "72%" },
+          { id: "c3", emoji: "🐎", type: "land", kind: "horse", top: "25%", left: "20%" },
+          { id: "c4", emoji: "🐄", type: "land", kind: "cow", top: "50%", left: "15%" },
+          { id: "c5", emoji: "🦁", type: "land", kind: "lion", top: "72%", left: "25%" }
+        ],
+        countQuestion: "How many land friends on the farm? Tap the number!",
+        countAnswer: 3,
+        countSymbol: "🌿 ?",
+        countOptions: [2, 3, 4],
+        comparePrompt: "Which side has MORE animals? Tap the water or the grass.",
+        moreSide: "grass",
+        bridgePattern: ["🦄", "⭐", "🦄", "⭐", "🦄"],
+        bridgeMissing: "⭐",
+        bridgeOptions: [
+          { emoji: "🦄", kind: "unicorn" },
+          { emoji: "⭐", kind: "star" },
+          { emoji: "🎈", kind: "balloon" }
+        ],
+        letters: [
+          { upper: "G", lower: "g", color: "" },
+          { upper: "H", lower: "h", color: "b-blue" },
+          { upper: "I", lower: "i", color: "b-green" }
+        ]
+      }
+    };
+
+    let currentSparkleRound = 1;
+    let currentVoicePrompt = "";
+    let mod1State = 'sorting';
+    let castleDone = { triangle: false, square: false };
+    let matchedLetters = 0;
+    let audioCtx = null;
+
+    // Web Audio Synthesizer
+    function playChime(freq1, freq2) {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.frequency.setValueAtTime(freq1, now);
+        osc.frequency.exponentialRampToValueAtTime(freq2, now + 0.22);
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+        osc.start(now);
+        osc.stop(now + 0.22);
+      } catch (err) {}
+    }
+
+    function soundSuccess() { playChime(440, 880); }
+    function soundSnap() { playChime(320, 640); }
+    function soundTrombone() { playChime(330, 220); }
+
+    // Voice Instruction Engine
+    const banner = document.getElementById('speech-banner');
+
+    function speak(text) {
+      currentVoicePrompt = text;
+      if (banner) banner.textContent = text;
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.92;
+      utterance.pitch = 1.15;
+      const voices = window.speechSynthesis.getVoices();
+      const friendly = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Samantha') || v.name.includes('Karen') || v.name.includes('Natural') || v.name.includes('Google')));
+      if (friendly) utterance.voice = friendly;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    document.getElementById('btn-speak').addEventListener('click', () => {
+      if (window.GazetteTelemetry) window.GazetteTelemetry.track('speaker_audio_tapped', { prompt: currentVoicePrompt, round: currentSparkleRound });
+      if (currentVoicePrompt) speak(currentVoicePrompt);
+    });
+
+    window.addEventListener('pointerdown', () => {
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    }, { once: true });
+
+    // Universal Draggable + Tap Support
+    function makeDraggable(el, onDrop, onTap) {
+      let isDragging = false;
+      let startX, startY;
+      let elStartX, elStartY;
+      let hasMoved = false;
+
+      const onStart = (clientX, clientY) => {
+        isDragging = true;
+        hasMoved = false;
+        startX = clientX;
+        startY = clientY;
+        const rect = el.getBoundingClientRect();
+        elStartX = rect.left;
+        elStartY = rect.top;
+      };
+
+      const onMove = (clientX, clientY) => {
+        if (!isDragging) return;
+        const dx = clientX - startX;
+        const dy = clientY - startY;
+        if (Math.abs(dx) > 6 || Math.abs(dy) > 6) {
+          hasMoved = true;
+          el.classList.add('dragging');
+          el.style.position = 'fixed';
+          el.style.left = (elStartX + dx) + 'px';
+          el.style.top = (elStartY + dy) + 'px';
+          el.style.zIndex = '1000';
+        }
+      };
+
+      const onEnd = (clientX, clientY) => {
+        if (!isDragging) return;
+        isDragging = false;
+        el.classList.remove('dragging');
+        el.style.zIndex = '';
+        if (hasMoved) {
+          onDrop(el, clientX, clientY);
+        } else if (onTap) {
+          onTap(el);
+        }
+      };
+
+      // Mouse
+      el.addEventListener('mousedown', e => {
+        e.preventDefault();
+        onStart(e.clientX, e.clientY);
+        const mouseMove = ev => onMove(ev.clientX, ev.clientY);
+        const mouseUp = ev => {
+          window.removeEventListener('mousemove', mouseMove);
+          window.removeEventListener('mouseup', mouseUp);
+          onEnd(ev.clientX, ev.clientY);
+        };
+        window.addEventListener('mousemove', mouseMove);
+        window.addEventListener('mouseup', mouseUp);
+      });
+
+      // Touch
+      el.addEventListener('touchstart', e => {
+        e.preventDefault();
+        const t = e.touches[0];
+        onStart(t.clientX, t.clientY);
+      }, { passive: false });
+
+      el.addEventListener('touchmove', e => {
+        e.preventDefault();
+        const t = e.touches[0];
+        onMove(t.clientX, t.clientY);
+      }, { passive: false });
+
+      el.addEventListener('touchend', e => {
+        const t = e.changedTouches[0];
+        onEnd(t.clientX, t.clientY);
+      });
+    }
+
+    function updateDots(idx) {
+      document.querySelectorAll('.dot').forEach((d, i) => {
+        d.classList.remove('active');
+        if (i < idx) d.classList.add('done');
+        if (i === idx) d.classList.add('active');
+      });
+    }
+
+    function triggerSparkleBurst() {
+      const shower = document.getElementById('sparkle-shower');
+      shower.style.display = 'block';
+      shower.innerHTML = '';
+      for (let i = 0; i < 30; i++) {
+        const p = document.createElement('div');
+        p.className = 'sparkle-particle';
+        p.textContent = ['✨', '⭐', '💖', '🌟'][Math.floor(Math.random() * 4)];
+        p.style.left = (Math.random() * 95) + 'vw';
+        p.style.animationDelay = (Math.random() * 0.7) + 's';
+        shower.appendChild(p);
+      }
+      setTimeout(() => { shower.style.display = 'none'; }, 2400);
+    }
+
+    // =============================================================
+    // ROUND SELECTION & INITIALIZATION
+    // =============================================================
+    window.setSparkleRound = function(rnd) {
+      currentSparkleRound = rnd;
+
+      // Update button highlights
+      [1, 2, 3].forEach(r => {
+        const btn = document.getElementById(`btn-round-${r}`);
+        if (btn) {
+          if (r === rnd) {
+            btn.style.background = '#f43f5e';
+            btn.style.color = '#ffffff';
+            btn.style.boxShadow = '0 2px 8px rgba(244,63,94,0.4)';
+          } else {
+            btn.style.background = 'transparent';
+            btn.style.color = '#334155';
+            btn.style.boxShadow = 'none';
+          }
+        }
+      });
+
+      if (window.GazetteTelemetry) {
+        window.GazetteTelemetry.track('sparkle_round_selected', { round: rnd });
+      }
+
+      startRound(rnd);
+    };
+
+    window.advanceSparkleRound = function() {
+      document.getElementById('win-screen').style.display = 'none';
+      if (currentSparkleRound < 3) {
+        window.setSparkleRound(currentSparkleRound + 1);
+      } else {
+        window.setSparkleRound(1);
+      }
+    };
+
+    function startRound(rnd) {
+      document.getElementById('win-screen').style.display = 'none';
+      document.getElementById('mod2-castle').style.display = 'none';
+      document.getElementById('mod3-bridge').style.display = 'none';
+      document.getElementById('mod4-bears').style.display = 'none';
+      document.getElementById('mod1-island').style.display = 'grid';
+
+      updateDots(0);
+      initModule1();
+    }
+
+    // =============================================================
+    // MODULE 1: The Magic Island (Sorting, Counting, Comparing)
+    // =============================================================
+    function initModule1() {
+      if (window.GazetteTelemetry) window.GazetteTelemetry.track('module_start', { module: 1, round: currentSparkleRound });
+      updateDots(0);
+
+      mod1State = 'sorting';
+      const round = ROUND_DATA[currentSparkleRound];
+      const island = document.getElementById('mod1-island');
+      const zoneWater = document.getElementById('zone-water');
+      const zoneGrass = document.getElementById('zone-grass');
+
+      // Clear existing critters
+      island.querySelectorAll('.critter').forEach(c => c.remove());
+
+      // Hide counting bar
+      const countingBar = document.getElementById('counting-bar');
+      countingBar.style.display = 'none';
+
+      // Create critters for this round
+      round.critters.forEach(cData => {
+        const c = document.createElement('div');
+        c.className = 'critter';
+        c.id = cData.id;
+        c.dataset.type = cData.type;
+        c.dataset.kind = cData.kind;
+        c.dataset.sorted = 'false';
+        c.textContent = cData.emoji;
+        c.style.top = cData.top;
+        c.style.left = cData.left;
+        c.style.position = 'absolute';
+
+        // Dual Tap or Drag: Tapping snaps critter directly to its target zone!
+        makeDraggable(c, (el, x, y) => {
+          const wRect = zoneWater.getBoundingClientRect();
+          const gRect = zoneGrass.getBoundingClientRect();
+          const stageRect = document.getElementById('stage').getBoundingClientRect();
+
+          const inWater = (x >= wRect.left && x <= wRect.right && y >= wRect.top && y <= wRect.bottom);
+          const inGrass = (x >= gRect.left && x <= gRect.right && y >= gRect.top && y <= gRect.bottom);
+
+          if ((el.dataset.type === 'sea' && inWater) || (el.dataset.type === 'land' && inGrass)) {
+            el.dataset.sorted = 'true';
+            soundSnap();
+            const relX = Math.max(10, Math.min(stageRect.width - 80, x - stageRect.left - 38));
+            const relY = Math.max(50, Math.min(stageRect.height - 90, y - stageRect.top - 38));
+            el.style.left = relX + 'px';
+            el.style.top = relY + 'px';
+          } else {
+            el.dataset.sorted = 'false';
+            el.style.position = 'absolute';
+            el.style.left = cData.left;
+            el.style.top = cData.top;
+          }
+          checkAllSorted();
+        }, (el) => {
+          // Tap shortcut: Send to correct zone with joyful snap
+          el.dataset.sorted = 'true';
+          soundSnap();
+          if (el.dataset.type === 'sea') {
+            el.style.left = (60 + Math.random() * 20) + '%';
+            el.style.top = (30 + Math.random() * 40) + '%';
+          } else {
+            el.style.left = (12 + Math.random() * 20) + '%';
+            el.style.top = (30 + Math.random() * 40) + '%';
+          }
+          checkAllSorted();
+        });
+
+        island.appendChild(c);
+      });
+
+      speak("Put the sea friends in the water, and the land friends on the grass!");
+    }
+
+    function checkAllSorted() {
+      const critters = document.querySelectorAll('.critter');
+      const allSorted = Array.from(critters).every(c => c.dataset.sorted === 'true');
+      if (allSorted && mod1State === 'sorting') {
+        mod1State = 'counting';
+        soundSuccess();
+        setTimeout(startCounting, 500);
+      }
+    }
+
+    function startCounting() {
+      const round = ROUND_DATA[currentSparkleRound];
+      const countingBar = document.getElementById('counting-bar');
+      countingBar.innerHTML = '';
+
+      const label = document.createElement('span');
+      label.style.fontSize = '26px';
+      label.style.fontWeight = '900';
+      label.textContent = round.countSymbol;
+      countingBar.appendChild(label);
+
+      round.countOptions.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'num-btn';
+        btn.textContent = opt;
+        btn.onclick = () => checkCount(opt);
+        countingBar.appendChild(btn);
+      });
+
+      countingBar.style.display = 'flex';
+      speak(round.countQuestion);
+    }
+
+    function checkCount(num) {
+      const round = ROUND_DATA[currentSparkleRound];
+      if (num === round.countAnswer) {
+        soundSuccess();
+        document.getElementById('counting-bar').style.display = 'none';
+        startComparing();
+      } else {
+        soundTrombone();
+        speak("Count carefully! Tap the number again!");
+      }
+    }
+
+    function startComparing() {
+      mod1State = 'comparing';
+      const round = ROUND_DATA[currentSparkleRound];
+      speak(round.comparePrompt);
+
+      const zoneWater = document.getElementById('zone-water');
+      const zoneGrass = document.getElementById('zone-grass');
+      zoneWater.classList.add('zone-pulse');
+      zoneGrass.classList.add('zone-pulse');
+
+      zoneWater.onclick = () => handleCompareChoice('water');
+      zoneGrass.onclick = () => handleCompareChoice('grass');
+    }
+
+    function handleCompareChoice(side) {
+      const round = ROUND_DATA[currentSparkleRound];
+      const zoneWater = document.getElementById('zone-water');
+      const zoneGrass = document.getElementById('zone-grass');
+
+      if (side === round.moreSide) {
+        soundSuccess();
+        zoneWater.classList.remove('zone-pulse');
+        zoneGrass.classList.remove('zone-pulse');
+        zoneWater.onclick = null;
+        zoneGrass.onclick = null;
+
+        speak(`Yes! The ${side} has more friends!`);
+        triggerSparkleBurst();
+        setTimeout(initModule2, 2000);
+      } else {
+        soundTrombone();
+        speak(`Look closely! Count which side has more animals and tap it!`);
+      }
+    }
+
+    // =============================================================
+    // MODULE 2: Unicorn Castle (Shapes & Positions)
+    // =============================================================
+    function initModule2() {
+      if (window.GazetteTelemetry) window.GazetteTelemetry.track('module_start', { module: 2, round: currentSparkleRound });
+      updateDots(1);
+
+      document.getElementById('mod1-island').style.display = 'none';
+      document.getElementById('mod2-castle').style.display = 'flex';
+
+      castleDone = { triangle: false, square: false };
+      const slotRoof = document.getElementById('slot-roof');
+      const slotRoom = document.getElementById('slot-room');
+      const door = document.getElementById('castle-door');
+      const mascot = document.getElementById('unicorn-mascot');
+      const tri = document.getElementById('drag-triangle');
+      const sq = document.getElementById('drag-square');
+
+      slotRoof.classList.remove('snapped');
+      slotRoom.classList.remove('snapped');
+      door.style.display = 'none';
+      mascot.style.display = 'none';
+      tri.style.display = 'flex';
+      tri.style.position = 'static';
+      sq.style.display = 'block';
+      sq.style.position = 'static';
+
+      speak("Put the triangle roof ABOVE the square room.");
+
+      // Triangle Roof: Drag OR Tap to snap
+      makeDraggable(tri, (el, x, y) => {
+        const rect = slotRoof.getBoundingClientRect();
+        if (x >= rect.left - 60 && x <= rect.right + 60 && y >= rect.top - 60 && y <= rect.bottom + 60) {
+          snapTriangle();
+        } else {
+          el.style.position = 'static';
+        }
+      }, () => snapTriangle());
+
+      // Square Room: Drag OR Tap to snap
+      makeDraggable(sq, (el, x, y) => {
+        const rect = slotRoom.getBoundingClientRect();
+        if (x >= rect.left - 60 && x <= rect.right + 60 && y >= rect.top - 60 && y <= rect.bottom + 60) {
+          snapSquare();
+        } else {
+          el.style.position = 'static';
+        }
+      }, () => snapSquare());
+    }
+
+    function snapTriangle() {
+      if (castleDone.triangle) return;
+      document.getElementById('slot-roof').classList.add('snapped');
+      document.getElementById('drag-triangle').style.display = 'none';
+      castleDone.triangle = true;
+      soundSuccess();
+      checkCastleComplete();
+    }
+
+    function snapSquare() {
+      if (castleDone.square) return;
+      document.getElementById('slot-room').classList.add('snapped');
+      document.getElementById('castle-door').style.display = 'block';
+      document.getElementById('drag-square').style.display = 'none';
+      castleDone.square = true;
+      soundSuccess();
+      checkCastleComplete();
+    }
+
+    function checkCastleComplete() {
+      if (castleDone.triangle && castleDone.square) {
+        soundSuccess();
+        document.getElementById('unicorn-mascot').style.display = 'block';
+        speak("Hooray! The unicorn castle is built!");
+        triggerSparkleBurst();
+        setTimeout(initModule3, 2200);
+      }
+    }
+
+    // =============================================================
+    // MODULE 3: The Star Bridge (Patterns)
+    // =============================================================
+    function initModule3() {
+      if (window.GazetteTelemetry) window.GazetteTelemetry.track('module_start', { module: 3, round: currentSparkleRound });
+      updateDots(2);
+
+      document.getElementById('mod2-castle').style.display = 'none';
+      document.getElementById('mod3-bridge').style.display = 'flex';
+
+      const round = ROUND_DATA[currentSparkleRound];
+      const bridgeTrack = document.querySelector('.bridge-track');
+      const monkey = document.getElementById('monkey-walker');
+      monkey.style.transform = 'none';
+
+      // Build bridge pattern
+      bridgeTrack.innerHTML = '';
+      round.bridgePattern.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'bridge-item';
+        div.textContent = item;
+        bridgeTrack.appendChild(div);
+      });
+
+      // Empty target slot
+      const slot = document.createElement('div');
+      slot.className = 'bridge-slot';
+      slot.id = 'bridge-slot';
+      slot.textContent = '?';
+      slot.dataset.accept = round.bridgeMissing;
+      bridgeTrack.appendChild(slot);
+
+      // Render options
+      const optContainer = document.querySelector('.pattern-options');
+      optContainer.innerHTML = '';
+
+      round.bridgeOptions.forEach(optData => {
+        const opt = document.createElement('div');
+        opt.className = 'pattern-opt';
+        opt.textContent = optData.emoji;
+        opt.dataset.kind = optData.kind;
+
+        makeDraggable(opt, (el, x, y) => {
+          const rect = slot.getBoundingClientRect();
+          if (x >= rect.left - 50 && x <= rect.right + 50 && y >= rect.top - 50 && y <= rect.bottom + 50) {
+            checkBridgeMatch(optData.emoji, el);
+          } else {
+            el.style.position = 'static';
+          }
+        }, () => {
+          checkBridgeMatch(optData.emoji, opt);
+        });
+
+        optContainer.appendChild(opt);
+      });
+
+      speak("What comes next to fix the bridge?");
+    }
+
+    function checkBridgeMatch(pickedEmoji, el) {
+      const round = ROUND_DATA[currentSparkleRound];
+      const slot = document.getElementById('bridge-slot');
+      const monkey = document.getElementById('monkey-walker');
+
+      if (pickedEmoji === round.bridgeMissing) {
+        slot.textContent = round.bridgeMissing;
+        slot.style.border = '3px solid #4ade80';
+        slot.style.background = 'rgba(74, 222, 128, 0.4)';
+        el.style.display = 'none';
+        soundSuccess();
+
+        // Monkey walks safely across
+        monkey.style.transform = 'translateX(260px)';
+        speak("You solved the pattern! The monkey crossed safely!");
+        triggerSparkleBurst();
+        setTimeout(initModule4, 2400);
+      } else {
+        soundTrombone();
+        speak("Look closely at the pattern! What comes next?");
+        el.style.position = 'static';
+      }
+    }
+
+    // =============================================================
+    // MODULE 4: Bear Balloons (Letters)
+    // =============================================================
+    function initModule4() {
+      if (window.GazetteTelemetry) window.GazetteTelemetry.track('module_start', { module: 4, round: currentSparkleRound });
+      updateDots(3);
+
+      document.getElementById('mod3-bridge').style.display = 'none';
+      document.getElementById('mod4-bears').style.display = 'flex';
+
+      matchedLetters = 0;
+      const round = ROUND_DATA[currentSparkleRound];
+
+      // Build Clouds
+      const cloudsRow = document.querySelector('.clouds-row');
+      cloudsRow.innerHTML = '';
+      round.letters.forEach(l => {
+        const cloud = document.createElement('div');
+        cloud.className = 'cloud-target';
+        cloud.id = `cloud-${l.upper}`;
+        cloud.dataset.letter = l.upper;
+        cloud.textContent = l.upper;
+        cloudsRow.appendChild(cloud);
+      });
+
+      // Build Bears
+      const bearsRow = document.querySelector('.bears-row');
+      bearsRow.innerHTML = '';
+      round.letters.forEach(l => {
+        const bear = document.createElement('div');
+        bear.className = 'bear-balloon';
+        bear.dataset.letter = l.upper;
+        bear.innerHTML = `
+          <div class="balloon ${l.color}">${l.lower}</div>
+          <div class="bear-icon">🐻</div>
+        `;
+
+        makeDraggable(bear, (el, x, y) => {
+          let hit = false;
+          document.querySelectorAll('.cloud-target').forEach(cloud => {
+            const rect = cloud.getBoundingClientRect();
+            if (x >= rect.left - 40 && x <= rect.right + 40 && y >= rect.top - 40 && y <= rect.bottom + 40) {
+              if (cloud.dataset.letter === el.dataset.letter && !cloud.classList.contains('matched')) {
+                matchBear(cloud, el);
+                hit = true;
+              }
+            }
+          });
+          if (!hit) el.style.position = 'static';
+        }, (el) => {
+          // Tap shortcut: matches to cloud
+          const targetCloud = document.getElementById(`cloud-${el.dataset.letter}`);
+          if (targetCloud && !targetCloud.classList.contains('matched')) {
+            matchBear(targetCloud, el);
+          }
+        });
+
+        bearsRow.appendChild(bear);
+      });
+
+      speak("Match the little letters to the big letters!");
+    }
+
+    function matchBear(cloud, bear) {
+      cloud.classList.add('matched');
+      bear.style.visibility = 'hidden';
+      soundSuccess();
+      matchedLetters++;
+      if (matchedLetters === ROUND_DATA[currentSparkleRound].letters.length) {
+        triggerGrandFinale();
+      }
+    }
+
+    // =============================================================
+    // GRAND FINALE & WIN MODAL
+    // =============================================================
+    function triggerGrandFinale() {
+      if (window.GazetteTelemetry) {
+        window.GazetteTelemetry.track('game_completed', {
+          game: 'sparkle_rescue',
+          round: currentSparkleRound,
+          result: 'victory_sparkle_shower'
+        });
+      }
+
+      updateDots(4);
+      soundSuccess();
+      speak("Incredible! You rescued the Starfall Kingdom!");
+
+      // Massive continuous sparkle storm
+      const shower = document.getElementById('sparkle-shower');
+      shower.style.display = 'block';
+      shower.innerHTML = '';
+      for (let i = 0; i < 90; i++) {
+        const p = document.createElement('div');
+        p.className = 'sparkle-particle';
+        p.textContent = ['✨', '⭐', '🦄', '🌟', '💖', '🎈'][Math.floor(Math.random() * 6)];
+        p.style.left = (Math.random() * 95) + 'vw';
+        p.style.animationDelay = (Math.random() * 2.2) + 's';
+        shower.appendChild(p);
+      }
+
+      setTimeout(() => {
+        const winScreen = document.getElementById('win-screen');
+        const nextBtn = document.getElementById('btn-next-round');
+        if (currentSparkleRound < 3) {
+          nextBtn.textContent = `Play Round ${currentSparkleRound + 1} 🌟`;
+        } else {
+          nextBtn.textContent = "Play Again from Round 1 🔄";
+        }
+        winScreen.style.display = 'flex';
+      }, 1400);
+    }
+
+    // Start with Round 1 on load
+    window.addEventListener('DOMContentLoaded', () => {
+      window.setSparkleRound(1);
+    });
+  </script>
+</body>
+</html>

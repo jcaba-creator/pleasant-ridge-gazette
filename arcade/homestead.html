@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Homestead Critter Match</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #7c2d12 0%, #9a3412 50%, #c2410c 100%);
+      color: white;
+      height: 100dvh; max-height: 100dvh; padding-top: max(14px, env(safe-area-inset-top)); padding-bottom: max(38px, calc(env(safe-area-inset-bottom) + 22px));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      max-width: 800px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #fef08a;
+      text-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+
+    .hud-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: 800;
+      backdrop-filter: blur(8px);
+    }
+
+    /* Grid Controls */
+    .controls {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .diff-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .diff-btn.active {
+      background: #f59e0b;
+      color: #78350f;
+      border-color: #fef08a;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.5);
+    }
+
+    /* Cards Grid */
+    .grid {
+      display: grid;
+      gap: 16px;
+      width: 100%;
+      max-width: 600px;
+      perspective: 1000px;
+    }
+
+    .card {
+      aspect-ratio: 1;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+    }
+
+    .card.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      backface-visibility: hidden;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      border: 3px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .card-front {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      font-size: 2.5rem;
+    }
+
+    .card-back {
+      background: #fef08a;
+      transform: rotateY(180deg);
+      font-size: 3.5rem;
+      border-color: #f59e0b;
+    }
+
+    .stats-bar {
+      margin-top: 24px;
+      font-size: 1.3rem;
+      font-weight: 800;
+      background: rgba(0,0,0,0.3);
+      padding: 10px 24px;
+      border-radius: 30px;
+    }
+  </style>
+  <script src="telemetry.js"></script>
+</head>
+<body>
+
+  <header>
+    <h1>🐷 Homestead Critter Match</h1>
+    <a href="/arcade/" class="hud-btn">🏠 Hub</a>
+  </header>
+
+  <div class="controls">
+    <button class="diff-btn active" onclick="setDifficulty(2)">2x2 (Toddler)</button>
+    <button class="diff-btn" onclick="setDifficulty(3)">3x4 (Medium)</button>
+    <button class="diff-btn" onclick="setDifficulty(4)">4x4 (Pro)</button>
+  </div>
+
+  <div class="grid" id="card-grid"></div>
+
+  <div class="stats-bar">
+    🌟 Matches: <span id="matches">0</span> | 🔄 Turns: <span id="turns">0</span>
+  </div>
+
+  <script>
+    const critters = ['🐷', '🐮', '🐔', '🐶', '🐐', '🐴', '🦆', '🚜'];
+    let gridDim = 2; // Default 2x2
+    let cards = [];
+    let flippedCards = [];
+    let matches = 0;
+    let turns = 0;
+
+    // Web Audio Synthesizer
+    let audioCtx = null;
+    function playSound(type) {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (!audioCtx) return;
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      const now = audioCtx.currentTime;
+
+      if (type === 'flip') {
+        osc.frequency.setValueAtTime(400, now);
+        osc.frequency.exponentialRampToValueAtTime(600, now + 0.1);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+        osc.start(now); osc.stop(now + 0.1);
+      } else if (type === 'match') {
+        osc.frequency.setValueAtTime(523.25, now);
+        osc.frequency.setValueAtTime(659.25, now + 0.1);
+        osc.frequency.setValueAtTime(783.99, now + 0.2);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+        osc.start(now); osc.stop(now + 0.3);
+      }
+    }
+
+    function setDifficulty(dim) {
+      gridDim = dim;
+      document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      initGame();
+    }
+
+    function initGame() {
+      matches = 0;
+      turns = 0;
+      flippedCards = [];
+      document.getElementById('matches').innerText = matches;
+      document.getElementById('turns').innerText = turns;
+
+      const grid = document.getElementById('card-grid');
+      grid.innerHTML = '';
+
+      let pairCount = (gridDim === 3) ? 6 : (gridDim === 4) ? 8 : 2;
+      let selectedCritters = critters.slice(0, pairCount);
+      let deck = [...selectedCritters, ...selectedCritters];
+      deck.sort(() => Math.random() - 0.5);
+
+      if (gridDim === 3) {
+        grid.style.gridTemplateColumns = 'repeat(4, 1fr)';
+      } else {
+        grid.style.gridTemplateColumns = `repeat(${gridDim}, 1fr)`;
+      }
+
+      deck.forEach((critter, idx) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.dataset.critter = critter;
+        card.dataset.id = idx;
+
+        card.innerHTML = `
+          <div class="card-face card-front">🌾</div>
+          <div class="card-face card-back">${critter}</div>
+        `;
+
+        card.onclick = () => flipCard(card);
+        grid.appendChild(card);
+      });
+    }
+
+    function flipCard(card) {
+      if (card.classList.contains('flipped') || flippedCards.length >= 2) return;
+
+      playSound('flip');
+      card.classList.add('flipped');
+      flippedCards.push(card);
+
+      if (flippedCards.length === 2) {
+        turns++;
+        document.getElementById('turns').innerText = turns;
+
+        const [c1, c2] = flippedCards;
+        if (c1.dataset.critter === c2.dataset.critter) {
+          playSound('match');
+          matches++;
+          document.getElementById('matches').innerText = matches;
+          flippedCards = [];
+        } else {
+          setTimeout(() => {
+            c1.classList.remove('flipped');
+            c2.classList.remove('flipped');
+            flippedCards = [];
+          }, 1000);
+        }
+      }
+    }
+
+    initGame();
+  </script>
+</body>
+</html>

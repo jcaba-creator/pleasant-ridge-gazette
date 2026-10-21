@@ -1,0 +1,249 @@
+window.GAZETTE_CORRIDOR_NODES = {
+  "version": "1.2",
+  "last_updated": "2026-10-21",
+  "corridor_sectors": [
+    {
+      "id": "Ridge-449",
+      "name": "The Ridge (Easton / USD 449 / Hwy 192)"
+    },
+    {
+      "id": "Post-FtL",
+      "name": "Fort Leavenworth (Inside Main Post)"
+    },
+    {
+      "id": "River-Downtown",
+      "name": "Downtown Leavenworth & Missouri Riverfront"
+    },
+    {
+      "id": "South-Lansing",
+      "name": "South Corridor (Lansing / K-7 / 4H Rd)"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "node_mwr_strike_zone",
+      "name": "Strike Zone Bowling Center",
+      "sector": "Post-FtL",
+      "category": "MWR & Recreation",
+      "role": "Anchor",
+      "location": "165 Fourth St, Bldg 255, Fort Leavenworth",
+      "hours_note": "Wed-Sun afternoons & evenings (Cosmic Bowling Sat PM)",
+      "military_perk": true,
+      "cost_tier": "$",
+      "family_note": "Kid lanes with automatic bumpers, casual snack bar, easy parking behind PX.",
+      "source_url": "https://leavenworth.armymwr.com/programs/bowling/prices-deals-and-specials",
+      "source_label": "Official Fort Leavenworth MWR"
+    },
+    {
+      "id": "node_mwr_gear_rental",
+      "name": "Fort Leavenworth Outdoor Recreation & Rental Center",
+      "sector": "Post-FtL",
+      "category": "MWR & Recreation",
+      "role": "Stitch",
+      "location": "Bldg 88, Smith Ave, Fort Leavenworth",
+      "hours_note": "Mon-Fri 0800-1630, Sat seasonal hours",
+      "military_perk": true,
+      "cost_tier": "$",
+      "family_note": "Rent Jon boats, campers, towable grills, bounce houses, lawn equipment.",
+      "source_url": "https://leavenworth.armymwr.com/programs/outdoor-recreation-equipment-rental",
+      "source_label": "Official Fort Leavenworth MWR"
+    },
+    {
+      "id": "node_post_library",
+      "name": "Combined Arms Center (CAC) Post Library",
+      "sector": "Post-FtL",
+      "category": "Civic & Education",
+      "role": "Anchor",
+      "location": "Gibbon Ave, Fort Leavenworth",
+      "hours_note": "Mon-Sat day hours",
+      "military_perk": true,
+      "cost_tier": "Free",
+      "family_note": "Dedicated kids' story room, STEM maker kits, quiet space, military history archive.",
+      "source_url": "https://leavenworth.armymwr.com/categories/recreation-and-activities",
+      "source_label": "Combined Arms Center Library"
+    },
+    {
+      "id": "node_12th_brick",
+      "name": "The 12th Brick & Frontier Conference Grounds",
+      "sector": "Post-FtL",
+      "category": "MWR & Social",
+      "role": "Stitch",
+      "location": "Frontier Conference Center grounds, Fort Leavenworth",
+      "hours_note": "Special social nights, trivia, community gatherings",
+      "military_perk": true,
+      "cost_tier": "$$",
+      "family_note": "Relaxed outdoor patio space, social gatherings, periodic food truck rallies.",
+      "source_url": "https://leavenworth.armymwr.com/",
+      "source_label": "Fort Leavenworth MWR Calendar"
+    },
+    {
+      "id": "node_easton_cafe",
+      "name": "Easton Cafe",
+      "sector": "Ridge-449",
+      "category": "Hyper-Local Food",
+      "role": "Anchor",
+      "location": "Highway 192, Easton, KS",
+      "hours_note": "Early morning breakfast daily; Fri-Sat Prime Rib evening special",
+      "military_perk": false,
+      "cost_tier": "$$",
+      "family_note": "Classic rural booth seating, hearty scratch country cooking, community hub.",
+      "source_url": "https://www.facebook.com/EastonCafe/",
+      "source_label": "Easton Cafe Official Updates"
+    },
+    {
+      "id": "node_hilltop_market",
+      "name": "Hilltop Market & Cafe",
+      "sector": "Ridge-449",
+      "category": "Hyper-Local Food & Essentials",
+      "role": "Stitch",
+      "location": "Hwy 192 & 207th St (Tonganoxie Loop)",
+      "hours_note": "Mon-Sat 0600-1900, Sun morning-afternoon",
+      "military_perk": false,
+      "cost_tier": "$",
+      "family_note": "Fresh-baked pies, daily plate lunches, Sinclair fuel, hardware essentials.",
+      "source_url": "https://www.facebook.com/HilltopMarketCafe/",
+      "source_label": "Hilltop Market Ground Truth"
+    },
+    {
+      "id": "node_munson_beef",
+      "name": "Munson's Angus Farm Store & Beef Pantry",
+      "sector": "Ridge-449",
+      "category": "Farm & Agriculture",
+      "role": "Stitch",
+      "location": "Local Farm Pantry / Area Drop",
+      "hours_note": "Retail pantry hours & scheduled local pickup",
+      "military_perk": false,
+      "cost_tier": "$$",
+      "family_note": "Premium pasture-raised local Angus cuts, ground beef packs, local pantry goods.",
+      "source_url": "https://munsonangusbeef.com/",
+      "source_label": "Munson Angus Beef Official"
+    },
+    {
+      "id": "node_landing_park",
+      "name": "Leavenworth Landing Park & River Ramp",
+      "sector": "River-Downtown",
+      "category": "Historic & Outdoors",
+      "role": "Anchor",
+      "location": "Missouri Riverfront, Leavenworth",
+      "hours_note": "Dawn to Dusk daily",
+      "military_perk": false,
+      "cost_tier": "Free",
+      "family_note": "Paved riverfront walking trail, active barge/boat ramp, train watching, big open grass.",
+      "source_url": "https://www.leavenworthks.org/parksrec/page/leavenworth-landing-park",
+      "source_label": "City of Leavenworth Parks & Rec"
+    },
+    {
+      "id": "node_first_city_creative",
+      "name": "First City Creative & Soda Bar",
+      "sector": "River-Downtown",
+      "category": "Arts, Culture & Treats",
+      "role": "Stitch",
+      "location": "Delaware St, Downtown Leavenworth",
+      "hours_note": "Thu-Sat day & evening hours",
+      "military_perk": true,
+      "cost_tier": "$",
+      "family_note": "Artisan craft soda flights, kid maker projects, local vendor goods, relaxed seating.",
+      "source_url": "https://www.leavenworthdowntown.com/",
+      "source_label": "Leavenworth Main Street Directory"
+    },
+    {
+      "id": "node_leavenworth_comm_center",
+      "name": "Riverfront Community Center & Pool",
+      "sector": "River-Downtown",
+      "category": "Civic & Recreation",
+      "role": "Anchor",
+      "location": "123 S Esplanade St, Leavenworth",
+      "hours_note": "Open 7 days (indoor pool, basketball courts, walking track)",
+      "military_perk": true,
+      "cost_tier": "$",
+      "family_note": "Heated indoor pool, open gym, historic former union depot building.",
+      "source_url": "https://www.leavenworthks.org/parksrec/page/riverfront-community-center",
+      "source_label": "City of Leavenworth Community Center"
+    },
+    {
+      "id": "node_lansing_library",
+      "name": "Lansing Community Library & Maker Hub",
+      "sector": "South-Lansing",
+      "category": "Civic & Education",
+      "role": "Anchor",
+      "location": "730 1st Commercial Pl, Lansing, KS 66043",
+      "hours_note": "Mon-Thu 0900-1900, Fri-Sat 0900-1700",
+      "military_perk": false,
+      "cost_tier": "Free",
+      "family_note": "Interactive youth STEM maker kits, 3D printing lab, quiet study spaces, curated book nook.",
+      "source_url": "https://lansinglibraryks.org/",
+      "source_label": "Lansing Community Library"
+    },
+    {
+      "id": "node_angel_falls_trail",
+      "name": "Angel Falls Trail & St. Francis Nature Walk",
+      "sector": "South-Lansing",
+      "category": "Historic & Outdoors",
+      "role": "Stitch",
+      "location": "Ida St Trailhead / 900 S 2nd St, Lansing, KS 66043",
+      "hours_note": "Dawn to Dusk daily",
+      "military_perk": false,
+      "cost_tier": "Free",
+      "family_note": "Shaded limestone nature trail along 7-Mile Creek leading to natural limestone rock waterfall.",
+      "source_url": "https://www.lansingks.org/parksrec/page/angel-falls-trail",
+      "source_label": "City of Lansing Parks & Rec"
+    }
+  ],
+  "seasonal_signals": [
+    {
+      "id": "sig_veterans_parade",
+      "title": "Leavenworth County Veterans Day Parade",
+      "date_window": "November 11 (Annual at 10:30 AM)",
+      "sector": "River-Downtown",
+      "category": "Civic-Tradition",
+      "description": "Oldest and largest Veterans Day observance west of the Mississippi River. Military bands, active units, and vintage armor.",
+      "paired_stitch": "Stop at First City Creative for hot cocoa and craft sodas after the parade.",
+      "source_url": "https://www.lvvetsparade.com/",
+      "source_label": "Official Leavenworth Veterans Parade Committee"
+    },
+    {
+      "id": "sig_haymarket_tree_lighting",
+      "title": "Mayor's Holiday Tree Lighting & Stroll",
+      "date_window": "Late November (Friday after Thanksgiving)",
+      "sector": "River-Downtown",
+      "category": "Civic-Tradition",
+      "description": "Downtown lighting ceremony at Haymarket Square with live brass, carolers, hot cider, and Santa arrival.",
+      "paired_stitch": "Walk Delaware St to see historic window displays and grab fresh dinner.",
+      "source_url": "https://www.leavenworthdowntown.com/",
+      "source_label": "Leavenworth Main Street Events"
+    },
+    {
+      "id": "sig_turkey_trot",
+      "title": "Fort Leavenworth MWR Family Turkey Trot 5K",
+      "date_window": "Thanksgiving Week Saturday",
+      "sector": "Post-FtL",
+      "category": "MWR-Special",
+      "description": "Family-paced 5K run and stroller walk through the historic brick quarters of the post.",
+      "paired_stitch": "Head to Strike Zone bowling for cosmic lanes and hot lunch.",
+      "source_url": "https://leavenworth.armymwr.com/",
+      "source_label": "Fort Leavenworth MWR Calendar"
+    },
+    {
+      "id": "sig_deer_rut",
+      "title": "Corridor Wildlife Alert: Peak Deer Rut Movement",
+      "date_window": "Late October through November",
+      "sector": "Ridge-449",
+      "category": "Nature-Phenomenon",
+      "description": "Heavy buck movement across Highway 192, Millwood Rd, and US-73 at dawn and dusk. Stay vigilant around timber creek crossings.",
+      "paired_stitch": "Plan evening drives on primary routes; slow speeds around Stranger Creek.",
+      "source_url": "https://ksoutdoors.com/",
+      "source_label": "Kansas Dept of Wildlife & Parks"
+    },
+    {
+      "id": "sig_stranger_creek_estk1",
+      "title": "Stranger Creek Flood Gauge Impact Monitor",
+      "date_window": "Active following rainstorms (>2.0 inches)",
+      "sector": "Ridge-449",
+      "category": "Nature-Phenomenon",
+      "description": "Gauge ESTK1 monitoring: at 18.0 ft 1st St floods, at 19.5 ft K-192 bridge approaches take water.",
+      "paired_stitch": "Check Gazette live gauge banner before dispatching east toward Leavenworth.",
+      "source_url": "https://water.noaa.gov/gauges/06891850",
+      "source_label": "NOAA National Water Prediction Service"
+    }
+  ]
+};

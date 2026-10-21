@@ -1,0 +1,234 @@
+[Tue 10/20/2026 13:13:43.92] Initiating Scheduled Sweep... 
+[13:13:44] Connecting to live corridor feed...
+  * Sunoco                   : $3.85 (live)
+  * Murphy USA (Walmart)     : $3.84 (live)
+  * AAFES Express            : $3.85 (live)
+  * QuikTrip                 : $3.87 (live)
+  * Dillons Fuel Center      : $3.89 (est)
+  * 7-Eleven                 : $3.87 (live)
+  * Casey's General Store    : $3.87 (live)
+  * Casey's                  : $3.87 (live)
+  * BP / Amoco               : $3.87 (live)
+  * Cenex                    : $3.89 (est)
+  * Fav Trip                 : $3.89 (est)
+  * Hilltop Market / 66      : $3.91 (est)
+  * Sam's Club Fuel          : $3.93 (live)
+  * Shell                    : $3.99 (est)
+
+[SUCCESS] Corridor feed generated! Cheapest: Murphy USA (Walmart) at $3.84/gal (Saves $2.25 per 15-gal tank).
+=== AUDITING PREDICTIVE RADAR FOR 2026-10-20 ===
+Appended new AAR record for 2026-10-20.
+
+=== AUDIT COMPLETE ===
+Cumulative Model Accuracy: 100.0% across 4 cycles.
+Latest Outcome: Model Win: Clear Corridor Confirmed
+Saved to Google Drive: G:\My Drive\pleasant-ridge-gazette\telemetry\predictive_aar_ledger.csv
+Summary saved: G:\My Drive\pleasant-ridge-gazette\telemetry\telemetry_summary.json
+Vercel CLI 59.17.0 (Node.js 24.14.0)
+Error: Could not find “G:\My Drive\pleasant-ridge-gazette"”
+[Tue 10/20/2026 13:13:59.59] Sweep completed and published to Vercel. 
+[Tue 10/20/2026 13:16:52.42] Initiating Scheduled Sweep... 
+[13:16:52] Connecting to live corridor feed...
+  * Sunoco                   : $3.85 (live)
+  * Murphy USA (Walmart)     : $3.84 (live)
+  * AAFES Express            : $3.85 (live)
+  * QuikTrip                 : $3.87 (live)
+  * Dillons Fuel Center      : $3.89 (est)
+  * 7-Eleven                 : $3.87 (live)
+  * Casey's General Store    : $3.87 (live)
+  * Casey's                  : $3.87 (live)
+  * BP / Amoco               : $3.87 (live)
+  * Cenex                    : $3.89 (est)
+  * Fav Trip                 : $3.89 (est)
+  * Hilltop Market / 66      : $3.91 (est)
+  * Sam's Club Fuel          : $3.93 (live)
+  * Shell                    : $3.99 (est)
+
+[SUCCESS] Corridor feed generated! Cheapest: Murphy USA (Walmart) at $3.84/gal (Saves $2.25 per 15-gal tank).
+=== AUDITING PREDICTIVE RADAR FOR 2026-10-20 ===
+Updated today's AAR row (2026-10-20).
+
+=== AUDIT COMPLETE ===
+Cumulative Model Accuracy: 100.0% across 4 cycles.
+Latest Outcome: Model Win: Clear Corridor Confirmed
+Saved to Google Drive: G:\My Drive\pleasant-ridge-gazette\telemetry\predictive_aar_ledger.csv
+Summary saved: G:\My Drive\pleasant-ridge-gazette\telemetry\telemetry_summary.json
+Vercel CLI 59.17.0 (Node.js 24.14.0)
+Deploying pleasant-ridge-gazette
+Uploading [--------------------] (0.0B/19.8KB)
+Uploading [========------------] (8.3KB/19.8KB)
+Uploading [=============-------] (12.9KB/19.8KB)
+Uploading [================----] (16.7KB/19.8KB)
+Uploading [====================] (19.8KB/19.8KB)
+  Inspect         https://vercel.com/billow-and-breeze/pleasant-ridge-gazette/ECu1od5sdWEZhVBvn6Hqxz3f7JWS
+  Production      https://pleasant-ridge-gazette-jgaawsvyx-billow-and-breeze.vercel.app
+Building…
+Building…
+Running build in Washington, D.C., USA (East) – iad1
+Build machine configuration: 2 cores, 8 GB
+Retrieving list of deployment files...
+Downloading 96 deployment files...
+Restored build cache from previous deployment (Erb7kv4eSwmZx2tY5hbTxxaWsL8c)
+Running "vercel build"
+Vercel CLI 64.5.0
+Installing dependencies...
+npm warn Unknown env config "cache-dir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+up to date in 526ms
+Build Completed in .vercel/build-output [2s]
+Deploying outputs...
+[2K[1A[2K[G  Production      https://pleasant-ridge-gazette-jgaawsvyx-billow-and-breeze.vercel.app
+Completing…
+▲ Aliased         https://pleasant-ridge-gazette.vercel.app
+{
+  "status": "ok",
+  "deployment": {
+    "id": "dpl_ECu1od5sdWEZhVBvn6Hqxz3f7JWS",
+    "url": "https://pleasant-ridge-gazette-jgaawsvyx-billow-and-breeze.vercel.app",
+    "inspectorUrl": "https://vercel.com/billow-and-breeze/pleasant-ridge-gazette/ECu1od5sdWEZhVBvn6Hqxz3f7JWS",
+    "readyState": "READY",
+    "target": "production",
+    "deploymentApiUrl": "https://api.vercel.com/v13/deployments/dpl_ECu1od5sdWEZhVBvn6Hqxz3f7JWS"
+  },
+  "message": "Deployment pleasant-ridge-gazette-jgaawsvyx-billow-and-breeze.vercel.app ready.",
+  "next": [
+    {
+      "command": "vercel curl https://pleasant-ridge-gazette-jgaawsvyx-billow-and-breeze.vercel.app",
+      "when": "Verify deployment, including when Deployment Protection is enabled"
+    },
+    {
+      "command": "vercel inspect pleasant-ridge-gazette-jgaawsvyx-billow-and-breeze.vercel.app --scope billow-and-breeze",
+      "when": "Inspect deployment"
+    },
+    {
+      "command": "vercel deploy --prod --scope billow-and-breeze",
+      "when": "Promote to production"
+    }
+  ]
+}
+[Tue 10/20/2026 13:17:16.16] Sweep completed and published to Vercel. 
+[Tue 10/20/2026 15:00:01.05] Initiating Scheduled Sweep... 
+[15:00:01] Connecting to live corridor feed...
+  * Sunoco                   : $3.83 (live)
+  * Murphy USA (Walmart)     : $3.84 (live)
+  * AAFES Express            : $3.85 (live)
+  * QuikTrip                 : $3.87 (live)
+  * Dillons Fuel Center      : $3.87 (live)
+  * 7-Eleven                 : $3.87 (live)
+  * Casey's General Store    : $3.87 (live)
+  * Casey's                  : $3.89 (est)
+  * BP / Amoco               : $3.87 (live)
+  * Cenex                    : $3.89 (est)
+  * Fav Trip                 : $3.89 (est)
+  * Hilltop Market / 66      : $3.91 (est)
+  * Sam's Club Fuel          : $3.93 (live)
+  * Shell                    : $3.99 (live)
+
+[SUCCESS] Corridor feed generated! Cheapest: Sunoco at $3.83/gal (Saves $2.40 per 15-gal tank).
+=== AUDITING PREDICTIVE RADAR FOR 2026-10-20 ===
+Updated today's AAR row (2026-10-20).
+
+=== AUDIT COMPLETE ===
+Cumulative Model Accuracy: 100.0% across 4 cycles.
+Latest Outcome: Model Win: Clear Corridor Confirmed
+Saved to Google Drive: G:\My Drive\pleasant-ridge-gazette\telemetry\predictive_aar_ledger.csv
+Summary saved: G:\My Drive\pleasant-ridge-gazette\telemetry\telemetry_summary.json
+Vercel CLI 59.17.0 (Node.js 24.14.0)
+Deploying pleasant-ridge-gazette
+Uploading [--------------------] (0.0B/24.7KB)
+Uploading [=====---------------] (6.6KB/24.7KB)
+Uploading [=============-------] (16.6KB/24.7KB)
+Uploading [================----] (20.9KB/24.7KB)
+Uploading [====================] (24.7KB/24.7KB)
+  Inspect         https://vercel.com/billow-and-breeze/pleasant-ridge-gazette/BytoohAFksdBjregdkgEb2i76je4
+  Production      https://pleasant-ridge-gazette-gulfbab80-billow-and-breeze.vercel.app
+https://pleasant-ridge-gazette-gulfbab80-billow-and-breeze.vercel.appBuilding…
+Building…
+Running build in Washington, D.C., USA (East) – iad1
+Build machine configuration: 2 cores, 8 GB
+Retrieving list of deployment files...
+Downloading 96 deployment files...
+Restored build cache from previous deployment (ECu1od5sdWEZhVBvn6Hqxz3f7JWS)
+Running "vercel build"
+Vercel CLI 64.5.0
+Installing dependencies...
+npm warn Unknown env config "cache-dir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+up to date in 477ms
+Build Completed in .vercel/build-output [1s]
+Deploying outputs...
+[2K[1A[2K[G  Production      https://pleasant-ridge-gazette-gulfbab80-billow-and-breeze.vercel.app
+Completing…
+▲ Aliased         https://pleasant-ridge-gazette.vercel.app
+
+✓ Ready in 10s
+
+Next steps:
+- Check the deployment response:
+  vercel curl https://pleasant-ridge-gazette-gulfbab80-billow-and-breeze.vercel.app --scope billow-and-breeze
+- View build logs:
+  vercel inspect pleasant-ridge-gazette-gulfbab80-billow-and-breeze.vercel.app --logs --scope billow-and-breeze
+- Create a new deployment from the same source:
+  vercel redeploy pleasant-ridge-gazette-gulfbab80-billow-and-breeze.vercel.app --scope billow-and-breeze
+[Tue 10/20/2026 15:00:24.44] Sweep completed and published to Vercel. 
+[Wed 10/21/2026  5:00:02.00] Initiating Scheduled Sweep... 
+[05:00:02] Connecting to live corridor feed...
+  * Sunoco                   : $3.83 (live)
+  * Murphy USA (Walmart)     : $3.84 (live)
+  * AAFES Express            : $3.85 (live)
+  * QuikTrip                 : $3.87 (live)
+  * Dillons Fuel Center      : $3.87 (live)
+  * 7-Eleven                 : $3.87 (live)
+  * Casey's General Store    : $3.87 (live)
+  * Casey's                  : $3.87 (live)
+  * BP / Amoco               : $3.87 (live)
+  * Cenex                    : $3.89 (est)
+  * Fav Trip                 : $3.89 (est)
+  * Hilltop Market / 66      : $3.91 (est)
+  * Sam's Club Fuel          : $3.93 (live)
+  * Shell                    : $3.99 (live)
+
+[SUCCESS] Corridor feed generated! Cheapest: Sunoco at $3.83/gal (Saves $2.40 per 15-gal tank).
+=== AUDITING PREDICTIVE RADAR FOR 2026-10-21 ===
+Appended new AAR record for 2026-10-21.
+
+=== AUDIT COMPLETE ===
+Cumulative Model Accuracy: 100.0% across 5 cycles.
+Latest Outcome: Model Win: Clear Corridor Confirmed
+Saved to Google Drive: G:\My Drive\pleasant-ridge-gazette\telemetry\predictive_aar_ledger.csv
+Summary saved: G:\My Drive\pleasant-ridge-gazette\telemetry\telemetry_summary.json
+Vercel CLI 59.17.0 (Node.js 24.14.0)
+Deploying pleasant-ridge-gazette
+Uploading [--------------------] (0.0B/28KB)
+Uploading [=====---------------] (7.7KB/28KB)
+Uploading [============--------] (17.4KB/28KB)
+Uploading [=================---] (24.2KB/28KB)
+Uploading [====================] (28.0KB/28KB)
+  Inspect         https://vercel.com/billow-and-breeze/pleasant-ridge-gazette/Gub1KUtqUGjQ5CLvWTU6UKEjeXKr
+  Production      https://pleasant-ridge-gazette-ndxyw2369-billow-and-breeze.vercel.app
+https://pleasant-ridge-gazette-ndxyw2369-billow-and-breeze.vercel.appBuilding…
+Building…
+Running build in Washington, D.C., USA (East) – iad1
+Build machine configuration: 2 cores, 8 GB
+Retrieving list of deployment files...
+Downloading 100 deployment files...
+Restored build cache from previous deployment (AeUJyoqT8owCJyis5tNKJQadz9nH)
+Running "vercel build"
+Vercel CLI 64.7.0
+Installing dependencies...
+npm warn Unknown env config "cache-dir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+up to date in 655ms
+Build Completed in .vercel/build-output [2s]
+Deploying outputs...
+[2K[1A[2K[G  Production      https://pleasant-ridge-gazette-ndxyw2369-billow-and-breeze.vercel.app
+Completing…
+▲ Aliased         https://pleasant-ridge-gazette.vercel.app
+
+✓ Ready in 12s
+
+Next steps:
+- Check the deployment response:
+  vercel curl https://pleasant-ridge-gazette-ndxyw2369-billow-and-breeze.vercel.app --scope billow-and-breeze
+- View build logs:
+  vercel inspect pleasant-ridge-gazette-ndxyw2369-billow-and-breeze.vercel.app --logs --scope billow-and-breeze
+- Create a new deployment from the same source:
+  vercel redeploy pleasant-ridge-gazette-ndxyw2369-billow-and-breeze.vercel.app --scope billow-and-breeze
+[Wed 10/21/2026  5:00:18.83] Sweep completed and published to Vercel. 

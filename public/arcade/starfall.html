@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Starfall Math Galaxy</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 100%);
+      color: white;
+      height: 100dvh; max-height: 100dvh; padding-top: max(14px, env(safe-area-inset-top)); padding-bottom: max(36px, calc(env(safe-area-inset-bottom) + 20px));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      overflow: hidden;
+    }
+
+    #game-container {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      height: 550px;
+      background: #020617;
+      border-radius: 24px;
+      box-shadow: 0 16px 40px rgba(59, 130, 246, 0.35);
+      border: 3px solid rgba(255, 255, 255, 0.2);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* HUD Banner */
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      z-index: 10;
+    }
+
+    .target-box {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      padding: 8px 24px;
+      border-radius: 30px;
+      font-size: 1.4rem;
+      font-weight: 900;
+      box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+      letter-spacing: 1px;
+    }
+
+    .score-box {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .hud-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 8px 18px;
+      border-radius: 20px;
+      text-decoration: none;
+      font-weight: 700;
+      transition: all 0.2s ease;
+    }
+
+    .hud-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    canvas {
+      flex: 1;
+      width: 100%;
+      cursor: crosshair;
+    }
+
+    /* Controls Bar */
+    .controls-bar {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      padding: 12px;
+      background: rgba(0,0,0,0.4);
+    }
+
+    .mode-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 6px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .mode-btn.active {
+      background: #06b6d4;
+      border-color: #67e8f9;
+      box-shadow: 0 0 12px rgba(6, 182, 212, 0.6);
+    }
+  </style>
+  <script src="telemetry.js"></script>
+</head>
+<body>
+
+  <div id="game-container">
+    <div class="hud">
+      <div class="score-box">🚀 Score: <span id="score">0</span></div>
+      <div class="target-box">TARGET: <span id="target-val">12</span></div>
+      <a href="/arcade/" class="hud-btn">🏠 Hub</a>
+    </div>
+
+    <canvas id="canvas"></canvas>
+
+    <div class="controls-bar">
+      <button class="mode-btn active" onclick="setMode('add')">➕ Addition</button>
+      <button class="mode-btn" onclick="setMode('sub')">➖ Subtraction</button>
+      <button class="mode-btn" onclick="setMode('mul')">✖️ Multiplication</button>
+      <button class="mode-btn" onclick="setMode('mix')">🌟 Mixed</button>
+    </div>
+  </div>
+
+  <script>
+
+    let currentSector = 1;
+    function setSector(sec) {
+      currentSector = sec;
+      ['sec-1-btn', 'sec-2-btn', 'sec-3-btn'].forEach((id, i) => {
+        const b = document.getElementById(id);
+        if (b) {
+          if (i + 1 === sec) {
+            b.style.background = '#3b82f6';
+            b.style.color = '#fff';
+          } else {
+            b.style.background = 'transparent';
+            b.style.color = '#94a3b8';
+          }
+        }
+      });
+      if (sec === 1) {
+        mode = 'addition';
+        targetNumber = Math.floor(Math.random() * 6) + 4; // 4 to 10
+      } else if (sec === 2) {
+        mode = 'subtraction';
+        targetNumber = Math.floor(Math.random() * 10) + 10; // 10 to 20
+      } else {
+        mode = 'multiplication';
+        targetNumber = [10, 12, 15, 16, 20, 24, 30][Math.floor(Math.random() * 7)];
+      }
+      document.getElementById('target-display').textContent = `Target: ${targetNumber}`;
+      if (window.GazetteTelemetry) {
+        window.GazetteTelemetry.track('starfall_sector_select', { sector: sec, mode: mode, target: targetNumber });
+      }
+    }
+
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    function resize() {
+      canvas.width = canvas.parentElement.clientWidth;
+      canvas.height = canvas.parentElement.clientHeight - 110;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    // Audio Synthesizer
+    let audioCtx = null;
+    function playAudio(type) {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (!audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      const now = audioCtx.currentTime;
+
+      if (type === 'zap') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(880, now);
+        osc.frequency.exponentialRampToValueAtTime(110, now + 0.2);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+        osc.start(now); osc.stop(now + 0.2);
+      } else if (type === 'buzz') {
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(150, now);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+        osc.start(now); osc.stop(now + 0.25);
+      }
+    }
+
+    // State
+    let score = 0;
+    let mode = 'add';
+    let targetValue = 12;
+    let bubbles = [];
+    let lasers = [];
+    let stars = [];
+
+    // Init Stars
+    for (let i = 0; i < 60; i++) {
+      stars.push({
+        x: Math.random() * 800,
+        y: Math.random() * 500,
+        size: Math.random() * 2 + 1,
+        speed: Math.random() * 0.5 + 0.2
+      });
+    }
+
+    function setMode(newMode) {
+      mode = newMode;
+      document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      generateTarget();
+    }
+
+    function generateTarget() {
+      if (mode === 'add') targetValue = Math.floor(Math.random() * 15) + 5;
+      else if (mode === 'sub') targetValue = Math.floor(Math.random() * 12) + 2;
+      else if (mode === 'mul') targetValue = (Math.floor(Math.random() * 6) + 2) * (Math.floor(Math.random() * 5) + 2);
+      else targetValue = Math.floor(Math.random() * 20) + 4;
+
+      document.getElementById('target-val').innerText = targetValue;
+      bubbles = [];
+      spawnBubbles();
+    }
+
+    function generateExpression(val, isCorrect) {
+      if (isCorrect) {
+        if (mode === 'add') {
+          const a = Math.floor(Math.random() * (val - 1)) + 1;
+          return `${a} + ${val - a}`;
+        } else if (mode === 'sub') {
+          const b = Math.floor(Math.random() * 8) + 1;
+          return `${val + b} - ${b}`;
+        } else if (mode === 'mul') {
+          // Find factors
+          for (let f = 2; f <= 10; f++) {
+            if (val % f === 0) return `${f} × ${val / f}`;
+          }
+          return `${val} × 1`;
+        } else {
+          return `${val}`;
+        }
+      } else {
+        const wrong = val + (Math.random() > 0.5 ? 2 : -2);
+        return `${Math.max(1, wrong)}`;
+      }
+    }
+
+    function spawnBubbles() {
+      const colors = ['#ec4899', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
+      const correctIdx = Math.floor(Math.random() * 4);
+
+      for (let i = 0; i < 4; i++) {
+        const isCorrect = (i === correctIdx);
+        bubbles.push({
+          x: (canvas.width / 5) * (i + 1),
+          y: -40 - Math.random() * 60,
+          radius: 36,
+          color: colors[i % colors.length],
+          text: generateExpression(targetValue, isCorrect),
+          val: isCorrect ? targetValue : targetValue + i + 1,
+          speed: 1.2 + Math.random() * 0.6
+        });
+      }
+    }
+
+    generateTarget();
+
+    // Click / Touch Handler
+    canvas.addEventListener('pointerdown', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+
+      bubbles.forEach((b, idx) => {
+        const dist = Math.hypot(clickX - b.x, clickY - b.y);
+        if (dist < b.radius) {
+          // Laser beam
+          lasers.push({ x: canvas.width / 2, y: canvas.height, targetX: b.x, targetY: b.y, alpha: 1.0 });
+
+          if (b.val === targetValue) {
+            playAudio('zap');
+            score += 20;
+            document.getElementById('score').innerText = score;
+            generateTarget();
+          } else {
+            playAudio('buzz');
+            b.y += 40; // Push back wrong bubble
+          }
+        }
+      });
+    });
+
+    function update() {
+      // Update Stars
+      stars.forEach(s => {
+        s.y += s.speed;
+        if (s.y > canvas.height) s.y = 0;
+      });
+
+      // Update Bubbles
+      let respawn = false;
+      bubbles.forEach(b => {
+        b.y += b.speed;
+        if (b.y > canvas.height + 40) respawn = true;
+      });
+
+      if (respawn) generateTarget();
+
+      // Update Lasers
+      lasers.forEach(l => l.alpha -= 0.1);
+      lasers = lasers.filter(l => l.alpha > 0);
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw Stars
+      ctx.fillStyle = '#ffffff';
+      stars.forEach(s => {
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Draw Lasers
+      lasers.forEach(l => {
+        ctx.strokeStyle = `rgba(56, 189, 248, ${l.alpha})`;
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.moveTo(l.x, l.y);
+        ctx.lineTo(l.targetX, l.targetY);
+        ctx.stroke();
+      });
+
+      // Draw Bubbles
+      bubbles.forEach(b => {
+        ctx.save();
+        ctx.shadowColor = b.color;
+        ctx.shadowBlur = 16;
+        ctx.fillStyle = b.color;
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        // Bubble Text
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 18px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(b.text, b.x, b.y);
+      });
+    }
+
+    function loop() {
+      update();
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    loop();
+  </script>
+</body>
+</html>

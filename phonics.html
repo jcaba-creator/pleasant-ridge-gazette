@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Enchanted Phonics Safari | Word Explorer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800;900&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --jungle-deep: #064e3b;
+      --jungle-mid: #047857;
+      --jungle-light: #10b981;
+      --sand-gold: #f59e0b;
+      --amber-glow: #fef08a;
+      --card-wood: #292524;
+      --text-white: #ffffff;
+      --border-thick: 3px solid #1e293b;
+      --shadow-hard: 0 8px 0px rgba(0,0,0,0.3);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    html, body {
+      font-family: 'Outfit', -apple-system, sans-serif;
+      background: radial-gradient(circle at 50% 30%, #065f46 0%, #064e3b 60%, #022c22 100%);
+      color: var(--text-white);
+      height: 100dvh;
+      max-height: 100dvh;
+      width: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: max(14px, env(safe-area-inset-top));
+      padding-bottom: max(38px, calc(env(safe-area-inset-bottom) + 24px));
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    /* Top HUD */
+    header.safari-hud {
+      width: 100%;
+      max-width: 860px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      z-index: 20;
+    }
+
+    .btn-hud {
+      background: #ffffff;
+      color: #064e3b;
+      border: 3px solid #022c22;
+      box-shadow: 0 4px 0 #022c22;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 14px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .btn-hud:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #022c22;
+    }
+
+    .level-pills {
+      display: flex;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 4px;
+      border-radius: 999px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      gap: 4px;
+    }
+
+    .pill-btn {
+      background: transparent;
+      border: none;
+      color: #e2e8f0;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .pill-btn.active {
+      background: var(--sand-gold);
+      color: #78350f;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.5);
+    }
+
+    .star-meter {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 20px;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Main Center Game Arena */
+    main.safari-arena {
+      width: 100%;
+      max-width: 820px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin: 10px 0;
+    }
+
+    .safari-card {
+      width: 100%;
+      background: rgba(2, 44, 34, 0.85);
+      border: 3px solid rgba(254, 240, 138, 0.35);
+      border-radius: 28px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5), inset 0 2px 6px rgba(255,255,255,0.1);
+      backdrop-filter: blur(12px);
+      padding: 22px 20px 26px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      position: relative;
+    }
+
+    /* Spoken Prompt & Speaker Banner */
+    .safari-guide-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 2px solid rgba(254, 240, 138, 0.3);
+      padding: 10px 20px;
+      border-radius: 999px;
+      max-width: 90%;
+    }
+
+    .speaker-icon-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--sand-gold);
+      border: 2px solid #78350f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #78350f;
+      transition: transform 0.1s;
+      flex-shrink: 0;
+    }
+    .speaker-icon-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #78350f;
+    }
+
+    .guide-text {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--amber-glow);
+      text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+      letter-spacing: 0.3px;
+    }
+
+    /* Mystery Animal Reveal Stage */
+    .mystery-stage {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      margin: 4px 0;
+    }
+
+    .animal-portrait {
+      width: 105px;
+      height: 105px;
+      border-radius: 24px;
+      background: radial-gradient(circle, #fde047 0%, #f59e0b 80%);
+      border: 4px solid #ffffff;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 64px;
+      position: relative;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .animal-portrait.revealed {
+      animation: popJump 0.6s ease forwards;
+    }
+    @keyframes popJump {
+      0% { transform: scale(0.8) rotate(-5deg); }
+      50% { transform: scale(1.25) rotate(5deg); }
+      100% { transform: scale(1.05) rotate(0deg); }
+    }
+
+    /* Word Slot Targets */
+    .word-slots {
+      display: flex;
+      gap: 12px;
+    }
+
+    .letter-slot {
+      width: 68px;
+      height: 80px;
+      background: rgba(0, 0, 0, 0.45);
+      border: 3px dashed rgba(254, 240, 138, 0.5);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 42px;
+      font-weight: 900;
+      color: var(--amber-glow);
+      box-shadow: inset 0 4px 10px rgba(0,0,0,0.4);
+      transition: all 0.25s ease;
+    }
+
+    .letter-slot.filled {
+      background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+      border: 3px solid #fef08a;
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.5);
+      transform: scale(1.05);
+    }
+
+    /* Letter Tile Choices (Elevated away from bottom edge for iPad) */
+    .tiles-rack {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 14px;
+      max-width: 650px;
+      padding: 10px 14px;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .phonics-tile {
+      width: 72px;
+      height: 76px;
+      background: linear-gradient(145deg, #fef08a 0%, #f59e0b 100%);
+      border: 3px solid #78350f;
+      border-radius: 18px;
+      box-shadow: 0 6px 0 #78350f, 0 8px 16px rgba(0,0,0,0.3);
+      color: #78350f;
+      font-size: 38px;
+      font-weight: 900;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+    .phonics-tile:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #78350f;
+    }
+    .phonics-tile.disabled {
+      opacity: 0.35;
+      pointer-events: none;
+      transform: scale(0.9);
+      box-shadow: none;
+    }
+
+    /* Victory & Level Complete Modal */
+    .celebration-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+      padding: 24px;
+    }
+
+    .modal-card {
+      background: linear-gradient(145deg, #064e3b, #022c22);
+      border: 4px solid var(--sand-gold);
+      border-radius: 32px;
+      padding: 32px 36px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+      max-width: 480px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .btn-advance {
+      background: linear-gradient(135deg, #fde047, #f59e0b);
+      color: #78350f;
+      border: 3px solid #ffffff;
+      padding: 14px 32px;
+      border-radius: 999px;
+      font-size: 20px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #78350f, 0 10px 24px rgba(245, 158, 11, 0.5);
+      transition: transform 0.1s;
+    }
+    .btn-advance:active {
+      transform: translateY(3px);
+      box-shadow: 0 3px 0 #78350f;
+    }
+  </style>
+  <script src="telemetry.js"></script>
+</head>
+<body>
+
+  <!-- Top HUD with iPad Safe Insets -->
+  <header class="safari-hud">
+    <a href="/arcade/" class="btn-hud">&larr; Field Arcade</a>
+    
+    <div class="level-pills">
+      <button class="pill-btn active" id="btn-lvl-1" onclick="selectLevel(1)">Level 1 (3-Letter)</button>
+      <button class="pill-btn" id="btn-lvl-2" onclick="selectLevel(2)">Level 2 (4-Letter)</button>
+      <button class="pill-btn" id="btn-lvl-3" onclick="selectLevel(3)">Level 3 (5-Letter)</button>
+    </div>
+
+    <div class="star-meter" id="star-display">
+      <span>⭐</span>
+      <span id="score-val" style="font-weight:900; color:#fde047;">0 / 5</span>
+    </div>
+  </header>
+
+  <!-- Centered Playing Arena (Safely elevated away from iPad Home bar) -->
+  <main class="safari-arena">
+    <div class="safari-card">
+      
+      <!-- Spoken Guide Prompt -->
+      <div class="safari-guide-banner">
+        <button class="speaker-icon-btn" id="btn-replay-audio" onclick="replayAudioPrompt()">🔊</button>
+        <span class="guide-text" id="guide-caption">"Listen closely to the safari animal..."</span>
+      </div>
+
+      <!-- Mystery Animal & Target Slots -->
+      <div class="mystery-stage">
+        <div class="animal-portrait" id="animal-avatar">❓</div>
+        <div class="word-slots" id="slots-container">
+          <!-- Slots generated dynamically -->
+        </div>
+      </div>
+
+      <!-- Elevated Letter Selection Rack -->
+      <div class="tiles-rack" id="letters-rack">
+        <!-- Interactive letter tiles generated dynamically -->
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Level Complete Modal -->
+  <div class="celebration-modal" id="win-modal">
+    <div class="modal-card">
+      <div style="font-size: 72px;">🏆🎉🌟</div>
+      <h2 style="font-size: 32px; font-weight: 900; color: #fde047;">SAFARI HERO!</h2>
+      <p id="modal-desc" style="font-size: 18px; color: #e2e8f0; font-weight: 700;">You mastered all the Level 1 animals!</p>
+      <button class="btn-advance" id="btn-modal-action" onclick="advanceNextLevel()">Next Level &rarr;</button>
+    </div>
+  </div>
+
+  <script>
+    // -------------------------------------------------------------
+    // Safari Curriculum: 3 Levels with Progressive Phonics Intent
+    // -------------------------------------------------------------
+    const CURRICULUM = {
+      1: [
+        { word: 'CAT', emoji: '🐱', hint: 'The whiskered friend that meows' },
+        { word: 'PIG', emoji: '🐷', hint: 'The pink friend that loves the mud' },
+        { word: 'FOX', emoji: '🦊', hint: 'The clever friend with a bushy tail' },
+        { word: 'BAT', emoji: '🦇', hint: 'The night friend that flies with wings' },
+        { word: 'OWL', emoji: '🦉', hint: 'The wise friend that says whoo-whoo' },
+        { word: 'DOG', emoji: '🐶', hint: 'The loyal puppy friend that barks' }
+      ],
+      2: [
+        { word: 'LION', emoji: '🦁', hint: 'The brave king of the jungle' },
+        { word: 'BEAR', emoji: '🐻', hint: 'The big furry friend who loves honey' },
+        { word: 'FROG', emoji: '🐸', hint: 'The green hopper at the pond' },
+        { word: 'DUCK', emoji: '🦆', hint: 'The feathery friend that quacks' },
+        { word: 'DEER', emoji: '🦌', hint: 'The gentle runner through Kansas woods' },
+        { word: 'HAWK', emoji: '🦅', hint: 'The sharp-eyed flyer in the sky' }
+      ],
+      3: [
+        { word: 'TIGER', emoji: '🐯', hint: 'The striped big cat of the forest' },
+        { word: 'HORSE', emoji: '🐴', hint: 'The galloping friend at the ranch' },
+        { word: 'ZEBRA', emoji: '🦓', hint: 'The black and white striped friend' },
+        { word: 'EAGLE', emoji: '🦅', hint: 'The majestic bird of the prairies' },
+        { word: 'BISON', emoji: '🦬', hint: 'The mighty giant of the Kansas plains' }
+      ]
+    };
+
+    let currentLevel = 1;
+    let wordIndex = 0;
+    let currentWordObj = null;
+    let spelledLetters = [];
+    let completedInLevel = 0;
+    let currentSpeechText = "";
+
+    // Web Audio Synthesizer
+    let audioCtx = null;
+    function playTone(freq1, freq2, duration = 0.25) {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.frequency.setValueAtTime(freq1, now);
+        osc.frequency.exponentialRampToValueAtTime(freq2, now + duration);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+        osc.start(now);
+        osc.stop(now + duration);
+      } catch (e) {}
+    }
+
+    function soundSnap() { playTone(360, 720, 0.18); }
+    function soundCorrect() { playTone(440, 880, 0.35); }
+    function soundFanfare() {
+      playTone(523.25, 659.25, 0.2);
+      setTimeout(() => playTone(659.25, 783.99, 0.2), 150);
+      setTimeout(() => playTone(783.99, 1046.50, 0.4), 300);
+    }
+    function soundMiss() { playTone(300, 200, 0.25); }
+
+    // Speech Synthesis
+    function speak(text) {
+      currentSpeechText = text;
+      document.getElementById('guide-caption').textContent = text;
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.rate = 0.9;
+      u.pitch = 1.15;
+      const voices = window.speechSynthesis.getVoices();
+      const friendly = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Samantha') || v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Karen')));
+      if (friendly) u.voice = friendly;
+      window.speechSynthesis.speak(u);
+
+      if (window.GazetteTelemetry) {
+        window.GazetteTelemetry.track('phonics_audio_prompt', { text: text, level: currentLevel });
+      }
+    }
+
+    function replayAudioPrompt() {
+      if (currentSpeechText) speak(currentSpeechText);
+    }
+
+    function selectLevel(lvl) {
+      currentLevel = lvl;
+      wordIndex = 0;
+      completedInLevel = 0;
+      document.querySelectorAll('.pill-btn').forEach((b, i) => {
+        b.classList.toggle('active', i + 1 === lvl);
+      });
+      if (window.GazetteTelemetry) {
+        window.GazetteTelemetry.track('phonics_level_select', { level: lvl });
+      }
+      loadWord();
+    }
+
+    function loadWord() {
+      const list = CURRICULUM[currentLevel];
+      if (wordIndex >= list.length) {
+        wordIndex = 0;
+      }
+      currentWordObj = list[wordIndex];
+      spelledLetters = [];
+
+      // Update Star HUD
+      document.getElementById('score-val').textContent = `${completedInLevel} / ${list.length}`;
+
+      // Reset Avatar to Mystery
+      const avatar = document.getElementById('animal-avatar');
+      avatar.textContent = '❓';
+      avatar.classList.remove('revealed');
+
+      // Build Target Slots
+      const slotsContainer = document.getElementById('slots-container');
+      slotsContainer.innerHTML = '';
+      for (let i = 0; i < currentWordObj.word.length; i++) {
+        const slot = document.createElement('div');
+        slot.className = 'letter-slot';
+        slot.id = `slot-${i}`;
+        slotsContainer.appendChild(slot);
+      }
+
+      // Generate Letter Choices with Distractors
+      const lettersNeeded = currentWordObj.word.split('');
+      const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      const distractors = [];
+      while (distractors.length < 3) {
+        const r = alphabet[Math.floor(Math.random() * alphabet.length)];
+        if (!lettersNeeded.includes(r) && !distractors.includes(r)) {
+          distractors.push(r);
+        }
+      }
+
+      const allTiles = [...lettersNeeded, ...distractors];
+      allTiles.sort(() => Math.random() - 0.5);
+
+      const rack = document.getElementById('letters-rack');
+      rack.innerHTML = '';
+      allTiles.forEach((letter, idx) => {
+        const tile = document.createElement('button');
+        tile.className = 'phonics-tile';
+        tile.textContent = letter;
+        tile.onclick = () => handleLetterPick(letter, tile);
+        rack.appendChild(tile);
+      });
+
+      // Spoken Intent
+      const phonicsSpelled = currentWordObj.word.split('').join('... ');
+      const speechPrompt = `Can you spell ${currentWordObj.word}? Find the letters: ${phonicsSpelled}!`;
+      setTimeout(() => speak(speechPrompt), 300);
+    }
+
+    function handleLetterPick(letter, buttonEl) {
+      const targetChar = currentWordObj.word[spelledLetters.length];
+
+      if (letter === targetChar) {
+        // Correct letter
+        soundSnap();
+        const slot = document.getElementById(`slot-${spelledLetters.length}`);
+        slot.textContent = letter;
+        slot.classList.add('filled');
+        buttonEl.classList.add('disabled');
+        spelledLetters.push(letter);
+
+        speak(letter);
+
+        if (spelledLetters.length === currentWordObj.word.length) {
+          // Word Complete!
+          setTimeout(handleWordComplete, 400);
+        }
+      } else {
+        // Incorrect letter
+        soundMiss();
+        speak(`Look for the letter ${targetChar}!`);
+      }
+    }
+
+    function handleWordComplete() {
+      soundCorrect();
+      completedInLevel++;
+      const list = CURRICULUM[currentLevel];
+      document.getElementById('score-val').textContent = `${completedInLevel} / ${list.length}`;
+
+      // Reveal Animal with Jump Animation
+      const avatar = document.getElementById('animal-avatar');
+      avatar.textContent = currentWordObj.emoji;
+      avatar.classList.add('revealed');
+
+      speak(`Incredible! You spelled ${currentWordObj.word}! It's a ${currentWordObj.word}!`);
+
+      if (window.GazetteTelemetry) {
+        window.GazetteTelemetry.track('phonics_word_solved', {
+          word: currentWordObj.word,
+          level: currentLevel,
+          progress: `${completedInLevel}/${list.length}`
+        });
+      }
+
+      setTimeout(() => {
+        if (completedInLevel >= list.length) {
+          showLevelCompleteModal();
+        } else {
+          wordIndex++;
+          loadWord();
+        }
+      }, 2400);
+    }
+
+    function showLevelCompleteModal() {
+      soundFanfare();
+      const modal = document.getElementById('win-modal');
+      const desc = document.getElementById('modal-desc');
+      const btn = document.getElementById('btn-modal-action');
+
+      if (currentLevel < 3) {
+        desc.textContent = `You rescued all the Level ${currentLevel} Safari animals! Ready for Level ${currentLevel + 1}?`;
+        btn.textContent = `Play Level ${currentLevel + 1} 🌟`;
+      } else {
+        desc.textContent = "You completed all 3 Safari levels! You are an official Grand Phonics Master!";
+        btn.textContent = "Play Again from Level 1 🔄";
+      }
+
+      modal.style.display = 'flex';
+
+      if (window.GazetteTelemetry) {
+        window.GazetteTelemetry.track('phonics_level_cleared', { level: currentLevel });
+      }
+    }
+
+    function advanceNextLevel() {
+      document.getElementById('win-modal').style.display = 'none';
+      if (currentLevel < 3) {
+        selectLevel(currentLevel + 1);
+      } else {
+        selectLevel(1);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadWord();
+    });
+  </script>
+</body>
+</html>

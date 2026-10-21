@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>449 Decision Tool | Staff Schedule & Compensation Analyzer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090e1a;
+      --surface: #111827;
+      --surface-card: #162032;
+      --surface-hover: #1e2c45;
+      --border: #1f2d47;
+      --border-accent: #2e4369;
+      --primary: #38bdf8;
+      --primary-glow: rgba(56, 189, 248, 0.2);
+      --emerald: #10b981;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --purple: #a855f7;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-sub: #64748b;
+      --radius: 14px;
+      --radius-sm: 8px;
+      --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: radial-gradient(circle at 10% 10%, #111c35, #090e1a 75%);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 24px 16px 60px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    header {
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .badge-pill {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      color: var(--primary);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+    }
+
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      max-width: 780px;
+    }
+
+    /* Fixed Constant Banner */
+    .constant-banner {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .constant-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .icon-box {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: rgba(16, 185, 129, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--emerald);
+      font-size: 1.15rem;
+    }
+
+    .constant-title {
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: #e2e8f0;
+    }
+
+    .constant-detail {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .constant-badge {
+      background: rgba(16, 185, 129, 0.15);
+      color: #6ee7b7;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      font-weight: 700;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    /* Key Metrics Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .metric-card {
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 16px;
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition);
+      box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.3);
+    }
+
+    .metric-card:hover {
+      border-color: var(--border-accent);
+    }
+
+    .metric-card.primary {
+      border-color: rgba(56, 189, 248, 0.35);
+      background: linear-gradient(180deg, #16243d 0%, #111a2d 100%);
+      box-shadow: 0 6px 24px -6px var(--primary-glow);
+    }
+
+    .metric-label {
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .metric-value {
+      font-size: 1.85rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: #ffffff;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+
+    .metric-card.primary .metric-value {
+      color: #38bdf8;
+    }
+
+    .metric-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+
+    /* Interactive Control Section */
+    .control-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      margin-bottom: 20px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .panel-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+
+    .slider-container {
+      margin-bottom: 22px;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 12px;
+    }
+
+    .slider-readout {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .slider-readout span {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-left: 4px;
+    }
+
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 10px;
+      border-radius: 5px;
+      background: #1e293b;
+      outline: none;
+      transition: background 0.2s;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #38bdf8;
+      cursor: pointer;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.5), 0 2px 5px rgba(0,0,0,0.4);
+      border: 3px solid #0b1120;
+      transition: transform 0.15s, background 0.15s;
+    }
+
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.12);
+      background: #7dd3fc;
+    }
+
+    /* Preset Buttons */
+    .presets-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .preset-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+    }
+
+    .preset-btn {
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      color: var(--text-main);
+      cursor: pointer;
+      text-align: left;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .preset-btn:hover {
+      border-color: var(--primary);
+      background: var(--surface-hover);
+    }
+
+    .preset-btn.active {
+      border-color: var(--primary);
+      background: rgba(56, 189, 248, 0.12);
+      box-shadow: 0 0 0 1px var(--primary);
+    }
+
+    .preset-btn .p-name {
+      font-weight: 700;
+      font-size: 0.86rem;
+    }
+
+    .preset-btn .p-desc {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    /* Live Information Callout */
+    .intel-callout {
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin-bottom: 22px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      border: 1px solid;
+      transition: var(--transition);
+    }
+
+    .intel-callout.efficient {
+      background: rgba(16, 185, 129, 0.08);
+      border-color: rgba(16, 185, 129, 0.35);
+    }
+
+    .intel-callout.warning {
+      background: rgba(245, 158, 11, 0.08);
+      border-color: rgba(245, 158, 11, 0.35);
+    }
+
+    .intel-callout.info {
+      background: rgba(56, 189, 248, 0.08);
+      border-color: rgba(56, 189, 248, 0.35);
+    }
+
+    .intel-icon {
+      font-size: 1.3rem;
+      line-height: 1;
+    }
+
+    .intel-content h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 3px;
+      color: #ffffff;
+    }
+
+    .intel-content p {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    /* Two-Column Deep Dive */
+    .deep-dive-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 26px;
+    }
+
+    @media (max-width: 768px) {
+      .deep-dive-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .detail-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+    }
+
+    .detail-card-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+
+    .table-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 0;
+      font-size: 0.84rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .table-row:last-child {
+      border-bottom: none;
+    }
+
+    .table-row.total {
+      font-weight: 700;
+      border-top: 1px solid var(--border);
+      margin-top: 8px;
+      padding-top: 10px;
+      font-size: 0.92rem;
+    }
+
+    .table-label {
+      color: var(--text-muted);
+    }
+
+    .table-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      color: #f1f5f9;
+    }
+
+    .table-value.deduct {
+      color: var(--rose);
+    }
+
+    .table-value.benefit {
+      color: var(--emerald);
+    }
+
+    /* Schedule Timeline */
+    .timeline-strip {
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .timeline-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.81rem;
+    }
+
+    .timeline-tag {
+      font-family: 'JetBrains Mono', monospace;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 0.74rem;
+      font-weight: 700;
+    }
+
+    .tag-pres { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; }
+    .tag-transit { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; }
+    .tag-prms { background: rgba(56, 189, 248, 0.15); color: #7dd3fc; }
+
+    /* Footer FAQ */
+    .faq-section {
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+    }
+
+    .faq-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+      color: #ffffff;
+    }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+    }
+
+    .faq-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+    }
+
+    .faq-q {
+      font-weight: 700;
+      font-size: 0.86rem;
+      color: var(--primary);
+      margin-bottom: 5px;
+    }
+
+    .faq-a {
+      font-size: 0.81rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- Header -->
+    <header>
+      <div class="badge-pill">USD 449 Easton • Classified Staff Operations</div>
+      <h1>449 Decision Tool</h1>
+      <p class="subtitle">
+        Schedule, hours, and compensation modeling utility based on the 2026–2027 USD 449 Non-Licensed Staff Handbook and Board Policies.
+      </p>
+    </header>
+
+    <!-- Locked Constant Banner: Before-School Care -->
+    <div class="constant-banner">
+      <div class="constant-left">
+        <div class="icon-box">☀️</div>
+        <div>
+          <div class="constant-title">LOCKED CONSTANT: PRES Before-School Care</div>
+          <div class="constant-detail">Elementary Morning Care Shift (7:00 AM – 8:15 AM) committed through the end of the school year.</div>
+        </div>
+      </div>
+      <div class="constant-badge">6.25 hrs/wk @ $15.00/hr = $406.25/mo Gross</div>
+    </div>
+
+    <!-- Key Metrics Grid -->
+    <div class="metrics-grid">
+      <div class="metric-card primary">
+        <div class="metric-label">
+          <span>Net Take-Home Cash</span>
+          <span>💳 Bank Account</span>
+        </div>
+        <div class="metric-value" id="val-net-cash">$1,514</div>
+        <div class="metric-sub" id="sub-net-cash">Estimated monthly direct deposit hitting your checking account</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-label">
+          <span>Monthly District Fringe</span>
+          <span>🎁 Allowance</span>
+        </div>
+        <div class="metric-value" id="val-fringe" style="color: #10b981;">+$155</div>
+        <div class="metric-sub" id="sub-fringe">District Section 125 benefit credit (Handbook p. 6)</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-label">
+          <span>Daily Clock-Out Time</span>
+          <span>⏰ Shift End</span>
+        </div>
+        <div class="metric-value" id="val-clockout" style="color: #fbbf24;">1:15 PM</div>
+        <div class="metric-sub" id="sub-clockout">Projected time done with workday</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-label">
+          <span>Mandatory Savings (KPERS)</span>
+          <span>🏦 Escrow</span>
+        </div>
+        <div class="metric-value" id="val-kpers" style="color: #38bdf8;">$119.60</div>
+        <div class="metric-sub">6% taken monthly; gains 4% interest; returned to you upon leaving.</div>
+      </div>
+    </div>
+
+    <!-- Interactive Control Section -->
+    <div class="control-panel">
+      <div class="panel-header">
+        <div class="panel-title">Hours & Shift Dispatcher</div>
+        <div id="status-tag" class="badge-pill" style="border-color: rgba(16, 185, 129, 0.4); color: #10b981; background: rgba(16, 185, 129, 0.1);">
+          Maximum Efficiency (28.75 Hrs)
+        </div>
+      </div>
+
+      <div class="slider-container">
+        <div class="slider-header">
+          <div>
+            <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">TOTAL COMBINED WEEKLY HOURS</div>
+            <div style="font-size: 0.78rem; color: var(--text-sub);">Before-School Care (6.25 hrs) + Middle School Custodial Hours</div>
+          </div>
+          <div class="slider-readout" id="slider-readout">28.75 <span>hrs / week</span></div>
+        </div>
+        <input type="range" id="hours-slider" min="6.25" max="40.0" step="0.25" value="28.75">
+      </div>
+
+      <div class="presets-label">Operational Presets (Click to Inspect)</div>
+      <div class="preset-grid">
+        <button class="preset-btn" onclick="setPreset(6.25)">
+          <span class="p-name">Morning Care Only</span>
+          <span class="p-desc">6.25 hrs • Under KPERS • $0 Fringe</span>
+        </button>
+        <button class="preset-btn" onclick="setPreset(20.0)">
+          <span class="p-name">Fringe Threshold</span>
+          <span class="p-desc">20.0 hrs • Unlocks $140 Fringe & 12 PTO</span>
+        </button>
+        <button class="preset-btn active" id="btn-preset-28" onclick="setPreset(28.75)">
+          <span class="p-name">Maximum Efficiency</span>
+          <span class="p-desc">28.75 hrs • 1:15 PM Clock-Out • Midday</span>
+        </button>
+        <button class="preset-btn" onclick="setPreset(30.0)">
+          <span class="p-name">ACA Health Threshold</span>
+          <span class="p-desc">30.0 hrs • $483/mo Health Voucher Gate</span>
+        </button>
+        <button class="preset-btn" onclick="setPreset(40.0)">
+          <span class="p-name">District 40-Hr Cap</span>
+          <span class="p-desc">40.0 hrs • Max Cash • 3:45 PM Clock-Out</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Live Status Box -->
+    <div class="intel-callout efficient" id="intel-box">
+      <div class="intel-icon" id="intel-icon">⚡</div>
+      <div class="intel-content">
+        <h4 id="intel-title">Maximum Efficiency Tier (28.75 Hours)</h4>
+        <p id="intel-desc">
+          Completes Morning Care (7:00–8:15 AM), followed by a 4.5-hour midday custodial block at PRMS (8:45 AM – 1:15 PM). Clocks out before middle school afternoon dismissal. Unlocks the $155/mo flexible fringe, 12 paid sick days, and yields ~$1,514/mo net cash with open afternoons.
+        </p>
+      </div>
+    </div>
+
+    <!-- Detailed Two-Column Breakdown -->
+    <div class="deep-dive-grid">
+      
+      <!-- Column 1: Financial Ledger -->
+      <div class="detail-card">
+        <div class="detail-card-title">
+          <span>Monthly Payroll Ledger</span>
+          <span style="font-size: 0.74rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">4.333 wks/mo avg</span>
+        </div>
+
+        <div class="table-row">
+          <span class="table-label">PRES Before-School Care (6.25 hrs @ $15/hr)</span>
+          <span class="table-value">$406.25</span>
+        </div>
+        <div class="table-row">
+          <span class="table-label" id="custodial-label">PRMS Custodial (22.50 hrs @ $16/hr)</span>
+          <span class="table-value" id="custodial-val">$1,560.00</span>
+        </div>
+        <div class="table-row total">
+          <span class="table-label" style="color: #fff;">Total Gross Wages</span>
+          <span class="table-value" id="gross-val" style="color: #38bdf8;">$1,966.25</span>
+        </div>
+
+        <div style="margin: 12px 0 6px; font-size: 0.74rem; color: var(--text-sub); text-transform: uppercase; font-weight: 700;">Deductions & Withholdings</div>
+        <div class="table-row">
+          <span class="table-label" id="kpers-label">KPERS Mandatory Savings (6.00%)</span>
+          <span class="table-value deduct" id="kpers-deduct">-$117.98</span>
+        </div>
+        <div class="table-row">
+          <span class="table-label">FICA & Medicare (7.65%)</span>
+          <span class="table-value deduct" id="fica-deduct">-$150.42</span>
+        </div>
+        <div class="table-row">
+          <span class="table-label">Est. Federal & State Taxes (~9%)</span>
+          <span class="table-value deduct" id="tax-deduct">-$176.96</span>
+        </div>
+        <div class="table-row total" style="border-color: rgba(56, 189, 248, 0.4);">
+          <span class="table-label" style="color: #fff;">What Shows Up in Bank Account (Net Pay)</span>
+          <span class="table-value" id="net-takehome-val" style="color: #38bdf8; font-size: 1.15rem;">$1,520.89</span>
+        </div>
+      </div>
+
+      <!-- Column 2: Schedule & District Perks -->
+      <div class="detail-card">
+        <div class="detail-card-title">
+          <span>Schedule & District Benefits</span>
+          <span style="font-size: 0.74rem; color: #10b981; font-weight: 700;">Handbook Standards</span>
+        </div>
+
+        <div class="table-row">
+          <span class="table-label">Monthly Fringe Benefit (Handbook p. 6)</span>
+          <span class="table-value benefit" id="fringe-table-val">+$155.00 / mo</span>
+        </div>
+        <div class="table-row">
+          <span class="table-label">12 Paid Chargeable Leave Days</span>
+          <span class="table-value benefit" id="leave-val">12 Days ($864/yr)</span>
+        </div>
+        <div class="table-row">
+          <span class="table-label">403(b) Employer Retirement Match</span>
+          <span class="table-value benefit" id="match-val">Up to $50.00 / mo</span>
+        </div>
+        <div class="table-row">
+          <span class="table-label">District Health Insurance Subsidy</span>
+          <span class="table-value" id="health-gate-val" style="color: #94a3b8;">Waived (TRICARE)</span>
+        </div>
+
+        <div style="margin: 14px 0 6px; font-size: 0.74rem; color: var(--text-sub); text-transform: uppercase; font-weight: 700;">Projected Shift Sequence</div>
+        <div class="timeline-strip">
+          <div class="timeline-row">
+            <span>07:00 AM – 08:15 AM (1.25 hrs)</span>
+            <span class="timeline-tag tag-pres">PRES Morning Care</span>
+          </div>
+          <div class="timeline-row">
+            <span>08:15 AM – 08:45 AM (30 min)</span>
+            <span class="timeline-tag tag-transit">Transit & Prep</span>
+          </div>
+          <div class="timeline-row">
+            <span id="prms-shift-time">08:45 AM – 01:15 PM (4.50 hrs)</span>
+            <span class="timeline-tag tag-prms">PRMS Custodial</span>
+          </div>
+          <div class="timeline-row" style="border-top: 1px dashed var(--border); padding-top: 6px; margin-top: 4px;">
+            <span style="font-weight: 700; color: #fbbf24;">Clock-Out & Done</span>
+            <span style="font-weight: 800; color: #fbbf24; font-family: 'JetBrains Mono', monospace;" id="timeline-clockout">01:15 PM</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="faq-section">
+      <div class="faq-title">Policy & Benefits FAQ</div>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <div class="faq-q">Can the school require 40 hours?</div>
+          <div class="faq-a">No. Time schedules for classified employees are assigned by administration (Board Policy GCA). Part-time classified roles between 20 and 30 hours are standard across Kansas districts.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">How does the 6% KPERS money work?</div>
+          <div class="faq-a">It is a mandatory savings account: 6% is taken from your monthly paycheck, and it gains 4% interest while it's in the account. When you leave the school, you take it with you as a refund or rollover.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Do part-time employees get paid sick days?</div>
+          <div class="faq-a">Yes. Once contracted for 20 or more hours per week, employees accrue 12 paid chargeable leave days per school year (Handbook p. 8), usable for illness or personal leave.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Is there any penalty for working 32 to 35 hours?</div>
+          <div class="faq-a">No financial penalties. Take-home pay increases slightly (~$11.26/hr net on extra hours) and monthly fringe increases to $185, but the shift extends further into the afternoon.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const slider = document.getElementById('hours-slider');
+    const readout = document.getElementById('slider-readout');
+
+    // Values
+    const valNetCash = document.getElementById('val-net-cash');
+    const valFringe = document.getElementById('val-fringe');
+    const valClockout = document.getElementById('val-clockout');
+    const valKpers = document.getElementById('val-kpers');
+
+    // Labels & Table elements
+    const statusTag = document.getElementById('status-tag');
+    const custodialLabel = document.getElementById('custodial-label');
+    const custodialVal = document.getElementById('custodial-val');
+    const grossVal = document.getElementById('gross-val');
+    const kpersLabel = document.getElementById('kpers-label');
+    const kpersDeduct = document.getElementById('kpers-deduct');
+    const ficaDeduct = document.getElementById('fica-deduct');
+    const taxDeduct = document.getElementById('tax-deduct');
+    const netTakehomeVal = document.getElementById('net-takehome-val');
+    const fringeTableVal = document.getElementById('fringe-table-val');
+    const leaveVal = document.getElementById('leave-val');
+    const matchVal = document.getElementById('match-val');
+    const healthGateVal = document.getElementById('health-gate-val');
+    const prmsShiftTime = document.getElementById('prms-shift-time');
+    const timelineClockout = document.getElementById('timeline-clockout');
+
+    // Intel callout
+    const intelBox = document.getElementById('intel-box');
+    const intelIcon = document.getElementById('intel-icon');
+    const intelTitle = document.getElementById('intel-title');
+    const intelDesc = document.getElementById('intel-desc');
+
+    const WEEKS_PER_MONTH = 4.3333;
+    const MORNING_HOURS = 6.25;
+    const MORNING_RATE = 15.00;
+    const CUSTODIAL_RATE = 16.00;
+
+    function formatMoney(amount) {
+      return '$' + Math.round(amount).toLocaleString();
+    }
+
+    function formatMoneyExact(amount) {
+      return '$' + amount.toFixed(2);
+    }
+
+    function calculateClockOutTime(custodialDailyHours) {
+      let lunchHours = custodialDailyHours > 5.0 ? 0.5 : 0.0;
+      let totalShiftSpan = custodialDailyHours + lunchHours;
+      let endDecimal = 8.75 + totalShiftSpan;
+
+      let endHour = Math.floor(endDecimal);
+      let endMinute = Math.round((endDecimal - endHour) * 60);
+      if (endMinute === 60) {
+        endHour += 1;
+        endMinute = 0;
+      }
+
+      let ampm = endHour >= 12 ? 'PM' : 'AM';
+      let displayHour = endHour > 12 ? endHour - 12 : endHour;
+      let displayMinute = endMinute < 10 ? '0' + endMinute : endMinute;
+
+      return `${displayHour}:${displayMinute} ${ampm}`;
+    }
+
+    function updateCalculations() {
+      const totalHours = parseFloat(slider.value);
+      const custodialWeeklyHours = Math.max(0, totalHours - MORNING_HOURS);
+      const custodialDailyHours = custodialWeeklyHours / 5.0;
+
+      readout.innerHTML = `${totalHours.toFixed(2)} <span>hrs / week</span>`;
+
+      // Gross Wages
+      const morningGrossWeekly = MORNING_HOURS * MORNING_RATE; // $93.75
+      const custodialGrossWeekly = custodialWeeklyHours * CUSTODIAL_RATE;
+      const totalWeeklyGross = morningGrossWeekly + custodialGrossWeekly;
+      const totalMonthlyGross = totalWeeklyGross * WEEKS_PER_MONTH;
+
+      const morningGrossMonthly = morningGrossWeekly * WEEKS_PER_MONTH;
+      const custodialGrossMonthly = custodialGrossWeekly * WEEKS_PER_MONTH;
+
+      // KPERS: 630 hours/year threshold (~17.5 hrs/wk)
+      let kpersRate = totalHours >= 17.5 ? 0.06 : 0.0;
+      let kpersDeductionMonthly = totalMonthlyGross * kpersRate;
+
+      // FICA: 7.65%
+      let ficaDeductionMonthly = totalMonthlyGross * 0.0765;
+
+      // Estimated Federal + Kansas State Taxes (~9% effective)
+      let taxRate = totalHours >= 30 ? 0.10 : 0.09;
+      let taxDeductionMonthly = totalMonthlyGross * taxRate;
+
+      // Fringe Benefit (Handbook p. 6)
+      let dailyTotalHours = totalHours / 5.0;
+      let monthlyFringe = 0;
+      if (totalHours >= 20.0) {
+        if (dailyTotalHours >= 7.25) monthlyFringe = 200;
+        else if (dailyTotalHours >= 6.25) monthlyFringe = 185;
+        else if (dailyTotalHours >= 5.25) monthlyFringe = 170;
+        else if (dailyTotalHours >= 4.25) monthlyFringe = 155;
+        else monthlyFringe = 140;
+      }
+
+      // Net Take-Home Pay
+      let netPaycheckMonthly = totalMonthlyGross - kpersDeductionMonthly - ficaDeductionMonthly - taxDeductionMonthly;
+      let netCashTakeHome = netPaycheckMonthly;
+
+      // Clock-Out Time
+      let clockOutTime = calculateClockOutTime(custodialDailyHours);
+      if (custodialWeeklyHours === 0) {
+        clockOutTime = '08:15 AM (PRES Only)';
+      }
+
+      // Update Metric Cards
+      valNetCash.innerText = formatMoney(netCashTakeHome);
+      valFringe.innerText = monthlyFringe > 0 ? `+$${monthlyFringe}` : '$0';
+      valClockout.innerText = clockOutTime.replace(' (PRES Only)', '');
+      valKpers.innerText = kpersDeductionMonthly > 0 ? formatMoneyExact(kpersDeductionMonthly) : '$0.00';
+
+      // Update Ledger Table
+      custodialLabel.innerText = `PRMS Custodial (${custodialWeeklyHours.toFixed(2)} hrs @ $16/hr)`;
+      custodialVal.innerText = formatMoneyExact(custodialGrossMonthly);
+      grossVal.innerText = formatMoneyExact(totalMonthlyGross);
+
+      if (kpersRate > 0) {
+        kpersLabel.innerText = 'KPERS Mandatory Savings (6.00%)';
+        kpersDeduct.innerText = '-' + formatMoneyExact(kpersDeductionMonthly);
+      } else {
+        kpersLabel.innerText = 'KPERS Savings (Exempt < 17.5 hrs)';
+        kpersDeduct.innerText = '$0.00';
+      }
+
+      ficaDeduct.innerText = '-' + formatMoneyExact(ficaDeductionMonthly);
+      taxDeduct.innerText = '-' + formatMoneyExact(taxDeductionMonthly);
+      netTakehomeVal.innerText = formatMoneyExact(netCashTakeHome);
+
+      // District Perks Table
+      fringeTableVal.innerText = monthlyFringe > 0 ? `+$${monthlyFringe}.00 / mo` : '$0.00 (Requires 20+ hrs)';
+      fringeTableVal.style.color = monthlyFringe > 0 ? 'var(--emerald)' : 'var(--text-sub)';
+
+      if (totalHours >= 20.0) {
+        let sickDayHours = (dailyTotalHours).toFixed(1);
+        let sickDayVal = Math.round(12 * dailyTotalHours * 16);
+        leaveVal.innerText = `12 Days (~${sickDayHours} hrs/day, $${sickDayVal}/yr)`;
+        matchVal.innerText = 'Eligible (Up to $50.00/mo match)';
+      } else {
+        leaveVal.innerText = '$0 / Casual (Requires 20+ hrs)';
+        matchVal.innerText = 'Ineligible (Requires 20+ hrs)';
+      }
+
+      if (totalHours >= 30.0) {
+        healthGateVal.innerText = 'Active (Waived for TRICARE - $0 cash)';
+        healthGateVal.style.color = 'var(--amber)';
+      } else {
+        healthGateVal.innerText = 'Not Triggered (< 30 hrs)';
+        healthGateVal.style.color = 'var(--text-sub)';
+      }
+
+      // Schedule Sequence
+      if (custodialWeeklyHours > 0) {
+        prmsShiftTime.innerText = `08:45 AM – ${clockOutTime} (${custodialDailyHours.toFixed(2)} hrs)`;
+      } else {
+        prmsShiftTime.innerText = 'No PRMS Custodial Shift';
+      }
+      timelineClockout.innerText = clockOutTime;
+
+      // Update Callout & Badges
+      updateStatusCallout(totalHours, monthlyFringe, clockOutTime);
+    }
+
+    function updateStatusCallout(totalHours, monthlyFringe, clockOutTime) {
+      intelBox.className = 'intel-callout';
+      statusTag.className = 'badge-pill';
+
+      if (totalHours < 17.5) {
+        intelBox.classList.add('info');
+        intelIcon.innerText = 'ℹ️';
+        intelTitle.innerText = 'Casual Part-Time (Under 17.5 Hours)';
+        intelDesc.innerText = 'Under the 630-hour threshold: No KPERS deduction is taken, and no monthly district fringe benefits or paid leave are unlocked. Ideal for casual, morning-only commitments.';
+        statusTag.innerText = 'Casual Part-Time';
+        statusTag.style.color = '#38bdf8';
+        statusTag.style.borderColor = 'rgba(56, 189, 248, 0.4)';
+        statusTag.style.background = 'rgba(56, 189, 248, 0.1)';
+      } else if (totalHours < 20.0) {
+        intelBox.classList.add('warning');
+        intelIcon.innerText = '⚠️';
+        intelTitle.innerText = 'KPERS Active / Sub-Fringe (17.5 to 19.9 Hours)';
+        intelDesc.innerText = 'Kansas statute mandates the 6% KPERS deduction once scheduled for 630+ hours/year, but district fringe benefits require 20.0 hours. Working at least 20.0 hours unlocks the $140+ monthly credit to offset KPERS.';
+        statusTag.innerText = 'Sub-Fringe Tier';
+        statusTag.style.color = '#f59e0b';
+        statusTag.style.borderColor = 'rgba(245, 158, 11, 0.4)';
+        statusTag.style.background = 'rgba(245, 158, 11, 0.1)';
+      } else if (totalHours <= 29.5) {
+        intelBox.classList.add('efficient');
+        intelIcon.innerText = '⚡';
+        intelTitle.innerText = `Maximum Efficiency Tier (${totalHours.toFixed(2)} Hours • Off by ${clockOutTime})`;
+        intelDesc.innerText = `Unlocks the +$${monthlyFringe}/mo fringe credit, 12 paid sick days, and 4% interest KPERS savings while finishing the workday by ${clockOutTime}. Leaves afternoons fully open while capturing full part-time benefits.`;
+        statusTag.innerText = 'Maximum Efficiency';
+        statusTag.style.color = '#10b981';
+        statusTag.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+        statusTag.style.background = 'rgba(16, 185, 129, 0.1)';
+      } else if (totalHours < 39.5) {
+        intelBox.classList.add('info');
+        intelIcon.innerText = '📋';
+        intelTitle.innerText = `Extended Schedule Tier (${totalHours.toFixed(2)} Hours • Off by ${clockOutTime})`;
+        intelDesc.innerText = `Take-home cash increases (~$11.26/hr net on additional hours) and monthly fringe moves to $185/mo. Health insurance subsidy activates but is waived for TRICARE. Suitable if additional monthly earnings are desired.`;
+        statusTag.innerText = 'Extended Schedule';
+        statusTag.style.color = '#38bdf8';
+        statusTag.style.borderColor = 'rgba(56, 189, 248, 0.4)';
+        statusTag.style.background = 'rgba(56, 189, 248, 0.1)';
+      } else {
+        intelBox.classList.add('info');
+        intelIcon.innerText = '💼';
+        intelTitle.innerText = `District Full-Time Cap (40.0 Hours • Off by ${clockOutTime})`;
+        intelDesc.innerText = `Maximum allowable schedule under district policy (6.25 hrs PRES + 33.75 hrs PRMS). Delivers ~$1,950/mo net take-home cash + $200 fringe, with daily release at approximately 3:45 PM.`;
+        statusTag.innerText = 'District 40-Hr Cap';
+        statusTag.style.color = '#a855f7';
+        statusTag.style.borderColor = 'rgba(168, 85, 247, 0.4)';
+        statusTag.style.background = 'rgba(168, 85, 247, 0.1)';
+      }
+    }
+
+    function setPreset(val) {
+      slider.value = val;
+      document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      updateCalculations();
+    }
+
+    slider.addEventListener('input', () => {
+      document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+      updateCalculations();
+    });
+
+    // Initial run
+    updateCalculations();
+  </script>
+</body>
+</html>

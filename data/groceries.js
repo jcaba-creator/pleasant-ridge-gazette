@@ -1,0 +1,135 @@
+// Pleasant Ridge Gazette - Grocery Data Sync
+window.GAZETTE_GROCERY_DATA = {
+  "meta": {
+    "title": "Pleasant Ridge Gazette - 5-Item Dinner Basket & Total Procurement Engine",
+    "baselineOrigin": "Pleasant Ridge Elementary School (PRES), 22041 219th St, Easton, KS 66020",
+    "defaultMpg": 20.0,
+    "taxNotes": "Kansas State Food Sales Tax is 0% (effective Jan 1, 2025). Leavenworth County (1%) + Leavenworth City (2%) = 3.00% local tax. Fort Leavenworth Commissary is tax-exempt with statutory 5.00% DeCA surcharge."
+  },
+  "items": [
+    {
+      "id": "ground_beef",
+      "name": "Ground Beef 80/20",
+      "spec": "1 lb chub/tray",
+      "category": "protein"
+    },
+    {
+      "id": "eggs_dozen",
+      "name": "Large White Eggs",
+      "spec": "1 Dozen Grade A",
+      "category": "dairy"
+    },
+    {
+      "id": "whole_milk",
+      "name": "Whole Milk",
+      "spec": "1 Gallon Jug",
+      "category": "dairy"
+    },
+    {
+      "id": "russet_potatoes",
+      "name": "Russet Potatoes",
+      "spec": "5 lb Bag",
+      "category": "produce"
+    },
+    {
+      "id": "sandwich_bread",
+      "name": "Enriched White Bread",
+      "spec": "20 oz Loaf",
+      "category": "pantry"
+    }
+  ],
+  "stores": [
+    {
+      "id": "aldi",
+      "name": "ALDI",
+      "address": "4th St, Leavenworth",
+      "roundTripMiles": 24.0,
+      "taxRate": 0.03,
+      "surchargeRate": 0.0,
+      "isManual": false,
+      "ingestionMode": "Playwright Web Scraper"
+    },
+    {
+      "id": "price_chopper",
+      "name": "Price Chopper",
+      "address": "4th St, Leavenworth",
+      "roundTripMiles": 24.0,
+      "taxRate": 0.03,
+      "surchargeRate": 0.0,
+      "isManual": false,
+      "ingestionMode": "Store #61 Native Circular API & Flipp Feed"
+    },
+    {
+      "id": "dillons",
+      "name": "Dillons",
+      "address": "4th St, Leavenworth",
+      "roundTripMiles": 24.0,
+      "taxRate": 0.03,
+      "surchargeRate": 0.0,
+      "isManual": false,
+      "ingestionMode": "Kroger Calypso SSR Engine (Real-Time Shelf JSON)"
+    },
+    {
+      "id": "walmart",
+      "name": "Walmart Supercenter",
+      "address": "10th Ave, Leavenworth",
+      "roundTripMiles": 25.6,
+      "taxRate": 0.03,
+      "surchargeRate": 0.0,
+      "isManual": false,
+      "ingestionMode": "Playwright / Headless Scraper"
+    },
+    {
+      "id": "commissary",
+      "name": "Fort Leavenworth Commissary",
+      "address": "Fort Leavenworth",
+      "roundTripMiles": 26.0,
+      "taxRate": 0.0,
+      "surchargeRate": 0.05,
+      "isManual": false,
+      "ingestionMode": "DeCA Click2Go API (NCR Freshop native JSON)"
+    }
+  ],
+  "currentBasket": {
+    "weekId": "2026-W42",
+    "publishedAt": "2026-10-19T02:43:23Z",
+    "gasPricePerGal": 2.72,
+    "prices": {
+      "aldi": {
+        "ground_beef": 4.19,
+        "eggs_dozen": 2.29,
+        "whole_milk": 2.89,
+        "russet_potatoes": 2.99,
+        "sandwich_bread": 1.45
+      },
+      "price_chopper": {
+        "ground_beef": 4.99,
+        "eggs_dozen": 1.99,
+        "whole_milk": 3.49,
+        "russet_potatoes": 1.99,
+        "sandwich_bread": 1.79
+      },
+      "dillons": {
+        "ground_beef": 8.99,
+        "eggs_dozen": 1.99,
+        "whole_milk": 3.09,
+        "russet_potatoes": 2.99,
+        "sandwich_bread": 1.69
+      },
+      "walmart": {
+        "ground_beef": 4.34,
+        "eggs_dozen": 2.38,
+        "whole_milk": 2.98,
+        "russet_potatoes": 3.12,
+        "sandwich_bread": 1.48
+      },
+      "commissary": {
+        "ground_beef": 4.0,
+        "eggs_dozen": 1.37,
+        "whole_milk": 4.88,
+        "russet_potatoes": 1.98,
+        "sandwich_bread": 1.35
+      }
+    }
+  }
+};
