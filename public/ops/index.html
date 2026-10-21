@@ -514,6 +514,80 @@
       outline: none;
       border-color: var(--amber);
     }
+    .btn-archive {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #0f172a;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25);
+    }
+    .btn-archive:hover {
+      background: #fbbf24;
+      transform: translateY(-1px);
+    }
+    .archive-drawer-btn {
+      width: 100%;
+      background: var(--bg-card-sub);
+      border: 1px dashed var(--border);
+      color: var(--text-muted);
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 14px;
+      transition: all 0.15s ease;
+    }
+    .archive-drawer-btn:hover {
+      background: #1e293b;
+      color: var(--text-main);
+      border-color: #475569;
+    }
+    .archive-drawer-content {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .archive-drawer-content.hidden-drawer {
+      display: none !important;
+    }
+    .archive-card {
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--amber);
+      border-radius: 10px;
+      padding: 12px;
+      position: relative;
+    }
+    .archive-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .archive-card-date {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      font-weight: 600;
+    }
+    .archive-card-text {
+      font-size: 0.85rem;
+      color: #e2e8f0;
+      white-space: pre-wrap;
+      line-height: 1.45;
+    }
 
     /* Tab 2: Ford Explorer Styles */
     .vehicle-hero {
@@ -1213,24 +1287,38 @@
         <!-- Rendered dynamically via JS -->
       </div>
 
-      <!-- NEXT SPRINT SCRATCHPAD -->
+      <!-- NEXT SPRINT SCRATCHPAD & ARCHIVE -->
       <div class="scratchpad-wrap">
         <div class="scratchpad-header">
           <div class="scratchpad-title">
             <span>📝</span> Next Sprint Scratchpad
           </div>
-          <div class="save-indicator" id="scratchpad-saved-badge">
-            <span>✓</span> Auto-saved locally
+          <div style="display:flex; align-items:center; gap:8px;">
+            <div class="save-indicator" id="scratchpad-saved-badge">
+              <span>✓</span> Auto-saved locally
+            </div>
+            <button class="btn-archive" onclick="archiveCurrentScratchpad()" title="Archive to permanent log and clear text box">
+              <span>📁</span> Archive Note
+            </button>
           </div>
         </div>
         <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:10px;">
-          Jot down upcoming tasks, hardware purchase lists, or future sprint notes. Saves automatically to local browser storage.
+          Jot down upcoming tasks, hardware purchase lists, or future sprint notes. Tapping <strong>Archive Note</strong> saves it to your permanent backlog and clears the box so your daily view stays 100% clutter-free.
         </p>
         <textarea 
           class="scratchpad-textarea" 
           id="scratchpad-input" 
           placeholder="e.g. Pick up M14x1.5 spare lug nuts at O'Reilly; schedule Infiniti transmission drain & fill; order Motorcraft Yellow coolant..."
           oninput="handleScratchpadInput()"></textarea>
+
+        <!-- Archived Notes Drawer -->
+        <button class="archive-drawer-btn" onclick="toggleArchiveDrawer()" type="button">
+          <span id="archive-drawer-label">📁 View Archived Notes (0 items)</span>
+          <span id="archive-drawer-arrow">▼</span>
+        </button>
+        <div id="archive-drawer-content" class="archive-drawer-content hidden-drawer">
+          <!-- Populated by JS -->
+        </div>
       </div>
     </section>
 
@@ -2123,9 +2211,11 @@
 
 
     /* ==============================================================
-       6. NEXT SPRINT SCRATCHPAD (DEBOUNCED AUTO-SAVE)
+       6. NEXT SPRINT SCRATCHPAD & ARCHIVE ENGINE
        ============================================================== */
     const SCRATCHPAD_KEY = 'bb_ops_scratchpad_content';
+    const ARCHIVE_LIST_KEY = 'bb_ops_archive_list';
+    const OFFLINE_QUEUE_KEY = 'bb_ops_archive_offline_queue';
     let scratchpadTimer;
 
     function initScratchpad() {
@@ -2133,6 +2223,8 @@
       if (saved) {
         document.getElementById('scratchpad-input').value = saved;
       }
+      renderArchiveDrawer();
+      drainOfflineArchiveQueue();
     }
 
     function handleScratchpadInput() {
@@ -2147,6 +2239,185 @@
         indicator.style.opacity = '1';
         indicator.innerHTML = '<span>✓</span> Auto-saved locally';
       }, 400);
+    }
+
+    function getArchiveList() {
+      try {
+        return JSON.parse(localStorage.getItem(ARCHIVE_LIST_KEY) || '[]');
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveArchiveList(list) {
+      localStorage.setItem(ARCHIVE_LIST_KEY, JSON.stringify(list));
+      renderArchiveDrawer();
+    }
+
+    function archiveCurrentScratchpad() {
+      const ta = document.getElementById('scratchpad-input');
+      const text = (ta.value || '').trim();
+
+      if (!text) {
+        showToast('Scratchpad is empty.');
+        return;
+      }
+
+      const now = new Date();
+      const dateFormatted = now.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      }) + ' • ' + now.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit'
+      });
+
+      const newItem = {
+        id: 'archive-' + Date.now(),
+        text: text,
+        timestamp: now.toISOString(),
+        displayDate: dateFormatted
+      };
+
+      // 1. Add to local archive list (newest first)
+      const list = getArchiveList();
+      list.unshift(newItem);
+      saveArchiveList(list);
+
+      // 2. Clear the active scratchpad text box
+      ta.value = '';
+      localStorage.removeItem(SCRATCHPAD_KEY);
+
+      // 3. Reset auto-save indicator
+      const indicator = document.getElementById('scratchpad-saved-badge');
+      indicator.innerHTML = '<span>✓</span> Cleared & Archived';
+
+      // 4. Sync to server / cloud file
+      syncArchiveItemToServer(newItem);
+
+      showToast('✓ Note archived & scratchpad cleared!');
+    }
+
+    function syncArchiveItemToServer(item) {
+      if (!navigator.onLine) {
+        queueOfflineArchiveItem(item);
+        return;
+      }
+
+      fetch('/api/archive', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(item)
+      })
+      .then(res => res.json())
+      .then(data => {
+        console.log('[ARCHIVE_SYNC_SUCCESS]', data);
+      })
+      .catch(err => {
+        console.warn('[ARCHIVE_SYNC_OFFLINE_QUEUED]', err);
+        queueOfflineArchiveItem(item);
+      });
+    }
+
+    function queueOfflineArchiveItem(item) {
+      try {
+        const queue = JSON.parse(localStorage.getItem(OFFLINE_QUEUE_KEY) || '[]');
+        queue.push(item);
+        localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(queue));
+      } catch (e) {}
+    }
+
+    function drainOfflineArchiveQueue() {
+      if (!navigator.onLine) return;
+      try {
+        const queue = JSON.parse(localStorage.getItem(OFFLINE_QUEUE_KEY) || '[]');
+        if (queue.length === 0) return;
+
+        queue.forEach(item => {
+          fetch('/api/archive', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(item)
+          }).catch(() => {});
+        });
+
+        localStorage.removeItem(OFFLINE_QUEUE_KEY);
+      } catch (e) {}
+    }
+
+    window.addEventListener('online', drainOfflineArchiveQueue);
+
+    function toggleArchiveDrawer() {
+      const drawer = document.getElementById('archive-drawer-content');
+      const arrow = document.getElementById('archive-drawer-arrow');
+      const isHidden = drawer.classList.contains('hidden-drawer');
+
+      if (isHidden) {
+        drawer.classList.remove('hidden-drawer');
+        arrow.textContent = '▲';
+      } else {
+        drawer.classList.add('hidden-drawer');
+        arrow.textContent = '▼';
+      }
+    }
+
+    function renderArchiveDrawer() {
+      const list = getArchiveList();
+      const label = document.getElementById('archive-drawer-label');
+      const container = document.getElementById('archive-drawer-content');
+      if (!label || !container) return;
+
+      label.textContent = `📁 View Archived Notes (${list.length} item${list.length === 1 ? '' : 's'})`;
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding:16px; color:var(--text-muted); font-size:0.8rem; background:var(--bg-card-sub); border-radius:8px;">
+            No archived notes yet. Type above and tap <strong>Archive Note</strong>.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = '';
+      list.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'archive-card';
+        card.innerHTML = `
+          <div class="archive-card-header">
+            <span class="archive-card-date">🗓️ ${item.displayDate || item.timestamp}</span>
+            <div style="display:flex; gap:6px;">
+              <button class="btn-copy" onclick="copyArchiveItem('${item.id}')">Copy</button>
+              <button class="btn-copy" style="color:#fb7185; border-color:rgba(251,113,133,0.3);" onclick="deleteArchiveItem('${item.id}')">Delete</button>
+            </div>
+          </div>
+          <div class="archive-card-text">${escapeHtml(item.text)}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function copyArchiveItem(id) {
+      const item = getArchiveList().find(i => i.id === id);
+      if (item) {
+        copyToClipboard(item.text, 'Archived Note');
+      }
+    }
+
+    function deleteArchiveItem(id) {
+      let list = getArchiveList();
+      list = list.filter(i => i.id !== id);
+      saveArchiveList(list);
+      showToast('Archived note removed.');
+    }
+
+    function escapeHtml(str) {
+      return (str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
     }
 
 
