@@ -1,0 +1,2572 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>The Pleasant Ridge Gazette: Household C2 & Wargaming Engine</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Playfair Display (Vintage Serif Masthead), JetBrains Mono (Mil-Spec Readouts), Inter (Interface) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=JetBrains+Mono:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            headline: ['"Playfair Display"', 'Georgia', 'serif'],
+            masthead: ['Cinzel', '"Playfair Display"', 'serif'],
+            mono: ['"JetBrains Mono"', 'Courier New', 'monospace'],
+            sans: ['Inter', '-apple-system', 'sans-serif'],
+          },
+          colors: {
+            tactical: {
+              950: '#060a12',
+              900: '#0a0f1d',
+              850: '#0f1629',
+              800: '#141d34',
+              700: '#1e2945',
+              600: '#2d3d63',
+              500: '#425686',
+            },
+            news: {
+              paper: '#f8f5eb',
+              parchment: '#eee6d3',
+              ink: '#111827',
+              muted: '#4b5563',
+              gold: '#c59b27',
+              border: '#374151',
+            },
+            f150: {
+              DEFAULT: '#f59e0b',
+              glow: 'rgba(245, 158, 11, 0.4)',
+              dark: '#b45309',
+            },
+            explorer: {
+              DEFAULT: '#38bdf8',
+              glow: 'rgba(56, 189, 248, 0.4)',
+              dark: '#0369a1',
+            },
+            radar: {
+              green: '#10b981',
+              amber: '#f59e0b',
+              red: '#ef4444',
+            }
+          },
+          animation: {
+            'radar-spin': 'radarSweep 4s linear infinite',
+            'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+            'dash-glow': 'dashGlow 1.5s linear infinite',
+            'shake': 'shake 0.4s cubic-bezier(.36,.07,.19,.97) both',
+          },
+          keyframes: {
+            radarSweep: {
+              '0%': { transform: 'rotate(0deg)' },
+              '100%': { transform: 'rotate(360deg)' }
+            },
+            pulseGlow: {
+              '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+              '50%': { opacity: '0.6', transform: 'scale(1.08)' }
+            },
+            dashGlow: {
+              'to': { strokeDashoffset: '-40' }
+            },
+            shake: {
+              '10%, 90%': { transform: 'translate3d(-2px, 0, 0)' },
+              '20%, 80%': { transform: 'translate3d(3px, 0, 0)' },
+              '30%, 50%, 70%': { transform: 'translate3d(-5px, 0, 0)' },
+              '40%, 60%': { transform: 'translate3d(5px, 0, 0)' }
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Tactical grid & scanline aesthetic */
+    .tactical-grid {
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    }
+    .scanlines {
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+      background-size: 100% 3px, 6px 100%;
+      pointer-events: none;
+    }
+    .newspaper-border {
+      border: 1px solid #334155;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #0a0f1d;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #2d3d63;
+      border-radius: 3px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #425686;
+    }
+    
+    /* Animated map vectors */
+    .active-vector-f150 {
+      stroke: #f59e0b !important;
+      stroke-width: 4 !important;
+      stroke-dasharray: 8 6 !important;
+      animation: dashGlow 1.2s linear infinite !important;
+      filter: drop-shadow(0 0 6px #f59e0b);
+    }
+    .active-vector-explorer {
+      stroke: #38bdf8 !important;
+      stroke-width: 4 !important;
+      stroke-dasharray: 8 6 !important;
+      animation: dashGlow 1.2s linear infinite !important;
+      filter: drop-shadow(0 0 6px #38bdf8);
+    }
+    
+    /* Vintage newspaper rule line */
+    .news-rule {
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #c59b27, #f59e0b, #c59b27, transparent);
+    }
+    .news-rule-double {
+      border-top: 3px double #475569;
+    }
+  </style>
+</head>
+<body class="bg-tactical-950 text-slate-100 font-sans min-h-screen selection:bg-amber-500 selection:text-black tactical-grid relative overflow-x-hidden">
+
+  <!-- Scanlines overlay (aesthetic) -->
+  <div class="scanlines fixed inset-0 z-40"></div>
+
+  <!-- AUTHENTICATION & SECURITY GATE MODAL -->
+  <div id="authGateModal" class="fixed inset-0 z-50 bg-tactical-950/95 backdrop-blur-md flex items-center justify-center p-4 transition-all duration-300">
+    <div class="max-w-md w-full bg-tactical-900 border-2 border-amber-600/40 rounded-xl p-6 sm:p-8 shadow-2xl relative newspaper-border overflow-hidden">
+      <!-- Watermark stamp -->
+      <div class="absolute -right-12 -bottom-12 text-slate-800/20 font-masthead text-8xl font-black pointer-events-none select-none uppercase rotate-12">
+        RESTRICTED
+      </div>
+      
+      <!-- Modal Header -->
+      <div class="text-center mb-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono font-bold uppercase tracking-wider mb-2">
+          <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+          MIL-STD-188 // HOUSEHOLD C2 ACCESS GATE
+        </div>
+        <h2 class="text-2xl font-masthead font-bold text-amber-100 tracking-wide">THE PLEASANT RIDGE GAZETTE</h2>
+        <p class="text-xs font-mono text-slate-400 mt-1">OPERATIONAL CONTROL & STOCHASTIC WARGAMING ENGINE</p>
+        <p class="text-[11px] font-mono text-slate-500">CABALLERO HOMESTEAD • USD 449 EASTON • FT. LEAVENWORTH</p>
+      </div>
+
+      <!-- PIN Input Status Display -->
+      <div class="bg-tactical-950 border border-slate-700/60 rounded-lg p-4 mb-6 text-center shadow-inner relative">
+        <div class="text-[10px] font-mono text-slate-400 uppercase tracking-widest mb-3">ENTER 4-DIGIT AUTHORIZATION PIN</div>
+        
+        <!-- 4 Visual Status Dots -->
+        <div class="flex items-center justify-center gap-4 mb-2" id="pinDotsContainer">
+          <div class="w-4 h-4 rounded-full border-2 border-slate-600 bg-tactical-900 transition-all duration-150 pin-dot" id="dot0"></div>
+          <div class="w-4 h-4 rounded-full border-2 border-slate-600 bg-tactical-900 transition-all duration-150 pin-dot" id="dot1"></div>
+          <div class="w-4 h-4 rounded-full border-2 border-slate-600 bg-tactical-900 transition-all duration-150 pin-dot" id="dot2"></div>
+          <div class="w-4 h-4 rounded-full border-2 border-slate-600 bg-tactical-900 transition-all duration-150 pin-dot" id="dot3"></div>
+        </div>
+
+        <div id="pinErrorMessage" class="text-xs font-mono text-red-400 h-4 font-semibold tracking-wide"></div>
+        <div class="text-[10px] font-mono text-slate-500 mt-1">AUTHORIZED CODES: 1776, 4490, 1234</div>
+      </div>
+
+      <!-- Keypad Grid -->
+      <div class="grid grid-cols-3 gap-3 mb-4">
+        <button onclick="handleKeypadInput('1')" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 border border-slate-700 text-lg font-mono font-bold text-amber-100 active:scale-95 transition-all shadow-sm">1</button>
+        <button onclick="handleKeypadInput('2')" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 border border-slate-700 text-lg font-mono font-bold text-amber-100 active:scale-95 transition-all shadow-sm">2</button>
+        <button onclick="handleKeypadInput('3')" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 border border-slate-700 text-lg font-mono font-bold text-amber-100 active:scale-95 transition-all shadow-sm">3</button>
+        <button onclick="handleKeypadInput('4')" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 border border-slate-700 text-lg font-mono font-bold text-amber-100 active:scale-95 transition-all shadow-sm">4</button>
+        <button onclick="handleKeypadInput('5')" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 border border-slate-700 text-lg font-mono font-bold text-amber-100 active:scale-95 transition-all shadow-sm">5</button>
+        <button onclick="handleKeypadInput('6')" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 border border-slate-700 text-lg font-mono font-bold text-amber-100 active:scale-95 transition-all shadow-sm">6</button>
+        <button onclick="handleKeypadInput('7')" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 border border-slate-700 text-lg font-mono font-bold text-amber-100 active:scale-95 transition-all shadow-sm">7</button>
+        <button onclick="handleKeypadInput('8')" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 border border-slate-700 text-lg font-mono font-bold text-amber-100 active:scale-95 transition-all shadow-sm">8</button>
+        <button onclick="handleKeypadInput('9')" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 border border-slate-700 text-lg font-mono font-bold text-amber-100 active:scale-95 transition-all shadow-sm">9</button>
+        <button onclick="clearKeypadInput()" class="h-12 rounded-lg bg-slate-800/80 hover:bg-red-900/40 border border-slate-700 hover:border-red-500 text-xs font-mono font-bold text-slate-300 active:scale-95 transition-all">CLR</button>
+        <button onclick="handleKeypadInput('0')" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 border border-slate-700 text-lg font-mono font-bold text-amber-100 active:scale-95 transition-all shadow-sm">0</button>
+        <button onclick="backspaceKeypadInput()" class="h-12 rounded-lg bg-slate-800/80 hover:bg-amber-900/40 border border-slate-700 hover:border-amber-500 text-sm font-mono font-bold text-slate-300 active:scale-95 transition-all">⌫</button>
+      </div>
+
+      <!-- Quick Bypass for Testing -->
+      <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between">
+        <button onclick="bypassAuthGate()" class="w-full py-2.5 px-4 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 text-xs font-mono font-bold tracking-wider uppercase transition-all flex items-center justify-center gap-2 group">
+          <svg class="w-4 h-4 text-amber-400 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          ⚡ PASS (TEST OVERRIDE AUTHENTICATION)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN APP CONTAINER -->
+  <div class="min-h-screen flex flex-col relative z-10 pb-12">
+    
+    <!-- VINTAGE NEWSPAPER & MILITARY C2 MASTHEAD -->
+    <header class="border-b border-slate-800 bg-tactical-900/90 backdrop-blur-md sticky top-0 z-30 shadow-lg">
+      
+      <!-- Top Classification Banner -->
+      <div class="bg-amber-600/10 border-b border-amber-600/30 px-4 py-1 text-[11px] font-mono flex items-center justify-between text-amber-300">
+        <div class="flex items-center gap-2">
+          <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="font-bold tracking-wider">DEFENSE SECTOR: LEAVENWORTH COUNTY, KS (USD 449 / FORT LEAVENWORTH)</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="hidden sm:inline text-slate-400">LAT: 39°21'N • LONG: 95°02'W</span>
+          <button onclick="toggleAudioMute()" id="audioMuteBtn" class="hover:text-amber-100 flex items-center gap-1 text-[11px]">
+            <span id="audioMuteIcon">🔊</span> <span id="audioMuteText">SFX: ON</span>
+          </button>
+          <button onclick="lockAuthGate()" class="hover:text-red-400 text-slate-400 flex items-center gap-1 font-bold">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            LOCK GATE
+          </button>
+        </div>
+      </div>
+
+      <!-- Newspaper Headline Title Block -->
+      <div class="max-w-7xl mx-auto px-4 py-3 sm:py-4">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+          
+          <!-- Left: Masthead Brand -->
+          <div class="text-center md:text-left">
+            <div class="text-[10px] font-mono tracking-widest text-amber-400/80 uppercase font-semibold">
+              EST. 1854 • OFFICIAL HOUSEHOLD DISPATCH & BATTLE SYNCHRONIZATION ENGINE
+            </div>
+            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-headline font-bold text-amber-50 tracking-tight leading-none drop-shadow-sm">
+              The Pleasant Ridge Gazette
+            </h1>
+            <div class="text-xs font-mono text-slate-400 mt-1 flex flex-wrap items-center justify-center md:justify-start gap-2">
+              <span class="text-amber-400 font-bold">VOL. CXLVIII NO. 42</span>
+              <span>•</span>
+              <span>OPERATIONS RESEARCH & C2 WARGAMING ENGINE</span>
+              <span>•</span>
+              <span class="text-slate-400">CABALLERO HOMESTEAD COMPONENT</span>
+            </div>
+          </div>
+
+          <!-- Right: System Operational Readiness Indicator (DEFCON Gauge) -->
+          <div class="bg-tactical-950 border border-slate-700/70 rounded-lg p-2.5 px-4 flex items-center gap-4 shadow-md">
+            <!-- Readiness Status Gauge -->
+            <div class="flex items-center gap-3">
+              <div class="relative w-12 h-12 flex items-center justify-center">
+                <svg class="w-12 h-12 transform -rotate-90">
+                  <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="4" class="text-slate-800" fill="transparent"/>
+                  <circle id="readinessGaugeRing" cx="24" cy="24" r="20" stroke="currentColor" stroke-width="4" class="text-emerald-500 transition-all duration-500" fill="transparent" stroke-dasharray="125.6" stroke-dashoffset="30"/>
+                </svg>
+                <span id="readinessStressScore" class="absolute text-[11px] font-mono font-bold text-emerald-400">24%</span>
+              </div>
+              <div>
+                <div class="text-[9px] font-mono text-slate-400 uppercase tracking-widest">SYSTEM READINESS</div>
+                <div id="readinessBadge" class="text-xs font-mono font-bold text-emerald-400 flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                  DEFCON 5 // NOMINAL
+                </div>
+                <div class="text-[11px] font-mono text-slate-300">
+                  Buffer Slack: <span id="systemSlackDisplay" class="font-bold text-amber-400">+28m</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="h-8 w-px bg-slate-800 hidden sm:block"></div>
+
+            <!-- Quick Action: Force Friction -->
+            <button onclick="triggerManualFrictionRoll()" class="px-3 py-1.5 rounded bg-red-950/60 hover:bg-red-900/80 border border-red-700/60 text-red-300 text-[11px] font-mono font-bold tracking-wider uppercase transition-all shadow-sm flex items-center gap-1.5 hover:scale-105 active:scale-95">
+              <span>🎲</span>
+              <span class="hidden lg:inline">FORCE</span> FRICTION ROLL
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- MASTER TIME & WEATHER BAR -->
+      <div class="bg-tactical-950/90 border-t border-slate-800 px-4 py-2.5">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-sm font-mono">
+          
+          <!-- Master Simulation Clock Controls -->
+          <div class="flex items-center flex-wrap gap-2 sm:gap-3">
+            <!-- Digital Clock Display -->
+            <div class="bg-tactical-900 border border-amber-500/40 rounded px-3 py-1 text-center shadow-inner">
+              <span class="text-[9px] uppercase tracking-widest text-slate-400 block -mb-0.5">SIM TIME</span>
+              <span id="clockDisplay" class="text-lg font-bold font-mono text-amber-400 tracking-wider">06:30 AM</span>
+            </div>
+
+            <!-- Play/Pause Button -->
+            <button onclick="toggleSimulationClock()" id="simPlayBtn" class="px-3 py-1.5 rounded bg-amber-500 hover:bg-amber-400 text-tactical-950 font-bold text-xs uppercase tracking-wider flex items-center gap-1 transition-all shadow">
+              <span id="simPlayIcon">▶</span>
+              <span id="simPlayText">RUN</span>
+            </button>
+
+            <!-- +15m Step Button -->
+            <button onclick="stepSimulationClock(15)" class="px-2.5 py-1.5 rounded bg-tactical-800 hover:bg-tactical-700 border border-slate-700 text-slate-200 text-xs font-semibold hover:border-slate-500 transition-all">
+              +15m
+            </button>
+
+            <!-- Reset Button -->
+            <button onclick="resetSimulationClock()" class="px-2.5 py-1.5 rounded bg-tactical-800 hover:bg-tactical-700 border border-slate-700 text-slate-300 hover:text-white text-xs transition-all" title="Reset to 06:30">
+              ↺ 06:30
+            </button>
+
+            <!-- Tempo Multipliers -->
+            <div class="flex items-center rounded bg-tactical-900 border border-slate-700 p-0.5 text-xs">
+              <button onclick="setSimTempo(1)" id="tempo1x" class="px-2 py-0.5 rounded text-amber-400 font-bold bg-tactical-800 transition-all">1x</button>
+              <button onclick="setSimTempo(5)" id="tempo5x" class="px-2 py-0.5 rounded text-slate-400 hover:text-white transition-all">5x</button>
+              <button onclick="setSimTempo(15)" id="tempo15x" class="px-2 py-0.5 rounded text-slate-400 hover:text-white transition-all">15x</button>
+            </div>
+          </div>
+
+          <!-- Weather Condition Selector -->
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] text-slate-400 uppercase tracking-wider hidden md:inline">CORRIDOR MET:</span>
+            <div class="relative">
+              <select id="weatherSelect" onchange="handleWeatherChange(this.value)" class="bg-tactical-900 border border-slate-700 hover:border-amber-500 text-slate-200 text-xs rounded px-3 py-1.5 font-mono focus:outline-none focus:ring-1 focus:ring-amber-500 cursor-pointer">
+                <option value="clear">☀️ Clear & Crisp (52°F, 1.0x)</option>
+                <option value="rain">🌧️ Fall Downpour (46°F, 1.25x, Slick)</option>
+                <option value="fog">🌫️ Morning Fog (41°F, +5m Gate Delay)</option>
+                <option value="frost">❄️ Early Frost & Ice (28°F, 1.5x, Defrost)</option>
+              </select>
+            </div>
+            
+            <!-- Weather Flag Badge -->
+            <div id="weatherFlagBadge" class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-800/80 border border-slate-700 text-[11px] font-mono text-slate-300">
+              <span id="weatherFlagIcon">☀️</span>
+              <span id="weatherFlagText">Optimal Highway Speed</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- NAVIGATION TABS -->
+      <nav class="max-w-7xl mx-auto px-4 flex items-center gap-1 border-t border-slate-800/80 overflow-x-auto text-xs font-mono">
+        <button onclick="switchTab('tabMap')" id="navTabMap" class="nav-tab px-4 py-2.5 font-bold border-b-2 border-amber-400 text-amber-400 flex items-center gap-2 transition-all whitespace-nowrap">
+          <span>🗺️</span> 1. TACTICAL VECTOR MAP & LIVE C2
+        </button>
+        <button onclick="switchTab('tabBattlePlan')" id="navTabBattlePlan" class="nav-tab px-4 py-2.5 font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 transition-all whitespace-nowrap">
+          <span>⚔️</span> 2. BATTLE PLAN & MONTE CARLO
+        </button>
+        <button onclick="switchTab('tabDossier')" id="navTabDossier" class="nav-tab px-4 py-2.5 font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 transition-all whitespace-nowrap">
+          <span>👥</span> 3. PERSONNEL DOSSIER & PERT
+        </button>
+        <button onclick="switchTab('tabMotorPool')" id="navTabMotorPool" class="nav-tab px-4 py-2.5 font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 transition-all whitespace-nowrap">
+          <span>🚙</span> 4. MOTOR POOL & LOGISTICS
+        </button>
+      </nav>
+
+    </header>
+
+    <!-- CONTENT WORKSPACE -->
+    <main class="max-w-7xl mx-auto px-4 py-6 w-full flex-1">
+      
+      <!-- ==================================================================== -->
+      <!-- TAB 1: TACTICAL VECTOR MAP & LIVE SIMULATION -->
+      <!-- ==================================================================== -->
+      <div id="tabMap" class="tab-pane space-y-6">
+        
+        <!-- Live Operations Command Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Tactical Vector Map (2 Columns on large screens) -->
+          <div class="lg:col-span-2 bg-tactical-900 border border-slate-700/80 rounded-xl p-4 shadow-xl newspaper-border relative flex flex-col">
+            
+            <!-- Map Card Header -->
+            <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-800">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-amber-400 shadow-[0_0_8px_#f59e0b]"></span>
+                <h3 class="font-masthead font-bold text-amber-100 text-sm tracking-wide uppercase">
+                  LEAVENWORTH COUNTY VECTOR MAP // SECTOR ALPHA-449
+                </h3>
+              </div>
+              <div class="text-[11px] font-mono text-slate-400 flex items-center gap-3">
+                <span class="flex items-center gap-1">
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>
+                  F-150 [CDR JOSH]
+                </span>
+                <span class="flex items-center gap-1">
+                  <span class="w-2.5 h-2.5 rounded-full bg-sky-400 inline-block"></span>
+                  EXPLORER [ATC BRITTANIE]
+                </span>
+              </div>
+            </div>
+
+            <!-- SVG Tactical Map Canvas -->
+            <div class="relative w-full aspect-[16/10] bg-tactical-950 rounded-lg border border-slate-800 overflow-hidden shadow-inner flex-1">
+              
+              <svg id="tacticalMapSvg" viewBox="0 0 1000 620" class="w-full h-full select-none">
+                <!-- Definitions & Filters -->
+                <defs>
+                  <filter id="glowF150" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="3" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                  </filter>
+                  <filter id="glowExplorer" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="3" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                  </filter>
+                  <pattern id="tacticalGridPattern" width="50" height="50" patternUnits="userSpaceOnUse">
+                    <path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(255, 255, 255, 0.04)" stroke-width="1"/>
+                  </pattern>
+                  <linearGradient id="riverGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#1e3a5f" stop-opacity="0.8"/>
+                    <stop offset="50%" stop-color="#2563eb" stop-opacity="0.5"/>
+                    <stop offset="100%" stop-color="#1e3a5f" stop-opacity="0.8"/>
+                  </linearGradient>
+                </defs>
+
+                <!-- Grid Background -->
+                <rect width="1000" height="620" fill="#090d18" />
+                <rect width="1000" height="620" fill="url(#tacticalGridPattern)" />
+
+                <!-- Topographic & Coordinate Markings -->
+                <g stroke="rgba(255,255,255,0.08)" stroke-width="0.5" stroke-dasharray="4 4">
+                  <line x1="200" y1="0" x2="200" y2="620" />
+                  <line x1="400" y1="0" x2="400" y2="620" />
+                  <line x1="600" y1="0" x2="600" y2="620" />
+                  <line x1="800" y1="0" x2="800" y2="620" />
+                  <line x1="0" y1="150" x2="1000" y2="150" />
+                  <line x1="0" y1="300" x2="1000" y2="300" />
+                  <line x1="0" y1="450" x2="1000" y2="450" />
+                </g>
+
+                <!-- Tactical Grid Coordinates -->
+                <text x="210" y="20" fill="#475569" font-size="9" font-family="JetBrains Mono">095°05'W</text>
+                <text x="410" y="20" fill="#475569" font-size="9" font-family="JetBrains Mono">095°00'W</text>
+                <text x="610" y="20" fill="#475569" font-size="9" font-family="JetBrains Mono">094°55'W</text>
+                <text x="810" y="20" fill="#475569" font-size="9" font-family="JetBrains Mono">094°50'W</text>
+                <text x="15" y="160" fill="#475569" font-size="9" font-family="JetBrains Mono">39°25'N</text>
+                <text x="15" y="310" fill="#475569" font-size="9" font-family="JetBrains Mono">39°20'N</text>
+                <text x="15" y="460" fill="#475569" font-size="9" font-family="JetBrains Mono">39°15'N</text>
+
+                <!-- MISSOURI RIVER BEND (Eastern Flank) -->
+                <g id="missouriRiverSector">
+                  <!-- Shaded River Channel -->
+                  <path d="M 880 -10 C 860 80, 810 140, 810 220 C 810 300, 870 380, 880 470 C 890 530, 860 590, 850 630 L 1010 630 L 1010 -10 Z" 
+                        fill="url(#riverGradient)" opacity="0.35" />
+                  <!-- River Bank Line -->
+                  <path d="M 880 -10 C 860 80, 810 140, 810 220 C 810 300, 870 380, 880 470 C 890 530, 860 590, 850 630" 
+                        fill="none" stroke="#3b82f6" stroke-width="4" stroke-opacity="0.7" />
+                  <!-- River Center Flow Line -->
+                  <path d="M 910 -10 C 890 80, 840 140, 840 220 C 840 300, 900 380, 910 470 C 920 530, 890 590, 880 630" 
+                        fill="none" stroke="#60a5fa" stroke-width="1.5" stroke-dasharray="8 6" stroke-opacity="0.4" />
+                  <!-- River Label -->
+                  <text x="840" y="290" fill="#60a5fa" font-size="11" font-family="JetBrains Mono" font-weight="bold" letter-spacing="3" opacity="0.6" transform="rotate(78 840 290)">
+                    MISSOURI RIVER // EASTERN FLANK
+                  </text>
+                </g>
+
+                <!-- County Topographic & Road Infrastructure Vector Lines -->
+                <g id="roadVectorsLayer">
+                  
+                  <!-- Vector 1: Base Alpha to Pleasant Ridge (Corridor Alpha) -->
+                  <path id="path_alpha" d="M 240 360 C 230 290, 220 220, 210 150" 
+                        fill="none" stroke="#334155" stroke-width="2.5" stroke-dasharray="4 4" class="transition-all" />
+                  <path id="path_alpha_return" d="M 210 150 C 220 220, 230 290, 240 360" 
+                        fill="none" stroke="transparent" stroke-width="2.5" />
+
+                  <!-- Vector 2: Base Alpha to Fort Leavenworth (Corridor Bravo - K-92 / US-73) -->
+                  <path id="path_bravo" d="M 240 360 C 380 340, 520 240, 640 180 C 700 150, 740 145, 780 140" 
+                        fill="none" stroke="#334155" stroke-width="2.5" stroke-dasharray="4 4" class="transition-all" />
+                  <path id="path_bravo_return" d="M 780 140 C 740 145, 700 150, 640 180 C 520 240, 380 340, 240 360" 
+                        fill="none" stroke="transparent" stroke-width="2.5" />
+
+                  <!-- Vector 3: Pleasant Ridge to Fort Leavenworth (Corridor Charlie - K-92 Direct) -->
+                  <path id="path_charlie" d="M 210 150 C 360 140, 540 135, 680 140 C 730 142, 755 140, 780 140" 
+                        fill="none" stroke="#334155" stroke-width="2" stroke-dasharray="4 4" class="transition-all" />
+                  <path id="path_charlie_return" d="M 780 140 C 755 140, 730 142, 680 140 C 540 135, 360 140, 210 150" 
+                        fill="none" stroke="transparent" stroke-width="2" />
+
+                  <!-- Vector 4: Base Alpha to Lansing Sports Fields (Corridor Delta - K-7 / K-92) -->
+                  <path id="path_delta" d="M 240 360 C 380 400, 530 430, 640 440 C 690 445, 720 448, 750 450" 
+                        fill="none" stroke="#334155" stroke-width="2.5" stroke-dasharray="4 4" class="transition-all" />
+                  <path id="path_delta_return" d="M 750 450 C 720 448, 690 445, 640 440 C 530 430, 380 400, 240 360" 
+                        fill="none" stroke="transparent" stroke-width="2.5" />
+
+                  <!-- Vector 5: Pleasant Ridge to Lansing Sports Fields (Corridor Echo - Highway 7 Loop) -->
+                  <path id="path_echo" d="M 210 150 C 350 240, 550 350, 700 420 C 725 435, 735 440, 750 450" 
+                        fill="none" stroke="#334155" stroke-width="2" stroke-dasharray="4 4" class="transition-all" />
+                  <path id="path_echo_return" d="M 750 450 C 735 440, 725 435, 700 420 C 550 350, 350 240, 210 150" 
+                        fill="none" stroke="transparent" stroke-width="2" />
+
+                </g>
+
+                <!-- Highway Badges -->
+                <g fill="#475569" font-family="JetBrains Mono" font-size="9" font-weight="bold">
+                  <text x="470" y="240">HWY K-92 (EAST-WEST)</text>
+                  <text x="690" y="320">US-73 / K-7 CORRIDOR</text>
+                  <text x="180" y="270">207TH ST / STRANGER CK</text>
+                </g>
+
+                <!-- STRATEGIC NODES (Interactive Pins) -->
+                
+                <!-- Node 1: Base Alpha (Caballero Homestead) -->
+                <g id="nodeBaseAlpha" class="cursor-pointer group" onclick="focusNode('Base Alpha')">
+                  <!-- Radar pulse circle -->
+                  <circle cx="240" cy="360" r="28" fill="rgba(245, 158, 11, 0.08)" stroke="#f59e0b" stroke-width="1" stroke-dasharray="2 3" class="animate-pulse" />
+                  <circle cx="240" cy="360" r="14" fill="#0f172a" stroke="#f59e0b" stroke-width="3" />
+                  <circle cx="240" cy="360" r="5" fill="#f59e0b" />
+                  <!-- Callout Label -->
+                  <rect x="155" y="385" width="170" height="34" rx="4" fill="#090d18" stroke="#f59e0b" stroke-width="1.5" />
+                  <text x="240" y="399" fill="#fef3c7" font-size="11" font-family="Cinzel" font-weight="bold" text-anchor="middle">BASE ALPHA</text>
+                  <text x="240" y="412" fill="#94a3b8" font-size="8" font-family="JetBrains Mono" text-anchor="middle">CABALLERO HOMESTEAD HQ</text>
+                </g>
+
+                <!-- Node 2: Pleasant Ridge Schools (USD 449 Easton) -->
+                <g id="nodePleasantRidge" class="cursor-pointer group" onclick="focusNode('Pleasant Ridge Schools')">
+                  <circle cx="210" cy="150" r="26" fill="rgba(56, 189, 248, 0.08)" stroke="#38bdf8" stroke-width="1" stroke-dasharray="2 3" class="animate-pulse" />
+                  <circle cx="210" cy="150" r="14" fill="#0f172a" stroke="#38bdf8" stroke-width="3" />
+                  <circle cx="210" cy="150" r="5" fill="#38bdf8" />
+                  <!-- Callout Label -->
+                  <rect x="120" y="95" width="180" height="34" rx="4" fill="#090d18" stroke="#38bdf8" stroke-width="1.5" />
+                  <text x="210" y="109" fill="#e0f2fe" font-size="11" font-family="Cinzel" font-weight="bold" text-anchor="middle">PLEASANT RIDGE (USD 449)</text>
+                  <text x="210" y="122" fill="#94a3b8" font-size="8" font-family="JetBrains Mono" text-anchor="middle">EASTON CAMPUS // CAR LINE</text>
+                </g>
+
+                <!-- Node 3: Fort Leavenworth (CAC / TRADOC / Grant Gate) -->
+                <g id="nodeFortLeavenworth" class="cursor-pointer group" onclick="focusNode('Fort Leavenworth')">
+                  <circle cx="780" cy="140" r="30" fill="rgba(239, 68, 68, 0.08)" stroke="#ef4444" stroke-width="1" stroke-dasharray="2 3" class="animate-pulse" />
+                  <circle cx="780" cy="140" r="15" fill="#0f172a" stroke="#ef4444" stroke-width="3" />
+                  <circle cx="780" cy="140" r="5" fill="#ef4444" />
+                  <!-- Callout Label -->
+                  <rect x="685" y="85" width="190" height="34" rx="4" fill="#090d18" stroke="#ef4444" stroke-width="1.5" />
+                  <text x="780" y="99" fill="#fee2e2" font-size="11" font-family="Cinzel" font-weight="bold" text-anchor="middle">FORT LEAVENWORTH</text>
+                  <text x="780" y="112" fill="#94a3b8" font-size="8" font-family="JetBrains Mono" text-anchor="middle">CAC / TRADOC / GRANT GATE</text>
+                </g>
+
+                <!-- Node 4: Lansing Sports Fields -->
+                <g id="nodeLansing" class="cursor-pointer group" onclick="focusNode('Lansing Sports Fields')">
+                  <circle cx="750" cy="450" r="26" fill="rgba(16, 185, 129, 0.08)" stroke="#10b981" stroke-width="1" stroke-dasharray="2 3" class="animate-pulse" />
+                  <circle cx="750" cy="450" r="14" fill="#0f172a" stroke="#10b981" stroke-width="3" />
+                  <circle cx="750" cy="450" r="5" fill="#10b981" />
+                  <!-- Callout Label -->
+                  <rect x="655" y="475" width="190" height="34" rx="4" fill="#090d18" stroke="#10b981" stroke-width="1.5" />
+                  <text x="750" y="489" fill="#d1fae5" font-size="11" font-family="Cinzel" font-weight="bold" text-anchor="middle">LANSING SPORTS COMPLEX</text>
+                  <text x="750" y="502" fill="#94a3b8" font-size="8" font-family="JetBrains Mono" text-anchor="middle">ATHLETIC FIELDS // K-7 CORRIDOR</text>
+                </g>
+
+                <!-- DWELL CYCLE PULSING RIPPLES (Dynamic) -->
+                <g id="dwellLayer"></g>
+
+                <!-- ACTIVE VEHICLE TOKENS (Interpolated dynamically) -->
+                
+                <!-- Ford F-150 Vehicle Token (Amber) -->
+                <g id="tokenF150" transform="translate(240, 360)" class="transition-transform duration-200">
+                  <circle cx="0" cy="0" r="16" fill="rgba(245, 158, 11, 0.25)" class="animate-pulse" />
+                  <circle cx="0" cy="0" r="10" fill="#f59e0b" stroke="#000" stroke-width="2" filter="url(#glowF150)" />
+                  <!-- Vehicle Icon Graphic inside -->
+                  <path d="M -5 -3 L 5 -3 L 4 3 L -4 3 Z" fill="#000" />
+                  <!-- Floating Callout Badge -->
+                  <g transform="translate(14, -14)">
+                    <rect x="0" y="-12" width="105" height="24" rx="3" fill="#0f172a" stroke="#f59e0b" stroke-width="1.5" opacity="0.95"/>
+                    <text x="6" y="3" fill="#fbbf24" font-size="9" font-family="JetBrains Mono" font-weight="bold">F-150 [CDR JOSH]</text>
+                  </g>
+                </g>
+
+                <!-- Ford Explorer Vehicle Token (Sky Blue) -->
+                <g id="tokenExplorer" transform="translate(240, 360)" class="transition-transform duration-200">
+                  <circle cx="0" cy="0" r="16" fill="rgba(56, 189, 248, 0.25)" class="animate-pulse" />
+                  <circle cx="0" cy="0" r="10" fill="#38bdf8" stroke="#000" stroke-width="2" filter="url(#glowExplorer)" />
+                  <circle cx="0" cy="0" r="3" fill="#000" />
+                  <!-- Floating Callout Badge -->
+                  <g transform="translate(14, 10)">
+                    <rect x="0" y="-12" width="135" height="24" rx="3" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5" opacity="0.95"/>
+                    <text x="6" y="3" fill="#7dd3fc" font-size="9" font-family="JetBrains Mono" font-weight="bold">EXPLORER [ATC BRITT]</text>
+                  </g>
+                </g>
+
+              </svg>
+
+              <!-- Real-time HUD telemetry overlay in map corner -->
+              <div class="absolute bottom-3 left-3 bg-tactical-950/90 border border-slate-700/80 rounded px-3 py-2 text-[10px] font-mono text-slate-300 pointer-events-none backdrop-blur-sm">
+                <div class="text-amber-400 font-bold uppercase tracking-wider mb-1">CORRIDOR STATUS</div>
+                <div>F-150 Status: <span id="hudF150Status" class="text-emerald-400 font-bold">STATIONARY @ BASE ALPHA</span></div>
+                <div>Explorer Status: <span id="hudExplorerStatus" class="text-emerald-400 font-bold">STATIONARY @ BASE ALPHA</span></div>
+                <div>Active Friction Delay: <span id="hudFrictionStatus" class="text-slate-400">0 min</span></div>
+              </div>
+
+            </div>
+
+            <!-- Vehicle Quick Dispatch Bar -->
+            <div class="mt-4 pt-3 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+              <div class="flex items-center gap-2">
+                <span class="text-slate-400">RAPID MISSION INJECT:</span>
+                <button onclick="triggerMissionLegImmediate(0)" class="px-2.5 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300">
+                  ⚡ Bluebird (School)
+                </button>
+                <button onclick="triggerMissionLegImmediate(1)" class="px-2.5 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300">
+                  ⚡ Iron Citadel (Fort)
+                </button>
+                <button onclick="triggerMissionLegImmediate(3)" class="px-2.5 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300">
+                  ⚡ Grasshopper (Lansing)
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-500">
+                Click map nodes to inspect sector intelligence
+              </div>
+            </div>
+
+          </div>
+
+          <!-- The Gazette Wire: Live Ticker & Dispatch Feed (1 Column) -->
+          <div class="bg-tactical-900 border border-slate-700/80 rounded-xl p-4 shadow-xl newspaper-border flex flex-col h-[520px] lg:h-auto">
+            
+            <!-- Feed Header -->
+            <div class="flex items-center justify-between pb-3 mb-2 border-b border-slate-800">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                <h3 class="font-headline font-bold text-amber-100 text-sm tracking-wide">
+                  The Gazette Wire
+                </h3>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="clearGazetteWire()" class="text-[10px] font-mono text-slate-400 hover:text-slate-200">
+                  CLEAR
+                </button>
+                <span class="px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 text-[10px] font-mono font-bold">
+                  LIVE TELETYPE
+                </span>
+              </div>
+            </div>
+
+            <p class="text-[11px] font-mono text-slate-400 mb-3">
+              Real-time operational dispatches, arrival timestamps, weather shifts, and stochastic friction rolls.
+            </p>
+
+            <!-- Ticker Filter Pills -->
+            <div class="flex items-center gap-1.5 mb-3 text-[10px] font-mono overflow-x-auto pb-1">
+              <button onclick="filterWire('all')" id="wireFilterAll" class="px-2 py-0.5 rounded bg-tactical-700 text-amber-300 font-bold">ALL</button>
+              <button onclick="filterWire('FRICTION')" id="wireFilterFriction" class="px-2 py-0.5 rounded bg-tactical-850 hover:bg-tactical-700 text-slate-400">FRICTION</button>
+              <button onclick="filterWire('MISSION')" id="wireFilterMission" class="px-2 py-0.5 rounded bg-tactical-850 hover:bg-tactical-700 text-slate-400">MISSIONS</button>
+              <button onclick="filterWire('WEATHER')" id="wireFilterWeather" class="px-2 py-0.5 rounded bg-tactical-850 hover:bg-tactical-700 text-slate-400">MET</button>
+            </div>
+
+            <!-- Ticker Scroll Container -->
+            <div id="gazetteWireFeed" class="flex-1 overflow-y-auto space-y-2.5 pr-1 font-mono text-xs custom-scrollbar">
+              <!-- Entries injected dynamically by JS -->
+            </div>
+
+            <!-- Manual Friction Injection Button at Bottom of Feed -->
+            <div class="pt-3 mt-3 border-t border-slate-800">
+              <button onclick="triggerManualFrictionRoll()" class="w-full py-2.5 px-3 rounded-lg bg-red-950/60 hover:bg-red-900/80 border border-red-700/60 text-red-200 text-xs font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md group">
+                <span class="text-base group-hover:rotate-45 transition-transform">🎲</span>
+                FORCE STOCHASTIC FRICTION ROLL (D100)
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ==================================================================== -->
+      <!-- TAB 2: DAILY BATTLE PLAN & SYNCHRONIZATION MATRIX -->
+      <!-- ==================================================================== -->
+      <div id="tabBattlePlan" class="tab-pane hidden space-y-6">
+        
+        <!-- Header Banner & Action Bar -->
+        <div class="bg-tactical-900 border border-slate-700/80 rounded-xl p-5 shadow-xl newspaper-border flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <div class="text-[10px] font-mono uppercase tracking-widest text-amber-400 font-bold mb-1">MASTER OPERATIONS SCHEDULE</div>
+            <h2 class="text-xl sm:text-2xl font-headline font-bold text-amber-50">
+              Daily Battle Plan & Synchronization Matrix
+            </h2>
+            <p class="text-xs font-mono text-slate-400 mt-1">
+              Combined Arms Daily Leg Schedule for Leavenworth County Household Logistics
+            </p>
+          </div>
+
+          <div class="flex items-center flex-wrap gap-3">
+            <!-- Monte Carlo Simulation Button -->
+            <button onclick="runMonteCarloSimulation()" class="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-tactical-950 font-mono font-bold text-xs uppercase tracking-wider shadow-lg flex items-center gap-2 transition-all transform hover:scale-105 active:scale-95">
+              <span>📊</span> RUN 500x MONTE CARLO SIM
+            </button>
+
+            <!-- Inject Tactical Mission Leg Button -->
+            <button onclick="toggleMissionInjectModal(true)" class="px-4 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-tactical-950 font-mono font-bold text-xs uppercase tracking-wider shadow-lg flex items-center gap-2 transition-all">
+              <span>➕</span> INJECT MISSION LEG
+            </button>
+          </div>
+        </div>
+
+        <!-- Master Battle Plan Matrix Table -->
+        <div class="bg-tactical-900 border border-slate-700/80 rounded-xl shadow-xl newspaper-border overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left font-mono text-xs">
+              <thead class="bg-tactical-950 border-b border-slate-800 text-[10px] text-amber-400 uppercase tracking-wider">
+                <tr>
+                  <th class="py-3 px-4">TIME GATE</th>
+                  <th class="py-3 px-4">OPERATION & MISSION NAME</th>
+                  <th class="py-3 px-4">PRIMARY VEHICLE</th>
+                  <th class="py-3 px-4">CREW MANIFEST</th>
+                  <th class="py-3 px-4">ROUTE VECTOR</th>
+                  <th class="py-3 px-4 text-center">NOMINAL SLACK</th>
+                  <th class="py-3 px-4 text-center">STATUS</th>
+                  <th class="py-3 px-4 text-right">ACTION</th>
+                </tr>
+              </thead>
+              <tbody id="missionMatrixBody" class="divide-y divide-slate-800/80">
+                <!-- Rows populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- MONTE CARLO OPERATIONS RESEARCH DOSSIER CARD (Displays simulation results) -->
+        <div id="monteCarloReportCard" class="bg-tactical-900 border border-emerald-500/40 rounded-xl p-6 shadow-2xl newspaper-border relative">
+          
+          <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between pb-4 mb-4 border-b border-slate-800 gap-4">
+            <div>
+              <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-mono font-bold uppercase tracking-wider mb-1">
+                <span>✓</span> OPERATIONS RESEARCH REPORT (500 ITERATIONS)
+              </div>
+              <h3 class="text-lg font-headline font-bold text-slate-100">
+                Stochastic Stress-Test & Schedule Fragility Analysis
+              </h3>
+            </div>
+
+            <!-- Key Metric: Overall Confidence Rating -->
+            <div class="bg-tactical-950 border border-slate-700 px-4 py-2 rounded-lg flex items-center gap-4">
+              <div>
+                <div class="text-[9px] font-mono text-slate-400 uppercase">CONFIDENCE PERCENTAGE</div>
+                <div id="mcConfidenceScore" class="text-2xl font-bold font-mono text-emerald-400">89.4%</div>
+              </div>
+              <div class="text-[11px] font-mono text-slate-400 leading-tight">
+                P(Zero Mission Failures)<br>
+                Under Active Kansas MET
+              </div>
+            </div>
+          </div>
+
+          <!-- 3-Column Statistical Diagnostics -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            
+            <!-- Card 1: Critical Path Node -->
+            <div class="bg-tactical-950 border border-slate-800 rounded-lg p-4">
+              <div class="text-[10px] font-mono text-amber-400 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                <span>⚠️</span> CRITICAL PATH PINCH POINT
+              </div>
+              <div id="mcCriticalNodeTitle" class="text-sm font-bold font-mono text-slate-200">
+                Fort Leavenworth (Grant Gate)
+              </div>
+              <div id="mcCriticalNodeDesc" class="text-xs text-slate-400 mt-1 leading-relaxed">
+                Stochastic ID security inspections and bridge traffic create maximum schedule variance. P80 margin: +14m buffer required.
+              </div>
+            </div>
+
+            <!-- Card 2: Fragility Risk Zones -->
+            <div class="bg-tactical-950 border border-slate-800 rounded-lg p-4">
+              <div class="text-[10px] font-mono text-sky-400 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                <span>⏱️</span> SCHEDULE COMPRESSION
+              </div>
+              <div id="mcPinchPointTitle" class="text-sm font-bold font-mono text-slate-200">
+                15:10 Op Return Vector (USD 449 Loop)
+              </div>
+              <div id="mcPinchPointDesc" class="text-xs text-slate-400 mt-1 leading-relaxed">
+                Turnaround buffer between school dismissal and afternoon sports practice narrows to &lt; 6 minutes under downpour conditions.
+              </div>
+            </div>
+
+            <!-- Card 3: Confidence Quantiles (P50, P80, P95) -->
+            <div class="bg-tactical-950 border border-slate-800 rounded-lg p-4">
+              <div class="text-[10px] font-mono text-emerald-400 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                <span>🎯</span> MISSION BUFFER QUANTILES
+              </div>
+              <div class="space-y-1.5 text-xs font-mono">
+                <div class="flex justify-between">
+                  <span class="text-slate-400">P50 (Median Day):</span>
+                  <span id="mcQuantileP50" class="font-bold text-emerald-400">+26m Slack</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-400">P80 (Operational Standard):</span>
+                  <span id="mcQuantileP80" class="font-bold text-amber-400">+14m Slack</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-400">P95 (Severe Friction Scenario):</span>
+                  <span id="mcQuantileP95" class="font-bold text-red-400">+2m Slack</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Monte Carlo Probability Distribution Chart (Canvas) -->
+          <div class="bg-tactical-950 border border-slate-800 rounded-lg p-4">
+            <div class="flex items-center justify-between mb-2">
+              <div class="text-xs font-mono font-bold text-slate-300">
+                FREQUENCY DISTRIBUTION: CUMULATIVE DAILY DELAYS (MINUTES)
+              </div>
+              <div class="text-[10px] font-mono text-slate-500">
+                500 STOCHASTIC DRAWS
+              </div>
+            </div>
+            <div class="w-full h-44 relative">
+              <canvas id="monteCarloChart" class="w-full h-full"></canvas>
+            </div>
+            <div class="flex items-center justify-between text-[10px] font-mono text-slate-400 mt-2">
+              <span>0m Delay (Nominal Flow)</span>
+              <span class="text-amber-400">P50: 8m</span>
+              <span class="text-amber-400">P80: 16m</span>
+              <span class="text-red-400">P95: 28m</span>
+              <span>45m+ Delay (Critical Failure)</span>
+            </div>
+          </div>
+
+          <!-- Recommended Countermeasures -->
+          <div class="mt-4 p-3 bg-slate-800/40 border border-slate-700/60 rounded-lg text-xs font-mono text-slate-300">
+            <span class="font-bold text-amber-400">DOCTRINAL COUNTERMEASURE:</span>
+            Advance <span class="text-amber-300 font-bold">Op Bluebird</span> departure by 8 minutes to absorb USD 449 car-line variance without compressing Dad's Fort Leavenworth arrival gate.
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ==================================================================== -->
+      <!-- TAB 3: PERSONNEL DOSSIER & STAT MATRICES (EDITABLE & SAVEABLE) -->
+      <!-- ==================================================================== -->
+      <div id="tabDossier" class="tab-pane hidden space-y-6">
+        
+        <!-- Header & Persistence Controls -->
+        <div class="bg-tactical-900 border border-slate-700/80 rounded-xl p-5 shadow-xl newspaper-border flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <div class="text-[10px] font-mono uppercase tracking-widest text-amber-400 font-bold mb-1">HOUSEHOLD CREW COMPOSITION & PERT CYCLE TIMES</div>
+            <h2 class="text-xl sm:text-2xl font-headline font-bold text-amber-50">
+              Personnel Dossier & Operational Traits
+            </h2>
+            <p class="text-xs font-mono text-slate-400 mt-1">
+              Configure three-point PERT cycle time estimates: Optimistic (O), Most Likely (M), Pessimistic (P) & friction risks.
+            </p>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <button onclick="savePersonnelDossier()" class="px-4 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-tactical-950 font-mono font-bold text-xs uppercase tracking-wider shadow-lg flex items-center gap-2 transition-all">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+              SAVE DOSSIER CHANGES
+            </button>
+            <button onclick="resetPersonnelDefaults()" class="px-3 py-2.5 rounded-lg bg-tactical-800 hover:bg-tactical-700 border border-slate-700 text-slate-300 font-mono text-xs transition-all">
+              RESET DEFAULTS
+            </button>
+          </div>
+        </div>
+
+        <!-- Formula Callout Banner -->
+        <div class="bg-tactical-950 border border-slate-800 rounded-lg p-3 text-xs font-mono text-slate-400 flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <span class="text-amber-400 font-bold">OPERATIONS RESEARCH METRIC:</span>
+            <span>PERT Expected Value: <strong class="text-slate-200">μ = (O + 4M + P) / 6</strong></span>
+            <span class="text-slate-600">|</span>
+            <span>Standard Deviation: <strong class="text-slate-200">σ = (P - O) / 6</strong></span>
+          </div>
+          <div id="saveToast" class="text-emerald-400 font-bold hidden flex items-center gap-1">
+            <span>✓</span> CHANGES COMMITTED TO LOCAL STORAGE
+          </div>
+        </div>
+
+        <!-- 5 Family Member Dossier Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="personnelCardsContainer">
+          <!-- Populated dynamically by JS -->
+        </div>
+
+      </div>
+
+      <!-- ==================================================================== -->
+      <!-- TAB 4: MOTOR POOL & LOGISTICS -->
+      <!-- ==================================================================== -->
+      <div id="tabMotorPool" class="tab-pane hidden space-y-6">
+        
+        <!-- Header -->
+        <div class="bg-tactical-900 border border-slate-700/80 rounded-xl p-5 shadow-xl newspaper-border">
+          <div class="text-[10px] font-mono uppercase tracking-widest text-amber-400 font-bold mb-1">HOMESTEAD LOGISTICS DIVISION</div>
+          <h2 class="text-xl sm:text-2xl font-headline font-bold text-amber-50">
+            Motor Pool Readiness & Corridor Fuel Economics
+          </h2>
+          <p class="text-xs font-mono text-slate-400 mt-1">
+            Vehicle Fleet Logistics, Fuel Range Buffers, and County Corridor Transit Times
+          </p>
+        </div>
+
+        <!-- Vehicle Fleet Cards -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          <!-- Vehicle 1: Ford F-150 -->
+          <div class="bg-tactical-900 border-2 border-amber-600/40 rounded-xl p-6 shadow-xl newspaper-border">
+            <div class="flex items-start justify-between mb-4">
+              <div>
+                <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded bg-amber-500/10 text-amber-400 text-[10px] font-mono font-bold uppercase tracking-wider mb-1">
+                  TACTICAL DESIGNATION: UNIT 01
+                </div>
+                <h3 class="text-xl font-headline font-bold text-amber-100">Ford F-150 (V8 4x4)</h3>
+                <div class="text-xs font-mono text-slate-400">Assigned Pilot: <strong class="text-amber-400">Dad / Josh ("COMMANDER")</strong></div>
+              </div>
+              <div class="text-right">
+                <span class="px-2.5 py-1 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold">
+                  MISSION READY
+                </span>
+              </div>
+            </div>
+
+            <!-- Vehicle Specs Grid -->
+            <div class="grid grid-cols-3 gap-3 mb-5 font-mono text-xs">
+              <div class="bg-tactical-950 p-2.5 rounded border border-slate-800">
+                <div class="text-[10px] text-slate-500">CREW CAPACITY</div>
+                <div class="text-base font-bold text-slate-200">5 Seats</div>
+                <div class="text-[9px] text-slate-400">Crew Cab Configuration</div>
+              </div>
+              <div class="bg-tactical-950 p-2.5 rounded border border-slate-800">
+                <div class="text-[10px] text-slate-500">NOMINAL RANGE</div>
+                <div class="text-base font-bold text-amber-400" id="f150RangeReadout">378 mi</div>
+                <div class="text-[9px] text-slate-400">26 Gal Tank (78%)</div>
+              </div>
+              <div class="bg-tactical-950 p-2.5 rounded border border-slate-800">
+                <div class="text-[10px] text-slate-500">TIRE PRESSURE</div>
+                <div class="text-base font-bold text-emerald-400">36 PSI</div>
+                <div class="text-[9px] text-slate-400">All-Terrain Nominal</div>
+              </div>
+            </div>
+
+            <!-- Fuel Level Slider -->
+            <div class="mb-5 bg-tactical-950 p-3 rounded border border-slate-800">
+              <div class="flex justify-between text-xs font-mono mb-1">
+                <span class="text-slate-400">Fuel Tank Level:</span>
+                <span id="f150FuelPercent" class="font-bold text-amber-400">78% Full</span>
+              </div>
+              <input type="range" id="f150FuelSlider" min="10" max="100" value="78" oninput="updateFuelState('f150', this.value)" class="w-full accent-amber-500 cursor-pointer">
+              <div class="flex justify-between text-[10px] font-mono text-slate-500 mt-1">
+                <span>Reserve (10%)</span>
+                <span>Half (50%)</span>
+                <span>Full (100%)</span>
+              </div>
+            </div>
+
+            <!-- Tactical Capabilities & Hardware -->
+            <div class="space-y-2 text-xs font-mono">
+              <div class="text-slate-400 font-bold uppercase text-[10px] tracking-wider">HARDWARE SUITE & ROLES:</div>
+              <div class="grid grid-cols-2 gap-2 text-[11px] text-slate-300">
+                <div class="flex items-center gap-1.5"><span class="text-amber-400">✓</span> Electronic Shift-on-the-Fly 4x4</div>
+                <div class="flex items-center gap-1.5"><span class="text-amber-400">✓</span> Class IV Heavy Towing Package</div>
+                <div class="flex items-center gap-1.5"><span class="text-amber-400">✓</span> Stranger Creek Flood Clearance</div>
+                <div class="flex items-center gap-1.5"><span class="text-amber-400">✓</span> Engine Block Heater for Winter Ops</div>
+              </div>
+            </div>
+
+            <!-- Status Footer -->
+            <div class="mt-5 pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-mono text-slate-400">
+              <div>Primary Corridor: <span class="text-slate-200">K-92 Fort Leavenworth Commute</span></div>
+              <div class="text-emerald-400">PMCS Passed</div>
+            </div>
+
+          </div>
+
+          <!-- Vehicle 2: Ford Explorer -->
+          <div class="bg-tactical-900 border-2 border-sky-600/40 rounded-xl p-6 shadow-xl newspaper-border">
+            <div class="flex items-start justify-between mb-4">
+              <div>
+                <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded bg-sky-500/10 text-sky-400 text-[10px] font-mono font-bold uppercase tracking-wider mb-1">
+                  TACTICAL DESIGNATION: UNIT 02
+                </div>
+                <h3 class="text-xl font-headline font-bold text-sky-100">Ford Explorer (EcoBoost AWD)</h3>
+                <div class="text-xs font-mono text-slate-400">Assigned Pilot: <strong class="text-sky-400">Mom / Brittanie ("ATC")</strong></div>
+              </div>
+              <div class="text-right">
+                <span class="px-2.5 py-1 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold">
+                  MISSION READY
+                </span>
+              </div>
+            </div>
+
+            <!-- Vehicle Specs Grid -->
+            <div class="grid grid-cols-3 gap-3 mb-5 font-mono text-xs">
+              <div class="bg-tactical-950 p-2.5 rounded border border-slate-800">
+                <div class="text-[10px] text-slate-500">CREW CAPACITY</div>
+                <div class="text-base font-bold text-slate-200">7 Seats</div>
+                <div class="text-[9px] text-slate-400">Tri-Row Crew Hauler</div>
+              </div>
+              <div class="bg-tactical-950 p-2.5 rounded border border-slate-800">
+                <div class="text-[10px] text-slate-500">NOMINAL RANGE</div>
+                <div class="text-base font-bold text-sky-400" id="explorerRangeReadout">352 mi</div>
+                <div class="text-[9px] text-slate-400">19 Gal Tank (84%)</div>
+              </div>
+              <div class="bg-tactical-950 p-2.5 rounded border border-slate-800">
+                <div class="text-[10px] text-slate-500">TIRE PRESSURE</div>
+                <div class="text-base font-bold text-emerald-400">35 PSI</div>
+                <div class="text-[9px] text-slate-400">Highway Touring Spec</div>
+              </div>
+            </div>
+
+            <!-- Fuel Level Slider -->
+            <div class="mb-5 bg-tactical-950 p-3 rounded border border-slate-800">
+              <div class="flex justify-between text-xs font-mono mb-1">
+                <span class="text-slate-400">Fuel Tank Level:</span>
+                <span id="explorerFuelPercent" class="font-bold text-sky-400">84% Full</span>
+              </div>
+              <input type="range" id="explorerFuelSlider" min="10" max="100" value="84" oninput="updateFuelState('explorer', this.value)" class="w-full accent-sky-400 cursor-pointer">
+              <div class="flex justify-between text-[10px] font-mono text-slate-500 mt-1">
+                <span>Reserve (10%)</span>
+                <span>Half (50%)</span>
+                <span>Full (100%)</span>
+              </div>
+            </div>
+
+            <!-- Tactical Capabilities & Hardware -->
+            <div class="space-y-2 text-xs font-mono">
+              <div class="text-slate-400 font-bold uppercase text-[10px] tracking-wider">HARDWARE SUITE & ROLES:</div>
+              <div class="grid grid-cols-2 gap-2 text-[11px] text-slate-300">
+                <div class="flex items-center gap-1.5"><span class="text-sky-400">✓</span> Rapid USD 449 Car-Line Ingress</div>
+                <div class="flex items-center gap-1.5"><span class="text-sky-400">✓</span> Tri-Zone Independent Climate Control</div>
+                <div class="flex items-center gap-1.5"><span class="text-sky-400">✓</span> High-Capacity Backpack & Sports Cargo Bay</div>
+                <div class="flex items-center gap-1.5"><span class="text-sky-400">✓</span> LATCH Child Restraint System Verified</div>
+              </div>
+            </div>
+
+            <!-- Status Footer -->
+            <div class="mt-5 pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-mono text-slate-400">
+              <div>Primary Corridor: <span class="text-slate-200">USD 449 Pleasant Ridge & Athletics Loop</span></div>
+              <div class="text-emerald-400">PMCS Passed</div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- County Corridor Transit Matrix & Local Fuel Stations -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Transit Time Matrix (2 Columns) -->
+          <div class="lg:col-span-2 bg-tactical-900 border border-slate-700/80 rounded-xl p-5 shadow-xl newspaper-border">
+            <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2">
+              <h3 class="font-headline font-bold text-amber-100 text-sm">
+                County Highway Corridor Transit Time Matrix
+              </h3>
+              <span class="text-[10px] font-mono text-slate-400">
+                MET Adjusted Speeds
+              </span>
+            </div>
+            
+            <div class="overflow-x-auto">
+              <table class="w-full text-left font-mono text-xs">
+                <thead class="bg-tactical-950 text-slate-400 text-[10px] uppercase">
+                  <tr>
+                    <th class="p-2.5">ROUTE VECTOR</th>
+                    <th class="p-2.5">DISTANCE</th>
+                    <th class="p-2.5">NOMINAL (DRY)</th>
+                    <th class="p-2.5 text-amber-400">CURRENT MET DURATION</th>
+                    <th class="p-2.5">PRIMARY RISK FACTOR</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800 text-slate-300" id="transitMatrixBody">
+                  <!-- Injected dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Fuel Corridor Monitor -->
+          <div class="bg-tactical-900 border border-slate-700/80 rounded-xl p-5 shadow-xl newspaper-border">
+            <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2">
+              <h3 class="font-headline font-bold text-amber-100 text-sm">
+                Corridor Fuel Intelligence
+              </h3>
+              <span class="text-[10px] font-mono text-emerald-400 font-bold">
+                LIVE
+              </span>
+            </div>
+
+            <div class="space-y-3 font-mono text-xs">
+              <div class="bg-tactical-950 p-2.5 rounded border border-slate-800 flex items-center justify-between">
+                <div>
+                  <div class="text-slate-200 font-bold">Easton Sinclair (Hwy 92)</div>
+                  <div class="text-[10px] text-slate-500">Closest to Base Alpha (5.2 mi)</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-sm font-bold text-amber-400">$3.09</div>
+                  <div class="text-[9px] text-slate-400">Regular 87</div>
+                </div>
+              </div>
+
+              <div class="bg-tactical-950 p-2.5 rounded border border-slate-800 flex items-center justify-between">
+                <div>
+                  <div class="text-slate-200 font-bold">Ft. Leavenworth PX / Express</div>
+                  <div class="text-[10px] text-slate-500">Tax-Free Military Depot</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-sm font-bold text-emerald-400">$2.94</div>
+                  <div class="text-[9px] text-slate-400">AAFES Rate</div>
+                </div>
+              </div>
+
+              <div class="bg-tactical-950 p-2.5 rounded border border-slate-800 flex items-center justify-between">
+                <div>
+                  <div class="text-slate-200 font-bold">Casey's General Store (Lansing)</div>
+                  <div class="text-[10px] text-slate-500">K-7 Athletics Corridor</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-sm font-bold text-amber-400">$3.14</div>
+                  <div class="text-[9px] text-slate-400">Pizza & Gas Stop</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] font-mono text-slate-400">
+              💡 <strong>Fleet Tip:</strong> Dad refuels F-150 at Fort Leavenworth AAFES during Op Iron Citadel for $0.15/gal family savings.
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- INJECT TACTICAL MISSION LEG MODAL -->
+    <div id="missionInjectModal" class="fixed inset-0 z-50 bg-tactical-950/80 backdrop-blur-sm hidden items-center justify-center p-4">
+      <div class="max-w-lg w-full bg-tactical-900 border border-amber-500/50 rounded-xl p-6 shadow-2xl newspaper-border">
+        
+        <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+            <h3 class="font-headline font-bold text-amber-100 text-lg">Inject Tactical Mission Leg</h3>
+          </div>
+          <button onclick="toggleMissionInjectModal(false)" class="text-slate-400 hover:text-white font-mono text-sm">✕</button>
+        </div>
+
+        <form onsubmit="handleInjectMissionSubmit(event)" class="space-y-4 font-mono text-xs">
+          
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-slate-400 mb-1">TIME GATE (HH:MM AM/PM)</label>
+              <input type="time" id="injectTime" required value="18:30" class="w-full bg-tactical-950 border border-slate-700 rounded p-2 text-slate-200">
+            </div>
+            <div>
+              <label class="block text-slate-400 mb-1">PRIMARY VEHICLE</label>
+              <select id="injectVehicle" class="w-full bg-tactical-950 border border-slate-700 rounded p-2 text-slate-200">
+                <option value="Ford F-150">Ford F-150 (Dad / CDR)</option>
+                <option value="Ford Explorer">Ford Explorer (Mom / ATC)</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-slate-400 mb-1">MISSION CODE & TITLE</label>
+            <input type="text" id="injectName" required placeholder="e.g. OP SUNSET RECON" value="OP NIGHT HAWK (Library Run)" class="w-full bg-tactical-950 border border-slate-700 rounded p-2 text-slate-200">
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-slate-400 mb-1">ORIGIN NODE</label>
+              <select id="injectOrigin" class="w-full bg-tactical-950 border border-slate-700 rounded p-2 text-slate-200">
+                <option value="Base Alpha">Base Alpha (Caballero Homestead)</option>
+                <option value="Pleasant Ridge Schools">Pleasant Ridge (USD 449)</option>
+                <option value="Fort Leavenworth">Fort Leavenworth (CAC)</option>
+                <option value="Lansing Sports Fields">Lansing Sports Fields</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-slate-400 mb-1">DESTINATION NODE</label>
+              <select id="injectDest" class="w-full bg-tactical-950 border border-slate-700 rounded p-2 text-slate-200">
+                <option value="Pleasant Ridge Schools">Pleasant Ridge (USD 449)</option>
+                <option value="Base Alpha">Base Alpha (Caballero Homestead)</option>
+                <option value="Fort Leavenworth">Fort Leavenworth (CAC)</option>
+                <option value="Lansing Sports Fields">Lansing Sports Fields</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-slate-400 mb-1">CREW MANIFEST (SELECT PERSONNEL)</label>
+            <div class="grid grid-cols-2 gap-2 p-2 bg-tactical-950 rounded border border-slate-800 text-[11px]">
+              <label class="flex items-center gap-1.5"><input type="checkbox" id="crewJosh" checked class="accent-amber-500"> Josh (Commander)</label>
+              <label class="flex items-center gap-1.5"><input type="checkbox" id="crewBrittanie" class="accent-amber-500"> Brittanie (ATC)</label>
+              <label class="flex items-center gap-1.5"><input type="checkbox" id="crewLincoln" checked class="accent-amber-500"> Lincoln (Scout)</label>
+              <label class="flex items-center gap-1.5"><input type="checkbox" id="crewAnnabel" class="accent-amber-500"> Annabel (Specialist)</label>
+              <label class="flex items-center gap-1.5"><input type="checkbox" id="crewSallyJo" class="accent-amber-500"> Sally Jo (Wildcard)</label>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-slate-400 mb-1">NOMINAL SLACK BUFFER</label>
+              <input type="number" id="injectSlack" min="0" max="60" value="15" class="w-full bg-tactical-950 border border-slate-700 rounded p-2 text-slate-200">
+            </div>
+            <div>
+              <label class="block text-slate-400 mb-1">EST. DURATION (MIN)</label>
+              <input type="number" id="injectDuration" min="5" max="120" value="25" class="w-full bg-tactical-950 border border-slate-700 rounded p-2 text-slate-200">
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-slate-800 flex justify-end gap-2">
+            <button type="button" onclick="toggleMissionInjectModal(false)" class="px-4 py-2 rounded bg-tactical-800 text-slate-300">
+              CANCEL
+            </button>
+            <button type="submit" class="px-4 py-2 rounded bg-amber-500 hover:bg-amber-400 text-tactical-950 font-bold uppercase tracking-wider">
+              COMMIT TO LEDGER
+            </button>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+
+    <!-- NODE INTEL MODAL (Popup when clicking map nodes) -->
+    <div id="nodeIntelModal" class="fixed inset-0 z-50 bg-tactical-950/80 backdrop-blur-sm hidden items-center justify-center p-4">
+      <div class="max-w-md w-full bg-tactical-900 border border-slate-700 rounded-xl p-5 shadow-2xl newspaper-border">
+        <div class="flex items-center justify-between pb-2 mb-3 border-b border-slate-800">
+          <h3 id="nodeIntelTitle" class="font-headline font-bold text-amber-100 text-lg">Sector Node Intelligence</h3>
+          <button onclick="closeNodeIntelModal()" class="text-slate-400 hover:text-white font-mono text-sm">✕</button>
+        </div>
+        <div id="nodeIntelBody" class="font-mono text-xs space-y-3 text-slate-300"></div>
+        <div class="mt-4 pt-3 border-t border-slate-800 flex justify-end">
+          <button onclick="closeNodeIntelModal()" class="px-3 py-1.5 rounded bg-tactical-800 text-slate-200 text-xs font-mono">CLOSE</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- JAVASCRIPT LOGIC & OPERATIONS RESEARCH ENGINE -->
+  <script>
+    /* =====================================================================
+       1. GLOBAL STATE & OPERATIONAL CONFIGURATION
+       ===================================================================== */
+    const AUTH_VALID_PINS = ['1776', '4490', '1234'];
+    let enteredPin = '';
+    let isGateUnlocked = false;
+    let isAudioMuted = false;
+
+    // Audio Synthesizer (Web Audio API - No external dependencies)
+    let audioCtx = null;
+    function playAudioTone(freq, type = 'sine', duration = 0.1, gainVal = 0.08) {
+      if (isAudioMuted) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        // audio context blocked or unsupported
+      }
+    }
+
+    function playKeypadBeep() { playAudioTone(750, 'sine', 0.05, 0.05); }
+    function playSuccessChime() {
+      playAudioTone(523.25, 'triangle', 0.12, 0.09);
+      setTimeout(() => playAudioTone(659.25, 'triangle', 0.12, 0.09), 100);
+      setTimeout(() => playAudioTone(783.99, 'triangle', 0.25, 0.10), 200);
+    }
+    function playErrorBuzzer() {
+      playAudioTone(160, 'sawtooth', 0.35, 0.15);
+    }
+    function playFrictionAlertSound() {
+      playAudioTone(380, 'square', 0.18, 0.12);
+      setTimeout(() => playAudioTone(290, 'square', 0.25, 0.12), 150);
+    }
+
+    function toggleAudioMute() {
+      isAudioMuted = !isAudioMuted;
+      document.getElementById('audioMuteIcon').innerText = isAudioMuted ? '🔇' : '🔊';
+      document.getElementById('audioMuteText').innerText = isAudioMuted ? 'SFX: MUTED' : 'SFX: ON';
+    }
+
+    // SIMULATION CLOCK STATE
+    // Start at 06:30 AM = 390 minutes; End at 21:00 = 1260 minutes
+    const SIM_START_MIN = 390;
+    const SIM_END_MIN = 1260;
+    let currentSimMinutes = 390;
+    let isSimRunning = false;
+    let simTempo = 1; // 1x, 5x, 15x
+    let simIntervalId = null;
+
+    // ACTIVE WEATHER CONFIGURATION
+    const WEATHER_PRESETS = {
+      clear: { name: 'Clear & Crisp', temp: 52, multiplier: 1.0, flag: 'Optimal Highway Speed', gateDelay: 0, defrost: 0, icon: '☀️' },
+      rain: { name: 'Fall Downpour', temp: 46, multiplier: 1.25, flag: 'Slick Roads & Gravel Washout', gateDelay: 0, defrost: 0, icon: '🌧️' },
+      fog: { name: 'Morning Fog', temp: 41, multiplier: 1.1, flag: '+5m Grant Gate Security Inspection Delay', gateDelay: 5, defrost: 0, icon: '🌫️' },
+      frost: { name: 'Early Frost & Ice', temp: 28, multiplier: 1.5, flag: '+10m Vehicle Defrost Buffer & K-92 Bridge Ice', gateDelay: 3, defrost: 10, icon: '❄️' }
+    };
+    let activeWeatherKey = 'clear';
+
+    // VEHICLE AND MISSION STATE
+    const VEHICLES = {
+      f150: {
+        id: 'f150',
+        name: 'Ford F-150 (V8 4x4)',
+        callsign: 'COMMANDER',
+        pilot: 'Josh',
+        color: '#f59e0b',
+        tokenElId: 'tokenF150',
+        status: 'IDLE',
+        currentNode: 'Base Alpha',
+        destNode: null,
+        activePathId: null,
+        progress: 0, // 0 to 1
+        speed: 45, // mph nominal
+        fuelPercent: 78,
+        nominalRange: 485,
+        dwellRemaining: 0,
+        activeLegIndex: null
+      },
+      explorer: {
+        id: 'explorer',
+        name: 'Ford Explorer (EcoBoost AWD)',
+        callsign: 'AIR TRAFFIC CONTROL',
+        pilot: 'Brittanie',
+        color: '#38bdf8',
+        tokenElId: 'tokenExplorer',
+        status: 'IDLE',
+        currentNode: 'Base Alpha',
+        destNode: null,
+        activePathId: null,
+        progress: 0,
+        speed: 45,
+        fuelPercent: 84,
+        nominalRange: 420,
+        dwellRemaining: 0,
+        activeLegIndex: null
+      }
+    };
+
+    // SCHEDULED LEGS (TAB 2)
+    let missionLegs = [
+      {
+        id: 'leg_01',
+        timeGate: '07:15',
+        simMin: 435, // 07:15 AM
+        name: 'Op Bluebird (School Run)',
+        vehicle: 'Ford Explorer',
+        crew: ['Brittanie', 'Lincoln', 'Annabel', 'Sally Jo'],
+        origin: 'Base Alpha',
+        destination: 'Pleasant Ridge Schools',
+        pathId: 'path_alpha',
+        returnPathId: 'path_alpha_return',
+        nominalSlack: 18,
+        nominalDuration: 15,
+        status: 'SCHEDULED' // SCHEDULED, IN_TRANSIT, DWELL, COMPLETE
+      },
+      {
+        id: 'leg_02',
+        timeGate: '07:40',
+        simMin: 460, // 07:40 AM
+        name: 'Op Iron Citadel (CAC Commute)',
+        vehicle: 'Ford F-150',
+        crew: ['Josh'],
+        origin: 'Base Alpha',
+        destination: 'Fort Leavenworth',
+        pathId: 'path_bravo',
+        returnPathId: 'path_bravo_return',
+        nominalSlack: 22,
+        nominalDuration: 28,
+        status: 'SCHEDULED'
+      },
+      {
+        id: 'leg_03',
+        timeGate: '15:10',
+        simMin: 910, // 15:10 (3:10 PM)
+        name: 'Op Return Vector (Pickup Loop)',
+        vehicle: 'Ford Explorer',
+        crew: ['Brittanie', 'Lincoln', 'Annabel', 'Sally Jo'],
+        origin: 'Base Alpha',
+        destination: 'Pleasant Ridge Schools',
+        pathId: 'path_alpha',
+        returnPathId: 'path_alpha_return',
+        nominalSlack: 16,
+        nominalDuration: 20,
+        status: 'SCHEDULED'
+      },
+      {
+        id: 'leg_04',
+        timeGate: '16:45',
+        simMin: 1005, // 16:45 (4:45 PM)
+        name: 'Op Grasshopper (Athletics)',
+        vehicle: 'Ford F-150',
+        crew: ['Josh', 'Lincoln'],
+        origin: 'Base Alpha',
+        destination: 'Lansing Sports Fields',
+        pathId: 'path_delta',
+        returnPathId: 'path_delta_return',
+        nominalSlack: 20,
+        nominalDuration: 30,
+        status: 'SCHEDULED'
+      }
+    ];
+
+    // PERSONNEL STAT MATRICES (TAB 3 - PERSISTABLE)
+    const DEFAULT_PERSONNEL = [
+      {
+        id: 'josh',
+        name: 'Josh (Dad)',
+        callsign: 'COMMANDER',
+        role: 'F-150 Pilot & Operations Commander',
+        pertO: 18,
+        pertM: 24,
+        pertP: 42,
+        frictionRisk: 15,
+        trait: 'Route Optimization: Calculates high-speed bypasses around farm machinery on K-92 corridor (+10% transit velocity).',
+        hazard: 'Grant Gate Inspection Risk: Subject to random 100% ID military security search delays at federal installation checkpoint (+8m).'
+      },
+      {
+        id: 'brittanie',
+        name: 'Brittanie (Mom)',
+        callsign: 'AIR TRAFFIC CONTROL',
+        role: 'Explorer Pilot & Household C2 Director',
+        pertO: 12,
+        pertM: 18,
+        pertP: 32,
+        frictionRisk: 18,
+        trait: 'Parallel Processing: Multi-crew manifest synchronization; rapid turnaround in USD 449 pickup queue.',
+        hazard: 'Pre-Flight Gear Audit: Conducts mandatory backpack, water bottle, and snack verification before wheel roll (+5m).'
+      },
+      {
+        id: 'lincoln',
+        name: 'Lincoln (10)',
+        callsign: 'FORWARD SCOUT',
+        role: 'Grade 5 USD 449 / Sports Specialist',
+        pertO: 8,
+        pertM: 15,
+        pertP: 35,
+        frictionRisk: 38,
+        trait: 'Speed Burst: Accelerates departure readiness when motivated by sports practice or athletic drills.',
+        hazard: 'Missing Cleat / Mudroom Void: High stochastic probability of misplacing left sports cleat or essential folder (+12m).'
+      },
+      {
+        id: 'annabel',
+        name: 'Annabel',
+        callsign: 'SPECIALIST',
+        role: 'USD 449 Scholar & Logistics Tracker',
+        pertO: 10,
+        pertM: 16,
+        pertP: 30,
+        frictionRisk: 25,
+        trait: 'Checklist Adherence: Zero gear deficit; maintains impeccable checklist accuracy for homework and field gear.',
+        hazard: 'Wardrobe Change Divergence: Sudden weather-induced apparel reassessment 2 minutes prior to departure (+9m).'
+      },
+      {
+        id: 'sallyjo',
+        name: 'Sally Jo',
+        callsign: 'TACTICAL WILDCARD',
+        role: 'Morale Officer & Kindergarten Recruit',
+        pertO: 12,
+        pertM: 20,
+        pertP: 45,
+        frictionRisk: 45,
+        trait: 'Morale Boost: High cheer factor boosts overall household cohesion and absorbs crew stress (+5 System Slack).',
+        hazard: 'Breakfast Spill Hazard: Stochastic whole milk or pancake syrup spill requiring complete uniform change (+14m).'
+      }
+    ];
+
+    let personnelList = JSON.parse(localStorage.getItem('gazette_c2_personnel')) || JSON.parse(JSON.stringify(DEFAULT_PERSONNEL));
+
+    // DISPATCH WIRE FEED LOG
+    let wireFeedEntries = [];
+
+    // COUNTY NODE LOCATIONS & INTEL
+    const NODE_COORDINATES = {
+      'Base Alpha': { x: 240, y: 360, name: 'Base Alpha (Caballero Homestead HQ)', desc: 'Rural homestead anchor in Easton corridor. Primary vehicle motor pool, communications hub, and equipment staging.' },
+      'Pleasant Ridge Schools': { x: 210, y: 150, name: 'Pleasant Ridge (USD 449)', desc: 'Easton school campus. Primary academic objective. High congestion during 07:30 - 08:00 drop-off and 15:15 - 15:45 pickup car-lines.' },
+      'Fort Leavenworth': { x: 780, y: 140, name: 'Fort Leavenworth (CAC / TRADOC / Grant Gate)', desc: 'Federal military garrison on Missouri River bend. Controlled access through Grant Gate. Security level subject to random Bravo inspection surges.' },
+      'Lansing Sports Fields': { x: 750, y: 450, name: 'Lansing Sports Complex', desc: 'Athletic complex on K-7 corridor south. Evening practice destination for Lincoln.' }
+    };
+
+    /* =====================================================================
+       2. AUTHENTICATION & SECURITY GATE LOGIC
+       ===================================================================== */
+    function initAuthGate() {
+      const savedAuth = sessionStorage.getItem('gazette_c2_authenticated');
+      if (savedAuth === 'granted') {
+        unlockAuthGateUI(false);
+      } else {
+        lockAuthGateUI();
+      }
+    }
+
+    function handleKeypadInput(digit) {
+      if (enteredPin.length < 4) {
+        enteredPin += digit;
+        playKeypadBeep();
+        updatePinDotsUI();
+        if (enteredPin.length === 4) {
+          evaluateEnteredPin();
+        }
+      }
+    }
+
+    function clearKeypadInput() {
+      enteredPin = '';
+      playKeypadBeep();
+      updatePinDotsUI();
+      document.getElementById('pinErrorMessage').innerText = '';
+    }
+
+    function backspaceKeypadInput() {
+      if (enteredPin.length > 0) {
+        enteredPin = enteredPin.slice(0, -1);
+        playKeypadBeep();
+        updatePinDotsUI();
+        document.getElementById('pinErrorMessage').innerText = '';
+      }
+    }
+
+    function updatePinDotsUI() {
+      for (let i = 0; i < 4; i++) {
+        const dot = document.getElementById(`dot${i}`);
+        if (i < enteredPin.length) {
+          dot.classList.remove('bg-tactical-900', 'border-slate-600');
+          dot.classList.add('bg-amber-400', 'border-amber-400', 'shadow-[0_0_12px_#f59e0b]', 'scale-110');
+        } else {
+          dot.classList.remove('bg-amber-400', 'border-amber-400', 'shadow-[0_0_12px_#f59e0b]', 'scale-110', 'bg-red-500', 'border-red-500', 'bg-emerald-500', 'border-emerald-500');
+          dot.classList.add('bg-tactical-900', 'border-slate-600');
+        }
+      }
+    }
+
+    function evaluateEnteredPin() {
+      if (AUTH_VALID_PINS.includes(enteredPin)) {
+        // SUCCESS
+        playSuccessChime();
+        for (let i = 0; i < 4; i++) {
+          const dot = document.getElementById(`dot${i}`);
+          dot.classList.remove('bg-amber-400', 'border-amber-400');
+          dot.classList.add('bg-emerald-500', 'border-emerald-500', 'shadow-[0_0_15px_#10b981]');
+        }
+        document.getElementById('pinErrorMessage').innerText = 'AUTHORIZATION GRANTED // ACCESS UNLOCKED';
+        document.getElementById('pinErrorMessage').className = 'text-xs font-mono text-emerald-400 h-4 font-bold tracking-wide';
+        
+        setTimeout(() => {
+          sessionStorage.setItem('gazette_c2_authenticated', 'granted');
+          unlockAuthGateUI(true);
+        }, 400);
+      } else {
+        // FAILED
+        playErrorBuzzer();
+        for (let i = 0; i < 4; i++) {
+          const dot = document.getElementById(`dot${i}`);
+          dot.classList.remove('bg-amber-400', 'border-amber-400');
+          dot.classList.add('bg-red-500', 'border-red-500');
+        }
+        const container = document.getElementById('pinDotsContainer');
+        container.classList.add('animate-shake');
+        document.getElementById('pinErrorMessage').innerText = 'ACCESS DENIED // INVALID AUTHORIZATION CODE';
+        document.getElementById('pinErrorMessage').className = 'text-xs font-mono text-red-400 h-4 font-bold tracking-wide';
+        
+        setTimeout(() => {
+          container.classList.remove('animate-shake');
+          clearKeypadInput();
+        }, 900);
+      }
+    }
+
+    function bypassAuthGate() {
+      enteredPin = 'PASS';
+      playSuccessChime();
+      sessionStorage.setItem('gazette_c2_authenticated', 'granted');
+      unlockAuthGateUI(true);
+    }
+
+    function unlockAuthGateUI(animate = true) {
+      isGateUnlocked = true;
+      const modal = document.getElementById('authGateModal');
+      if (animate) {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        setTimeout(() => modal.classList.add('hidden'), 300);
+      } else {
+        modal.classList.add('hidden', 'opacity-0', 'pointer-events-none');
+      }
+      postGazetteWire('DISPATCH', 'Security Gate unlocked. Master Household C2 active.');
+    }
+
+    function lockAuthGate() {
+      sessionStorage.removeItem('gazette_c2_authenticated');
+      lockAuthGateUI();
+    }
+
+    function lockAuthGateUI() {
+      isGateUnlocked = false;
+      clearKeypadInput();
+      const modal = document.getElementById('authGateModal');
+      modal.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
+      if (isSimRunning) toggleSimulationClock();
+    }
+
+    /* =====================================================================
+       3. MASTER OPERATIONAL TIME & WEATHER CONTROLS
+       ===================================================================== */
+    function formatMinutesToTime(min) {
+      const h = Math.floor(min / 60);
+      const m = Math.floor(min % 60);
+      const s = Math.floor((min * 60) % 60);
+      const period = h >= 12 ? 'PM' : 'AM';
+      const displayH = h % 12 === 0 ? 12 : h % 12;
+      const padM = m < 10 ? '0' + m : m;
+      const padH = displayH < 10 ? '0' + displayH : displayH;
+      return `${padH}:${padM} ${period}`;
+    }
+
+    function formatTime24H(min) {
+      const h = Math.floor(min / 60);
+      const m = Math.floor(min % 60);
+      const padH = h < 10 ? '0' + h : h;
+      const padM = m < 10 ? '0' + m : m;
+      return `${padH}${padM}H`;
+    }
+
+    function updateClockDisplay() {
+      document.getElementById('clockDisplay').innerText = formatMinutesToTime(currentSimMinutes);
+      recalculateOperationalReadiness();
+    }
+
+    function toggleSimulationClock() {
+      isSimRunning = !isSimRunning;
+      const btn = document.getElementById('simPlayBtn');
+      const icon = document.getElementById('simPlayIcon');
+      const text = document.getElementById('simPlayText');
+
+      if (isSimRunning) {
+        playAudioTone(880, 'sine', 0.08);
+        btn.classList.remove('bg-amber-500', 'hover:bg-amber-400');
+        btn.classList.add('bg-emerald-500', 'hover:bg-emerald-400');
+        icon.innerText = '⏸';
+        text.innerText = 'PAUSE';
+        
+        simIntervalId = setInterval(simulationTick, 1000 / simTempo);
+      } else {
+        playAudioTone(440, 'sine', 0.08);
+        btn.classList.remove('bg-emerald-500', 'hover:bg-emerald-400');
+        btn.classList.add('bg-amber-500', 'hover:bg-amber-400');
+        icon.innerText = '▶';
+        text.innerText = 'RUN';
+        
+        clearInterval(simIntervalId);
+        simIntervalId = null;
+      }
+    }
+
+    function setSimTempo(tempo) {
+      simTempo = tempo;
+      ['tempo1x', 'tempo5x', 'tempo15x'].forEach(id => {
+        const el = document.getElementById(id);
+        el.classList.remove('bg-tactical-800', 'text-amber-400', 'font-bold');
+        el.classList.add('text-slate-400');
+      });
+      const activeEl = document.getElementById(`tempo${tempo}x`);
+      activeEl.classList.remove('text-slate-400');
+      activeEl.classList.add('bg-tactical-800', 'text-amber-400', 'font-bold');
+
+      if (isSimRunning) {
+        clearInterval(simIntervalId);
+        simIntervalId = setInterval(simulationTick, 1000 / simTempo);
+      }
+      playKeypadBeep();
+    }
+
+    function stepSimulationClock(minutes) {
+      advanceSimMinutes(minutes);
+      playKeypadBeep();
+    }
+
+    function resetSimulationClock() {
+      currentSimMinutes = SIM_START_MIN;
+      if (isSimRunning) toggleSimulationClock();
+      
+      // Reset vehicles
+      VEHICLES.f150.status = 'IDLE';
+      VEHICLES.f150.currentNode = 'Base Alpha';
+      VEHICLES.f150.destNode = null;
+      VEHICLES.f150.progress = 0;
+      VEHICLES.f150.activePathId = null;
+      VEHICLES.f150.dwellRemaining = 0;
+
+      VEHICLES.explorer.status = 'IDLE';
+      VEHICLES.explorer.currentNode = 'Base Alpha';
+      VEHICLES.explorer.destNode = null;
+      VEHICLES.explorer.progress = 0;
+      VEHICLES.explorer.activePathId = null;
+      VEHICLES.explorer.dwellRemaining = 0;
+
+      // Reset missions
+      missionLegs.forEach(leg => leg.status = 'SCHEDULED');
+      
+      clearPathAnimations();
+      renderVehicleTokens();
+      renderMissionMatrixTable();
+      updateClockDisplay();
+      postGazetteWire('DISPATCH', 'Sim Clock reset to 06:30 AM baseline. All assets anchored at Base Alpha.');
+      playKeypadBeep();
+    }
+
+    function simulationTick() {
+      advanceSimMinutes(0.5); // Advance half a minute per tick
+    }
+
+    function advanceSimMinutes(deltaMin) {
+      currentSimMinutes += deltaMin;
+      if (currentSimMinutes >= SIM_END_MIN) {
+        currentSimMinutes = SIM_END_MIN;
+        if (isSimRunning) toggleSimulationClock();
+        postGazetteWire('DISPATCH', 'Operational Day complete at 21:00 (Nightfall). Assets RTB.');
+      }
+
+      // Check scheduled missions to trigger
+      checkAndTriggerScheduledLegs();
+
+      // Update vehicle physics
+      updateVehiclePhysics(deltaMin);
+
+      // Refresh UI displays
+      updateClockDisplay();
+      renderVehicleTokens();
+      renderMissionMatrixTable();
+    }
+
+    function handleWeatherChange(key) {
+      activeWeatherKey = key;
+      const met = WEATHER_PRESETS[key];
+      document.getElementById('weatherFlagIcon').innerText = met.icon;
+      document.getElementById('weatherFlagText').innerText = `${met.name} (${met.temp}°F) • ${met.flag}`;
+      
+      playAudioTone(520, 'sine', 0.1);
+      postGazetteWire('WEATHER', `Corridor MET shift: ${met.name} (${met.temp}°F). Transit multiplier: ${met.multiplier}x.`);
+      
+      recalculateOperationalReadiness();
+      renderTransitMatrixTable();
+    }
+
+    function recalculateOperationalReadiness() {
+      // Dynamic Slack and Stress Score calculation
+      const met = WEATHER_PRESETS[activeWeatherKey];
+      let baseSlack = 28;
+
+      // Weather impact
+      if (activeWeatherKey === 'rain') baseSlack -= 6;
+      if (activeWeatherKey === 'fog') baseSlack -= 8;
+      if (activeWeatherKey === 'frost') baseSlack -= 14;
+
+      // Active vehicle transit delays
+      if (VEHICLES.f150.status === 'IN_TRANSIT') baseSlack -= 3;
+      if (VEHICLES.explorer.status === 'IN_TRANSIT') baseSlack -= 3;
+
+      const currentSlack = Math.max(-10, baseSlack);
+      const stressScore = Math.min(100, Math.max(0, Math.round(((35 - currentSlack) / 45) * 100)));
+
+      document.getElementById('systemSlackDisplay').innerText = (currentSlack >= 0 ? `+${currentSlack}` : `${currentSlack}`) + 'm';
+      document.getElementById('readinessStressScore').innerText = `${stressScore}%`;
+
+      // Status Gauge Colors and Ring
+      const ring = document.getElementById('readinessGaugeRing');
+      const badge = document.getElementById('readinessBadge');
+      const score = document.getElementById('readinessStressScore');
+
+      // Circumference = 2 * PI * 20 = 125.6
+      const offset = 125.6 - (125.6 * (stressScore / 100));
+      ring.style.strokeDashoffset = offset;
+
+      if (stressScore < 35) {
+        ring.className.baseVal = 'text-emerald-500 transition-all duration-500';
+        score.className = 'absolute text-[11px] font-mono font-bold text-emerald-400';
+        badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> DEFCON 5 // NOMINAL';
+        badge.className = 'text-xs font-mono font-bold text-emerald-400 flex items-center gap-1.5';
+      } else if (stressScore < 70) {
+        ring.className.baseVal = 'text-amber-500 transition-all duration-500';
+        score.className = 'absolute text-[11px] font-mono font-bold text-amber-400';
+        badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span> DEFCON 3 // COMPRESSED';
+        badge.className = 'text-xs font-mono font-bold text-amber-400 flex items-center gap-1.5';
+      } else {
+        ring.className.baseVal = 'text-red-500 transition-all duration-500';
+        score.className = 'absolute text-[11px] font-mono font-bold text-red-400';
+        badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-400 animate-pulse"></span> DEFCON 1 // CRITICAL';
+        badge.className = 'text-xs font-mono font-bold text-red-400 flex items-center gap-1.5';
+      }
+    }
+
+    /* =====================================================================
+       4. TACTICAL VECTOR MAP & LIVE VEHICLE SIMULATION (TAB 1)
+       ===================================================================== */
+    function checkAndTriggerScheduledLegs() {
+      missionLegs.forEach((leg, index) => {
+        if (leg.status === 'SCHEDULED' && currentSimMinutes >= leg.simMin) {
+          triggerMissionLeg(index);
+        }
+      });
+    }
+
+    function triggerMissionLegImmediate(index) {
+      if (!isGateUnlocked) return;
+      currentSimMinutes = missionLegs[index].simMin;
+      updateClockDisplay();
+      triggerMissionLeg(index);
+    }
+
+    function triggerMissionLeg(index) {
+      const leg = missionLegs[index];
+      const vehicleKey = leg.vehicle.includes('F-150') ? 'f150' : 'explorer';
+      const veh = VEHICLES[vehicleKey];
+
+      leg.status = 'IN_TRANSIT';
+      veh.status = 'IN_TRANSIT';
+      veh.destNode = leg.destination;
+      veh.activePathId = leg.pathId;
+      veh.progress = 0;
+      veh.activeLegIndex = index;
+
+      activateVectorPath(leg.pathId, vehicleKey);
+      postGazetteWire('DISPATCH', `${leg.name}: ${veh.name} departed ${leg.origin} for ${leg.destination}. Crew: ${leg.crew.join(', ')}.`);
+      playAudioTone(600, 'triangle', 0.15);
+    }
+
+    function activateVectorPath(pathId, vehicleKey) {
+      const pathEl = document.getElementById(pathId);
+      if (pathEl) {
+        pathEl.classList.remove('active-vector-f150', 'active-vector-explorer');
+        pathEl.classList.add(vehicleKey === 'f150' ? 'active-vector-f150' : 'active-vector-explorer');
+      }
+    }
+
+    function clearPathAnimations() {
+      ['path_alpha', 'path_bravo', 'path_charlie', 'path_delta', 'path_echo'].forEach(id => {
+        const p = document.getElementById(id);
+        if (p) p.classList.remove('active-vector-f150', 'active-vector-explorer');
+      });
+    }
+
+    function updateVehiclePhysics(deltaMin) {
+      const met = WEATHER_PRESETS[activeWeatherKey];
+
+      ['f150', 'explorer'].forEach(vKey => {
+        const veh = VEHICLES[vKey];
+
+        if (veh.status === 'IN_TRANSIT') {
+          const leg = missionLegs[veh.activeLegIndex];
+          const totalDuration = (leg ? leg.nominalDuration : 20) * met.multiplier;
+          
+          veh.progress += deltaMin / totalDuration;
+
+          if (veh.progress >= 1.0) {
+            // Arrival & Dwell Cycle Initiation
+            veh.progress = 1.0;
+            veh.status = 'DWELLING';
+            veh.currentNode = veh.destNode;
+            veh.dwellRemaining = 10; // 10 minutes dwell for dropoff/pickup/security
+            if (leg) leg.status = 'DWELL';
+
+            clearPathAnimations();
+            postGazetteWire('ARRIVAL', `${leg ? leg.name : 'Mission'}: ${veh.name} arrived on objective at ${veh.currentNode}. Entering 10m dwell cycle.`);
+            playSuccessChime();
+          }
+        } else if (veh.status === 'DWELLING') {
+          veh.dwellRemaining -= deltaMin;
+          if (veh.dwellRemaining <= 0) {
+            veh.dwellRemaining = 0;
+            veh.status = 'IDLE';
+            const leg = missionLegs[veh.activeLegIndex];
+            if (leg) leg.status = 'COMPLETE';
+            postGazetteWire('DISPATCH', `${veh.name} concluded dwell cycle at ${veh.currentNode}. Standing by.`);
+          }
+        }
+      });
+
+      // Update HUD Status in Map Corner
+      document.getElementById('hudF150Status').innerText = `${VEHICLES.f150.status} @ ${VEHICLES.f150.currentNode}` + (VEHICLES.f150.status === 'DWELLING' ? ` (${Math.ceil(VEHICLES.f150.dwellRemaining)}m Dwell)` : '');
+      document.getElementById('hudExplorerStatus').innerText = `${VEHICLES.explorer.status} @ ${VEHICLES.explorer.currentNode}` + (VEHICLES.explorer.status === 'DWELLING' ? ` (${Math.ceil(VEHICLES.explorer.dwellRemaining)}m Dwell)` : '');
+    }
+
+    function renderVehicleTokens() {
+      ['f150', 'explorer'].forEach(vKey => {
+        const veh = VEHICLES[vKey];
+        const token = document.getElementById(veh.tokenElId);
+        if (!token) return;
+
+        let posX = 240;
+        let posY = 360;
+
+        if (veh.status === 'IN_TRANSIT' && veh.activePathId) {
+          const pathEl = document.getElementById(veh.activePathId);
+          if (pathEl) {
+            const totalLen = pathEl.getTotalLength();
+            const pt = pathEl.getPointAtLength(veh.progress * totalLen);
+            posX = pt.x;
+            posY = pt.y;
+          }
+        } else if (NODE_COORDINATES[veh.currentNode]) {
+          posX = NODE_COORDINATES[veh.currentNode].x;
+          posY = NODE_COORDINATES[veh.currentNode].y;
+          // Offset slightly if both are at same node
+          if (vKey === 'explorer' && VEHICLES.f150.currentNode === veh.currentNode) {
+            posX += 20;
+            posY -= 15;
+          }
+        }
+
+        token.setAttribute('transform', `translate(${posX}, ${posY})`);
+      });
+    }
+
+    function focusNode(nodeName) {
+      const node = NODE_COORDINATES[nodeName];
+      if (!node) return;
+      
+      document.getElementById('nodeIntelTitle').innerText = node.name;
+      document.getElementById('nodeIntelBody').innerHTML = `
+        <div class="p-2.5 rounded bg-tactical-950 border border-slate-800">
+          <div class="text-[10px] text-amber-400 uppercase font-bold">TACTICAL RECONNAISSANCE</div>
+          <p class="mt-1 text-slate-300">${node.desc}</p>
+        </div>
+        <div class="grid grid-cols-2 gap-2 text-[11px]">
+          <div class="p-2 bg-tactical-950 rounded border border-slate-800">
+            <span class="text-slate-500">SECTOR COORD:</span><br>
+            <span class="text-slate-200">X: ${node.x} | Y: ${node.y}</span>
+          </div>
+          <div class="p-2 bg-tactical-950 rounded border border-slate-800">
+            <span class="text-slate-500">SPEED RESTRICTION:</span><br>
+            <span class="text-emerald-400">45 - 55 MPH</span>
+          </div>
+        </div>
+      `;
+      document.getElementById('nodeIntelModal').classList.remove('hidden');
+      document.getElementById('nodeIntelModal').classList.add('flex');
+      playKeypadBeep();
+    }
+
+    function closeNodeIntelModal() {
+      document.getElementById('nodeIntelModal').classList.add('hidden');
+      document.getElementById('nodeIntelModal').classList.remove('flex');
+    }
+
+    /* =====================================================================
+       5. THE GAZETTE WIRE (LIVE TICKER FEED & FRICTION INJECTION)
+       ===================================================================== */
+    function postGazetteWire(type, message) {
+      const entry = {
+        id: Date.now() + Math.random(),
+        time: formatMinutesToTime(currentSimMinutes),
+        type: type, // DISPATCH, ARRIVAL, FRICTION, WEATHER, GATE_ALERT
+        message: message
+      };
+      wireFeedEntries.unshift(entry);
+      if (wireFeedEntries.length > 50) wireFeedEntries.pop();
+      renderGazetteWire();
+    }
+
+    function clearGazetteWire() {
+      wireFeedEntries = [];
+      renderGazetteWire();
+    }
+
+    let activeWireFilter = 'all';
+    function filterWire(type) {
+      activeWireFilter = type;
+      ['wireFilterAll', 'wireFilterFriction', 'wireFilterMission', 'wireFilterWeather'].forEach(id => {
+        const el = document.getElementById(id);
+        el.className = 'px-2 py-0.5 rounded bg-tactical-850 hover:bg-tactical-700 text-slate-400';
+      });
+      if (type === 'all') document.getElementById('wireFilterAll').className = 'px-2 py-0.5 rounded bg-tactical-700 text-amber-300 font-bold';
+      if (type === 'FRICTION') document.getElementById('wireFilterFriction').className = 'px-2 py-0.5 rounded bg-red-900/60 text-red-300 font-bold';
+      if (type === 'MISSION') document.getElementById('wireFilterMission').className = 'px-2 py-0.5 rounded bg-amber-900/60 text-amber-300 font-bold';
+      if (type === 'WEATHER') document.getElementById('wireFilterWeather').className = 'px-2 py-0.5 rounded bg-sky-900/60 text-sky-300 font-bold';
+      renderGazetteWire();
+    }
+
+    function renderGazetteWire() {
+      const container = document.getElementById('gazetteWireFeed');
+      if (!container) return;
+
+      const filtered = wireFeedEntries.filter(entry => {
+        if (activeWireFilter === 'all') return true;
+        if (activeWireFilter === 'FRICTION') return entry.type === 'FRICTION' || entry.type === 'GATE_ALERT';
+        if (activeWireFilter === 'MISSION') return entry.type === 'DISPATCH' || entry.type === 'ARRIVAL';
+        if (activeWireFilter === 'WEATHER') return entry.type === 'WEATHER';
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-10 text-slate-500 font-mono text-xs">
+            Awaiting transmission pulses on 148.550 MHz...
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(item => {
+        let badgeClass = 'bg-slate-800 text-slate-300 border-slate-700';
+        if (item.type === 'FRICTION' || item.type === 'GATE_ALERT') badgeClass = 'bg-red-950/80 text-red-300 border-red-700/60';
+        if (item.type === 'DISPATCH') badgeClass = 'bg-amber-950/80 text-amber-300 border-amber-700/60';
+        if (item.type === 'ARRIVAL') badgeClass = 'bg-emerald-950/80 text-emerald-300 border-emerald-700/60';
+        if (item.type === 'WEATHER') badgeClass = 'bg-sky-950/80 text-sky-300 border-sky-700/60';
+
+        return `
+          <div class="p-2.5 rounded bg-tactical-950/80 border border-slate-800/80 hover:border-slate-700 transition-all text-xs">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[10px] text-slate-500 font-mono">${item.time}</span>
+              <span class="px-1.5 py-0.2 rounded border text-[9px] font-mono font-bold tracking-wider ${badgeClass}">
+                [${item.type}]
+              </span>
+            </div>
+            <div class="text-slate-300 font-mono text-[11px] leading-relaxed">${item.message}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    const STOCHASTIC_FRICTION_TABLE = [
+      { roll: [1, 15], tag: 'GATE_ALERT', delay: 8, text: 'Grant Gate 100% ID Inspection: Federal security forces implement random search surge (+8m vehicle delay).' },
+      { roll: [16, 30], tag: 'FRICTION', delay: 12, text: 'Lincoln Cleat Anomaly: Forward Scout misplaced sports footwear in mudroom void. Pre-flight search required (+12m).' },
+      { roll: [31, 45], tag: 'FRICTION', delay: 6, text: 'USD 449 Bus Convoys: Rural route 7 bottleneck on Easton 207th gravel connector (+6m transit compression).' },
+      { roll: [46, 60], tag: 'FRICTION', delay: 9, text: 'Sally Jo Tactical Beverage Breach: Whole apple juice container spilled on car seat; emergency wipe-down deployed (+9m).' },
+      { roll: [61, 75], tag: 'FRICTION', delay: 5, text: 'Kansas Whitetail Deer Hazard: Braking event on K-92 Stranger Creek bridge; cautious speed enforced (+5m).' },
+      { roll: [76, 88], tag: 'FRICTION', delay: 8, text: 'Annabel Wardrobe Reassessment: Specialist vetoed outerwear based on north wind gusts (+8m prep buffer).' },
+      { roll: [89, 100], tag: 'GATE_ALERT', delay: 15, text: 'BNSF Freight Train Blockage: 110-car slow roll at Leavenworth rail crossing; corridor locked (+15m).' }
+    ];
+
+    function triggerManualFrictionRoll() {
+      const d100 = Math.floor(Math.random() * 100) + 1;
+      const event = STOCHASTIC_FRICTION_TABLE.find(e => d100 >= e.roll[0] && d100 <= e.roll[1]) || STOCHASTIC_FRICTION_TABLE[0];
+
+      playFrictionAlertSound();
+      postGazetteWire(event.tag, `🎲 D100 Roll [${d100}]: ${event.text}`);
+      
+      // Inject delay into HUD and compress system slack
+      document.getElementById('hudFrictionStatus').innerText = `+${event.delay}m Delay Injected`;
+      document.getElementById('hudFrictionStatus').className = 'text-red-400 font-bold';
+      
+      recalculateOperationalReadiness();
+    }
+
+    /* =====================================================================
+       6. DAILY BATTLE PLAN & MONTE CARLO ENGINE (TAB 2)
+       ===================================================================== */
+    function renderMissionMatrixTable() {
+      const tbody = document.getElementById('missionMatrixBody');
+      if (!tbody) return;
+
+      tbody.innerHTML = missionLegs.map((leg, index) => {
+        let statusBadge = '<span class="px-2 py-0.5 rounded bg-slate-800 text-slate-400 text-[10px]">SCHEDULED</span>';
+        if (leg.status === 'IN_TRANSIT') statusBadge = '<span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/40 text-[10px] animate-pulse">IN TRANSIT</span>';
+        if (leg.status === 'DWELL') statusBadge = '<span class="px-2 py-0.5 rounded bg-sky-500/20 text-sky-400 border border-sky-500/40 text-[10px]">DWELLING</span>';
+        if (leg.status === 'COMPLETE') statusBadge = '<span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-[10px]">COMPLETED</span>';
+
+        const vehicleBadge = leg.vehicle.includes('F-150')
+          ? '<span class="text-amber-400 font-bold">Ford F-150</span>'
+          : '<span class="text-sky-400 font-bold">Ford Explorer</span>';
+
+        return `
+          <tr class="hover:bg-tactical-850/60 transition-colors">
+            <td class="py-3 px-4 font-bold text-slate-200">${leg.timeGate}</td>
+            <td class="py-3 px-4">
+              <div class="font-bold text-amber-200">${leg.name}</div>
+              <div class="text-[10px] text-slate-400">Duration: ~${leg.nominalDuration}m</div>
+            </td>
+            <td class="py-3 px-4">${vehicleBadge}</td>
+            <td class="py-3 px-4">
+              <div class="flex flex-wrap gap-1">
+                ${leg.crew.map(c => `<span class="px-1.5 py-0.2 rounded bg-tactical-950 border border-slate-700 text-[10px] text-slate-300">${c}</span>`).join('')}
+              </div>
+            </td>
+            <td class="py-3 px-4 text-slate-300">
+              ${leg.origin} ➔ <strong class="text-slate-100">${leg.destination}</strong>
+            </td>
+            <td class="py-3 px-4 text-center font-bold text-emerald-400">+${leg.nominalSlack}m</td>
+            <td class="py-3 px-4 text-center">${statusBadge}</td>
+            <td class="py-3 px-4 text-right">
+              <div class="flex items-center justify-end gap-1.5">
+                <button onclick="triggerMissionLegImmediate(${index})" class="px-2 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-[10px] font-bold">
+                  ▶ TRIGGER
+                </button>
+                <button onclick="deleteMissionLeg(${index})" class="px-1.5 py-1 rounded hover:bg-red-900/40 text-slate-500 hover:text-red-400 text-xs">
+                  ✕
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function deleteMissionLeg(index) {
+      missionLegs.splice(index, 1);
+      renderMissionMatrixTable();
+      playKeypadBeep();
+    }
+
+    function toggleMissionInjectModal(show) {
+      const modal = document.getElementById('missionInjectModal');
+      if (show) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        playKeypadBeep();
+      } else {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
+
+    function handleInjectMissionSubmit(e) {
+      e.preventDefault();
+      const timeVal = document.getElementById('injectTime').value; // "HH:MM"
+      const [h, m] = timeVal.split(':').map(Number);
+      const simMin = h * 60 + m;
+
+      const crew = [];
+      if (document.getElementById('crewJosh').checked) crew.push('Josh');
+      if (document.getElementById('crewBrittanie').checked) crew.push('Brittanie');
+      if (document.getElementById('crewLincoln').checked) crew.push('Lincoln');
+      if (document.getElementById('crewAnnabel').checked) crew.push('Annabel');
+      if (document.getElementById('crewSallyJo').checked) crew.push('Sally Jo');
+
+      const origin = document.getElementById('injectOrigin').value;
+      const dest = document.getElementById('injectDest').value;
+
+      // Assign matching path
+      let pathId = 'path_alpha';
+      if (dest === 'Fort Leavenworth') pathId = 'path_bravo';
+      if (dest === 'Lansing Sports Fields') pathId = 'path_delta';
+
+      const newLeg = {
+        id: 'leg_' + Date.now(),
+        timeGate: formatMinutesToTime(simMin),
+        simMin: simMin,
+        name: document.getElementById('injectName').value,
+        vehicle: document.getElementById('injectVehicle').value,
+        crew: crew.length > 0 ? crew : ['Josh'],
+        origin: origin,
+        destination: dest,
+        pathId: pathId,
+        returnPathId: pathId + '_return',
+        nominalSlack: parseInt(document.getElementById('injectSlack').value) || 15,
+        nominalDuration: parseInt(document.getElementById('injectDuration').value) || 25,
+        status: 'SCHEDULED'
+      };
+
+      missionLegs.push(newLeg);
+      missionLegs.sort((a, b) => a.simMin - b.simMin);
+
+      toggleMissionInjectModal(false);
+      renderMissionMatrixTable();
+      postGazetteWire('DISPATCH', `New Mission Injected: ${newLeg.name} scheduled for ${newLeg.timeGate}.`);
+      playSuccessChime();
+    }
+
+    // 500x MONTE CARLO STOCHASTIC SIMULATION ENGINE
+    function runMonteCarloSimulation() {
+      playAudioTone(700, 'sine', 0.1);
+      setTimeout(() => playAudioTone(900, 'sine', 0.15), 100);
+
+      const ITERATIONS = 500;
+      const met = WEATHER_PRESETS[activeWeatherKey];
+      
+      const totalDelays = [];
+      let lateMissionRuns = 0;
+      const nodeDelayCounts = {
+        'Base Alpha': 0,
+        'Pleasant Ridge Schools': 0,
+        'Fort Leavenworth': 0,
+        'Lansing Sports Fields': 0
+      };
+
+      for (let i = 0; i < ITERATIONS; i++) {
+        let dayDelay = 0;
+        let dayFailed = false;
+
+        missionLegs.forEach(leg => {
+          let legDelay = 0;
+
+          // Crew PERT sampling
+          leg.crew.forEach(memberCallsign => {
+            const member = personnelList.find(p => p.name.includes(memberCallsign) || p.callsign.includes(memberCallsign));
+            if (member) {
+              // Sample PERT Beta-approximate duration: O + 4M + P / 6 with normal variance
+              const mean = (member.pertO + 4 * member.pertM + member.pertP) / 6;
+              const stdDev = (member.pertP - member.pertO) / 6;
+              const sampledDelay = Math.max(0, sampleGaussian(mean - member.pertM, stdDev));
+              legDelay += sampledDelay * 0.4;
+
+              // Stochastic Friction roll
+              if (Math.random() * 100 < member.frictionRisk) {
+                legDelay += Math.floor(Math.random() * 8) + 4;
+              }
+            }
+          });
+
+          // MET impact
+          legDelay += (met.multiplier - 1.0) * leg.nominalDuration;
+
+          // Special Grant Gate security check risk if destination is Fort Leavenworth
+          if (leg.destination === 'Fort Leavenworth') {
+            const gateCheckProb = activeWeatherKey === 'fog' ? 0.65 : 0.35;
+            if (Math.random() < gateCheckProb) {
+              const gateSearchTime = Math.floor(Math.random() * 10) + 6 + met.gateDelay;
+              legDelay += gateSearchTime;
+              nodeDelayCounts['Fort Leavenworth'] += gateSearchTime;
+            }
+          }
+
+          if (leg.destination === 'Pleasant Ridge Schools') {
+            nodeDelayCounts['Pleasant Ridge Schools'] += legDelay * 0.5;
+          }
+
+          // Check if delay exceeds planned slack
+          if (legDelay > leg.nominalSlack) {
+            dayFailed = true;
+          }
+
+          dayDelay += legDelay;
+        });
+
+        totalDelays.push(dayDelay);
+        if (dayFailed) lateMissionRuns++;
+      }
+
+      totalDelays.sort((a, b) => a - b);
+
+      // Operations Research Metrics
+      const confidencePercent = (((ITERATIONS - lateMissionRuns) / ITERATIONS) * 100).toFixed(1);
+      const p50Delay = Math.round(totalDelays[Math.floor(ITERATIONS * 0.50)]);
+      const p80Delay = Math.round(totalDelays[Math.floor(ITERATIONS * 0.80)]);
+      const p95Delay = Math.round(totalDelays[Math.floor(ITERATIONS * 0.95)]);
+
+      // Critical Path Node Determination
+      let topNode = 'Fort Leavenworth (Grant Gate)';
+      let maxNodeDelay = -1;
+      for (const [n, d] of Object.entries(nodeDelayCounts)) {
+        if (d > maxNodeDelay) {
+          maxNodeDelay = d;
+          topNode = n;
+        }
+      }
+
+      // Update Report Card UI
+      document.getElementById('mcConfidenceScore').innerText = `${confidencePercent}%`;
+      document.getElementById('mcQuantileP50').innerText = `+${Math.max(0, 30 - p50Delay)}m Slack (${p50Delay}m delay)`;
+      document.getElementById('mcQuantileP80').innerText = `+${Math.max(0, 30 - p80Delay)}m Slack (${p80Delay}m delay)`;
+      document.getElementById('mcQuantileP95').innerText = `${30 - p95Delay >= 0 ? '+' : ''}${30 - p95Delay}m Slack (${p95Delay}m delay)`;
+      document.getElementById('mcCriticalNodeTitle').innerText = `${topNode}`;
+
+      // Render Canvas Frequency Histogram
+      drawMonteCarloHistogram(totalDelays, p50Delay, p80Delay, p95Delay);
+
+      postGazetteWire('DISPATCH', `Monte Carlo 500x complete. Confidence: ${confidencePercent}%. Critical Path Node: ${topNode}.`);
+    }
+
+    function sampleGaussian(mean, stdev) {
+      let u = 1 - Math.random();
+      let v = Math.random();
+      let z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+      return mean + z * stdev;
+    }
+
+    function drawMonteCarloHistogram(data, p50, p80, p95) {
+      const canvas = document.getElementById('monteCarloChart');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      
+      // Match display dimensions
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+
+      const w = rect.width;
+      const h = rect.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Bin data into 30 buckets
+      const NUM_BINS = 30;
+      const maxVal = Math.max(...data, 45);
+      const minVal = 0;
+      const binWidth = (maxVal - minVal) / NUM_BINS;
+      const bins = new Array(NUM_BINS).fill(0);
+
+      data.forEach(val => {
+        const binIdx = Math.min(NUM_BINS - 1, Math.floor((val - minVal) / binWidth));
+        bins[binIdx]++;
+      });
+
+      const maxBinCount = Math.max(...bins, 1);
+      const colWidth = (w - 40) / NUM_BINS;
+
+      // Draw Bars
+      bins.forEach((count, i) => {
+        const barH = (count / maxBinCount) * (h - 30);
+        const x = 20 + i * colWidth;
+        const y = h - 15 - barH;
+
+        const binVal = minVal + i * binWidth;
+        if (binVal < p50) {
+          ctx.fillStyle = '#10b981'; // Green
+        } else if (binVal < p80) {
+          ctx.fillStyle = '#f59e0b'; // Amber
+        } else {
+          ctx.fillStyle = '#ef4444'; // Red
+        }
+
+        ctx.fillRect(x, y, colWidth - 2, barH);
+      });
+
+      // Draw Baseline Rule
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(15, h - 15);
+      ctx.lineTo(w - 15, h - 15);
+      ctx.stroke();
+
+      // P50, P80, P95 Indicator Lines
+      drawPercentileMarker(ctx, p50, minVal, maxVal, w, h, '#10b981', 'P50');
+      drawPercentileMarker(ctx, p80, minVal, maxVal, w, h, '#f59e0b', 'P80');
+      drawPercentileMarker(ctx, p95, minVal, maxVal, w, h, '#ef4444', 'P95');
+    }
+
+    function drawPercentileMarker(ctx, val, minVal, maxVal, w, h, color, label) {
+      const x = 20 + ((val - minVal) / (maxVal - minVal)) * (w - 40);
+      ctx.strokeStyle = color;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(x, 10);
+      ctx.lineTo(x, h - 15);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = color;
+      ctx.font = '10px JetBrains Mono';
+      ctx.fillText(label, x - 8, 20);
+    }
+
+    /* =====================================================================
+       7. PERSONNEL DOSSIER & PERT FORMULAS (TAB 3)
+       ===================================================================== */
+    function renderPersonnelCards() {
+      const container = document.getElementById('personnelCardsContainer');
+      if (!container) return;
+
+      container.innerHTML = personnelList.map((person, idx) => {
+        // Calculate PERT Expected Value & StdDev
+        const mu = ((person.pertO + 4 * person.pertM + person.pertP) / 6).toFixed(1);
+        const sigma = ((person.pertP - person.pertO) / 6).toFixed(1);
+
+        return `
+          <div class="bg-tactical-900 border border-slate-700/80 rounded-xl p-5 shadow-xl newspaper-border flex flex-col justify-between">
+            
+            <div>
+              <!-- Card Header -->
+              <div class="flex items-start justify-between pb-3 mb-3 border-b border-slate-800">
+                <div>
+                  <div class="text-[10px] font-mono text-amber-400 uppercase font-bold tracking-wider">
+                    CALL SIGN: "${person.callsign}"
+                  </div>
+                  <h3 class="text-lg font-headline font-bold text-amber-100">${person.name}</h3>
+                  <div class="text-[11px] font-mono text-slate-400">${person.role}</div>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-tactical-950 border border-amber-500/40 flex items-center justify-center text-base font-bold font-mono text-amber-300">
+                  ${person.name[0]}
+                </div>
+              </div>
+
+              <!-- PERT Cycle Time 3-Point Estimates -->
+              <div class="mb-4">
+                <div class="flex justify-between items-center mb-1.5 text-xs font-mono">
+                  <span class="text-slate-300 font-bold">PERT CYCLE TIME (MINUTES):</span>
+                  <span class="text-amber-400 font-bold" id="pertMuDisplay_${idx}">μ = ${mu}m (±${sigma})</span>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-2 font-mono text-xs text-center">
+                  <div class="bg-tactical-950 p-2 rounded border border-slate-800">
+                    <label class="text-[9px] text-slate-500 block mb-0.5">OPTIMISTIC (O)</label>
+                    <input type="number" min="1" max="120" value="${person.pertO}" 
+                           oninput="updatePertField(${idx}, 'pertO', this.value)"
+                           class="w-full bg-transparent text-center font-bold text-emerald-400 focus:outline-none">
+                  </div>
+                  <div class="bg-tactical-950 p-2 rounded border border-slate-800">
+                    <label class="text-[9px] text-slate-500 block mb-0.5">MOST LIKELY (M)</label>
+                    <input type="number" min="1" max="120" value="${person.pertM}" 
+                           oninput="updatePertField(${idx}, 'pertM', this.value)"
+                           class="w-full bg-transparent text-center font-bold text-amber-400 focus:outline-none">
+                  </div>
+                  <div class="bg-tactical-950 p-2 rounded border border-slate-800">
+                    <label class="text-[9px] text-slate-500 block mb-0.5">PESSIMISTIC (P)</label>
+                    <input type="number" min="1" max="120" value="${person.pertP}" 
+                           oninput="updatePertField(${idx}, 'pertP', this.value)"
+                           class="w-full bg-transparent text-center font-bold text-red-400 focus:outline-none">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Friction Risk Slider -->
+              <div class="mb-4 bg-tactical-950 p-2.5 rounded border border-slate-800 font-mono text-xs">
+                <div class="flex justify-between mb-1">
+                  <span class="text-slate-400">Stochastic Friction Risk:</span>
+                  <span class="font-bold text-amber-400" id="frictionRiskDisplay_${idx}">${person.frictionRisk}%</span>
+                </div>
+                <input type="range" min="5" max="60" value="${person.frictionRisk}" 
+                       oninput="updateFrictionRisk(${idx}, this.value)"
+                       class="w-full accent-amber-500 cursor-pointer">
+              </div>
+
+              <!-- Trait & Hazard Descriptions -->
+              <div class="space-y-3 font-mono text-xs">
+                <div>
+                  <div class="text-[10px] text-emerald-400 font-bold uppercase mb-0.5">OPERATIONAL TRAIT</div>
+                  <textarea rows="2" onchange="updatePersonTrait(${idx}, 'trait', this.value)" class="w-full bg-tactical-950 border border-slate-800 rounded p-2 text-slate-300 text-[11px] focus:outline-none focus:border-amber-500">${person.trait}</textarea>
+                </div>
+                <div>
+                  <div class="text-[10px] text-red-400 font-bold uppercase mb-0.5">HAZARD / VULNERABILITY</div>
+                  <textarea rows="2" onchange="updatePersonTrait(${idx}, 'hazard', this.value)" class="w-full bg-tactical-950 border border-slate-800 rounded p-2 text-slate-300 text-[11px] focus:outline-none focus:border-amber-500">${person.hazard}</textarea>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updatePertField(idx, field, val) {
+      personnelList[idx][field] = parseFloat(val) || 0;
+      const person = personnelList[idx];
+      const mu = ((person.pertO + 4 * person.pertM + person.pertP) / 6).toFixed(1);
+      const sigma = ((person.pertP - person.pertO) / 6).toFixed(1);
+      document.getElementById(`pertMuDisplay_${idx}`).innerText = `μ = ${mu}m (±${sigma})`;
+    }
+
+    function updateFrictionRisk(idx, val) {
+      personnelList[idx].frictionRisk = parseInt(val) || 10;
+      document.getElementById(`frictionRiskDisplay_${idx}`).innerText = `${val}%`;
+    }
+
+    function updatePersonTrait(idx, field, val) {
+      personnelList[idx][field] = val;
+    }
+
+    function savePersonnelDossier() {
+      localStorage.setItem('gazette_c2_personnel', JSON.stringify(personnelList));
+      const toast = document.getElementById('saveToast');
+      toast.classList.remove('hidden');
+      playSuccessChime();
+      setTimeout(() => toast.classList.add('hidden'), 3500);
+      postGazetteWire('DISPATCH', 'Personnel Dossier changes committed to local encrypted storage.');
+    }
+
+    function resetPersonnelDefaults() {
+      personnelList = JSON.parse(JSON.stringify(DEFAULT_PERSONNEL));
+      localStorage.removeItem('gazette_c2_personnel');
+      renderPersonnelCards();
+      playKeypadBeep();
+      postGazetteWire('DISPATCH', 'Personnel Dossier restored to military baseline defaults.');
+    }
+
+    /* =====================================================================
+       8. MOTOR POOL & LOGISTICS (TAB 4)
+       ===================================================================== */
+    function updateFuelState(vehicleKey, percent) {
+      VEHICLES[vehicleKey].fuelPercent = percent;
+      const calculatedRange = Math.round((percent / 100) * VEHICLES[vehicleKey].nominalRange);
+      
+      if (vehicleKey === 'f150') {
+        document.getElementById('f150FuelPercent').innerText = `${percent}% Full`;
+        document.getElementById('f150RangeReadout').innerText = `${calculatedRange} mi`;
+      } else {
+        document.getElementById('explorerFuelPercent').innerText = `${percent}% Full`;
+        document.getElementById('explorerRangeReadout').innerText = `${calculatedRange} mi`;
+      }
+    }
+
+    function renderTransitMatrixTable() {
+      const tbody = document.getElementById('transitMatrixBody');
+      if (!tbody) return;
+
+      const met = WEATHER_PRESETS[activeWeatherKey];
+
+      const routes = [
+        { name: 'Base Alpha ➔ Pleasant Ridge (USD 449)', dist: '8.4 mi', dry: 14, hazard: 'Gravel rutting, bus convoys on 207th' },
+        { name: 'Base Alpha ➔ Fort Leavenworth (Grant Gate)', dist: '19.2 mi', dry: 26, hazard: 'Stranger Creek bridge fog, military ID gate check' },
+        { name: 'Pleasant Ridge ➔ Fort Leavenworth via K-92', dist: '21.0 mi', dry: 28, hazard: 'K-92 rural tractor traffic, deer crossing' },
+        { name: 'Base Alpha ➔ Lansing Sports Complex', dist: '18.0 mi', dry: 25, hazard: 'US-73 signal lights, heavy commuter surge' },
+        { name: 'Pleasant Ridge ➔ Lansing via K-7 Loop', dist: '22.5 mi', dry: 30, hazard: 'Lansing school zone speed traps, evening athletics rush' }
+      ];
+
+      tbody.innerHTML = routes.map(r => {
+        const metDuration = Math.round(r.dry * met.multiplier);
+        return `
+          <tr class="hover:bg-tactical-850/60">
+            <td class="p-2.5 font-bold text-slate-200">${r.name}</td>
+            <td class="p-2.5">${r.dist}</td>
+            <td class="p-2.5 text-slate-400">${r.dry} mins</td>
+            <td class="p-2.5 font-bold text-amber-400">${metDuration} mins</td>
+            <td class="p-2.5 text-slate-400 text-[11px]">${r.hazard}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    /* =====================================================================
+       9. TAB NAVIGATION & INITIALIZATION
+       ===================================================================== */
+    function switchTab(tabId) {
+      ['tabMap', 'tabBattlePlan', 'tabDossier', 'tabMotorPool'].forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+      });
+      document.getElementById(tabId).classList.remove('hidden');
+
+      ['navTabMap', 'navTabBattlePlan', 'navTabDossier', 'navTabMotorPool'].forEach(id => {
+        const el = document.getElementById(id);
+        el.classList.remove('border-amber-400', 'text-amber-400');
+        el.classList.add('border-transparent', 'text-slate-400');
+      });
+
+      let activeNavId = 'navTabMap';
+      if (tabId === 'tabBattlePlan') activeNavId = 'navTabBattlePlan';
+      if (tabId === 'tabDossier') activeNavId = 'navTabDossier';
+      if (tabId === 'tabMotorPool') activeNavId = 'navTabMotorPool';
+
+      const activeNav = document.getElementById(activeNavId);
+      activeNav.classList.remove('border-transparent', 'text-slate-400');
+      activeNav.classList.add('border-amber-400', 'text-amber-400');
+
+      playKeypadBeep();
+
+      if (tabId === 'tabBattlePlan') {
+        // Redraw histogram if Monte Carlo was run
+        setTimeout(() => runMonteCarloSimulation(), 50);
+      }
+    }
+
+    // ON DOM READY
+    window.addEventListener('DOMContentLoaded', () => {
+      initAuthGate();
+      updateClockDisplay();
+      renderVehicleTokens();
+      renderMissionMatrixTable();
+      renderPersonnelCards();
+      renderTransitMatrixTable();
+      
+      // Initial gazette wire dispatches
+      postGazetteWire('DISPATCH', 'Pleasant Ridge Gazette C2 Engine initialized in Leavenworth County theater.');
+      postGazetteWire('WEATHER', 'Corridor MET: Clear & Crisp (52°F). Optimal highway speed.');
+      postGazetteWire('DISPATCH', 'Household assets: Ford F-150 [CDR JOSH] & Ford Explorer [ATC BRITTANIE] ready.');
+      
+      // Pre-run baseline Monte Carlo sim
+      runMonteCarloSimulation();
+    });
+  </script>
+</body>
+</html>

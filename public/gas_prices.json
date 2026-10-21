@@ -1,7 +1,7 @@
 {
   "status": "success",
-  "last_updated_iso": "2026-10-21T15:00:05.662435",
-  "last_updated_human": "Wednesday, October 21, 2026 - 03:00 PM",
+  "last_updated_iso": "2026-10-21T18:32:00.951818",
+  "last_updated_human": "Wednesday, October 21, 2026 - 06:32 PM",
   "date_header": "Wednesday, Oct 21, 2026",
   "cheapest_station": {
     "name": "Sunoco",
@@ -25,7 +25,7 @@
       "loc": "10th Ave / Eisenhower (Leavenworth)",
       "address": "1050 Eisenhower Road (Leavenworth)",
       "price": 3.84,
-      "updated": "2026-10-21T19:42:42.441Z",
+      "updated": "2026-10-21T22:30:49.032Z",
       "is_estimate": false
     },
     {
@@ -70,7 +70,7 @@
       "loc": "2100 S 4th St (Leavenworth)",
       "address": "2100 S 4th St (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-21T18:46:09.810Z",
+      "updated": "2026-10-21T22:46:59.780Z",
       "is_estimate": false
     },
     {
@@ -79,7 +79,7 @@
       "loc": "2004 Spruce St (Leavenworth)",
       "address": "2004 Spruce St (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-21T19:45:54.350Z",
+      "updated": "2026-10-21T21:45:54.096Z",
       "is_estimate": false
     },
     {
@@ -124,7 +124,7 @@
       "loc": "Parallel Pkwy Corridor",
       "address": "10580 Parallel Pkwy (Kansas City)",
       "price": 3.93,
-      "updated": "2026-10-21T18:47:11.911Z",
+      "updated": "2026-10-21T21:51:14.096Z",
       "is_estimate": false
     },
     {

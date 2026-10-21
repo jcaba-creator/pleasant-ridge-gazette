@@ -4,6 +4,18 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/c2",
+      "destination": "/c2.html"
+    },
+    {
+      "source": "/wargame",
+      "destination": "/c2.html"
+    },
+    {
+      "source": "/c2.html",
+      "destination": "/c2.html"
+    },
+    {
       "source": "/449_decision_tool.html",
       "destination": "/449_decision_tool.html"
     },
