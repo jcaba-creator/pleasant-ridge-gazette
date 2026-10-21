@@ -1,7 +1,7 @@
 window.GAZETTE_GAS_FEED = {
   "status": "success",
-  "last_updated_iso": "2026-10-21T06:43:01.520807",
-  "last_updated_human": "Wednesday, October 21, 2026 - 06:43 AM",
+  "last_updated_iso": "2026-10-21T15:00:05.662435",
+  "last_updated_human": "Wednesday, October 21, 2026 - 03:00 PM",
   "date_header": "Wednesday, Oct 21, 2026",
   "cheapest_station": {
     "name": "Sunoco",
@@ -25,7 +25,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "10th Ave / Eisenhower (Leavenworth)",
       "address": "1050 Eisenhower Road (Leavenworth)",
       "price": 3.84,
-      "updated": "2026-10-21T10:31:04.470Z",
+      "updated": "2026-10-21T19:42:42.441Z",
       "is_estimate": false
     },
     {
@@ -33,8 +33,8 @@ window.GAZETTE_GAS_FEED = {
       "name": "AAFES Express",
       "loc": "Main Post (Ft. Leavenworth)",
       "address": "335 Kansas Ave (Fort Leavenworth)",
-      "price": 3.85,
-      "updated": "2026-10-19T16:23:11.175Z",
+      "price": 3.87,
+      "updated": "2026-10-21T18:26:56.266Z",
       "is_estimate": false
     },
     {
@@ -52,7 +52,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "Eisenhower Rd (Leavenworth)",
       "address": "720 Eisenhower Rd (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-21T00:30:07.325Z",
+      "updated": "2026-10-21T19:41:17.555Z",
       "is_estimate": false
     },
     {
@@ -70,7 +70,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "2100 S 4th St (Leavenworth)",
       "address": "2100 S 4th St (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-21T10:46:53.169Z",
+      "updated": "2026-10-21T18:46:09.810Z",
       "is_estimate": false
     },
     {
@@ -79,7 +79,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "2004 Spruce St (Leavenworth)",
       "address": "2004 Spruce St (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-21T09:46:08.566Z",
+      "updated": "2026-10-21T19:45:54.350Z",
       "is_estimate": false
     },
     {
@@ -88,7 +88,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "601 S Main St (Lansing)",
       "address": "601 S Main St (Lansing)",
       "price": 3.87,
-      "updated": "2026-10-19T12:05:27.437Z",
+      "updated": "2026-10-21T15:32:01.941Z",
       "is_estimate": false
     },
     {
@@ -124,7 +124,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "Parallel Pkwy Corridor",
       "address": "10580 Parallel Pkwy (Kansas City)",
       "price": 3.93,
-      "updated": "2026-10-19T21:30:17.706Z",
+      "updated": "2026-10-21T18:47:11.911Z",
       "is_estimate": false
     },
     {
