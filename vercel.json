@@ -16,6 +16,26 @@
       "destination": "/c2.html"
     },
     {
+      "source": "/flow",
+      "destination": "/family_flow.html"
+    },
+    {
+      "source": "/family-flow",
+      "destination": "/family_flow.html"
+    },
+    {
+      "source": "/family_flow",
+      "destination": "/family_flow.html"
+    },
+    {
+      "source": "/family_flow.html",
+      "destination": "/family_flow.html"
+    },
+    {
+      "source": "/simulator",
+      "destination": "/family_flow.html"
+    },
+    {
       "source": "/449_decision_tool.html",
       "destination": "/449_decision_tool.html"
     },

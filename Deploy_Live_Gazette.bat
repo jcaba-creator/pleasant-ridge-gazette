@@ -16,6 +16,7 @@ copy /Y "%~dp0gas_prices.json" "%~dp0public\gas_prices.json" >nul 2>&1
 copy /Y "%~dp0gas_prices.js" "%~dp0public\gas_prices.js" >nul 2>&1
 copy /Y "%~dp0index.html" "%~dp0public\index.html" >nul 2>&1
 copy /Y "%~dp0c2.html" "%~dp0public\c2.html" >nul 2>&1
+copy /Y "%~dp0family_flow.html" "%~dp0public\family_flow.html" >nul 2>&1
 if not exist "%~dp0public\data" mkdir "%~dp0public\data"
 xcopy /Y /Q /E "%~dp0data\*.*" "%~dp0public\data\" >nul 2>&1
 
