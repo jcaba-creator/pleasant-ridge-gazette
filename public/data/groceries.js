@@ -48,7 +48,7 @@ window.GAZETTE_GROCERY_DATA = {
       "surchargeRate": 0.0,
       "isManual": false,
       "ingestionMode": "Playwright Web Scraper",
-      "lastUpdated": "2026-10-22T17:13:56Z"
+      "lastUpdated": "2026-10-22T20:00:19Z"
     },
     {
       "id": "price_chopper",
@@ -59,7 +59,7 @@ window.GAZETTE_GROCERY_DATA = {
       "surchargeRate": 0.0,
       "isManual": false,
       "ingestionMode": "Store #61 Native Circular API & Flipp Feed",
-      "lastUpdated": "2026-10-22T17:13:54Z"
+      "lastUpdated": "2026-10-22T20:00:17Z"
     },
     {
       "id": "dillons",
@@ -70,7 +70,7 @@ window.GAZETTE_GROCERY_DATA = {
       "surchargeRate": 0.0,
       "isManual": false,
       "ingestionMode": "Kroger Calypso SSR Engine (Real-Time Shelf JSON)",
-      "lastUpdated": "2026-10-22T17:13:51Z"
+      "lastUpdated": "2026-10-22T20:00:15Z"
     },
     {
       "id": "walmart",
@@ -81,7 +81,7 @@ window.GAZETTE_GROCERY_DATA = {
       "surchargeRate": 0.0,
       "isManual": false,
       "ingestionMode": "Playwright / Headless Scraper",
-      "lastUpdated": "2026-10-22T17:13:58Z"
+      "lastUpdated": "2026-10-22T20:00:21Z"
     },
     {
       "id": "commissary",
@@ -92,12 +92,12 @@ window.GAZETTE_GROCERY_DATA = {
       "surchargeRate": 0.05,
       "isManual": false,
       "ingestionMode": "DeCA Click2Go API (NCR Freshop native JSON)",
-      "lastUpdated": "2026-10-22T17:13:45Z"
+      "lastUpdated": "2026-10-22T20:00:07Z"
     }
   ],
   "currentBasket": {
     "weekId": "2026-W42",
-    "publishedAt": "2026-10-22T17:13:58Z",
+    "publishedAt": "2026-10-22T20:00:21Z",
     "gasPricePerGal": 2.72,
     "prices": {
       "aldi": {
@@ -117,7 +117,7 @@ window.GAZETTE_GROCERY_DATA = {
       "dillons": {
         "ground_beef": 4.99,
         "eggs_dozen": 1.99,
-        "whole_milk": 3.09,
+        "whole_milk": 2.99,
         "russet_potatoes": 2.99,
         "sandwich_bread": 1.69
       },
@@ -137,11 +137,11 @@ window.GAZETTE_GROCERY_DATA = {
       }
     },
     "storeTimestamps": {
-      "commissary": "2026-10-22T17:13:45Z",
-      "dillons": "2026-10-22T17:13:51Z",
-      "price_chopper": "2026-10-22T17:13:54Z",
-      "aldi": "2026-10-22T17:13:56Z",
-      "walmart": "2026-10-22T17:13:58Z"
+      "commissary": "2026-10-22T20:00:07Z",
+      "dillons": "2026-10-22T20:00:15Z",
+      "price_chopper": "2026-10-22T20:00:17Z",
+      "aldi": "2026-10-22T20:00:19Z",
+      "walmart": "2026-10-22T20:00:21Z"
     }
   }
 };

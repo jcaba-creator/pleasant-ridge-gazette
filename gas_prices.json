@@ -1,31 +1,31 @@
 {
   "status": "success",
-  "last_updated_iso": "2026-10-22T05:00:04.878804",
-  "last_updated_human": "Thursday, October 22, 2026 - 05:00 AM",
+  "last_updated_iso": "2026-10-22T15:00:05.307112",
+  "last_updated_human": "Thursday, October 22, 2026 - 03:00 PM",
   "date_header": "Thursday, Oct 22, 2026",
   "cheapest_station": {
-    "name": "Sunoco",
-    "loc": "501 Limit St (Leavenworth)",
-    "price": 3.83
+    "name": "Murphy USA (Walmart)",
+    "loc": "10th Ave / Eisenhower (Leavenworth)",
+    "price": 3.84
   },
-  "max_tank_savings": 2.4,
+  "max_tank_savings": 2.25,
   "stations": [
-    {
-      "id": "49808",
-      "name": "Sunoco",
-      "loc": "501 Limit St (Leavenworth)",
-      "address": "501 Limit St (Leavenworth)",
-      "price": 3.83,
-      "updated": "2026-10-20T18:47:19.224Z",
-      "is_estimate": false
-    },
     {
       "id": "186732",
       "name": "Murphy USA (Walmart)",
       "loc": "10th Ave / Eisenhower (Leavenworth)",
       "address": "1050 Eisenhower Road (Leavenworth)",
       "price": 3.84,
-      "updated": "2026-10-22T09:01:28.426Z",
+      "updated": "2026-10-22T19:30:28.681Z",
+      "is_estimate": false
+    },
+    {
+      "id": "49808",
+      "name": "Sunoco",
+      "loc": "501 Limit St (Leavenworth)",
+      "address": "501 Limit St (Leavenworth)",
+      "price": 3.85,
+      "updated": "2026-10-22T17:16:25.024Z",
       "is_estimate": false
     },
     {
@@ -43,7 +43,7 @@
       "loc": "1205 N Main St (Lansing)",
       "address": "1205 N Main St (Lansing)",
       "price": 3.87,
-      "updated": "2026-10-20T22:22:46.702Z",
+      "updated": "2026-10-22T14:19:12.751Z",
       "is_estimate": false
     },
     {
@@ -70,7 +70,7 @@
       "loc": "2100 S 4th St (Leavenworth)",
       "address": "2100 S 4th St (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-22T08:46:54.676Z",
+      "updated": "2026-10-22T18:46:16.504Z",
       "is_estimate": false
     },
     {
@@ -79,7 +79,7 @@
       "loc": "2004 Spruce St (Leavenworth)",
       "address": "2004 Spruce St (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-22T09:46:56.289Z",
+      "updated": "2026-10-22T19:45:23.989Z",
       "is_estimate": false
     },
     {
@@ -88,7 +88,7 @@
       "loc": "601 S Main St (Lansing)",
       "address": "601 S Main St (Lansing)",
       "price": 3.87,
-      "updated": "2026-10-21T15:32:01.941Z",
+      "updated": "2026-10-22T16:46:49.412Z",
       "is_estimate": false
     },
     {
@@ -96,9 +96,9 @@
       "name": "Cenex",
       "loc": "109 4H Rd (Lansing)",
       "address": "109 4H Rd (Lansing)",
-      "price": 3.89,
-      "updated": null,
-      "is_estimate": true
+      "price": 3.87,
+      "updated": "2026-10-22T16:46:55.089Z",
+      "is_estimate": false
     },
     {
       "id": "103082",
@@ -133,8 +133,8 @@
       "loc": "Spruce St (Leavenworth)",
       "address": "788 Spruce St (Leavenworth)",
       "price": 3.99,
-      "updated": "2026-10-20T19:10:25.011Z",
-      "is_estimate": false
+      "updated": null,
+      "is_estimate": true
     }
   ]
 }
