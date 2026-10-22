@@ -1,8 +1,8 @@
 window.GAZETTE_GAS_FEED = {
   "status": "success",
-  "last_updated_iso": "2026-10-21T20:30:24.137543",
-  "last_updated_human": "Wednesday, October 21, 2026 - 08:30 PM",
-  "date_header": "Wednesday, Oct 21, 2026",
+  "last_updated_iso": "2026-10-22T05:00:04.878804",
+  "last_updated_human": "Thursday, October 22, 2026 - 05:00 AM",
+  "date_header": "Thursday, Oct 22, 2026",
   "cheapest_station": {
     "name": "Sunoco",
     "loc": "501 Limit St (Leavenworth)",
@@ -25,7 +25,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "10th Ave / Eisenhower (Leavenworth)",
       "address": "1050 Eisenhower Road (Leavenworth)",
       "price": 3.84,
-      "updated": "2026-10-22T00:01:07.438Z",
+      "updated": "2026-10-22T09:01:28.426Z",
       "is_estimate": false
     },
     {
@@ -52,7 +52,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "Eisenhower Rd (Leavenworth)",
       "address": "720 Eisenhower Rd (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-21T19:41:17.555Z",
+      "updated": "2026-10-22T02:25:33.111Z",
       "is_estimate": false
     },
     {
@@ -61,7 +61,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "Metropolitan Ave (Leavenworth)",
       "address": "609 Metropolitan Ave (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-20T16:22:59.774Z",
+      "updated": "2026-10-22T04:10:26.136Z",
       "is_estimate": false
     },
     {
@@ -70,7 +70,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "2100 S 4th St (Leavenworth)",
       "address": "2100 S 4th St (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-22T00:46:26.322Z",
+      "updated": "2026-10-22T08:46:54.676Z",
       "is_estimate": false
     },
     {
@@ -79,7 +79,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "2004 Spruce St (Leavenworth)",
       "address": "2004 Spruce St (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-21T23:46:08.264Z",
+      "updated": "2026-10-22T09:46:56.289Z",
       "is_estimate": false
     },
     {

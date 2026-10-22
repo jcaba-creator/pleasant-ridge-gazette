@@ -117,6 +117,62 @@
 <body class="min-h-screen text-ink flex flex-col relative overflow-x-hidden pb-12">
 
   <!-- ==================================================================== -->
+  <!-- PIN ACCESS GATE MODAL (SECRET CODE: 0449) -->
+  <!-- ==================================================================== -->
+  <div id="pinGateModal" class="fixed inset-0 z-[99999] bg-[#211c16]/85 backdrop-blur-md flex items-center justify-center p-4 transition-opacity duration-300">
+    <div id="pinGateCard" class="max-w-xs w-full bg-[#fbf8f0] border-2 border-[#211c16] rounded-2xl p-6 shadow-2xl relative text-center">
+      <!-- Newspaper Header Rule -->
+      <div class="border-b-2 border-[#766753] pb-2 mb-4">
+        <div class="text-[9px] font-mono tracking-widest text-[#766753] uppercase font-bold">
+          THE PLEASANT RIDGE GAZETTE
+        </div>
+        <h2 class="font-headline font-bold text-xl text-ink mt-0.5">
+          Dispatch Gate
+        </h2>
+        <div class="text-[10px] font-mono text-[#766753] mt-1">
+          Enter 4-Digit Security PIN
+        </div>
+      </div>
+
+      <!-- 4 Visual PIN Slots -->
+      <div class="flex items-center justify-center gap-3 my-3" id="pinSlotsContainer">
+        <div id="pinSlot0" class="w-11 h-13 rounded-lg border-2 border-[#8f7d66] bg-white flex items-center justify-center text-xl font-mono font-bold text-ink shadow-inner"></div>
+        <div id="pinSlot1" class="w-11 h-13 rounded-lg border-2 border-[#8f7d66] bg-white flex items-center justify-center text-xl font-mono font-bold text-ink shadow-inner"></div>
+        <div id="pinSlot2" class="w-11 h-13 rounded-lg border-2 border-[#8f7d66] bg-white flex items-center justify-center text-xl font-mono font-bold text-ink shadow-inner"></div>
+        <div id="pinSlot3" class="w-11 h-13 rounded-lg border-2 border-[#8f7d66] bg-white flex items-center justify-center text-xl font-mono font-bold text-ink shadow-inner"></div>
+      </div>
+
+      <!-- Error / Status Message Line -->
+      <div id="pinErrorMsg" class="h-5 text-xs font-mono font-bold text-red-700 mb-2 flex items-center justify-center"></div>
+
+      <!-- Tactical Keypad Grid (3 x 4) -->
+      <div class="grid grid-cols-3 gap-2 mb-3">
+        <button type="button" onclick="pressPinKey('1')" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#ede7d8] active:scale-95 border border-[#8f7d66] font-mono font-bold text-lg text-ink shadow-xs transition-all">1</button>
+        <button type="button" onclick="pressPinKey('2')" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#ede7d8] active:scale-95 border border-[#8f7d66] font-mono font-bold text-lg text-ink shadow-xs transition-all">2</button>
+        <button type="button" onclick="pressPinKey('3')" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#ede7d8] active:scale-95 border border-[#8f7d66] font-mono font-bold text-lg text-ink shadow-xs transition-all">3</button>
+        <button type="button" onclick="pressPinKey('4')" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#ede7d8] active:scale-95 border border-[#8f7d66] font-mono font-bold text-lg text-ink shadow-xs transition-all">4</button>
+        <button type="button" onclick="pressPinKey('5')" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#ede7d8] active:scale-95 border border-[#8f7d66] font-mono font-bold text-lg text-ink shadow-xs transition-all">5</button>
+        <button type="button" onclick="pressPinKey('6')" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#ede7d8] active:scale-95 border border-[#8f7d66] font-mono font-bold text-lg text-ink shadow-xs transition-all">6</button>
+        <button type="button" onclick="pressPinKey('7')" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#ede7d8] active:scale-95 border border-[#8f7d66] font-mono font-bold text-lg text-ink shadow-xs transition-all">7</button>
+        <button type="button" onclick="pressPinKey('8')" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#ede7d8] active:scale-95 border border-[#8f7d66] font-mono font-bold text-lg text-ink shadow-xs transition-all">8</button>
+        <button type="button" onclick="pressPinKey('9')" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#ede7d8] active:scale-95 border border-[#8f7d66] font-mono font-bold text-lg text-ink shadow-xs transition-all">9</button>
+        <button type="button" onclick="clearPinKey()" class="h-12 rounded-lg bg-[#f0eade] hover:bg-[#dfd7c2] active:scale-95 border border-[#8f7d66] font-mono font-bold text-sm text-[#766753] shadow-xs transition-all">CLR</button>
+        <button type="button" onclick="pressPinKey('0')" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#ede7d8] active:scale-95 border border-[#8f7d66] font-mono font-bold text-lg text-ink shadow-xs transition-all">0</button>
+        <button type="button" onclick="deletePinKey()" class="h-12 rounded-lg bg-[#f0eade] hover:bg-[#dfd7c2] active:scale-95 border border-[#8f7d66] font-mono font-bold text-base text-[#766753] shadow-xs transition-all">⌫</button>
+      </div>
+
+      <!-- Quick Test Pass & Hint -->
+      <div class="pt-3 border-t border-[#dcd2bf] flex items-center justify-between text-[11px] font-mono">
+        <span class="text-[#766753]">USD 449 SECRET</span>
+        <button type="button" onclick="quickPassPin()" class="font-bold text-[#b45309] hover:underline flex items-center gap-0.5">
+          <span>PASS (0449)</span> ➔
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==================================================================== -->
   <!-- 1. STICKY TOP HUD (CLOCK, FORCE RATIO & SIM CONTROLS) -->
   <!-- ==================================================================== -->
   <header class="bg-[#fffef9]/95 backdrop-blur-md border-b-2 border-[#766753] sticky top-0 z-40 shadow-sm">
@@ -131,6 +187,9 @@
         <span class="hidden sm:inline">USD 449 EASTON • CAC FORT LEAVENWORTH</span>
         <button onclick="toggleSound()" id="soundBtn" class="hover:text-amber-900 font-bold flex items-center gap-1">
           <span id="soundIcon">🔔</span> <span id="soundText">SFX: ON</span>
+        </button>
+        <button onclick="lockPinGate()" id="lockGateBtn" class="hover:text-amber-900 font-bold flex items-center gap-1 px-1.5 py-0.5 rounded border border-[#c2b59f] hover:bg-[#dfd7c2] transition-colors" title="Lock access gate">
+          <span>🔒</span> <span>LOCK</span>
         </button>
       </div>
     </div>
@@ -544,6 +603,91 @@
         <!-- Log entries injected dynamically -->
       </div>
     </div>
+
+    <!-- ================================================================== -->
+    <!-- 5. COMMANDER'S FIELD SCRATCHPAD & AAR LOG -->
+    <!-- ================================================================== -->
+    <div class="rounded-xl p-4 sm:p-5 border-2 border-stone-900 shadow-sm" style="background-color: #faf7f0;">
+      <!-- Header -->
+      <div class="flex flex-wrap items-center justify-between gap-2 pb-2 mb-3 border-b border-[#dcd2bf]">
+        <div>
+          <div class="text-[9px] font-mono uppercase tracking-widest text-[#766753] font-bold">TACTICAL OBSERVATIONS &amp; AAR</div>
+          <h3 class="font-headline font-bold text-base sm:text-lg text-ink flex items-center gap-2">
+            <span>📝</span> Commander's Field Scratchpad &amp; AAR Log
+          </h3>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="copyNotesBtn" onclick="copyScratchpadNotes()" class="px-3 py-1.5 rounded bg-[#ede7d8] hover:bg-[#dfd7c2] active:bg-[#d0c5ad] border border-[#8f7d66] text-xs font-mono font-bold text-ink transition-all flex items-center gap-1.5 shadow-2xs">
+            <span>📋</span> <span id="copyNotesBtnText">Copy Notes</span>
+          </button>
+          <button onclick="clearScratchpadNotes()" class="px-2.5 py-1.5 rounded hover:bg-[#ede7d8] text-xs font-mono text-[#766753] hover:text-red-700 transition-all">
+            Clear
+          </button>
+        </div>
+      </div>
+
+      <!-- AI Agent Collaboration Tip -->
+      <div class="mb-3 p-2.5 rounded-lg bg-[#f4eee1] border border-[#c2b59f] text-[11px] font-mono text-[#766753] flex items-center justify-between gap-2 shadow-2xs">
+        <div class="flex items-center gap-2">
+          <span>💡</span>
+          <span><b>AAR Action:</b> Notes are saved in your browser. Tap <b>Copy Notes</b> above and paste into chat to have your AI assistant execute changes!</span>
+        </div>
+      </div>
+
+      <!-- Quick Tag Buttons -->
+      <div class="mb-3">
+        <div class="text-[10px] font-mono text-[#766753] uppercase tracking-wider font-semibold mb-1.5 flex items-center gap-1">
+          <span>QUICK TAGS (TAP TO APPEND):</span>
+        </div>
+        <div class="flex flex-wrap gap-1.5">
+          <button type="button" onclick="appendScratchpadTag('+ Chokepoint')" class="px-2.5 py-1 rounded-full bg-[#f0eade] hover:bg-[#e4dcce] active:scale-95 border border-[#c2b59f] text-[11px] font-mono font-medium text-ink transition-all">
+            + Chokepoint
+          </button>
+          <button type="button" onclick="appendScratchpadTag('+ Lincoln')" class="px-2.5 py-1 rounded-full bg-[#f0eade] hover:bg-[#e4dcce] active:scale-95 border border-[#c2b59f] text-[11px] font-mono font-medium text-ink transition-all">
+            + Lincoln
+          </button>
+          <button type="button" onclick="appendScratchpadTag('+ Breakfast')" class="px-2.5 py-1 rounded-full bg-[#f0eade] hover:bg-[#e4dcce] active:scale-95 border border-[#c2b59f] text-[11px] font-mono font-medium text-ink transition-all">
+            + Breakfast
+          </button>
+          <button type="button" onclick="appendScratchpadTag('+ Mudroom Staging')" class="px-2.5 py-1 rounded-full bg-[#f0eade] hover:bg-[#e4dcce] active:scale-95 border border-[#c2b59f] text-[11px] font-mono font-medium text-ink transition-all">
+            + Mudroom Staging
+          </button>
+          <button type="button" onclick="appendScratchpadTag('+ Bedtime 20:00')" class="px-2.5 py-1 rounded-full bg-[#f0eade] hover:bg-[#e4dcce] active:scale-95 border border-[#c2b59f] text-[11px] font-mono font-medium text-ink transition-all">
+            + Bedtime 20:00
+          </button>
+        </div>
+      </div>
+
+      <!-- Textarea Input & Save Button -->
+      <div class="space-y-2">
+        <textarea id="scratchpadInput" rows="3" class="w-full p-2.5 rounded-lg bg-white border border-[#c2b59f] focus:border-stone-900 focus:outline-none font-mono text-xs text-ink placeholder-[#a89b88] resize-y custom-scrollbar shadow-inner" placeholder="Record tactical observations, friction points, or AAR reflection... (Ctrl+Enter to save)"></textarea>
+
+        <div class="flex items-center justify-between">
+          <div id="scratchpadSaveConfirmation" class="text-xs font-mono font-bold text-green-700 opacity-0 transition-opacity duration-300 flex items-center gap-1.5">
+            <span>✓</span> Note saved to AAR log!
+          </div>
+          <button onclick="saveScratchpadNote()" class="px-4 py-2 rounded-lg bg-stone-900 hover:bg-stone-800 text-white font-mono font-bold text-xs shadow transition-all flex items-center gap-1.5 active:scale-95">
+            <span>💾</span> Save Note
+          </button>
+        </div>
+      </div>
+
+      <!-- Logged Notes Feed -->
+      <div class="mt-4 pt-3 border-t border-[#dcd2bf]">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[10px] font-mono font-bold text-[#766753] uppercase tracking-wider">
+            LOGGED OBSERVATIONS (<span id="scratchpadCount">0</span>)
+          </span>
+          <span class="text-[9px] font-mono text-[#a89b88]">
+            PERSISTED LOCALLY
+          </span>
+        </div>
+        <div id="scratchpadNotesList" class="space-y-2 max-h-72 overflow-y-auto pr-1 custom-scrollbar">
+          <!-- Rendered notes injected here -->
+        </div>
+      </div>
+    </div>
+
 
   </main>
 
@@ -1067,11 +1211,383 @@
       playTone(620);
     }
 
+
+    /* ---------------------------------------------------------------------
+       7. COMMANDER'S FIELD SCRATCHPAD & AAR LOG
+       --------------------------------------------------------------------- */
+    const SCRATCHPAD_STORAGE_KEY = 'pr_gazette_scratchpad';
+    let scratchpadNotes = [];
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function initScratchpad() {
+      try {
+        const stored = localStorage.getItem(SCRATCHPAD_STORAGE_KEY);
+        if (stored) {
+          scratchpadNotes = JSON.parse(stored);
+          if (!Array.isArray(scratchpadNotes)) scratchpadNotes = [];
+        }
+      } catch (e) {
+        console.error('Error loading scratchpad notes:', e);
+        scratchpadNotes = [];
+      }
+      renderScratchpadNotes();
+
+      const input = document.getElementById('scratchpadInput');
+      if (input) {
+        input.addEventListener('keydown', (e) => {
+          if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault();
+            saveScratchpadNote();
+          }
+        });
+      }
+    }
+
+    function renderScratchpadNotes() {
+      const container = document.getElementById('scratchpadNotesList');
+      const countEl = document.getElementById('scratchpadCount');
+      if (countEl) countEl.innerText = scratchpadNotes.length;
+      if (!container) return;
+
+      if (scratchpadNotes.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-6 px-4 rounded-lg border border-dashed border-[#c2b59f] text-xs font-mono text-[#8f7d66] italic bg-[#fcfbf7]">
+            No field notes logged yet. Use the quick tags and scratchpad above to record friction points, timing gates, and after-action review items.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = scratchpadNotes.map((note) => `
+        <div class="p-3 rounded-lg bg-white border border-[#dcd2bf] hover:border-[#8f7d66] transition-all shadow-2xs flex flex-col gap-1.5">
+          <div class="flex items-center justify-between text-[10px] font-mono border-b border-[#f0eade] pb-1.5">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded bg-[#f4eee1] border border-[#dcd2bf] font-bold text-[#b45309]">
+                ${escapeHtml(note.simTime)}
+              </span>
+              <span class="text-[#766753]">
+                ${escapeHtml(note.realTime)}
+              </span>
+            </div>
+            <button onclick="deleteScratchpadNote('${escapeHtml(note.id)}')" class="text-[#766753] hover:text-red-700 font-bold px-1.5 py-0.5 rounded hover:bg-red-50 transition-colors flex items-center gap-0.5 text-[10px]">
+              <span>✕</span> Remove
+            </button>
+          </div>
+          <div class="text-xs font-editorial text-ink whitespace-pre-wrap leading-relaxed">
+            ${escapeHtml(note.text)}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function appendScratchpadTag(tag) {
+      const input = document.getElementById('scratchpadInput');
+      if (!input) return;
+      const val = input.value;
+      if (!val.trim()) {
+        input.value = tag + ' ';
+      } else {
+        input.value = val.trimEnd() + ' ' + tag + ' ';
+      }
+      input.focus();
+      playTone(550, 'sine', 0.05);
+    }
+
+    function saveScratchpadNote() {
+      const input = document.getElementById('scratchpadInput');
+      if (!input) return;
+      const text = input.value.trim();
+      if (!text) {
+        input.focus();
+        return;
+      }
+
+      const simTimeStr = `${formatTime(currentSimMin)} Sim`;
+      const realTimeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' Real';
+
+      const newNote = {
+        id: 'note_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+        text: text,
+        simTime: simTimeStr,
+        realTime: realTimeStr,
+        simMin: currentSimMin,
+        timestamp: Date.now()
+      };
+
+      scratchpadNotes.unshift(newNote);
+      try {
+        localStorage.setItem(SCRATCHPAD_STORAGE_KEY, JSON.stringify(scratchpadNotes));
+      } catch (e) {
+        console.error('Failed to save to localStorage:', e);
+      }
+
+      input.value = '';
+      renderScratchpadNotes();
+      playTone(750, 'sine', 0.1);
+
+      // Show temporary confirmation
+      const toast = document.getElementById('scratchpadSaveConfirmation');
+      if (toast) {
+        toast.classList.remove('opacity-0');
+        toast.classList.add('opacity-100');
+        setTimeout(() => {
+          toast.classList.remove('opacity-100');
+          toast.classList.add('opacity-0');
+        }, 2200);
+      }
+    }
+
+    function deleteScratchpadNote(id) {
+      scratchpadNotes = scratchpadNotes.filter(n => n.id !== id);
+      try {
+        localStorage.setItem(SCRATCHPAD_STORAGE_KEY, JSON.stringify(scratchpadNotes));
+      } catch (e) {
+        console.error('Failed to save to localStorage:', e);
+      }
+      renderScratchpadNotes();
+      playTone(400, 'sine', 0.06);
+    }
+
+    function clearScratchpadNotes() {
+      if (scratchpadNotes.length === 0) return;
+      if (confirm('Clear all logged scratchpad and AAR entries?')) {
+        scratchpadNotes = [];
+        try {
+          localStorage.removeItem(SCRATCHPAD_STORAGE_KEY);
+        } catch (e) {
+          console.error('Failed to clear localStorage:', e);
+        }
+        renderScratchpadNotes();
+        playTone(350, 'sine', 0.08);
+      }
+    }
+
+    function copyScratchpadNotes() {
+      if (scratchpadNotes.length === 0) {
+        alert('No scratchpad notes to copy.');
+        return;
+      }
+
+      const now = new Date();
+      let md = `# The Pleasant Ridge Gazette: Commander's Field Scratchpad & AAR Log
+`;
+      md += `*Exported: ${now.toLocaleDateString()} at ${now.toLocaleTimeString()}*
+
+`;
+      md += `---
+
+`;
+
+      scratchpadNotes.forEach(n => {
+        md += `### [${n.simTime} • ${n.realTime}]
+`;
+        md += `${n.text}
+
+`;
+      });
+
+      const copyBtnText = document.getElementById('copyNotesBtnText');
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(md).then(() => {
+          if (copyBtnText) copyBtnText.innerText = 'Copied!';
+          playTone(850, 'sine', 0.1);
+          setTimeout(() => {
+            if (copyBtnText) copyBtnText.innerText = 'Copy Notes';
+          }, 2000);
+        }).catch(err => {
+          console.error('Clipboard write error:', err);
+          fallbackCopyText(md);
+        });
+      } else {
+        fallbackCopyText(md);
+      }
+    }
+
+    function fallbackCopyText(text) {
+      const copyBtnText = document.getElementById('copyNotesBtnText');
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.top = "0";
+      textArea.style.left = "0";
+      textArea.style.position = "fixed";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        if (copyBtnText) copyBtnText.innerText = 'Copied!';
+        playTone(850, 'sine', 0.1);
+        setTimeout(() => {
+          if (copyBtnText) copyBtnText.innerText = 'Copy Notes';
+        }, 2000);
+      } catch (err) {
+        alert('Could not copy notes to clipboard. Please copy manually.');
+      }
+      document.body.removeChild(textArea);
+    }
+
+
+    /* ---------------------------------------------------------------------
+       8. SECURITY GATE & PIN ACCESS ENGINE (SECRET PIN: 0449)
+       --------------------------------------------------------------------- */
+    const PIN_STORAGE_KEY = 'pr_flow_gate_unlocked';
+    const VALID_PINS = ['0449', '4490', '1776'];
+    let currentPinInput = '';
+
+    function initPinGate() {
+      const isUnlocked = sessionStorage.getItem(PIN_STORAGE_KEY) === 'true';
+      if (isUnlocked) {
+        hidePinGate(false);
+      } else {
+        showPinGate();
+      }
+
+      window.addEventListener('keydown', (e) => {
+        const modal = document.getElementById('pinGateModal');
+        if (!modal || modal.style.display === 'none') return;
+
+        if (e.key >= '0' && e.key <= '9') {
+          pressPinKey(e.key);
+        } else if (e.key === 'Backspace') {
+          deletePinKey();
+        } else if (e.key === 'Escape' || e.key.toLowerCase() === 'c') {
+          clearPinKey();
+        }
+      });
+    }
+
+    function showPinGate() {
+      const modal = document.getElementById('pinGateModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        modal.classList.add('opacity-100');
+      }
+      clearPinKey();
+    }
+
+    function hidePinGate(animate = true) {
+      const modal = document.getElementById('pinGateModal');
+      if (!modal) return;
+      if (animate) {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        setTimeout(() => {
+          modal.style.display = 'none';
+        }, 300);
+      } else {
+        modal.style.display = 'none';
+      }
+    }
+
+    function lockPinGate() {
+      sessionStorage.removeItem(PIN_STORAGE_KEY);
+      showPinGate();
+      playTone(400, 'sine', 0.08);
+      postLog('SECURITY', 'Operational gate re-locked.');
+    }
+
+    function pressPinKey(digit) {
+      if (currentPinInput.length >= 4) return;
+      currentPinInput += digit;
+      updatePinSlotsUI();
+      playTone(600 + (currentPinInput.length * 60), 'sine', 0.05);
+
+      if (currentPinInput.length === 4) {
+        evaluatePin();
+      }
+    }
+
+    function deletePinKey() {
+      if (currentPinInput.length > 0) {
+        currentPinInput = currentPinInput.slice(0, -1);
+        updatePinSlotsUI();
+        playTone(450, 'sine', 0.04);
+      }
+    }
+
+    function clearPinKey() {
+      currentPinInput = '';
+      updatePinSlotsUI();
+      const err = document.getElementById('pinErrorMsg');
+      if (err) err.innerText = '';
+    }
+
+    function updatePinSlotsUI() {
+      for (let i = 0; i < 4; i++) {
+        const slot = document.getElementById(`pinSlot${i}`);
+        if (slot) {
+          if (i < currentPinInput.length) {
+            slot.innerText = '●';
+            slot.classList.add('bg-[#f4eee1]', 'border-stone-900');
+          } else {
+            slot.innerText = '';
+            slot.classList.remove('bg-[#f4eee1]', 'border-stone-900');
+          }
+        }
+      }
+    }
+
+    function quickPassPin() {
+      currentPinInput = '0449';
+      updatePinSlotsUI();
+      evaluatePin();
+    }
+
+    function evaluatePin() {
+      const err = document.getElementById('pinErrorMsg');
+      const card = document.getElementById('pinGateCard');
+
+      if (VALID_PINS.includes(currentPinInput)) {
+        // SUCCESS
+        if (err) {
+          err.innerText = 'ACCESS GRANTED';
+          err.className = 'h-5 text-xs font-mono font-bold text-emerald-700 mb-2 flex items-center justify-center';
+        }
+        for (let i = 0; i < 4; i++) {
+          const slot = document.getElementById(`pinSlot${i}`);
+          if (slot) {
+            slot.classList.add('bg-emerald-100', 'border-emerald-700', 'text-emerald-800');
+          }
+        }
+        playTone(880, 'sine', 0.12);
+        setTimeout(() => playTone(1174, 'sine', 0.15), 100);
+        sessionStorage.setItem(PIN_STORAGE_KEY, 'true');
+        setTimeout(() => {
+          hidePinGate(true);
+        }, 500);
+      } else {
+        // FAILURE
+        if (err) {
+          err.innerText = 'INVALID PASSCODE — ACCESS DENIED';
+          err.className = 'h-5 text-xs font-mono font-bold text-red-700 mb-2 flex items-center justify-center';
+        }
+        if (card) {
+          card.classList.add('animate-bounce');
+          setTimeout(() => card.classList.remove('animate-bounce'), 400);
+        }
+        playTone(200, 'sawtooth', 0.18, 0.1);
+        setTimeout(() => {
+          clearPinKey();
+        }, 650);
+      }
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       calculateForceRatio();
       updateSimulationClock();
       resolveUnitLocations(currentSimMin, currentSimMin);
       renderUnitTokens();
+      initScratchpad();
+      initPinGate();
       postLog('DISPATCH', 'The Pleasant Ridge Gazette Daily Operational Simulator initialized at 06:20 AM.');
       postLog('DISPATCH', 'Josh is solo in-home commander. Mom on 05:00 middle school cleaning shift.');
     });

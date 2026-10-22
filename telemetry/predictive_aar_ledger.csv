@@ -1,4 +1,5 @@
 Date,Forecast_MinTemp_F,Forecast_MinTemp_Time,Freeze_Alert_Active,Winter_Alert_Active,Stranger_Creek_Gauge_Ft,Easton_Bridges_Status,Pathogen_14Day_Trend,USD449_Status,Fort_Leavenworth_Status,KDOT_Corridor_Incidents,Roads_Passable,Model_Outcome,Fidelity_Score_Pct,Evaluated_At
+2026-10-22,51,12:00 PM,NO,NO,2.69,CLEAR,-86%,Green,Green,0,YES,Model Win: Clear Corridor Confirmed,100%,2026-10-22 05:00:05
 2026-10-21,51,12:00 PM,NO,NO,2.72,CLEAR,-86%,Green,Green,0,YES,Model Win: Clear Corridor Confirmed,100%,2026-10-21 15:00:05
 2026-10-20,51,12:00 PM,NO,NO,2.75,CLEAR,-86%,Green,Green,0,YES,Model Win: Clear Corridor Confirmed,100%,2026-10-20 15:00:05
 2026-10-18,40,12:00 PM,NO,NO,2.81,CLEAR,-86%,Green,Green,0,YES,Model Win: Clear Corridor Confirmed,100%,2026-10-18 07:31:32
