@@ -1254,17 +1254,6 @@ window.GAZETTE_RECON_INVENTORY = {
       "paired_stitch": "Plan evening drives on primary routes; slow speeds around Stranger Creek.",
       "source_url": "https://ksoutdoors.com/",
       "source_label": "Kansas Dept of Wildlife & Parks"
-    },
-    {
-      "id": "sig_stranger_creek_estk1",
-      "title": "Stranger Creek Flood Gauge Impact Monitor",
-      "date_window": "Active following rainstorms (>2.0 inches)",
-      "sector": "Ridge-449",
-      "category": "Nature-Phenomenon",
-      "description": "Gauge ESTK1 monitoring: at 18.0 ft 1st St floods, at 19.5 ft K-192 bridge approaches take water.",
-      "paired_stitch": "Check Gazette live gauge banner before dispatching east toward Leavenworth.",
-      "source_url": "https://water.noaa.gov/gauges/06891850",
-      "source_label": "NOAA National Water Prediction Service"
     }
   ]
 };

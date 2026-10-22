@@ -55,12 +55,24 @@
       "category": "Civic & Education",
       "role": "Anchor",
       "location": "Gibbon Ave, Fort Leavenworth",
-      "hours_note": "Mon-Sat day hours",
+      "hours_note": "Mon-Fri 09:00-17:00 (Closed Weekends & Federal Holidays)",
       "military_perk": true,
       "cost_tier": "Free",
       "family_note": "Dedicated kids' story room, STEM maker kits, quiet space, military history archive.",
       "source_url": "https://leavenworth.armymwr.com/categories/recreation-and-activities",
-      "source_label": "Combined Arms Center Library"
+      "source_label": "Combined Arms Center Library",
+      "hours": "Mon-Fri 9:00 AM - 5:00 PM",
+      "features": [
+        "Children's Reading Room",
+        "Board Game & STEM Kit Checkout",
+        "3D Printing & Maker Support",
+        "Quiet Study Carrels",
+        "Military History Archives"
+      ],
+      "weekly_events": [
+        "Story & Craft Hour (Tuesdays 10:00 AM)",
+        "After-School STEM Lab (Thursdays 3:30 PM)"
+      ]
     },
     {
       "id": "node_12th_brick",
@@ -167,12 +179,24 @@
       "category": "Civic & Education",
       "role": "Anchor",
       "location": "730 1st Commercial Pl, Lansing, KS 66043",
-      "hours_note": "Mon-Thu 0900-1900, Fri-Sat 0900-1700",
+      "hours_note": "Mon 09:00-18:00, Tue & Thu 09:00-19:00, Fri-Sat 09:00-17:00 (Closed Wed & Sun)",
       "military_perk": false,
       "cost_tier": "Free",
       "family_note": "Interactive youth STEM maker kits, 3D printing lab, quiet study spaces, curated book nook.",
       "source_url": "https://lansinglibraryks.org/",
-      "source_label": "Lansing Community Library"
+      "source_label": "Lansing Community Library",
+      "hours": "Mon 9:00 AM - 6:00 PM, Tue/Thu 9:00 AM - 7:00 PM, Fri/Sat 9:00 AM - 5:00 PM",
+      "features": [
+        "Youth STEM Maker Kits",
+        "3D Printing Lab",
+        "Rhyme Time & Seasonal Storytimes",
+        "Dolly Parton Imagination Library Hub",
+        "NEXT Regional Catalog Access"
+      ],
+      "weekly_events": [
+        "Rhyme Time Toddlers (Wednesdays 10:00 AM)",
+        "Crafternoon & Maker Lab (Fridays 3:30 PM)"
+      ]
     },
     {
       "id": "node_angel_falls_trail",
@@ -187,6 +211,59 @@
       "family_note": "Shaded limestone nature trail along 7-Mile Creek leading to natural limestone rock waterfall.",
       "source_url": "https://www.lansingks.org/parksrec/page/angel-falls-trail",
       "source_label": "City of Lansing Parks & Rec"
+    },
+    {
+      "id": "node_leavenworth_library",
+      "name": "Leavenworth Public Library",
+      "sector": "Downtown-LV",
+      "category": "Civic & Education",
+      "role": "Anchor",
+      "location": "417 Spruce St, Leavenworth, KS 66048",
+      "hours_note": "Mon-Thu 09:00-20:00, Fri-Sat 09:00-18:00, Sun 13:00-18:00",
+      "hours": "Mon-Thu 9:00 AM - 8:00 PM, Fri-Sat 9:00 AM - 6:00 PM, Sun 1:00 PM - 6:00 PM",
+      "military_perk": false,
+      "cost_tier": "Free",
+      "family_note": "Dedicated children's floor, Yoto player collection, Lucky Day fast-track collection, private study rooms.",
+      "features": [
+        "Dedicated Children's Wing",
+        "Yoto Player Library",
+        "Lucky Day Fast-Track Books",
+        "Digital Media Lab",
+        "Kanopy & Libby Hub"
+      ],
+      "weekly_events": [
+        "Toddler Storytime (Tuesdays & Thursdays 10:00 AM)",
+        "Lego Builders Club (Wednesdays 4:00 PM)",
+        "Teen Creative Studio (Saturdays 1:00 PM)"
+      ],
+      "source_url": "https://leavenworthpubliclibrary.org/",
+      "source_label": "Leavenworth Public Library"
+    },
+    {
+      "id": "node_basehor_library",
+      "name": "Basehor Community Library",
+      "sector": "South-Lansing",
+      "category": "Civic & Education",
+      "role": "Anchor",
+      "location": "1400 N 158th St, Basehor, KS 66007",
+      "hours_note": "Mon-Thu 09:00-20:00, Fri-Sat 09:00-17:00, Sun 13:00-17:00",
+      "hours": "Mon-Thu 9:00 AM - 8:00 PM, Fri-Sat 9:00 AM - 5:00 PM, Sun 1:00 PM - 5:00 PM",
+      "military_perk": false,
+      "cost_tier": "Free",
+      "family_note": "Active early literacy programs, Kitchen Chemistry youth workshops, quiet conference suites.",
+      "features": [
+        "Early Childhood Play Area",
+        "Kitchen Chemistry STEM Sessions",
+        "Seed Library & Community Garden",
+        "Conference Suites",
+        "Teen Zone"
+      ],
+      "weekly_events": [
+        "StoryTots Early Literacy (Mondays 10:00 AM)",
+        "Kitchen Chemistry (1st & 3rd Thursdays 4:00 PM)"
+      ],
+      "source_url": "https://basehorlibrary.com/",
+      "source_label": "Basehor Community Library"
     }
   ],
   "seasonal_signals": [
@@ -233,17 +310,6 @@
       "paired_stitch": "Plan evening drives on primary routes; slow speeds around Stranger Creek.",
       "source_url": "https://ksoutdoors.com/",
       "source_label": "Kansas Dept of Wildlife & Parks"
-    },
-    {
-      "id": "sig_stranger_creek_estk1",
-      "title": "Stranger Creek Flood Gauge Impact Monitor",
-      "date_window": "Active following rainstorms (>2.0 inches)",
-      "sector": "Ridge-449",
-      "category": "Nature-Phenomenon",
-      "description": "Gauge ESTK1 monitoring: at 18.0 ft 1st St floods, at 19.5 ft K-192 bridge approaches take water.",
-      "paired_stitch": "Check Gazette live gauge banner before dispatching east toward Leavenworth.",
-      "source_url": "https://water.noaa.gov/gauges/06891850",
-      "source_label": "NOAA National Water Prediction Service"
     }
   ]
 }

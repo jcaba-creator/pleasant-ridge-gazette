@@ -92,7 +92,7 @@ window.GAZETTE_GROCERY_DATA = {
   ],
   "currentBasket": {
     "weekId": "2026-W42",
-    "publishedAt": "2026-10-19T02:43:23Z",
+    "publishedAt": "2026-10-22T15:38:14Z",
     "gasPricePerGal": 2.72,
     "prices": {
       "aldi": {
@@ -104,10 +104,10 @@ window.GAZETTE_GROCERY_DATA = {
       },
       "price_chopper": {
         "ground_beef": 4.99,
-        "eggs_dozen": 1.99,
-        "whole_milk": 3.49,
-        "russet_potatoes": 1.99,
-        "sandwich_bread": 1.79
+        "eggs_dozen": 5.49,
+        "whole_milk": 4.99,
+        "russet_potatoes": 2.99,
+        "sandwich_bread": 3.99
       },
       "dillons": {
         "ground_beef": 8.99,
@@ -127,7 +127,7 @@ window.GAZETTE_GROCERY_DATA = {
         "ground_beef": 4.0,
         "eggs_dozen": 1.37,
         "whole_milk": 4.88,
-        "russet_potatoes": 1.98,
+        "russet_potatoes": 1.5,
         "sandwich_bread": 1.35
       }
     }

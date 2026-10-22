@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Pleasant Ridge Gazette · Rural OS & Corridor Radar</title>
+  <title>The Pleasant Ridge Gazette · Rural Broadsheet &amp; Corridor Radar</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,700;1,6..72,400;1,6..72,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -13,6 +13,7 @@
       --ink: #111111;
       --forest: #1b4332;
       --slate-blue: #1e3a8a;
+      --navy: #0f172a;
       --amber: #b45309;
       --green-status: #27ae60;
       --amber-status: #e67e22;
@@ -1924,7 +1925,7 @@
   <div class="wrapper">
     <!-- TOP UTILITY / TIMESTAMP -->
     <div class="top-utility-bar">
-      <span class="tagline">The Autonomous Rural OS for USD 449 & Fort Leavenworth</span>
+      <span class="tagline">Independent Broadsheet for Easton &amp; Leavenworth Corridor</span>
       <span style="color: #666; font-size: 11px; font-weight: 700;">Independent As-Of Telemetry Matrix</span>
     </div>
 
@@ -1948,24 +1949,20 @@
         <span class="tab-badge">Tab 1</span>
         <span class="tab-title">⛽ Fuel &amp; Corridor Radar</span>
       </button>
-      <button type="button" class="tab-btn" id="tabBtnLand" onclick="switchTab('land')">
-        <span class="tab-badge">Tab 2</span>
-        <span class="tab-title">🌾 Land &amp; Field Status</span>
-      </button>
       <button type="button" class="tab-btn" id="tabBtnGroceries" onclick="switchTab('groceries')">
-        <span class="tab-badge">Tab 3</span>
+        <span class="tab-badge">Tab 2</span>
         <span class="tab-title">🛒 Grocery Intelligence</span>
       </button>
       <button type="button" class="tab-btn" id="tabBtnSchool" onclick="switchTab('school')">
-        <span class="tab-badge">Tab 4</span>
+        <span class="tab-badge">Tab 3</span>
         <span class="tab-title">🏫 USD 449 Dispatch</span>
       </button>
       <button type="button" class="tab-btn" id="tabBtnOutings" onclick="switchTab('outings')">
-        <span class="tab-badge">Tab 5</span>
-        <span class="tab-title">🧭 Weekend Recon (Outings)</span>
+        <span class="tab-badge">Tab 4</span>
+        <span class="tab-title">🧭 Outings</span>
       </button>
       <a href="arcade/" class="tab-btn tab-btn-link" onclick="handleArcadeNav(event, 'arcade/', 'arcade/index.html')">
-        <span class="tab-badge">Tab 6</span>
+        <span class="tab-badge">Tab 5</span>
         <span class="tab-title">🕹️ 449 Arcade</span>
       </a>
     </nav>
@@ -2382,6 +2379,21 @@
               <span><strong>PRHS</strong> · High School (9–12)</span>
             </label>
           </div>
+
+          <!-- GRADE SELECTORS ROW -->
+          <div class="grade-filter-container" style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed #cbd5e1; display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+              <span style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11.5px; font-weight: 700; color: #0f172a; text-transform: uppercase;">
+                🎯 Grade Selectors (Refine Class &amp; Grade Events):
+              </span>
+              <div style="display: flex; gap: 6px;">
+                <button type="button" class="filter-quick-btn" style="padding: 2px 7px; font-size: 10px;" onclick="setAllGradeFilters(true)">All Grades</button>
+                <button type="button" class="filter-quick-btn" style="padding: 2px 7px; font-size: 10px;" onclick="setAllGradeFilters(false)">Clear Grades</button>
+              </div>
+            </div>
+            <div class="grade-chips-deck" id="gradeChipsDeck" style="display: flex; flex-wrap: wrap; gap: 6px;"></div>
+          </div>
+
           <div class="filter-footnote">
             <span>📌</span>
             <span><strong>Critical Guarantee:</strong> District-scoped disruptions (e.g. 10 AM Late Starts, Early Releases, Snow Days, Conferences) always remain visible regardless of checkbox states.</span>
@@ -2425,14 +2437,14 @@
         <!-- HEADER & CONTEXT STRIP -->
         <div class="recon-header">
           <div>
-            <h2 class="recon-title">449 Weekend Recon: Outings &amp; Date Ledger</h2>
+            <h2 class="recon-title">449 Corridor Outings &amp; Community Ledger</h2>
             <div class="recon-sub">
-              True Cost, Drive Radius, and Friction Audits from Pleasant Ridge Elementary (PRES).
+              True Cost, Drive Radius, Library Programs, and Tactical Audits from Pleasant Ridge Elementary (PRES).
             </div>
           </div>
           <div class="recon-badges-deck">
             <div class="recon-badge"><strong>Origin Benchmark:</strong> PRES (22041 219th St, Easton, KS)</div>
-            <div class="recon-badge" id="reconHorizonBadge"><strong>Radar Horizon:</strong> 14 Days Active (OCT 21 – NOV 3)</div>
+            <div class="recon-badge" id="reconHorizonBadge"><strong>Radar Horizon:</strong> 14 Days Active (Rolling)</div>
             <div class="recon-badge"><strong>Format:</strong> 5-Point "No-Surprises" Audit</div>
             <div class="recon-badge"><strong>Clipboard:</strong> Tap Address to Instant Copy</div>
           </div>
@@ -2444,10 +2456,10 @@
           <div class="signals-top-row">
             <div class="signals-heading">
               <span>🚨 Corridor Signals &amp; Tactical Radar</span>
-              <span class="recon-badge" style="background: #f4ecdf; color: var(--ink); border: 1px solid #d4c8b8; font-size: 11px;">Active Signals: <strong id="signalsCountBadge" style="color: var(--forest);">5</strong></span>
+              <span class="recon-badge" style="background: #f4ecdf; color: var(--ink); border: 1px solid #d4c8b8; font-size: 11px;">Active Signals: <strong id="signalsCountBadge" style="color: var(--forest);">4</strong></span>
             </div>
             <div class="signals-tagline">
-              Active wildlife alerts, streamflow flood gauges, and marquee seasonal traditions across the corridor.
+              Active wildlife alerts, seasonal phenomena, and marquee community traditions across the corridor.
             </div>
           </div>
           <div class="signals-grid" id="seasonalSignalsGrid">
@@ -2458,14 +2470,14 @@
         <!-- HORIZON TIMELINE RADAR (TOP STRIP) -->
         <div class="horizon-timeline-card">
           <div class="horizon-top-row">
-            <div class="horizon-heading" id="horizonTimelineHeading">📅 14-Day Horizon Radar (OCT 21 – NOV 3):</div>
+            <div class="horizon-heading" id="horizonTimelineHeading">📅 14-Day Horizon Radar (Rolling Window):</div>
             <div class="horizon-controls">
               <span class="horizon-status-tag" id="horizonActiveFilterLabel">Showing: <strong>All Dates</strong></span>
               <button type="button" class="show-all-dates-btn active" id="horizonResetBtn" onclick="selectReconDate('all')">Show All Dates</button>
             </div>
           </div>
           <div class="timeline-days-scroll" id="horizonTimelineScroll">
-            <!-- Dynamically generated day pills: FRI 10/23 (2) | SAT 10/24 (4) | SUN 10/25 (3) -->
+            <!-- Dynamically generated day pills -->
           </div>
         </div>
 
@@ -2494,6 +2506,123 @@
           <!-- Dynamically populated 5-point operational cards -->
         </div>
 
+        <!-- 2.5 CORRIDOR HUNTING & PUBLIC LAND DOSSIER (KANSAS DMU 10) -->
+        <div class="hunting-dossier-wrapper" id="huntingDossierSection" style="margin: 28px 0; background: #ffffff; border: 2px solid #111111; box-shadow: 4px 4px 0px #111111; padding: 22px 24px;">
+          <div style="border-bottom: 2px solid #111111; padding-bottom: 12px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <h3 style="font-family: 'Oswald', sans-serif; font-size: 22px; text-transform: uppercase; margin: 0; color: #111111; letter-spacing: 0.5px;">
+                🦌 Kansas DMU 10 Hunting &amp; Public Land Dossier
+              </h3>
+              <div style="font-family: 'Georgia', serif; font-style: italic; font-size: 13.5px; color: #475569; margin-top: 4px;">
+                Seasons by species &amp; weapon, beginner checklist, and public land access within 35 minutes of PRES.
+              </div>
+            </div>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+              <span style="background: #f0fdf4; border: 1px solid #16a34a; color: #166534; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 2px;">KDWP Unit 10</span>
+              <span style="background: #eff6ff; border: 1px solid #2563eb; color: #1e40af; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 2px;">2026–2027 Framework</span>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 18px;">
+            <!-- Column 1: Active & Upcoming Seasons -->
+            <div style="background: #fdfaf5; border: 1px solid #cbd5e1; padding: 14px 16px;">
+              <div style="font-family: 'Oswald', sans-serif; font-size: 15px; text-transform: uppercase; color: #1b4332; border-bottom: 1.5px solid #1b4332; padding-bottom: 6px; margin-bottom: 10px; display: flex; justify-content: space-between;">
+                <span>🎯 Seasons by Species &amp; Weapon</span>
+                <span style="font-size: 11px; color: #64748b;">Unit 10 / Region 2</span>
+              </div>
+              <ul style="list-style: none; padding: 0; margin: 0; font-size: 12.5px; line-height: 1.6; color: #1e293b;">
+                <li style="margin-bottom: 8px;">
+                  <strong style="color: #0f172a;">Whitetail Deer (DMU 10):</strong><br>
+                  • <em>Youth &amp; Disabled:</em> Sept 5 – Sept 13<br>
+                  • <em>Muzzleloader:</em> Sept 14 – Sept 27<br>
+                  • <em>Archery:</em> Sept 14 – Dec 31<br>
+                  • <em>Regular Firearm:</em> Dec 2 – Dec 13<br>
+                  • <em>Extended Whitetail Antlerless:</em> Jan 1 – Jan 10
+                </li>
+                <li style="margin-bottom: 8px;">
+                  <strong style="color: #0f172a;">Wild Turkey:</strong><br>
+                  • <em>Fall Turkey:</em> Oct 1 – Nov 10 &amp; Dec 14 – Jan 31<br>
+                  • <em>Spring Youth/Disabled:</em> Apr 1 – Apr 14<br>
+                  • <em>Spring Regular:</em> Apr 15 – May 31
+                </li>
+                <li style="margin-bottom: 8px;">
+                  <strong style="color: #0f172a;">Waterfowl &amp; Migratory:</strong><br>
+                  • <em>Dove:</em> Sept 1 – Nov 29<br>
+                  • <em>Ducks (Low Plains Late Zone):</em> Oct 31 – Jan 3 &amp; Jan 16 – Jan 24<br>
+                  • <em>Geese:</em> Oct 31 – Nov 8 &amp; Nov 11 – Feb 14
+                </li>
+                <li>
+                  <strong style="color: #0f172a;">Upland Birds &amp; Small Game:</strong><br>
+                  • <em>Pheasant &amp; Quail:</em> Nov 14 – Jan 31<br>
+                  • <em>Squirrel:</em> June 1 – Feb 28<br>
+                  • <em>Rabbit:</em> Year-Round
+                </li>
+              </ul>
+            </div>
+
+            <!-- Column 2: Getting Started Checklist -->
+            <div style="background: #fdfaf5; border: 1px solid #cbd5e1; padding: 14px 16px;">
+              <div style="font-family: 'Oswald', sans-serif; font-size: 15px; text-transform: uppercase; color: #1e3a8a; border-bottom: 1.5px solid #1e3a8a; padding-bottom: 6px; margin-bottom: 10px; display: flex; justify-content: space-between;">
+                <span>📋 Getting Started Checklist</span>
+                <span style="font-size: 11px; color: #64748b;">Prerequisites</span>
+              </div>
+              <div style="font-size: 12.5px; line-height: 1.55; color: #1e293b;">
+                <div style="margin-bottom: 10px;">
+                  <strong style="color: #0f172a;">1. Hunter Education Certificate:</strong><br>
+                  Mandatory for all hunters born on or after July 1, 1957. Anyone 16+ may purchase a one-time Apprentice License without hunter ed (valid 1 year while accompanied).
+                </div>
+                <div style="margin-bottom: 10px;">
+                  <strong style="color: #0f172a;">2. Licenses &amp; Tags (gooutdoorskansas.com):</strong><br>
+                  • <em>KS Resident Annual Hunt License:</em> $27.50<br>
+                  • <em>Resident Deer Permit (Any-Season Whitetail):</em> $42.50<br>
+                  • <em>Waterfowl Requirements:</em> State Waterfowl Stamp ($10), Federal Duck Stamp ($25), plus free annual HIP certification.
+                </div>
+                <div style="margin-bottom: 10px;">
+                  <strong style="color: #0f172a;">3. Daily Electronic Check-In (iSportsman):</strong><br>
+                  Mandatory daily check-in/out via smartphone or automated call for all KDWP Wildlife Areas and Fort Leavenworth prior to entering fields.
+                </div>
+                <div>
+                  <strong style="color: #0f172a;">4. Hunter Orange Requirement:</strong><br>
+                  Mandatory during firearm deer seasons: minimum 100 sq inches visible on front and back, plus orange hat.
+                </div>
+              </div>
+            </div>
+
+            <!-- Column 3: Public Hunting Locations -->
+            <div style="background: #fdfaf5; border: 1px solid #cbd5e1; padding: 14px 16px;">
+              <div style="font-family: 'Oswald', sans-serif; font-size: 15px; text-transform: uppercase; color: #b45309; border-bottom: 1.5px solid #b45309; padding-bottom: 6px; margin-bottom: 10px; display: flex; justify-content: space-between;">
+                <span>📍 Public Lands &amp; Drive Times</span>
+                <span style="font-size: 11px; color: #64748b;">From PRES Origin</span>
+              </div>
+              <div style="font-size: 12.5px; line-height: 1.55; color: #1e293b;">
+                <div style="margin-bottom: 10px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 6px;">
+                  <strong style="color: #0f172a;">1. Leavenworth State Fishing Lake &amp; Wildlife Area</strong><br>
+                  <span style="font-size: 11px; color: #166534; font-weight: 700;">⏱️ 22 min (15.4 mi SW via K-192 &amp; Co Rd 25)</span><br>
+                  • <em>Size:</em> 341 acres timber/grass + 160-acre lake.<br>
+                  • <em>Game:</em> Deer, Turkey, Squirrel, Rabbit, Waterfowl.<br>
+                  • <em>Weapons:</em> Shotgun, Archery, Rimfire/Muzzleloader only (Centerfire rifles prohibited). Non-toxic shot required.
+                </div>
+                <div style="margin-bottom: 10px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 6px;">
+                  <strong style="color: #0f172a;">2. Fort Leavenworth Installation Managed Units</strong><br>
+                  <span style="font-size: 11px; color: #1e40af; font-weight: 700;">⏱️ 23 min (14.0 mi E via K-92)</span><br>
+                  • <em>Units:</em> Designated bluff and river-bottom timber.<br>
+                  • <em>Rules:</em> Post firearm registration with Provost Marshal, Fort Leavenworth iSportsman account, safety harness mandatory for tree stands. Units open around military training schedules.
+                </div>
+                <div style="margin-bottom: 10px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 6px;">
+                  <strong style="color: #0f172a;">3. Perry Wildlife Area (Valley Falls / Ozawkie)</strong><br>
+                  <span style="font-size: 11px; color: #b45309; font-weight: 700;">⏱️ 35 min (26.0 mi W via K-92 / K-4)</span><br>
+                  • <em>Size:</em> 11,000+ acres public land around Perry Reservoir.<br>
+                  • <em>Game:</em> Premier waterfowl marshes, deer, turkey, quail.
+                </div>
+                <div>
+                  <strong style="color: #0f172a;">4. Kansas Walk-In Hunting Access (WIHA / iWIHA)</strong><br>
+                  <span style="font-size: 11px; color: #475569; font-weight: 700;">⏱️ 10–30 min radius (Leavenworth, Jefferson, Atchison Co)</span><br>
+                  • Leased private agricultural &amp; timber tracts open to public foot traffic. Tracts marked with green/orange KDWP signs.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <!-- 3. CORRIDOR NODES LEDGER: ANCHORS & STITCHES -->
         <div class="nodes-section-wrapper" id="corridorNodesWrapper">
@@ -2562,7 +2691,7 @@
 
     <footer class="gazette-footer">
       <div>
-        <strong>The Pleasant Ridge Gazette</strong> · Easton, Kansas · Autonomous Rural OS
+        <strong>The Pleasant Ridge Gazette</strong> · Easton, Kansas · Independent Corridor Broadsheet
       </div>
       <div>
         <a href="arcade/" class="arcade-link-simple" onclick="handleArcadeNav(event, 'arcade/', 'arcade/index.html')">449 Arcade</a>
@@ -3326,14 +3455,9 @@
 
       const outings = activeOutingsData.outings || [];
 
-      // Determine baseline date: Oct 21, 2026 or from meta.startDate
+      // Determine baseline date: dynamic today anchor for rolling 14-day horizon
       let baseDate = new Date();
-      if (activeOutingsData.meta && activeOutingsData.meta.startDate) {
-        const parsed = new Date(activeOutingsData.meta.startDate + 'T00:00:00');
-        if (!isNaN(parsed.getTime())) {
-          baseDate = parsed;
-        }
-      }
+      baseDate.setHours(0, 0, 0, 0);
 
       // Today anchor for reference
       const today = new Date();
@@ -3820,6 +3944,21 @@
               </div>
             ` : ''}
 
+            ${node.features && Array.isArray(node.features) ? `
+              <div class="node-features" style="display: flex; flex-wrap: wrap; gap: 4px; margin: 8px 0;">
+                ${node.features.map(f => `<span class="feature-pill" style="background: #f1f5f9; border: 1px solid #cbd5e1; font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 2px; color: #1e293b;">${escapeHtml(f)}</span>`).join('')}
+              </div>
+            ` : ''}
+
+            ${node.weekly_events && Array.isArray(node.weekly_events) ? `
+              <div class="node-weekly-events" style="background: #f8fafc; border-left: 3px solid #2563eb; padding: 6px 10px; margin: 8px 0; font-size: 11px;">
+                <strong style="color: #1e3a8a;">🗓️ Weekly Specialty Events:</strong>
+                <ul style="margin: 4px 0 0 16px; padding: 0; color: #334155;">
+                  ${node.weekly_events.map(ev => `<li>${escapeHtml(ev)}</li>`).join('')}
+                </ul>
+              </div>
+            ` : ''}
+
             <div class="node-card-footer">
               <span class="node-sector-tag">${escapeHtml(sectorName)}</span>
               <a href="${item.source_url}" target="_blank" class="source-link">🔗 Source: ${item.source_label}</a>
@@ -3871,7 +4010,6 @@
 
     function switchTab(tabId) {
       const fuelBtn = document.getElementById('tabBtnFuel');
-      const landBtn = document.getElementById('tabBtnLand');
       const grocBtn = document.getElementById('tabBtnGroceries');
       const schoolBtn = document.getElementById('tabBtnSchool');
       const outingsBtn = document.getElementById('tabBtnOutings');
@@ -3883,7 +4021,6 @@
 
       // Deactivate all buttons
       if (fuelBtn) fuelBtn.classList.remove('active');
-      if (landBtn) landBtn.classList.remove('active');
       if (grocBtn) grocBtn.classList.remove('active');
       if (schoolBtn) schoolBtn.classList.remove('active');
       if (outingsBtn) outingsBtn.classList.remove('active');
@@ -3912,12 +4049,6 @@
         renderReconCards();
         renderSeasonalSignals();
         renderCorridorNodes();
-      } else if (tabId === 'land') {
-        if (landBtn) landBtn.classList.add('active');
-        if (fuelPane) fuelPane.style.display = 'block';
-        window.location.hash = 'land';
-        const burnCard = document.getElementById('burnIndexCard') || document.getElementById('statusDeckGrid');
-        if (burnCard) burnCard.scrollIntoView({ behavior: 'smooth' });
       } else {
         if (fuelBtn) fuelBtn.classList.add('active');
         if (fuelPane) fuelPane.style.display = 'block';
@@ -3925,24 +4056,28 @@
       }
     }
 
-    function getLowestGasPrice() {
+    function getLowestGasStation() {
       // 1. Check window.GAZETTE_GAS_FEED stations
-      if (window.GAZETTE_GAS_FEED && window.GAZETTE_GAS_FEED.stations) {
-        let lowest = 999;
+      if (window.GAZETTE_GAS_FEED && window.GAZETTE_GAS_FEED.stations && window.GAZETTE_GAS_FEED.stations.length > 0) {
+        let lowest = null;
         window.GAZETTE_GAS_FEED.stations.forEach(s => {
-          if (s.price && s.price < lowest) lowest = s.price;
+          if (s.price && (!lowest || s.price < lowest.price)) lowest = s;
         });
-        if (lowest < 900) return lowest;
+        if (lowest) return { name: lowest.name, price: lowest.price, loc: lowest.loc || '' };
       }
       // 2. Check CORRIDOR_STATIONS in scope
-      if (typeof CORRIDOR_STATIONS !== 'undefined' && Array.isArray(CORRIDOR_STATIONS)) {
-        let lowest = 999;
+      if (typeof CORRIDOR_STATIONS !== 'undefined' && Array.isArray(CORRIDOR_STATIONS) && CORRIDOR_STATIONS.length > 0) {
+        let lowest = null;
         CORRIDOR_STATIONS.forEach(s => {
-          if (s.price && s.price < lowest) lowest = s.price;
+          if (s.price && (!lowest || s.price < lowest.price)) lowest = s;
         });
-        if (lowest < 900) return lowest;
+        if (lowest) return { name: lowest.name, price: lowest.price, loc: lowest.loc || '' };
       }
-      return 2.72; // Default fallback (Fort Leavenworth PX Fuel)
+      return { name: 'Sunoco (501 Limit St)', price: 3.83, loc: 'Leavenworth' };
+    }
+
+    function getLowestGasPrice() {
+      return getLowestGasStation().price;
     }
 
     let activeGroceryData = null;
@@ -3960,11 +4095,15 @@
           console.warn('Groceries fetch note:', e);
         }
       }
-      // Populate fuel price input default
+      // Populate fuel price input default and sync hint
       const gasInput = document.getElementById('inputGasPrice');
-      const lowestGas = getLowestGasPrice();
+      const gasSyncHint = document.getElementById('gasSyncHint');
+      const station = getLowestGasStation();
       if (gasInput && (!gasInput.value || gasInput.value === '2.72')) {
-        gasInput.value = lowestGas.toFixed(2);
+        gasInput.value = station.price.toFixed(2);
+      }
+      if (gasSyncHint) {
+        gasSyncHint.textContent = `Synced with lowest corridor station (${station.name}: $${station.price.toFixed(2)}/gal)`;
       }
       renderGroceryProcurementEngine();
     }
@@ -3980,7 +4119,11 @@
       prhs: true  // Pleasant Ridge High (9-12)
     };
 
+    const STORAGE_KEY_GRADES = 'gazette_usd449_grade_filter';
+    const ALL_GRADES = ['PK', 'K', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+
     let currentSchoolFilter = getSavedSchoolFilter();
+    let currentGradeFilter = getSavedGradeFilter();
     let activeSchoolData = window.GAZETTE_USD449_DATA || null;
 
     function getSavedSchoolFilter() {
@@ -4008,6 +4151,45 @@
       }
     }
 
+    function getSavedGradeFilter() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_GRADES);
+        if (raw) return JSON.parse(raw);
+      } catch (e) {}
+      const defaults = {};
+      ALL_GRADES.forEach(g => { defaults[g] = true; });
+      return defaults;
+    }
+
+    function saveGradeFilter(state) {
+      try {
+        localStorage.setItem(STORAGE_KEY_GRADES, JSON.stringify(state));
+      } catch (e) {}
+    }
+
+    function toggleGradeFilter(grade) {
+      currentGradeFilter[grade] = !currentGradeFilter[grade];
+      saveGradeFilter(currentGradeFilter);
+      syncGradeFilterUI();
+      renderSchoolDispatch();
+    }
+
+    function setAllGradeFilters(enableAll) {
+      ALL_GRADES.forEach(g => { currentGradeFilter[g] = !!enableAll; });
+      saveGradeFilter(currentGradeFilter);
+      syncGradeFilterUI();
+      renderSchoolDispatch();
+    }
+
+    function syncGradeFilterUI() {
+      const deck = document.getElementById('gradeChipsDeck');
+      if (!deck) return;
+      deck.innerHTML = ALL_GRADES.map(g => {
+        const active = !!currentGradeFilter[g];
+        return `<button type="button" class="filter-quick-btn" style="padding: 3px 8px; font-size: 11px; font-weight: 700; ${active ? 'background: #0f172a; color: #ffffff; border-color: #0f172a;' : 'background: #f8fafc; color: #475569; border-color: #cbd5e1;'}" onclick="toggleGradeFilter('${g}')">${g}</button>`;
+      }).join('');
+    }
+
     async function initSchoolData() {
       if (window.GAZETTE_USD449_DATA) {
         activeSchoolData = window.GAZETTE_USD449_DATA;
@@ -4022,6 +4204,7 @@
         }
       }
       syncFilterInputsWithState();
+      syncGradeFilterUI();
       renderSchoolDispatch();
     }
 
@@ -4053,15 +4236,23 @@
       renderSchoolDispatch();
     }
 
-    function isSchoolItemVisible(scopeArray) {
+    function isSchoolItemVisible(scopeArray, gradesArray) {
       if (!scopeArray || scopeArray.length === 0) return true;
       if (scopeArray.includes('district') || scopeArray.includes('all')) return true;
+      let buildingMatch = false;
       for (const b of ['pres', 'prms', 'prhs']) {
         if (scopeArray.includes(b) && currentSchoolFilter[b]) {
-          return true;
+          buildingMatch = true;
+          break;
         }
       }
-      return false;
+      if (!buildingMatch) return false;
+
+      // If item has specific grade tags, check if any of those grades are active
+      if (gradesArray && Array.isArray(gradesArray) && gradesArray.length > 0) {
+        return gradesArray.some(g => !!currentGradeFilter[g]);
+      }
+      return true;
     }
 
     function renderScopeBadges(scopeArray) {
@@ -4093,7 +4284,7 @@
       // 1. Render Tier 1: Schedule & Disruptions
       const t1Grid = document.getElementById('tier1Grid');
       if (t1Grid) {
-        const items = (activeSchoolData.tier1_schedule_disruptions || []).filter(it => isSchoolItemVisible(it.scope));
+        const items = (activeSchoolData.tier1_schedule_disruptions || []).filter(it => isSchoolItemVisible(it.scope, it.grades));
         if (items.length === 0) {
           t1Grid.innerHTML = '<div class="empty-tier-notice">No schedule disruptions or calendar deviations active for the selected building filters.</div>';
         } else {
@@ -4121,7 +4312,7 @@
       // 2. Render Tier 2: Gear, Deadlines & Parent Action
       const t2Grid = document.getElementById('tier2Grid');
       if (t2Grid) {
-        const items = (activeSchoolData.tier2_gear_deadlines_action || []).filter(it => isSchoolItemVisible(it.scope));
+        const items = (activeSchoolData.tier2_gear_deadlines_action || []).filter(it => isSchoolItemVisible(it.scope, it.grades));
         if (items.length === 0) {
           t2Grid.innerHTML = '<div class="empty-tier-notice">All forms, fees, and homeroom action items clear for the selected buildings.</div>';
         } else {
@@ -4149,7 +4340,7 @@
       // 3. Render Tier 3: Marquee Home Gatherings
       const t3Grid = document.getElementById('tier3Grid');
       if (t3Grid) {
-        const items = (activeSchoolData.tier3_marquee_gatherings || []).filter(it => isSchoolItemVisible(it.scope));
+        const items = (activeSchoolData.tier3_marquee_gatherings || []).filter(it => isSchoolItemVisible(it.scope, it.grades));
         if (items.length === 0) {
           t3Grid.innerHTML = '<div class="empty-tier-notice">No home gatherings or athletic showcases scheduled for the selected buildings.</div>';
         } else {
@@ -4244,6 +4435,12 @@
       if (gasRateSubEl) gasRateSubEl.textContent = `Based on ${mpg.toFixed(0)} MPG @ $${gasPrice.toFixed(2)}/gal`;
       if (procGasRateBadge) procGasRateBadge.innerHTML = `<strong>Corridor Fuel:</strong> $${gasPrice.toFixed(2)}/gal ($${costPerMile.toFixed(3)}/mi)`;
       if (itemCountEl) itemCountEl.textContent = `${items.length} Dinner Staples`;
+
+      const station = getLowestGasStation();
+      const gasSyncHint = document.getElementById('gasSyncHint');
+      if (gasSyncHint) {
+        gasSyncHint.textContent = `Synced with lowest corridor station (${station.name}: $${gasPrice.toFixed(2)}/gal)`;
+      }
 
       // 1. Calculate Procurement per store
       const evaluatedStores = [];
