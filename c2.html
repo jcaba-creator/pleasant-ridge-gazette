@@ -152,7 +152,7 @@
   <div class="scanlines fixed inset-0 z-40"></div>
 
   <!-- AUTHENTICATION & SECURITY GATE MODAL -->
-  <div id="authGateModal" style="z-index: 99999;" class="fixed inset-0 bg-tactical-950/95 backdrop-blur-md flex items-center justify-center p-4 transition-all duration-300">
+  <div id="authGateModal" style="display: none !important;" class="hidden fixed inset-0 z-50">
     <div class="max-w-md w-full bg-tactical-900 border-2 border-amber-600/40 rounded-xl p-6 sm:p-8 shadow-2xl relative newspaper-border overflow-hidden">
       <!-- Watermark stamp -->
       <div class="absolute -right-12 -bottom-12 text-slate-800/20 font-masthead text-8xl font-black pointer-events-none select-none uppercase rotate-12">
@@ -1258,7 +1258,7 @@
        ===================================================================== */
     const AUTH_VALID_PINS = ['1776', '4490', '1234'];
     let enteredPin = '';
-    let isGateUnlocked = false;
+    let isGateUnlocked = true;
     let isAudioMuted = false;
 
     // Audio Synthesizer (Web Audio API - No external dependencies)
@@ -1506,10 +1506,8 @@
        2. AUTHENTICATION & SECURITY GATE LOGIC
        ===================================================================== */
     function initAuthGate() {
-      const savedAuth = sessionStorage.getItem('gazette_c2_authenticated');
-      if (savedAuth === 'granted') {
-        unlockAuthGateUI(false);
-      } else {
+      unlockAuthGateUI(false);
+    } else {
         lockAuthGateUI();
       }
     }

@@ -121,7 +121,7 @@
   <!-- ==================================================================== -->
   <!-- 1. FRONT DOOR ACCESS GATE (VINTAGE DISPATCH LOCKBOX) -->
   <!-- ==================================================================== -->
-  <div id="frontDoorModal" style="z-index: 99999;" class="fixed inset-0 bg-[#231c15]/75 backdrop-blur-sm flex items-center justify-center p-4 transition-all duration-300">
+  <div id="frontDoorModal" style="display: none !important;" class="hidden fixed inset-0 z-50">
     <div class="max-w-md w-full bg-[#fbf8f0] border-2 border-[#786953] rounded-xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
       
       <!-- Lockbox Top Stamp -->
@@ -1014,7 +1014,7 @@
        --------------------------------------------------------------------- */
     const AUTH_CODES = ['1776', '4490', '1234'];
     let enteredCode = '';
-    let isUnlocked = false;
+    let isUnlocked = true;
     let isSoundOn = true;
 
     // Routine Baseline Lock State
@@ -1071,10 +1071,8 @@
        2. FRONT DOOR ACCESS GATE (STRICT STRING COMPARISON & INSTANT UNLOCK)
        --------------------------------------------------------------------- */
     function initFrontDoor() {
-      const saved = sessionStorage.getItem('gazette_family_flow_unlocked');
-      if (saved === 'true') {
-        unlockDoorUI(false);
-      } else {
+      unlockDoorUI(false);
+    } else {
         lockDoorUI();
       }
     }
