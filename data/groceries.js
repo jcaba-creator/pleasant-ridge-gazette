@@ -47,7 +47,8 @@ window.GAZETTE_GROCERY_DATA = {
       "taxRate": 0.03,
       "surchargeRate": 0.0,
       "isManual": false,
-      "ingestionMode": "Playwright Web Scraper"
+      "ingestionMode": "Playwright Web Scraper",
+      "lastUpdated": "2026-10-22T17:13:56Z"
     },
     {
       "id": "price_chopper",
@@ -57,7 +58,8 @@ window.GAZETTE_GROCERY_DATA = {
       "taxRate": 0.03,
       "surchargeRate": 0.0,
       "isManual": false,
-      "ingestionMode": "Store #61 Native Circular API & Flipp Feed"
+      "ingestionMode": "Store #61 Native Circular API & Flipp Feed",
+      "lastUpdated": "2026-10-22T17:13:54Z"
     },
     {
       "id": "dillons",
@@ -67,7 +69,8 @@ window.GAZETTE_GROCERY_DATA = {
       "taxRate": 0.03,
       "surchargeRate": 0.0,
       "isManual": false,
-      "ingestionMode": "Kroger Calypso SSR Engine (Real-Time Shelf JSON)"
+      "ingestionMode": "Kroger Calypso SSR Engine (Real-Time Shelf JSON)",
+      "lastUpdated": "2026-10-22T17:13:51Z"
     },
     {
       "id": "walmart",
@@ -77,7 +80,8 @@ window.GAZETTE_GROCERY_DATA = {
       "taxRate": 0.03,
       "surchargeRate": 0.0,
       "isManual": false,
-      "ingestionMode": "Playwright / Headless Scraper"
+      "ingestionMode": "Playwright / Headless Scraper",
+      "lastUpdated": "2026-10-22T17:13:58Z"
     },
     {
       "id": "commissary",
@@ -87,12 +91,13 @@ window.GAZETTE_GROCERY_DATA = {
       "taxRate": 0.0,
       "surchargeRate": 0.05,
       "isManual": false,
-      "ingestionMode": "DeCA Click2Go API (NCR Freshop native JSON)"
+      "ingestionMode": "DeCA Click2Go API (NCR Freshop native JSON)",
+      "lastUpdated": "2026-10-22T17:13:45Z"
     }
   ],
   "currentBasket": {
     "weekId": "2026-W42",
-    "publishedAt": "2026-10-22T15:38:14Z",
+    "publishedAt": "2026-10-22T17:13:58Z",
     "gasPricePerGal": 2.72,
     "prices": {
       "aldi": {
@@ -104,13 +109,13 @@ window.GAZETTE_GROCERY_DATA = {
       },
       "price_chopper": {
         "ground_beef": 4.99,
-        "eggs_dozen": 5.49,
-        "whole_milk": 4.99,
+        "eggs_dozen": 3.99,
+        "whole_milk": 3.49,
         "russet_potatoes": 2.99,
-        "sandwich_bread": 3.99
+        "sandwich_bread": 1.99
       },
       "dillons": {
-        "ground_beef": 8.99,
+        "ground_beef": 4.99,
         "eggs_dozen": 1.99,
         "whole_milk": 3.09,
         "russet_potatoes": 2.99,
@@ -130,6 +135,13 @@ window.GAZETTE_GROCERY_DATA = {
         "russet_potatoes": 1.5,
         "sandwich_bread": 1.35
       }
+    },
+    "storeTimestamps": {
+      "commissary": "2026-10-22T17:13:45Z",
+      "dillons": "2026-10-22T17:13:51Z",
+      "price_chopper": "2026-10-22T17:13:54Z",
+      "aldi": "2026-10-22T17:13:56Z",
+      "walmart": "2026-10-22T17:13:58Z"
     }
   }
 };

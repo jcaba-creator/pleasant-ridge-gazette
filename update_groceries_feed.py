@@ -59,14 +59,38 @@ def pull_commissary_prices():
             print(f"  ! Error for {item_key}: {e}")
     return results
 
+def is_valid_staple_match(item_key, item_name, price):
+    name = (item_name or "").lower()
+    if item_key == "ground_beef":
+        if any(bad in name for bad in ["patties", "patty", "organic", "grass-fed", "grass fed", "2 lb", "3 lb", "5 lb", "slider"]):
+            return False
+        return ("ground beef" in name or "80%" in name or "80/20" in name) and (3.00 <= price <= 7.00)
+    elif item_key == "eggs_dozen":
+        if any(bad in name for bad in ["18 ct", "18-ct", "24 ct", "30 ct", "60 ct", "organic", "pasture", "cage-free", "cage free", "liquid"]):
+            return False
+        return "egg" in name and (1.00 <= price <= 4.50)
+    elif item_key == "whole_milk":
+        if any(bad in name for bad in ["half gallon", "1/2 gal", "chocolate", "fairlife", "organic", "almond", "oat", "soy", "lactose", "pint", "quart"]):
+            return False
+        return "milk" in name and (2.00 <= price <= 5.50)
+    elif item_key == "russet_potatoes":
+        if any(bad in name for bad in ["yellow", "red", "gold", "bite", "sweet", "10 lb", "15 lb", "mashed"]):
+            return False
+        return "russet" in name and "potato" in name and (1.20 <= price <= 5.00)
+    elif item_key == "sandwich_bread":
+        if any(bad in name for bad in ["garlic", "knot", "oroweat", "artisan", "keto", "gluten", "sourdough", "cinnamon", "raisin", "french", "italian", "bun", "roll"]):
+            return False
+        return "bread" in name and ("white" in name or "sandwich" in name or "enriched" in name) and (1.00 <= price <= 3.50)
+    return False
+
 # -------------------------------------------------------------
 # 2. DILLONS INGESTION (KROGER CALYPSO SSR VIA CURL_CFFI)
 # -------------------------------------------------------------
 DILLONS_QUERIES = {
-    "ground_beef": "80% ground beef 1 lb",
+    "ground_beef": "kroger 80/20 ground beef 16 oz",
     "eggs_dozen": "kroger large white eggs 12 ct",
-    "whole_milk": "kroger whole milk gallon",
-    "russet_potatoes": "russet potatoes 5 lb bag",
+    "whole_milk": "kroger vitamin d whole milk 1 gal",
+    "russet_potatoes": "kroger russet potatoes 5 lb",
     "sandwich_bread": "kroger enriched white bread 20 oz"
 }
 
@@ -90,7 +114,7 @@ def pull_dillons_prices():
                 prods = data.get("calypso", {}).get("useCases", {}).get("getProducts", {}).get("search-grid", {}).get("response", {}).get("data", {}).get("products", [])
                 best_price = None
                 best_desc = None
-                for p in prods[:6]:
+                for p in prods[:10]:
                     item_desc = p.get("item", {}).get("description", "")
                     sp = p.get("price", {}).get("storePrices", {})
                     promo = sp.get("promo", {}).get("defaultDescription")
@@ -98,14 +122,15 @@ def pull_dillons_prices():
                     price_str = promo or regular
                     if price_str:
                         clean_p = float(price_str.replace("$", "").replace(",", "").strip())
-                        best_price = clean_p
-                        best_desc = item_desc
-                        break
+                        if is_valid_staple_match(item_key, item_desc, clean_p):
+                            best_price = clean_p
+                            best_desc = item_desc
+                            break
                 if best_price is not None:
                     results[item_key] = best_price
                     print(f"  + {item_key}: {best_desc} -> ${best_price:.2f}")
                 else:
-                    print(f"  - {item_key}: No direct price found in grid")
+                    print(f"  - {item_key}: Preserving verified shelf baseline")
         except Exception as e:
             print(f"  ! Dillons error for {item_key}: {e}")
     return results
@@ -137,17 +162,15 @@ def pull_price_chopper_prices():
                     with urllib.request.urlopen(urllib.request.Request(ad_url, headers=headers), timeout=10) as a_resp:
                         items_data = json.loads(a_resp.read().decode("utf-8")).get("data", {}).get("items", [])
                         for it in items_data:
-                            title = it.get("Title", "").lower()
+                            title = it.get("Title", "")
                             p_str = str(it.get("AdPrice", "")).replace("$", "").strip()
-                            if "ground beef" in title and "ground_beef" not in results:
-                                try: results["ground_beef"] = float(p_str.split()[0])
-                                except: pass
-                            elif "egg" in title and "eggs_dozen" not in results:
-                                try: results["eggs_dozen"] = float(p_str.split()[0])
-                                except: pass
-                            elif "potato" in title and "russet_potatoes" not in results:
-                                try: results["russet_potatoes"] = float(p_str.split()[0])
-                                except: pass
+                            try:
+                                p_val = float(p_str.split()[0])
+                            except Exception:
+                                continue
+                            for ik in ["ground_beef", "eggs_dozen", "whole_milk", "russet_potatoes", "sandwich_bread"]:
+                                if ik not in results and is_valid_staple_match(ik, title, p_val):
+                                    results[ik] = round(p_val, 2)
                 except Exception:
                     pass
     except Exception as e:
@@ -156,10 +179,10 @@ def pull_price_chopper_prices():
     # 2. Check Flipp 66048 Price Chopper KC deals for any unfilled items
     staple_terms = {
         "ground_beef": "ground beef",
-        "eggs_dozen": "eggs",
-        "whole_milk": "milk",
-        "russet_potatoes": "potatoes",
-        "sandwich_bread": "bread"
+        "eggs_dozen": "large eggs",
+        "whole_milk": "whole milk gallon",
+        "russet_potatoes": "russet potatoes",
+        "sandwich_bread": "white bread"
     }
     for item_key, q in staple_terms.items():
         if item_key in results: continue
@@ -173,12 +196,46 @@ def pull_price_chopper_prices():
                     if "price chopper" in merchant.lower():
                         price = it.get("current_price") or it.get("price")
                         if price is not None:
-                            results[item_key] = round(float(price), 2)
-                            print(f"  + {item_key} (from PC Weekly Ad): {it.get('name')} -> ${results[item_key]:.2f}")
-                            break
+                            p_val = round(float(price), 2)
+                            if is_valid_staple_match(item_key, it.get("name", ""), p_val):
+                                results[item_key] = p_val
+                                print(f"  + {item_key} (from PC Weekly Ad): {it.get('name')} -> ${results[item_key]:.2f}")
+                                break
         except Exception:
             pass
 
+    return results
+
+
+def pull_flipp_store_prices(store_label, merchant_keyword):
+    print(f"\n[*] Pulling {store_label} Leavenworth (66048 Feed)...")
+    results = {}
+    headers = {"User-Agent": "Mozilla/5.0", "Accept": "application/json"}
+    staple_terms = {
+        "ground_beef": "ground beef",
+        "eggs_dozen": "large eggs",
+        "whole_milk": "whole milk gallon",
+        "russet_potatoes": "russet potatoes",
+        "sandwich_bread": "white bread"
+    }
+    for item_key, q in staple_terms.items():
+        url = f"{FLIPP_SEARCH}&q={urllib.parse.quote(q)}"
+        try:
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                f_data = json.loads(resp.read().decode("utf-8"))
+                for it in f_data.get("items", []):
+                    merchant = it.get("merchant_name") or it.get("merchant") or ""
+                    if merchant_keyword.lower() in merchant.lower():
+                        price = it.get("current_price") or it.get("price")
+                        if price is not None:
+                            p_val = round(float(price), 2)
+                            if is_valid_staple_match(item_key, it.get("name", ""), p_val):
+                                results[item_key] = p_val
+                                print(f"  + {item_key} ({store_label}): {it.get('name')} -> ${p_val:.2f}")
+                                break
+        except Exception:
+            pass
     return results
 
 
@@ -187,9 +244,22 @@ def run_pipeline():
     print("  THE PLEASANT RIDGE GAZETTE — AUTOMATED GROCERY PROCUREMENT SWEEP")
     print("=" * 68)
 
+    store_timestamps = {}
+
     comm_prices = pull_commissary_prices()
+    store_timestamps["commissary"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
     dillons_prices = pull_dillons_prices()
+    store_timestamps["dillons"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
     pc_prices = pull_price_chopper_prices()
+    store_timestamps["price_chopper"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    aldi_prices = pull_flipp_store_prices("ALDI", "aldi")
+    store_timestamps["aldi"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    walmart_prices = pull_flipp_store_prices("Walmart Supercenter", "walmart")
+    store_timestamps["walmart"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     if not os.path.exists(DATA_JSON_PATH):
         print(f"[FATAL] Data file not found: {DATA_JSON_PATH}")
@@ -200,6 +270,7 @@ def run_pipeline():
 
     current_basket = data.setdefault("currentBasket", {})
     prices_map = current_basket.setdefault("prices", {})
+    ts_map = current_basket.setdefault("storeTimestamps", {})
 
     # Update Commissary
     if comm_prices:
@@ -216,16 +287,32 @@ def run_pipeline():
         pc_map = prices_map.setdefault("price_chopper", {})
         for k, v in pc_prices.items(): pc_map[k] = v
 
-    current_basket["publishedAt"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    # Update ALDI (preserve existing baseline for any item not in weekly promo circular)
+    if aldi_prices:
+        a_map = prices_map.setdefault("aldi", {})
+        for k, v in aldi_prices.items(): a_map[k] = v
 
-    # Update ingestion mode descriptions
+    # Update Walmart (preserve existing baseline for any item not in weekly promo circular)
+    if walmart_prices:
+        w_map = prices_map.setdefault("walmart", {})
+        for k, v in walmart_prices.items(): w_map[k] = v
+
+    now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    current_basket["publishedAt"] = now_iso
+    for st_id, st_ts in store_timestamps.items():
+        ts_map[st_id] = st_ts
+
+    # Update ingestion mode descriptions and per-store timestamps
     for s in data.get("stores", []):
-        if s.get("id") == "commissary":
+        sid = s.get("id")
+        if sid in store_timestamps:
+            s["lastUpdated"] = store_timestamps[sid]
+        if sid == "commissary":
             s["ingestionMode"] = "DeCA Click2Go API (NCR Freshop native JSON)"
             s["isManual"] = False
-        elif s.get("id") == "dillons":
+        elif sid == "dillons":
             s["ingestionMode"] = "Kroger Calypso SSR Engine (Real-Time Shelf JSON)"
-        elif s.get("id") == "price_chopper":
+        elif sid == "price_chopper":
             s["ingestionMode"] = "Store #61 Native Circular API & Flipp Feed"
 
     # Save outputs

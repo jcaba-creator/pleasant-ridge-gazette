@@ -9,8 +9,9 @@ echo     1. Vercel: https://pleasant-ridge-gazette.vercel.app
 echo     2. GitHub: https://jcaba-creator.github.io/pleasant-ridge-gazette/
 echo ========================================================
 echo.
-echo [1/4] Updating live corridor fuel prices...
+echo [1/4] Updating live corridor fuel and grocery prices...
 python "%~dp0update_gas_feed.py"
+python "%~dp0update_groceries_feed.py"
 
 copy /Y "%~dp0gas_prices.json" "%~dp0public\gas_prices.json" >nul 2>&1
 copy /Y "%~dp0gas_prices.js" "%~dp0public\gas_prices.js" >nul 2>&1

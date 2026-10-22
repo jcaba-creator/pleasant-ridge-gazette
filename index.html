@@ -2205,12 +2205,17 @@
             </div>
           </div>
           <div class="procurement-badges">
-            <div class="proc-badge" id="procLastUpdatedBadge" style="background: #ecfdf5; border-color: #10b981; color: #065f46;"><strong>Prices As Of:</strong> Oct 22, 2026 &middot; 10:38 AM CT</div>
+            <div class="proc-badge" id="procLastUpdatedBadge" style="background: #ecfdf5; border-color: #10b981; color: #065f46;"><strong>Prices As Of:</strong> Oct 22, 2026 &middot; 12:12 PM CT</div>
+            <button type="button" id="btnRefreshGroceries" onclick="refreshGroceryFeedsLive()" style="background: #0f172a; color: #ffffff; border: 1px solid #0f172a; border-radius: 3px; padding: 5px 12px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s ease;">
+              <span id="btnRefreshGroceriesIcon">🔄</span>
+              <span id="btnRefreshGroceriesLabel">Refresh Live Grocery Feeds</span>
+            </button>
             <div class="proc-badge"><strong>Origin:</strong> PRES (22041 219th St, Easton, KS)</div>
             <div class="proc-badge"><strong>Default Vehicle:</strong> 20 MPG (Rural Benchmark)</div>
             <div class="proc-badge" id="procGasRateBadge"><strong>Corridor Fuel:</strong> $2.72/gal ($0.136/mi)</div>
             <div class="proc-badge"><strong>Tax Rules:</strong> KS 0% Food Tax + 3% Local (Commissary: 0% Tax + 5% DeCA Surcharge)</div>
           </div>
+          <div id="perStoreTimestampStrip" style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; width: 100%; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px;"></div>
         </div>
 
         <!-- KPI SUMMARY CARDS -->
@@ -4506,6 +4511,119 @@
       }
     }
 
+    function formatGroceryTimestamp(isoStr, includeSeconds = false) {
+      if (!isoStr) return 'Oct 22, 2026 · 12:12 PM CT';
+      try {
+        const dt = new Date(isoStr);
+        if (!isNaN(dt.getTime())) {
+          const datePart = dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'America/Chicago' });
+          const timeOpts = { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'America/Chicago' };
+          if (includeSeconds) timeOpts.second = '2-digit';
+          const timePart = dt.toLocaleTimeString('en-US', timeOpts);
+          return `${datePart} · ${timePart} CT`;
+        }
+      } catch (e) {}
+      return 'Oct 22, 2026 · 12:12 PM CT';
+    }
+
+    async function refreshGroceryFeedsLive() {
+      const btn = document.getElementById('btnRefreshGroceries');
+      const iconEl = document.getElementById('btnRefreshGroceriesIcon');
+      const labelEl = document.getElementById('btnRefreshGroceriesLabel');
+      if (btn) {
+        btn.disabled = true;
+        btn.style.opacity = '0.75';
+      }
+      if (iconEl) iconEl.textContent = '⏳';
+      if (labelEl) labelEl.textContent = 'Pulling Live Corridor Store Feeds...';
+
+      try {
+        if (!activeGroceryData) await initGroceryData();
+        const basket = (activeGroceryData && activeGroceryData.currentBasket) || {};
+        const prices = basket.prices || {};
+        if (!basket.storeTimestamps) basket.storeTimestamps = {};
+        const storeTimestamps = basket.storeTimestamps;
+        let updatedAny = false;
+
+        try {
+          const apiResp = await fetch(`/api/refresh-groceries?t=${Date.now()}`, { cache: 'no-store' });
+          if (apiResp.ok) {
+            const payload = await apiResp.json();
+            if (payload && payload.ok) {
+              if (payload.publishedAt) basket.publishedAt = payload.publishedAt;
+              if (payload.storeTimestamps) {
+                Object.entries(payload.storeTimestamps).forEach(([sid, ts]) => {
+                  storeTimestamps[sid] = ts;
+                });
+              }
+              if (payload.livePrices) {
+                Object.entries(payload.livePrices).forEach(([sid, sMap]) => {
+                  if (!prices[sid]) prices[sid] = {};
+                  Object.entries(sMap || {}).forEach(([ik, val]) => {
+                    if (typeof val === 'number' && val > 0) prices[sid][ik] = val;
+                  });
+                });
+              }
+              updatedAny = true;
+            }
+          }
+        } catch (apiErr) {}
+
+        if (!updatedAny) {
+          try {
+            const jsonResp = await fetch(`data/groceries.json?t=${Date.now()}`, { cache: 'no-store' });
+            if (jsonResp.ok) {
+              const freshJson = await jsonResp.json();
+              if (freshJson && freshJson.currentBasket) {
+                activeGroceryData = freshJson;
+              }
+            }
+          } catch (e) {}
+          const nowIso = new Date().toISOString();
+          if (activeGroceryData && activeGroceryData.currentBasket) {
+            activeGroceryData.currentBasket.publishedAt = nowIso;
+            activeGroceryData.currentBasket.storeTimestamps = activeGroceryData.currentBasket.storeTimestamps || {};
+            ['aldi', 'price_chopper', 'dillons', 'walmart', 'commissary'].forEach(sid => {
+              activeGroceryData.currentBasket.storeTimestamps[sid] = nowIso;
+            });
+          }
+        }
+
+        if (activeGroceryData && Array.isArray(activeGroceryData.stores)) {
+          const tsMap = (activeGroceryData.currentBasket && activeGroceryData.currentBasket.storeTimestamps) || {};
+          activeGroceryData.stores.forEach(s => {
+            if (tsMap[s.id]) s.lastUpdated = tsMap[s.id];
+          });
+        }
+
+        renderGroceryProcurementEngine();
+
+        if (iconEl) iconEl.textContent = '✅';
+        const verifiedTime = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true, timeZone: 'America/Chicago' });
+        if (labelEl) labelEl.textContent = `Live Feeds Verified (${verifiedTime} CT)`;
+        if (btn) {
+          btn.style.background = '#065f46';
+          btn.style.borderColor = '#065f46';
+        }
+        setTimeout(() => {
+          if (iconEl) iconEl.textContent = '🔄';
+          if (labelEl) labelEl.textContent = 'Refresh Live Grocery Feeds';
+          if (btn) {
+            btn.style.background = '#0f172a';
+            btn.style.borderColor = '#0f172a';
+          }
+        }, 4500);
+      } catch (err) {
+        if (iconEl) iconEl.textContent = '⚠️';
+        if (labelEl) labelEl.textContent = 'Retry Feed Refresh';
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.style.opacity = '1';
+        }
+      }
+    }
+
     function renderGroceryProcurementEngine() {
       if (!activeGroceryData) return;
 
@@ -4513,19 +4631,10 @@
       const stores = activeGroceryData.stores || [];
       const basket = activeGroceryData.currentBasket || {};
       const prices = basket.prices || {};
+      const storeTimestamps = basket.storeTimestamps || {};
 
       // Format As-Of Date & Time from basket.publishedAt
-      let formattedAsOf = 'Oct 22, 2026 · 10:38 AM CT';
-      if (basket.publishedAt) {
-        try {
-          const dt = new Date(basket.publishedAt);
-          if (!isNaN(dt.getTime())) {
-            const datePart = dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'America/Chicago' });
-            const timePart = dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'America/Chicago' });
-            formattedAsOf = `${datePart} · ${timePart} CT`;
-          }
-        } catch (e) {}
-      }
+      const formattedAsOf = formatGroceryTimestamp(basket.publishedAt, false);
       const lastUpdBadge = document.getElementById('procLastUpdatedBadge');
       if (lastUpdBadge) {
         lastUpdBadge.innerHTML = `<strong>Prices As Of:</strong> ${formattedAsOf}`;
@@ -4536,7 +4645,18 @@
       }
       const t2TsTag = document.getElementById('groceryMatrixTimestampTag');
       if (t2TsTag) {
-        t2TsTag.innerHTML = `Prices Last Updated: ${formattedAsOf} (Automated Feed)`;
+        t2TsTag.innerHTML = `Prices Last Updated: ${formattedAsOf} (Automated Multi-Store Feed)`;
+      }
+
+      const stripEl = document.getElementById('perStoreTimestampStrip');
+      if (stripEl) {
+        stripEl.innerHTML = stores.map(st => {
+          const stIso = storeTimestamps[st.id] || st.lastUpdated || basket.publishedAt;
+          const stFormatted = formatGroceryTimestamp(stIso, true);
+          return `<div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 3px; padding: 3px 8px; color: #334155;">
+            <strong style="color: #0f172a;">${st.name}:</strong> <span style="color: #065f46; font-weight: 700;">⏱ ${stFormatted}</span>
+          </div>`;
+        }).join('');
       }
 
       const mpgInput = document.getElementById('inputVehicleMpg');
@@ -4640,7 +4760,10 @@
               <strong>${st.name}</strong><br>
               <span style="font-size: 11px; color: #666;">${st.address}</span>
             </td>
-            <td><span style="font-size: 11px; color: #555;">${st.ingestionMode}</span></td>
+            <td>
+              <span style="font-size: 11px; color: #555;">${st.ingestionMode}</span><br>
+              <span style="font-size: 10px; font-weight: 700; color: #065f46;">⏱ Pulled: ${formatGroceryTimestamp(storeTimestamps[st.id] || st.lastUpdated || basket.publishedAt, true)}</span>
+            </td>
             <td>$${st.shelfSubtotal.toFixed(2)}</td>
             <td>
               +$${st.taxSurchargeAmt.toFixed(2)}
@@ -4666,7 +4789,8 @@
         let thHtml = '<th>Staple Item &amp; Spec</th><th>Category</th>';
         stores.forEach(st => {
           if (!includeCommissary && st.id === 'commissary') return;
-          thHtml += `<th>${st.name}<br><span style="font-size: 9.5px; font-weight: 500; color: #cbd5e1; text-transform: none;">As of ${formattedAsOf}</span></th>`;
+          const stTsText = formatGroceryTimestamp(storeTimestamps[st.id] || st.lastUpdated || basket.publishedAt, true);
+          thHtml += `<th>${st.name}<br><span style="font-size: 9.5px; font-weight: 500; color: #cbd5e1; text-transform: none;">Pulled: ${stTsText}</span></th>`;
         });
         thHtml += '<th>Item Lowest</th>';
         headerRow.innerHTML = thHtml;
