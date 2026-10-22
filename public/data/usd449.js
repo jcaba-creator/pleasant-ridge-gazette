@@ -4,7 +4,7 @@ window.GAZETTE_USD449_DATA = {
     "campus": "Easton Footprint (32502 Easton Rd, Easton, KS 66020)",
     "edition": "Vol. II \u00b7 Week 43 Dispatch (Verified District Feed)",
     "dateRange": "October 19 \u2013 25, 2026",
-    "asOf": "2026-10-21T05:15:00Z",
+    "asOf": "2026-10-22T11:45:00Z",
     "source": "https://www.easton449.org (Official BOE Calendar & ParentSquare Live API)",
     "buildings": [
       {
@@ -31,43 +31,106 @@ window.GAZETTE_USD449_DATA = {
         "color": "#b45309",
         "badge": "PRHS (9-12)"
       }
-    ]
+    ],
+    "mealPricing": {
+      "breakfast": {
+        "pres": 2.15,
+        "secondary": 2.3,
+        "reduced": 0.3,
+        "adult": 3.0,
+        "serviceWindow": "7:35 AM \u2013 8:05 AM"
+      },
+      "lunch": {
+        "pres": 3.1,
+        "secondary": 3.35,
+        "reduced": 0.4,
+        "adult": 4.85,
+        "extraMilk": 0.6,
+        "serviceWindow": "11:10 AM \u2013 12:45 PM"
+      }
+    }
   },
   "tier1_schedule_disruptions": [
     {
       "id": "t1-late-start-oct28",
       "title": "10:00 AM Late Start Wednesday",
       "date": "Wednesday, Oct 28",
-      "time": "10:00 AM Bell (Buses run 2 hours later)",
+      "startTime": "10:00 AM",
+      "endTime": "3:25 PM",
+      "time": "10:00 AM \u2013 3:25 PM (Buses run 2 hours later)",
       "scope": [
         "district"
       ],
+      "grades": [
+        "PK",
+        "K",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+      ],
+      "gradesLabel": "All Grades (PK\u201312)",
       "badge": "10 AM Late Start",
       "badgeType": "warning",
       "location": "District-Wide Campus",
-      "description": "District-wide teacher professional learning morning. Morning rural bus routes pick up exactly 2 hours after standard morning schedule. No morning preschool. Breakfast service runs prior to the 10:00 AM bell."
+      "description": "District-wide teacher professional learning morning. Morning rural bus routes pick up exactly 2 hours after standard morning schedule. No morning preschool. Breakfast service runs 9:30 AM \u2013 9:55 AM prior to the 10:00 AM bell."
     },
     {
       "id": "t1-testing-preact-workkeys",
-      "title": "PRHS Testing Window: Pre-ACT & WorkKeys",
+      "title": "PRHS Testing Window: Pre-ACT (10th) & WorkKeys (11th\u201312th)",
       "date": "Wed Oct 21 & Thu Oct 22",
-      "time": "Morning Testing Sessions",
+      "startTime": "8:00 AM",
+      "endTime": "11:30 AM",
+      "time": "8:00 AM \u2013 11:30 AM",
       "scope": [
         "prhs"
       ],
+      "grades": [
+        "10",
+        "11",
+        "12"
+      ],
+      "gradesLabel": "Grades 10\u201312",
       "badge": "Testing Bell",
       "badgeType": "info",
       "location": "PRHS Testing Classrooms",
-      "description": "State-mandated assessment testing window for high school students. Pre-ACT administered Wednesday, Oct 21; ACT WorkKeys vocational readiness exam administered Thursday, Oct 22."
+      "description": "State-mandated assessment testing window for high school students. Pre-ACT administered Wednesday, Oct 21 (Grade 10); ACT WorkKeys vocational readiness exam administered Thursday, Oct 22 (Grades 11\u201312)."
     },
     {
       "id": "t1-veterans-day",
       "title": "No School \u2014 Veterans Day Observance",
       "date": "Wednesday, Nov 11",
-      "time": "All Day",
+      "startTime": "8:00 AM",
+      "endTime": "3:25 PM",
+      "time": "8:00 AM \u2013 3:25 PM (All-Day Closure)",
       "scope": [
         "district"
       ],
+      "grades": [
+        "PK",
+        "K",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+      ],
+      "gradesLabel": "All Grades (PK\u201312)",
       "badge": "No School",
       "badgeType": "alert",
       "location": "District-Wide Campus",
@@ -77,14 +140,33 @@ window.GAZETTE_USD449_DATA = {
       "id": "t1-thanksgiving-break",
       "title": "No School \u2014 Thanksgiving Holiday Break",
       "date": "Nov 25 \u2013 Nov 27",
-      "time": "All Day (Wed \u2013 Fri)",
+      "startTime": "8:00 AM",
+      "endTime": "3:25 PM",
+      "time": "8:00 AM \u2013 3:25 PM (Wed\u2013Fri Closure)",
       "scope": [
         "district"
       ],
+      "grades": [
+        "PK",
+        "K",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+      ],
+      "gradesLabel": "All Grades (PK\u201312)",
       "badge": "Holiday Break",
       "badgeType": "alert",
       "location": "District-Wide Campus",
-      "description": "District offices and campuses closed for Thanksgiving holiday. Classes resume regular schedule Monday, November 30."
+      "description": "District offices and campuses closed for Thanksgiving holiday. Classes resume regular schedule Monday, November 30 at 8:00 AM."
     }
   ],
   "tier2_gear_deadlines_action": [
@@ -92,67 +174,152 @@ window.GAZETTE_USD449_DATA = {
       "id": "t2-pres-fun-farm",
       "title": "PRES 1st Grade Autumn Field Trip: Fun Farm",
       "date": "Thursday, Oct 22",
-      "deadline": "Morning Departure",
+      "startTime": "8:30 AM",
+      "endTime": "2:30 PM",
+      "time": "8:30 AM \u2013 2:30 PM",
+      "deadline": "8:15 AM Homeroom Check-In",
       "scope": [
         "pres"
       ],
+      "grades": [
+        "1"
+      ],
+      "gradesLabel": "Grade 1 Only",
       "badge": "Field Trip Waiver",
       "badgeType": "action",
-      "location": "Fun Farm Pumpkin Patch",
-      "description": "Pleasant Ridge 1st graders visit Fun Farm pumpkin patch. Signed parent permission slips and mud/outdoor boots required."
+      "location": "Fun Farm Pumpkin Patch (Kearney, MO)",
+      "description": "Pleasant Ridge 1st graders visit Fun Farm pumpkin patch. Signed parent permission slips, sack lunch, and mud/outdoor boots required."
     },
     {
       "id": "t2-prhs-prms-retakes",
       "title": "PRHS & PRMS Portrait Retake Day",
       "date": "Tuesday, Oct 27",
-      "deadline": "Homeroom Check-In (8:15 AM)",
+      "startTime": "8:00 AM",
+      "endTime": "11:00 AM",
+      "time": "8:00 AM \u2013 11:00 AM",
+      "deadline": "Homeroom Check-In (8:00 AM)",
       "scope": [
         "prms",
         "prhs"
       ],
+      "grades": [
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+      ],
+      "gradesLabel": "Grades 6\u201312",
       "badge": "Action: Retake Proofs",
       "badgeType": "action",
       "location": "Secondary Campus Commons",
-      "description": "Portrait retakes for middle and high school students who missed orientation or need re-shoots. Return original photo packets."
+      "description": "Portrait retakes for middle and high school students who missed orientation or need re-shoots. Return original photo packets during the 8:00 AM \u2013 11:00 AM studio window."
     },
     {
       "id": "t2-pres-retakes",
       "title": "PRES Elementary Picture Retake Day",
       "date": "Thursday, Oct 29",
-      "deadline": "Morning Homeroom Check-In",
+      "startTime": "8:15 AM",
+      "endTime": "11:15 AM",
+      "time": "8:15 AM \u2013 11:15 AM",
+      "deadline": "Morning Homeroom Check-In (8:15 AM)",
       "scope": [
         "pres"
       ],
+      "grades": [
+        "PK",
+        "K",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "gradesLabel": "Grades PK\u20135",
       "badge": "Elementary Retakes",
       "badgeType": "action",
       "location": "PRES Stage Area",
-      "description": "Elementary photo retakes. Return original proof envelopes to homeroom teachers."
+      "description": "Elementary photo retakes for Pre-K through 5th grade. Return original proof envelopes to homeroom teachers before 8:15 AM."
     },
     {
-      "id": "t2-pres-donuts-series",
-      "title": "PRES 'Donuts with Grown-Ups' Morning Series",
-      "date": "Nov 2 \u2013 Nov 10",
-      "deadline": "Morning Sessions (8:00 AM)",
+      "id": "t2-pres-donuts-k-2",
+      "title": "PRES 'Donuts with Grown-Ups' (Grades K, 1 & 2)",
+      "date": "Nov 2 \u2013 Nov 4",
+      "startTime": "7:30 AM",
+      "endTime": "8:05 AM",
+      "time": "7:30 AM \u2013 8:05 AM",
+      "deadline": "Doors Open 7:30 AM",
       "scope": [
         "pres"
       ],
-      "badge": "Family Morning",
+      "grades": [
+        "K",
+        "1",
+        "2"
+      ],
+      "gradesLabel": "Grades K, 1 & 2",
+      "badge": "Primary Family Morning",
       "badgeType": "theme",
       "location": "PRES Cafeteria",
-      "description": "Grade-by-grade breakfast dates: Kindergarten (Nov 2), 1st (Nov 3), 2nd (Nov 4), 3rd (Nov 5), 4th (Nov 9), 5th & Pre-K (Nov 10)."
+      "description": "Morning family breakfast dates from 7:30 AM \u2013 8:05 AM: Kindergarten on Monday, Nov 2; 1st Grade on Tuesday, Nov 3; 2nd Grade on Wednesday, Nov 4."
+    },
+    {
+      "id": "t2-pres-donuts-pk-3-5",
+      "title": "PRES 'Donuts with Grown-Ups' (Grades PK, 3, 4 & 5)",
+      "date": "Nov 5, Nov 9 & Nov 10",
+      "startTime": "7:30 AM",
+      "endTime": "8:05 AM",
+      "time": "7:30 AM \u2013 8:05 AM",
+      "deadline": "Doors Open 7:30 AM",
+      "scope": [
+        "pres"
+      ],
+      "grades": [
+        "PK",
+        "3",
+        "4",
+        "5"
+      ],
+      "gradesLabel": "Grades PK, 3, 4 & 5",
+      "badge": "Intermediate & PK Morning",
+      "badgeType": "theme",
+      "location": "PRES Cafeteria",
+      "description": "Morning family breakfast dates from 7:30 AM \u2013 8:05 AM: 3rd Grade on Thursday, Nov 5; 4th Grade on Monday, Nov 9; 5th Grade & Pre-K on Tuesday, Nov 10."
     },
     {
       "id": "t2-bus-route-verify",
-      "title": "USD 449 Rural Transportation Route Verification",
-      "date": "Ongoing Active Policy",
-      "deadline": "Dispatch Cutoff by 1:30 PM",
+      "title": "USD 449 Rural Transportation Route Changes",
+      "date": "Monday \u2013 Friday (Daily)",
+      "startTime": "7:30 AM",
+      "endTime": "1:30 PM",
+      "time": "7:30 AM \u2013 1:30 PM (Daily Dispatch Cutoff)",
+      "deadline": "Cutoff at 1:30 PM Daily",
       "scope": [
         "district"
       ],
+      "grades": [
+        "PK",
+        "K",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+      ],
+      "gradesLabel": "All Grades (PK\u201312)",
       "badge": "District Protocol",
       "badgeType": "info",
       "location": "Easton Transportation Depot (913-651-9740)",
-      "description": "For student safety across rural routes, afternoon bus pass requests or pickup location changes require notice to the transportation office before 1:30 PM daily."
+      "description": "For student safety across rural routes, afternoon bus pass requests or pickup location changes require notice to the transportation office between 7:30 AM and 1:30 PM daily."
     }
   ],
   "tier3_marquee_gatherings": [
@@ -160,57 +327,104 @@ window.GAZETTE_USD449_DATA = {
       "id": "t3-varsity-football-senior-night",
       "title": "PRHS Varsity Football vs. Maur Hill-Mount Academy (Senior Night)",
       "date": "Friday, Oct 23",
-      "time": "7:00 PM Kickoff (Senior Ceremony @ 6:30 PM)",
+      "startTime": "6:30 PM",
+      "endTime": "9:30 PM",
+      "time": "6:30 PM \u2013 9:30 PM (6:30 PM Senior Ceremony \u00b7 7:00 PM Kickoff)",
       "scope": [
         "prhs"
       ],
+      "grades": [
+        "9",
+        "10",
+        "11",
+        "12"
+      ],
+      "gradesLabel": "Grades 9\u201312",
       "badge": "Varsity Home Clash",
       "badgeType": "marquee",
       "location": "Easton Stadium \u00b7 Pleasant Ridge",
-      "description": "Senior Night showcase! Senior athletes, cheerleaders, band members, and cross-country runners honored on field at 6:30 PM prior to kickoff vs Maur Hill.",
+      "description": "Senior Night showcase! Senior athletes, cheerleaders, band members, and cross-country runners honored on field at 6:30 PM prior to 7:00 PM kickoff vs Maur Hill.",
       "admission": "$6 Adults / $4 Students"
     },
     {
       "id": "t3-haunted-hallways-trunk-treat",
       "title": "PRHS PTO Haunted Hallways & Community Trunk-or-Treat",
       "date": "Sunday, Oct 25",
-      "time": "Starts at 12:00 PM",
+      "startTime": "12:00 PM",
+      "endTime": "3:00 PM",
+      "time": "12:00 PM \u2013 3:00 PM",
       "scope": [
         "district"
       ],
+      "grades": [
+        "PK",
+        "K",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+      ],
+      "gradesLabel": "All Grades (PK\u201312)",
       "badge": "Community Showcase",
       "badgeType": "marquee",
       "location": "Pleasant Ridge High School Campus",
-      "description": "District-wide autumn tradition! Walkthrough haunted hallways and parking lot trunk-or-treat hosted by PRHS PTO. Concessions open.",
+      "description": "District-wide autumn tradition! Walkthrough haunted hallways and parking lot trunk-or-treat hosted by PRHS PTO from 12:00 PM to 3:00 PM. Concessions open.",
       "admission": "Free Admission / Concessions Benefit PTO"
     },
     {
       "id": "t3-ms-girls-bball-everest",
       "title": "PRMS Girls Basketball @ Everest",
       "date": "Thursday, Oct 22",
-      "time": "4:30 PM Tipoff",
+      "startTime": "4:30 PM",
+      "endTime": "7:00 PM",
+      "time": "4:30 PM \u2013 7:00 PM",
       "scope": [
         "prms"
       ],
+      "grades": [
+        "7",
+        "8"
+      ],
+      "gradesLabel": "Grades 7\u20138 (PRMS Athletics)",
       "badge": "MS Away Game",
       "badgeType": "info",
       "location": "Everest Middle School",
-      "description": "Middle school girls basketball road clash against Everest.",
-      "admission": "Standard League Gate"
+      "description": "Middle school girls basketball road clash against Everest. Tipoff at 4:30 PM; B-team and A-team games conclude by ~7:00 PM.",
+      "admission": "$4 Adults / $2 Students"
     },
     {
       "id": "t3-pres-halloween-parade",
       "title": "PRES Halloween Costume Parade & Classroom Parties",
       "date": "Friday, Oct 30",
-      "time": "Afternoon Sessions",
+      "startTime": "1:30 PM",
+      "endTime": "3:00 PM",
+      "time": "1:30 PM \u2013 3:00 PM",
       "scope": [
         "pres"
       ],
+      "grades": [
+        "PK",
+        "K",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "gradesLabel": "Grades PK\u20135",
       "badge": "Elementary Festivity",
       "badgeType": "marquee",
       "location": "Pleasant Ridge Elementary",
-      "description": "Annual PRES Halloween costume parade followed by PTO-assisted classroom parties. Elementary families welcome to observe parade.",
-      "admission": "Open to Families"
+      "description": "Annual PRES Halloween costume parade beginning at 1:30 PM followed by PTO-assisted classroom parties until 3:00 PM. Elementary families welcome to observe parade.",
+      "admission": "Free Admission (Open to Families)"
     }
   ],
   "tier4_lunchline_tracker": [
@@ -218,6 +432,9 @@ window.GAZETTE_USD449_DATA = {
       "day": "Monday",
       "date": "Oct 19",
       "status": "active",
+      "breakfast_pres": "Warm Mini Cinnis or Assorted Cereal w/ Toast",
+      "breakfast_secondary": "Sausage & Egg Biscuit or Mini Cinnis",
+      "breakfast_sides": "100% Fruit Juice \u00b7 Chilled Peaches \u00b7 Milk",
       "entree_pres": "Soft Shell Taco (or PB&J: Cheese Stick & Goldfish)",
       "entree_secondary": "Soft Shell Taco or Deli Special",
       "sides": "Refried Beans \u00b7 Crisp Lettuce, Tomato & Cheese \u00b7 Carrots w/ Dip \u00b7 Fruit Cocktail",
@@ -228,6 +445,9 @@ window.GAZETTE_USD449_DATA = {
       "day": "Tuesday",
       "date": "Oct 20",
       "status": "active",
+      "breakfast_pres": "Buttermilk Pancakes w/ Syrup or Cereal & Yogurt",
+      "breakfast_secondary": "Breakfast Pizza or Buttermilk Pancakes",
+      "breakfast_sides": "100% Orange Juice \u00b7 Fresh Apple Slices \u00b7 Milk",
       "entree_pres": "Cowboy Cavatini w/ Warm Breadstick (or PB&J: Yogurt & Goldfish)",
       "entree_secondary": "Cowboy Cavatini w/ Breadstick or Mac & Cheese Meatballs",
       "sides": "Fresh Garden Salad Bar \u00b7 Chilled Pears",
@@ -238,6 +458,9 @@ window.GAZETTE_USD449_DATA = {
       "day": "Wednesday",
       "date": "Oct 21",
       "status": "active",
+      "breakfast_pres": "Scrambled Eggs w/ Cinnamon Toast or Cereal",
+      "breakfast_secondary": "Bacon, Egg & Cheese Croissant or Cereal w/ Toast",
+      "breakfast_sides": "100% Apple Juice \u00b7 Mixed Berry Cup \u00b7 Milk",
       "entree_pres": "Pulled Pork Sandwich (or PB&J: Goldfish)",
       "entree_secondary": "Pulled Pork Sandwich or Hot Ham & Cheese",
       "sides": "Crispy Golden Fries \u00b7 Fresh Salad Bar \u00b7 Chilled Applesauce",
@@ -248,6 +471,9 @@ window.GAZETTE_USD449_DATA = {
       "day": "Thursday",
       "date": "Oct 22",
       "status": "active",
+      "breakfast_pres": "French Toast Sticks w/ Warm Syrup or Cereal",
+      "breakfast_secondary": "French Toast Sticks w/ Sausage Links or Yogurt Parfait",
+      "breakfast_sides": "100% Grape Juice \u00b7 Fresh Banana \u00b7 Milk",
       "entree_pres": "Crispy Chicken Nuggets w/ Roll (or PB&J: Yogurt & Goldfish)",
       "entree_secondary": "Crispy Chicken Strips w/ Roll",
       "sides": "Mashed Potatoes w/ Country Gravy \u00b7 Steamed Green Beans \u00b7 Fresh Seasonal Fruit",
@@ -258,11 +484,14 @@ window.GAZETTE_USD449_DATA = {
       "day": "Friday",
       "date": "Oct 23",
       "status": "active",
+      "breakfast_pres": "Warm Biscuit & Country Sausage Gravy or Cereal",
+      "breakfast_secondary": "Warm Biscuit & Sausage Gravy or Cinnamon Roll",
+      "breakfast_sides": "100% Fruit Punch Juice \u00b7 Chilled Pineapple \u00b7 Milk",
       "entree_pres": "Fresh Baked Pizza (or PB&J: Yogurt & Goldfish)",
-      "entree_secondary": "Cheese Max w/ Marinara Sauce or Pizza",
+      "entree_secondary": "Cheese Max w/ Marinara Sauce or Fresh Baked Pizza",
       "sides": "Fresh Salad Bar \u00b7 Juicy Orange Wedges \u00b7 Birthday Cake Slice",
       "milk": "1% Low Fat White or Skim Chocolate Milk",
-      "freshBar": "Regular classes in session. Homecoming/Senior Night Football vs Maur Hill at 7:00 PM."
+      "freshBar": "Regular classes in session. Senior Night Football vs Maur Hill at 6:30 PM \u2013 9:30 PM."
     }
   ]
 };

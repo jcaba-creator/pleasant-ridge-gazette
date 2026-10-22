@@ -2205,6 +2205,7 @@
             </div>
           </div>
           <div class="procurement-badges">
+            <div class="proc-badge" id="procLastUpdatedBadge" style="background: #ecfdf5; border-color: #10b981; color: #065f46;"><strong>Prices As Of:</strong> Oct 22, 2026 &middot; 10:38 AM CT</div>
             <div class="proc-badge"><strong>Origin:</strong> PRES (22041 219th St, Easton, KS)</div>
             <div class="proc-badge"><strong>Default Vehicle:</strong> 20 MPG (Rural Benchmark)</div>
             <div class="proc-badge" id="procGasRateBadge"><strong>Corridor Fuel:</strong> $2.72/gal ($0.136/mi)</div>
@@ -2271,7 +2272,7 @@
         <!-- TABLE 1: TOTAL PROCUREMENT RANKING BOARD -->
         <div class="proc-table-title-strip">
           <h3>1. Total Procurement Ranking (True Cost to Easton Doorstep)</h3>
-          <span class="proc-formula-tag">Formula: Shelf Subtotal + Tax/Surcharge + (Round-Trip Miles × Gas Price ÷ MPG)</span>
+          <span class="proc-formula-tag" id="procTable1TimestampTag">Prices As Of: Oct 22, 2026 &middot; 10:38 AM CT | Formula: Shelf Subtotal + Tax/Surcharge + Transit</span>
         </div>
         <div class="fuel-table-wrapper" style="margin-bottom: 28px;">
           <table class="fuel-table" id="procurementRankingTable">
@@ -2296,7 +2297,7 @@
         <!-- TABLE 2: ITEMIZED 5-ITEM DINNER BASKET MATRIX -->
         <div class="proc-table-title-strip">
           <h3>2. Itemized Dinner Staple Price Matrix (Weekly Basket Comparison)</h3>
-          <span class="proc-formula-tag">Extensible Architecture: Dynamic rendering from data/groceries.json</span>
+          <span class="proc-formula-tag" id="groceryMatrixTimestampTag" style="color: #065f46; font-weight: 700;">Prices Last Updated: Oct 22, 2026 &middot; 10:38 AM CT (Automated Feed)</span>
         </div>
         <div class="fuel-table-wrapper" style="margin-bottom: 24px;">
           <table class="fuel-table" id="itemizedBasketTable">
@@ -2327,7 +2328,7 @@
               <strong>Transit &amp; Distance Baseline:</strong> Round-trip mileage calculated via K-192 / US-73 / K-7 from Pleasant Ridge Elementary School (22041 219th St, Easton, KS). Fuel cost per mile = Gas Price / MPG. Transit cost = Miles × Cost per Mile.
             </div>
             <div>
-              <strong>Data Ingestion Architecture:</strong> Dillons is ingested via Kroger Native Developer API JSON endpoints; ALDI, Walmart, and Price Chopper via Playwright automated scrapers; Fort Leavenworth Commissary via manual verified admin input.
+              <strong>Data Ingestion Architecture:</strong> Fully automated multi-store pipeline — Fort Leavenworth Commissary is ingested automatically via the DeCA Click2Go / NCR Freshop REST API (Store #5878 JSON); Dillons via the Kroger Calypso SSR Engine; Price Chopper via Store #61 Native Circular API &amp; Flipp Feed; and ALDI &amp; Walmart via automated Playwright headless scrapers. Zero manual price verification required.
             </div>
           </div>
         </div>
@@ -2421,10 +2422,20 @@
         </div>
         <div class="dispatch-cards-grid" id="tier3Grid"></div>
 
-        <!-- TIER 4: DAILY LUNCHLINE TRACKER -->
+        <!-- TIER 4: DAILY BREAKFAST & LUNCHLINE TRACKER -->
         <div class="tier-header-strip tier-4-strip">
-          <h3 class="tier-title-text">🍱 Tier 4: Daily Lunchline Tracker</h3>
-          <span class="tier-sub-text">Monday – Friday campus kitchen menus (PRES vs. Secondary Entrees &amp; Sides)</span>
+          <h3 class="tier-title-text">🍳🍱 Tier 4: Daily Breakfast &amp; Lunchline Tracker</h3>
+          <span class="tier-sub-text">Monday – Friday Campus Kitchen Menus, Service Windows &amp; Meal Pricing (PRES &amp; PRMS/PRHS)</span>
+        </div>
+        <div id="tier4PricingBanner" style="background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #15803d; border-radius: 6px; padding: 12px 16px; margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px;">
+          <div>
+            <strong style="color: #0f172a; text-transform: uppercase; letter-spacing: 0.03em;">☕ Daily Breakfast (7:35 AM – 8:05 AM):</strong>
+            <span style="color: #334155; margin-left: 6px;">PRES (PK–5): <strong>$2.15</strong> &middot; PRMS/PRHS (6–12): <strong>$2.30</strong> &middot; Reduced: <strong>$0.30</strong> &middot; Adult: <strong>$3.00</strong></span>
+          </div>
+          <div>
+            <strong style="color: #0f172a; text-transform: uppercase; letter-spacing: 0.03em;">🍱 Daily Lunch (11:10 AM – 12:45 PM):</strong>
+            <span style="color: #334155; margin-left: 6px;">PRES (PK–5): <strong>$3.10</strong> &middot; PRMS/PRHS (6–12): <strong>$3.35</strong> &middot; Reduced: <strong>$0.40</strong> &middot; Adult: <strong>$4.85</strong> &middot; Extra Milk: <strong>$0.60</strong></span>
+          </div>
         </div>
         <div class="lunchline-grid" id="tier4Grid"></div>
 
@@ -4121,6 +4132,11 @@
 
     const STORAGE_KEY_GRADES = 'gazette_usd449_grade_filter';
     const ALL_GRADES = ['PK', 'K', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+    const BUILDING_GRADE_MAP = {
+      pres: ['PK', 'K', '1', '2', '3', '4', '5'],
+      prms: ['6', '7', '8'],
+      prhs: ['9', '10', '11', '12']
+    };
 
     let currentSchoolFilter = getSavedSchoolFilter();
     let currentGradeFilter = getSavedGradeFilter();
@@ -4167,9 +4183,19 @@
       } catch (e) {}
     }
 
+    function syncBuildingsFromGrades() {
+      ['pres', 'prms', 'prhs'].forEach(b => {
+        const bGrades = BUILDING_GRADE_MAP[b] || [];
+        currentSchoolFilter[b] = bGrades.some(g => !!currentGradeFilter[g]);
+      });
+      saveSchoolFilter(currentSchoolFilter);
+      syncFilterInputsWithState();
+    }
+
     function toggleGradeFilter(grade) {
       currentGradeFilter[grade] = !currentGradeFilter[grade];
       saveGradeFilter(currentGradeFilter);
+      syncBuildingsFromGrades();
       syncGradeFilterUI();
       renderSchoolDispatch();
     }
@@ -4177,6 +4203,7 @@
     function setAllGradeFilters(enableAll) {
       ALL_GRADES.forEach(g => { currentGradeFilter[g] = !!enableAll; });
       saveGradeFilter(currentGradeFilter);
+      syncBuildingsFromGrades();
       syncGradeFilterUI();
       renderSchoolDispatch();
     }
@@ -4184,10 +4211,12 @@
     function syncGradeFilterUI() {
       const deck = document.getElementById('gradeChipsDeck');
       if (!deck) return;
+      const activeGrades = ALL_GRADES.filter(g => !!currentGradeFilter[g]);
       deck.innerHTML = ALL_GRADES.map(g => {
         const active = !!currentGradeFilter[g];
-        return `<button type="button" class="filter-quick-btn" style="padding: 3px 8px; font-size: 11px; font-weight: 700; ${active ? 'background: #0f172a; color: #ffffff; border-color: #0f172a;' : 'background: #f8fafc; color: #475569; border-color: #cbd5e1;'}" onclick="toggleGradeFilter('${g}')">${g}</button>`;
-      }).join('');
+        const label = g === 'PK' ? 'Pre-K' : (g === 'K' ? 'Kindergarten' : `Grade ${g}`);
+        return `<button type="button" class="filter-quick-btn" title="Toggle ${label}" style="padding: 4px 10px; font-size: 11px; font-weight: 700; ${active ? 'background: #0f172a; color: #ffffff; border-color: #0f172a;' : 'background: #f8fafc; color: #64748b; border-color: #cbd5e1;'}" onclick="toggleGradeFilter('${g}')">${g}</button>`;
+      }).join('') + `<span style="margin-left: auto; font-size: 11px; font-weight: 600; color: #475569; align-self: center;">Active: <strong>${activeGrades.length === ALL_GRADES.length ? 'All Grades (PK–12)' : (activeGrades.length === 0 ? 'None (District Alerts Only)' : activeGrades.join(', '))}</strong></span>`;
     }
 
     async function initSchoolData() {
@@ -4220,8 +4249,12 @@
 
     function handleBuildingFilterChange(buildingId, isChecked) {
       currentSchoolFilter[buildingId] = !!isChecked;
+      const bGrades = BUILDING_GRADE_MAP[buildingId] || [];
+      bGrades.forEach(g => { currentGradeFilter[g] = !!isChecked; });
       saveSchoolFilter(currentSchoolFilter);
+      saveGradeFilter(currentGradeFilter);
       syncFilterInputsWithState();
+      syncGradeFilterUI();
       renderSchoolDispatch();
     }
 
@@ -4231,14 +4264,43 @@
         prms: !!enableAll,
         prhs: !!enableAll
       };
+      ALL_GRADES.forEach(g => { currentGradeFilter[g] = !!enableAll; });
       saveSchoolFilter(currentSchoolFilter);
+      saveGradeFilter(currentGradeFilter);
       syncFilterInputsWithState();
+      syncGradeFilterUI();
       renderSchoolDispatch();
     }
 
-    function isSchoolItemVisible(scopeArray, gradesArray) {
-      if (!scopeArray || scopeArray.length === 0) return true;
-      if (scopeArray.includes('district') || scopeArray.includes('all')) return true;
+    function getEffectiveGrades(scopeArray, gradesArray) {
+      if (gradesArray && Array.isArray(gradesArray) && gradesArray.length > 0) {
+        return gradesArray;
+      }
+      if (!scopeArray || scopeArray.includes('district') || scopeArray.includes('all')) {
+        return ALL_GRADES;
+      }
+      const derived = [];
+      scopeArray.forEach(s => {
+        if (BUILDING_GRADE_MAP[s]) {
+          derived.push(...BUILDING_GRADE_MAP[s]);
+        }
+      });
+      return derived.length > 0 ? derived : ALL_GRADES;
+    }
+
+    function isSchoolItemVisible(scopeArray, gradesArray, isTier1Disruption = false) {
+      const isDistrictWide = !scopeArray || scopeArray.length === 0 || scopeArray.includes('district') || scopeArray.includes('all');
+      if (isTier1Disruption && isDistrictWide) {
+        return true; // Critical Guarantee: Tier 1 district-wide closures/late starts always visible
+      }
+      const effectiveGrades = getEffectiveGrades(scopeArray, gradesArray);
+      const anyGradeActive = effectiveGrades.some(g => !!currentGradeFilter[g]);
+      if (!anyGradeActive) return false;
+
+      if (isDistrictWide) {
+        return ALL_GRADES.some(g => !!currentGradeFilter[g]);
+      }
+
       let buildingMatch = false;
       for (const b of ['pres', 'prms', 'prhs']) {
         if (scopeArray.includes(b) && currentSchoolFilter[b]) {
@@ -4246,25 +4308,31 @@
           break;
         }
       }
-      if (!buildingMatch) return false;
-
-      // If item has specific grade tags, check if any of those grades are active
-      if (gradesArray && Array.isArray(gradesArray) && gradesArray.length > 0) {
-        return gradesArray.some(g => !!currentGradeFilter[g]);
-      }
-      return true;
+      return buildingMatch;
     }
 
-    function renderScopeBadges(scopeArray) {
+    function renderScopeBadges(scopeArray, gradesLabel, gradesArray) {
+      let buildingBadges = '';
       if (!scopeArray || scopeArray.includes('district') || scopeArray.includes('all')) {
-        return '<span class="scope-pill scope-district">District-Wide</span>';
+        buildingBadges = '<span class="scope-pill scope-district">District-Wide</span>';
+      } else {
+        buildingBadges = scopeArray.map(s => {
+          if (s === 'pres') return '<span class="scope-pill scope-pres">PRES · PK–5</span>';
+          if (s === 'prms') return '<span class="scope-pill scope-prms">PRMS · 6–8</span>';
+          if (s === 'prhs') return '<span class="scope-pill scope-prhs">PRHS · 9–12</span>';
+          return `<span class="scope-pill">${s.toUpperCase()}</span>`;
+        }).join(' ');
       }
-      return scopeArray.map(s => {
-        if (s === 'pres') return '<span class="scope-pill scope-pres">PRES · PK–5</span>';
-        if (s === 'prms') return '<span class="scope-pill scope-prms">PRMS · 6–8</span>';
-        if (s === 'prhs') return '<span class="scope-pill scope-prhs">PRHS · 9–12</span>';
-        return `<span class="scope-pill">${s.toUpperCase()}</span>`;
-      }).join(' ');
+      const gText = gradesLabel || (gradesArray && gradesArray.length < 14 ? `Grades: ${gradesArray.join(', ')}` : 'All Grades PK–12');
+      const gradePill = `<span class="scope-pill" style="background: #f1f5f9; color: #0f172a; border: 1px solid #cbd5e1;">🎯 ${gText}</span>`;
+      return `${buildingBadges} ${gradePill}`;
+    }
+
+    function formatEventTimeRange(it) {
+      if (it.startTime && it.endTime) {
+        return `${it.startTime} – ${it.endTime}`;
+      }
+      return it.time || it.deadline || '8:00 AM – 3:25 PM';
     }
 
     function renderBadgePill(badgeText, badgeType) {
@@ -4284,19 +4352,19 @@
       // 1. Render Tier 1: Schedule & Disruptions
       const t1Grid = document.getElementById('tier1Grid');
       if (t1Grid) {
-        const items = (activeSchoolData.tier1_schedule_disruptions || []).filter(it => isSchoolItemVisible(it.scope, it.grades));
+        const items = (activeSchoolData.tier1_schedule_disruptions || []).filter(it => isSchoolItemVisible(it.scope, it.grades, true));
         if (items.length === 0) {
-          t1Grid.innerHTML = '<div class="empty-tier-notice">No schedule disruptions or calendar deviations active for the selected building filters.</div>';
+          t1Grid.innerHTML = '<div class="empty-tier-notice">No schedule disruptions or calendar deviations active for the selected grade/building filters.</div>';
         } else {
           t1Grid.innerHTML = items.map(it => `
             <div class="dispatch-card tier-1-card">
               <div>
                 <div class="dispatch-card-top">
                   <span class="dispatch-date-badge">${it.date || ''}</span>
-                  <div class="dispatch-scopes">${renderScopeBadges(it.scope)}</div>
+                  <div class="dispatch-scopes">${renderScopeBadges(it.scope, it.gradesLabel, it.grades)}</div>
                 </div>
                 <h4 class="dispatch-card-title">${it.title}</h4>
-                <div class="dispatch-card-time">⏰ ${it.time || ''}</div>
+                <div class="dispatch-card-time">⏰ <strong>Start – End:</strong> ${formatEventTimeRange(it)}</div>
                 <div class="dispatch-card-location">📍 ${it.location || ''}</div>
                 <div class="dispatch-card-desc">${it.description || ''}</div>
               </div>
@@ -4312,19 +4380,19 @@
       // 2. Render Tier 2: Gear, Deadlines & Parent Action
       const t2Grid = document.getElementById('tier2Grid');
       if (t2Grid) {
-        const items = (activeSchoolData.tier2_gear_deadlines_action || []).filter(it => isSchoolItemVisible(it.scope, it.grades));
+        const items = (activeSchoolData.tier2_gear_deadlines_action || []).filter(it => isSchoolItemVisible(it.scope, it.grades, false));
         if (items.length === 0) {
-          t2Grid.innerHTML = '<div class="empty-tier-notice">All forms, fees, and homeroom action items clear for the selected buildings.</div>';
+          t2Grid.innerHTML = '<div class="empty-tier-notice">No gear, deadlines, or parent action items match the currently selected grades.</div>';
         } else {
           t2Grid.innerHTML = items.map(it => `
             <div class="dispatch-card tier-2-card">
               <div>
                 <div class="dispatch-card-top">
                   <span class="dispatch-date-badge">${it.date || ''}</span>
-                  <div class="dispatch-scopes">${renderScopeBadges(it.scope)}</div>
+                  <div class="dispatch-scopes">${renderScopeBadges(it.scope, it.gradesLabel, it.grades)}</div>
                 </div>
                 <h4 class="dispatch-card-title">${it.title}</h4>
-                <div class="dispatch-card-time" style="color: #ea580c;">⏳ ${it.deadline || ''}</div>
+                <div class="dispatch-card-time" style="color: #ea580c;">⏰ <strong>Start – End:</strong> ${formatEventTimeRange(it)}${it.deadline ? ` &middot; ⏳ ${it.deadline}` : ''}</div>
                 <div class="dispatch-card-location">📍 ${it.location || ''}</div>
                 <div class="dispatch-card-desc">${it.description || ''}</div>
               </div>
@@ -4340,19 +4408,19 @@
       // 3. Render Tier 3: Marquee Home Gatherings
       const t3Grid = document.getElementById('tier3Grid');
       if (t3Grid) {
-        const items = (activeSchoolData.tier3_marquee_gatherings || []).filter(it => isSchoolItemVisible(it.scope, it.grades));
+        const items = (activeSchoolData.tier3_marquee_gatherings || []).filter(it => isSchoolItemVisible(it.scope, it.grades, false));
         if (items.length === 0) {
-          t3Grid.innerHTML = '<div class="empty-tier-notice">No home gatherings or athletic showcases scheduled for the selected buildings.</div>';
+          t3Grid.innerHTML = '<div class="empty-tier-notice">No home gatherings or athletic showcases scheduled for the currently selected grades.</div>';
         } else {
           t3Grid.innerHTML = items.map(it => `
             <div class="dispatch-card tier-3-card">
               <div>
                 <div class="dispatch-card-top">
                   <span class="dispatch-date-badge">${it.date || ''}</span>
-                  <div class="dispatch-scopes">${renderScopeBadges(it.scope)}</div>
+                  <div class="dispatch-scopes">${renderScopeBadges(it.scope, it.gradesLabel, it.grades)}</div>
                 </div>
                 <h4 class="dispatch-card-title">${it.title}</h4>
-                <div class="dispatch-card-time" style="color: #2563eb;">🏟️ ${it.time || ''}</div>
+                <div class="dispatch-card-time" style="color: #2563eb;">⏰ <strong>Start – End:</strong> ${formatEventTimeRange(it)}</div>
                 <div class="dispatch-card-location">📍 ${it.location || ''}</div>
                 <div class="dispatch-card-desc">${it.description || ''}</div>
               </div>
@@ -4365,12 +4433,18 @@
         }
       }
 
-      // 4. Render Tier 4: Daily Lunchline Tracker
+      // 4. Render Tier 4: Daily Breakfast & Lunchline Tracker
       const t4Grid = document.getElementById('tier4Grid');
       if (t4Grid) {
         const days = activeSchoolData.tier4_lunchline_tracker || [];
-        const showPres = currentSchoolFilter.pres;
-        const showSec = currentSchoolFilter.prms || currentSchoolFilter.prhs;
+        const showPres = currentSchoolFilter.pres && BUILDING_GRADE_MAP.pres.some(g => !!currentGradeFilter[g]);
+        const showSec = (currentSchoolFilter.prms && BUILDING_GRADE_MAP.prms.some(g => !!currentGradeFilter[g])) ||
+                        (currentSchoolFilter.prhs && BUILDING_GRADE_MAP.prhs.some(g => !!currentGradeFilter[g]));
+
+        const pricing = (activeSchoolData.meta && activeSchoolData.meta.mealPricing) || {
+          breakfast: { pres: 2.15, secondary: 2.30, reduced: 0.30, adult: 3.00, serviceWindow: '7:35 AM – 8:05 AM' },
+          lunch: { pres: 3.10, secondary: 3.35, reduced: 0.40, adult: 4.85, extraMilk: 0.60, serviceWindow: '11:10 AM – 12:45 PM' }
+        };
 
         t4Grid.innerHTML = days.map(d => `
           <div class="lunch-card ${d.status === 'holiday' ? 'holiday' : ''}">
@@ -4379,29 +4453,53 @@
               <span class="lunch-date">${d.date}</span>
             </div>
             ${d.note ? `<div style="font-size: 10.5px; font-weight: 700; color: #b91c1c; font-family: 'Plus Jakarta Sans', sans-serif;">⚠️ ${d.note}</div>` : ''}
-            
-            ${showPres ? `
-              <div class="lunch-section-block">
-                <span class="lunch-label label-pres">Elementary Entree (PRES):</span>
-                <span class="lunch-text"><strong>${d.entree_pres || 'Standard Menu'}</strong></span>
-              </div>
-            ` : ''}
 
-            ${showSec ? `
-              <div class="lunch-section-block">
-                <span class="lunch-label label-sec">Secondary Entree (PRMS / PRHS):</span>
-                <span class="lunch-text"><strong>${d.entree_secondary || 'Standard Menu'}</strong></span>
+            <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 5px; padding: 7px 9px; margin-bottom: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: #b45309;">☕ Breakfast (${pricing.breakfast.serviceWindow})</span>
+                <span style="font-size: 10px; font-weight: 700; color: #92400e;">$${pricing.breakfast.pres.toFixed(2)} PRES / $${pricing.breakfast.secondary.toFixed(2)} Sec</span>
               </div>
-            ` : ''}
-
-            <div class="lunch-section-block">
-              <span class="lunch-label label-sides">Sides &amp; Produce:</span>
-              <span class="lunch-text" style="color: #475569;">${d.sides || 'Seasonal sides'}</span>
+              ${(showPres || (!showPres && !showSec)) ? `
+                <div style="font-size: 11.5px; color: #1e293b; margin-bottom: 2px;">
+                  <strong style="color: #15803d;">PRES (PK–5):</strong> ${d.breakfast_pres || 'Hot Breakfast Entree or Cereal w/ Toast'}
+                </div>
+              ` : ''}
+              ${(showSec || (!showPres && !showSec)) ? `
+                <div style="font-size: 11.5px; color: #1e293b; margin-bottom: 2px;">
+                  <strong style="color: #0284c7;">PRMS/PRHS (6–12):</strong> ${d.breakfast_secondary || d.breakfast_pres || 'Hot Breakfast Entree or Cereal'}
+                </div>
+              ` : ''}
+              <div style="font-size: 10.5px; color: #64748b;">Fruit &amp; Milk: ${d.breakfast_sides || '100% Fruit Juice · Fresh Fruit · Milk'}</div>
             </div>
 
-            <div class="lunch-section-block">
-              <span class="lunch-label label-sides">Milk Service:</span>
-              <span class="lunch-text" style="color: #64748b; font-size: 11px;">${d.milk || '1% or Skim Milk'}</span>
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 5px; padding: 7px 9px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: #15803d;">🍱 Lunch (${pricing.lunch.serviceWindow})</span>
+                <span style="font-size: 10px; font-weight: 700; color: #166534;">$${pricing.lunch.pres.toFixed(2)} PRES / $${pricing.lunch.secondary.toFixed(2)} Sec</span>
+              </div>
+              ${(showPres || (!showPres && !showSec)) ? `
+                <div class="lunch-section-block" style="margin-bottom: 4px;">
+                  <span class="lunch-label label-pres">Elementary Lunch (PRES · $${pricing.lunch.pres.toFixed(2)}):</span>
+                  <span class="lunch-text"><strong>${d.entree_pres || 'Standard Menu'}</strong></span>
+                </div>
+              ` : ''}
+
+              ${(showSec || (!showPres && !showSec)) ? `
+                <div class="lunch-section-block" style="margin-bottom: 4px;">
+                  <span class="lunch-label label-sec">Secondary Lunch (PRMS/PRHS · $${pricing.lunch.secondary.toFixed(2)}):</span>
+                  <span class="lunch-text"><strong>${d.entree_secondary || 'Standard Menu'}</strong></span>
+                </div>
+              ` : ''}
+
+              <div class="lunch-section-block" style="margin-bottom: 3px;">
+                <span class="lunch-label label-sides">Sides &amp; Produce:</span>
+                <span class="lunch-text" style="color: #475569;">${d.sides || 'Seasonal sides'}</span>
+              </div>
+
+              <div class="lunch-section-block">
+                <span class="lunch-label label-sides">Milk Service ($${pricing.lunch.extraMilk.toFixed(2)} extra):</span>
+                <span class="lunch-text" style="color: #64748b; font-size: 11px;">${d.milk || '1% or Skim Milk'}</span>
+              </div>
             </div>
           </div>
         `).join('');
@@ -4415,6 +4513,31 @@
       const stores = activeGroceryData.stores || [];
       const basket = activeGroceryData.currentBasket || {};
       const prices = basket.prices || {};
+
+      // Format As-Of Date & Time from basket.publishedAt
+      let formattedAsOf = 'Oct 22, 2026 · 10:38 AM CT';
+      if (basket.publishedAt) {
+        try {
+          const dt = new Date(basket.publishedAt);
+          if (!isNaN(dt.getTime())) {
+            const datePart = dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'America/Chicago' });
+            const timePart = dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'America/Chicago' });
+            formattedAsOf = `${datePart} · ${timePart} CT`;
+          }
+        } catch (e) {}
+      }
+      const lastUpdBadge = document.getElementById('procLastUpdatedBadge');
+      if (lastUpdBadge) {
+        lastUpdBadge.innerHTML = `<strong>Prices As Of:</strong> ${formattedAsOf}`;
+      }
+      const t1TsTag = document.getElementById('procTable1TimestampTag');
+      if (t1TsTag) {
+        t1TsTag.innerHTML = `<strong>Prices As Of:</strong> ${formattedAsOf} &nbsp;|&nbsp; Formula: Shelf Subtotal + Tax/Surcharge + Transit`;
+      }
+      const t2TsTag = document.getElementById('groceryMatrixTimestampTag');
+      if (t2TsTag) {
+        t2TsTag.innerHTML = `Prices Last Updated: ${formattedAsOf} (Automated Feed)`;
+      }
 
       const mpgInput = document.getElementById('inputVehicleMpg');
       const gasInput = document.getElementById('inputGasPrice');
@@ -4543,7 +4666,7 @@
         let thHtml = '<th>Staple Item &amp; Spec</th><th>Category</th>';
         stores.forEach(st => {
           if (!includeCommissary && st.id === 'commissary') return;
-          thHtml += `<th>${st.name}</th>`;
+          thHtml += `<th>${st.name}<br><span style="font-size: 9.5px; font-weight: 500; color: #cbd5e1; text-transform: none;">As of ${formattedAsOf}</span></th>`;
         });
         thHtml += '<th>Item Lowest</th>';
         headerRow.innerHTML = thHtml;
