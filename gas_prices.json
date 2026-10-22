@@ -1,7 +1,7 @@
 {
   "status": "success",
-  "last_updated_iso": "2026-10-21T19:38:56.825738",
-  "last_updated_human": "Wednesday, October 21, 2026 - 07:38 PM",
+  "last_updated_iso": "2026-10-21T20:30:24.137543",
+  "last_updated_human": "Wednesday, October 21, 2026 - 08:30 PM",
   "date_header": "Wednesday, Oct 21, 2026",
   "cheapest_station": {
     "name": "Sunoco",
@@ -70,7 +70,7 @@
       "loc": "2100 S 4th St (Leavenworth)",
       "address": "2100 S 4th St (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-21T22:46:59.780Z",
+      "updated": "2026-10-22T00:46:26.322Z",
       "is_estimate": false
     },
     {

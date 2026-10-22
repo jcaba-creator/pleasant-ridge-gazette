@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>The Pleasant Ridge Gazette: Family Flow Simulator & Routine Trainer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>The Pleasant Ridge Gazette: Family Flow & Wargaming Trainer</title>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Google Fonts: Playfair Display (Vintage Headline), JetBrains Mono (Data blocks), Newsreader / Inter -->
+  <!-- Google Fonts: Playfair Display, Cinzel, JetBrains Mono, Newsreader -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;0,900;1,400;1,600;1,700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,400;1,600;1,700&display=swap" rel="stylesheet">
 
   <script>
     tailwind.config = {
@@ -20,24 +20,28 @@
           fontFamily: {
             headline: ['"Playfair Display"', 'Georgia', 'serif'],
             masthead: ['Cinzel', '"Playfair Display"', 'serif'],
-            editorial: ['Newsreader', 'Georgia', 'serif'],
+            editorial: ['Georgia', 'Newsreader', 'serif'],
             mono: ['"JetBrains Mono"', '"Courier New"', 'monospace'],
             sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
           },
           colors: {
-            gazette: {
-              paper: '#f6f3eb',
-              parchment: '#eee7da',
-              ink: '#231c15',
-              muted: '#635848',
-              border: '#d7cdba',
+            paper: {
+              DEFAULT: '#f7f4ed',
+              light: '#fcfbf7',
+              dark: '#ede7d8',
+              card: '#fffef9',
+              border: '#dcd2bf',
               darkborder: '#8f7d66',
-              amber: '#b45309',
-              gold: '#c59b27',
-              forest: '#2d6a4f',
-              cream: '#fffdfa',
-              sky: '#0284c7',
-            }
+            },
+            ink: {
+              DEFAULT: '#211c16',
+              light: '#4d4234',
+              muted: '#766753',
+            },
+            newsamber: '#b45309',
+            newsforest: '#2d6a4f',
+            newsnavy: '#1d3557',
+            newsred: '#991b1b',
           }
         }
       }
@@ -45,1006 +49,552 @@
   </script>
 
   <style>
-    /* Authentic newsprint paper styling */
+    /* Authentic newsprint paper grain & rules */
     body {
-      background-color: #f6f3eb;
-      color: #231c15;
+      background-color: #f7f4ed;
+      color: #211c16;
       background-image: 
-        linear-gradient(to right, rgba(74, 55, 34, 0.02) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(74, 55, 34, 0.02) 1px, transparent 1px);
-      background-size: 24px 24px;
+        linear-gradient(to right, rgba(90, 70, 45, 0.025) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(90, 70, 45, 0.025) 1px, transparent 1px);
+      background-size: 28px 28px;
     }
 
     .news-card {
-      background-color: #fffdfa;
-      border: 1px solid #d7cdba;
-      box-shadow: 0 2px 8px -1px rgba(60, 48, 33, 0.07), 0 1px 3px -1px rgba(60, 48, 33, 0.04);
+      background-color: #fffef9;
+      border: 1px solid #dcd2bf;
+      box-shadow: 0 2px 6px -1px rgba(50, 38, 22, 0.06), 0 1px 3px -1px rgba(50, 38, 22, 0.04);
     }
 
-    .news-card-inner {
-      background-color: #fbf8f0;
-      border: 1px solid #e3dbc9;
+    .news-card-inset {
+      background-color: #f4eee1;
+      border: 1px solid #d7cbba;
     }
 
-    .news-border-double {
-      border-top: 3px double #786953;
-      border-bottom: 3px double #786953;
+    .double-rule-top {
+      border-top: 3px double #766753;
     }
-
-    .news-border-single {
-      border-top: 1px solid #8f7d66;
+    .double-rule-bottom {
+      border-bottom: 3px double #766753;
+    }
+    .single-rule {
+      border-top: 1px solid #c2b59f;
     }
 
     .custom-scrollbar::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
     }
     .custom-scrollbar::-webkit-scrollbar-track {
-      background: #eee7da;
+      background: #ede7d8;
     }
     .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: #b5a791;
-      border-radius: 3px;
+      background: #b5a48c;
+      border-radius: 2px;
     }
 
-    /* Keypad shake animation */
-    @keyframes shake {
-      10%, 90% { transform: translate3d(-1px, 0, 0); }
-      20%, 80% { transform: translate3d(2px, 0, 0); }
-      30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-      40%, 60% { transform: translate3d(4px, 0, 0); }
+    /* Unit token animation */
+    .token-bounce {
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    .animate-shake {
-      animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+    .token-pulse {
+      animation: tokenPulse 1.8s ease-in-out infinite;
     }
-
-    /* Vehicle travel animation */
-    @keyframes dashTravel {
-      to { stroke-dashoffset: -32; }
+    @keyframes tokenPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
     }
-    .active-travel-f150 {
-      stroke: #b45309 !important;
-      stroke-width: 4 !important;
-      stroke-dasharray: 6 5 !important;
-      animation: dashTravel 1.2s linear infinite !important;
+    
+    /* Gate pulse */
+    @keyframes gateGlow {
+      0%, 100% { border-color: #b45309; }
+      50% { border-color: #f59e0b; }
     }
-    .active-travel-explorer {
-      stroke: #0284c7 !important;
-      stroke-width: 4 !important;
-      stroke-dasharray: 6 5 !important;
-      animation: dashTravel 1.2s linear infinite !important;
+    .gate-active {
+      animation: gateGlow 1.5s infinite;
     }
   </style>
 </head>
-<body class="min-h-screen selection:bg-amber-200 selection:text-amber-950 flex flex-col relative overflow-x-hidden text-gazette-ink">
+<body class="min-h-screen text-ink flex flex-col relative overflow-x-hidden pb-12">
 
   <!-- ==================================================================== -->
-  <!-- 1. FRONT DOOR ACCESS GATE (VINTAGE DISPATCH LOCKBOX) -->
+  <!-- 1. STICKY TOP HUD (CLOCK, FORCE RATIO & SIM CONTROLS) -->
   <!-- ==================================================================== -->
-  <div id="frontDoorModal" style="display: none !important;" class="hidden fixed inset-0 z-50">
-    <div class="max-w-md w-full bg-[#fbf8f0] border-2 border-[#786953] rounded-xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
-      
-      <!-- Lockbox Top Stamp -->
-      <div class="text-center mb-5 pb-4 border-b border-[#d7cdba]">
-        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-[#eee7da] border border-[#c4b79f] text-[11px] font-mono font-bold text-[#635848] uppercase tracking-wider mb-2">
-          <span>🔒</span> FAMILY DISPATCH LOCKBOX
-        </div>
-        <h2 class="text-2xl font-headline font-bold text-[#231c15] tracking-wide">
-          The Pleasant Ridge Gazette
-        </h2>
-        <p class="text-xs font-editorial italic text-[#635848] mt-0.5">
-          Family Flow Simulator & Routine Trainer • Easton & Leavenworth County
-        </p>
-      </div>
-
-      <!-- PIN Input Status Display -->
-      <div class="bg-[#eee7da] border border-[#c4b79f] rounded-lg p-4 mb-5 text-center shadow-inner">
-        <div class="text-[10px] font-mono text-[#635848] uppercase tracking-widest mb-2 font-semibold">
-          ENTER 4-DIGIT HOUSEHOLD PASSCODE
-        </div>
-        
-        <!-- Large Monospace Digit Readout Boxes -->
-        <div class="flex items-center justify-center gap-3 mb-3" id="pinDisplayBoxes">
-          <div class="w-12 h-14 rounded-lg border-2 border-[#8f7d66] bg-[#fffdfa] flex items-center justify-center text-2xl font-mono font-bold text-[#231c15] shadow-sm transition-all" id="pinSlot0">•</div>
-          <div class="w-12 h-14 rounded-lg border-2 border-[#8f7d66] bg-[#fffdfa] flex items-center justify-center text-2xl font-mono font-bold text-[#231c15] shadow-sm transition-all" id="pinSlot1">•</div>
-          <div class="w-12 h-14 rounded-lg border-2 border-[#8f7d66] bg-[#fffdfa] flex items-center justify-center text-2xl font-mono font-bold text-[#231c15] shadow-sm transition-all" id="pinSlot2">•</div>
-          <div class="w-12 h-14 rounded-lg border-2 border-[#8f7d66] bg-[#fffdfa] flex items-center justify-center text-2xl font-mono font-bold text-[#231c15] shadow-sm transition-all" id="pinSlot3">•</div>
-        </div>
-
-        <!-- 4 Visual Status Dots -->
-        <div class="flex items-center justify-center gap-4 mb-2" id="pinDotsContainer">
-          <div class="w-3.5 h-3.5 rounded-full border-2 border-[#8f7d66] bg-[#fbf8f0] transition-all duration-150 pin-dot" id="dot0"></div>
-          <div class="w-3.5 h-3.5 rounded-full border-2 border-[#8f7d66] bg-[#fbf8f0] transition-all duration-150 pin-dot" id="dot1"></div>
-          <div class="w-3.5 h-3.5 rounded-full border-2 border-[#8f7d66] bg-[#fbf8f0] transition-all duration-150 pin-dot" id="dot2"></div>
-          <div class="w-3.5 h-3.5 rounded-full border-2 border-[#8f7d66] bg-[#fbf8f0] transition-all duration-150 pin-dot" id="dot3"></div>
-        </div>
-
-        <div id="pinErrorMessage" class="text-xs font-mono text-red-600 h-4 font-bold tracking-wide"></div>
-        
-        <!-- One-Touch Quick Click Passcode Shortcuts -->
-        <div class="text-[11px] font-mono text-[#635848] mt-2 flex items-center justify-center gap-2">
-          <span class="font-bold">CLICK TO ENTER:</span>
-          <button type="button" onclick="autoFillPin('1776')" class="px-2.5 py-0.5 rounded bg-[#fffdfa] hover:bg-[#b45309] hover:text-white border border-[#c4b79f] font-bold text-[#b45309] transition-all cursor-pointer shadow-sm">1776</button>
-          <button type="button" onclick="autoFillPin('4490')" class="px-2.5 py-0.5 rounded bg-[#fffdfa] hover:bg-[#b45309] hover:text-white border border-[#c4b79f] font-bold text-[#b45309] transition-all cursor-pointer shadow-sm">4490</button>
-          <button type="button" onclick="autoFillPin('1234')" class="px-2.5 py-0.5 rounded bg-[#fffdfa] hover:bg-[#b45309] hover:text-white border border-[#c4b79f] font-bold text-[#b45309] transition-all cursor-pointer shadow-sm">1234</button>
-        </div>
-      </div>
-
-      <!-- Keypad Grid with High-Contrast Clickable Buttons -->
-      <div class="grid grid-cols-3 gap-2.5 mb-4">
-        <button type="button" onclick="handleKeypad('1')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 active:bg-[#e4dcce] border-2 border-[#c4b79f] hover:border-[#8f7d66] text-xl font-mono font-bold text-[#231c15] shadow transition-all flex items-center justify-center">1</button>
-        <button type="button" onclick="handleKeypad('2')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 active:bg-[#e4dcce] border-2 border-[#c4b79f] hover:border-[#8f7d66] text-xl font-mono font-bold text-[#231c15] shadow transition-all flex items-center justify-center">2</button>
-        <button type="button" onclick="handleKeypad('3')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 active:bg-[#e4dcce] border-2 border-[#c4b79f] hover:border-[#8f7d66] text-xl font-mono font-bold text-[#231c15] shadow transition-all flex items-center justify-center">3</button>
-        <button type="button" onclick="handleKeypad('4')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 active:bg-[#e4dcce] border-2 border-[#c4b79f] hover:border-[#8f7d66] text-xl font-mono font-bold text-[#231c15] shadow transition-all flex items-center justify-center">4</button>
-        <button type="button" onclick="handleKeypad('5')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 active:bg-[#e4dcce] border-2 border-[#c4b79f] hover:border-[#8f7d66] text-xl font-mono font-bold text-[#231c15] shadow transition-all flex items-center justify-center">5</button>
-        <button type="button" onclick="handleKeypad('6')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 active:bg-[#e4dcce] border-2 border-[#c4b79f] hover:border-[#8f7d66] text-xl font-mono font-bold text-[#231c15] shadow transition-all flex items-center justify-center">6</button>
-        <button type="button" onclick="handleKeypad('7')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 active:bg-[#e4dcce] border-2 border-[#c4b79f] hover:border-[#8f7d66] text-xl font-mono font-bold text-[#231c15] shadow transition-all flex items-center justify-center">7</button>
-        <button type="button" onclick="handleKeypad('8')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 active:bg-[#e4dcce] border-2 border-[#c4b79f] hover:border-[#8f7d66] text-xl font-mono font-bold text-[#231c15] shadow transition-all flex items-center justify-center">8</button>
-        <button type="button" onclick="handleKeypad('9')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 active:bg-[#e4dcce] border-2 border-[#c4b79f] hover:border-[#8f7d66] text-xl font-mono font-bold text-[#231c15] shadow transition-all flex items-center justify-center">9</button>
-        <button type="button" onclick="clearKeypad()" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-[#eee7da] hover:bg-[#e4dcce] active:scale-95 border-2 border-[#c4b79f] hover:border-[#8f7d66] text-xs font-mono font-bold text-[#635848] transition-all flex items-center justify-center">CLEAR</button>
-        <button type="button" onclick="handleKeypad('0')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 active:bg-[#e4dcce] border-2 border-[#c4b79f] hover:border-[#8f7d66] text-xl font-mono font-bold text-[#231c15] shadow transition-all flex items-center justify-center">0</button>
-        <button type="button" onclick="backspaceKeypad()" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-[#eee7da] hover:bg-[#e4dcce] active:scale-95 border-2 border-[#c4b79f] hover:border-[#8f7d66] text-base font-mono font-bold text-[#635848] transition-all flex items-center justify-center">⌫</button>
-      </div>
-
-      <!-- Quick Entry Pass Button -->
-      <div class="pt-2 border-t border-[#d7cdba]">
-        <button onclick="passQuickEntry()" class="w-full py-2.5 px-4 rounded-lg bg-[#b45309] hover:bg-[#92400e] text-[#fffdfa] text-xs font-mono font-bold tracking-wider uppercase transition-all shadow flex items-center justify-center gap-2">
-          <span>⚡</span> PASS (ONE-TOUCH ENTRY)
-        </button>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ==================================================================== -->
-  <!-- 2. GAZETTE MASTHEAD, CLOCK, FLOW GAUGE & BASELINE LOCK -->
-  <!-- ==================================================================== -->
-  <header class="bg-[#fffdfa] border-b-2 border-[#786953] shadow-sm sticky top-0 z-30">
+  <header class="bg-[#fffef9]/95 backdrop-blur-md border-b-2 border-[#766753] sticky top-0 z-40 shadow-sm">
     
-    <!-- Top Gazette Banner -->
-    <div class="bg-[#eee7da] border-b border-[#d7cdba] px-4 py-1 text-[11px] font-mono flex items-center justify-between text-[#635848]">
-      <div class="flex items-center gap-2">
-        <span class="inline-block w-2 h-2 rounded-full bg-emerald-600"></span>
-        <span class="font-bold tracking-wider">USD 449 PLEASANT RIDGE & LEAVENWORTH COUNTY COMMUNITY EDITION</span>
+    <!-- Top Gazette Issue Bar -->
+    <div class="bg-[#ede7d8] border-b border-[#dcd2bf] px-3 py-0.5 text-[10px] font-mono flex items-center justify-between text-[#766753]">
+      <div class="flex items-center gap-1.5 font-bold">
+        <span class="w-2 h-2 rounded-full bg-emerald-700 animate-pulse"></span>
+        <span>THE PLEASANT RIDGE GAZETTE // DAILY OPERATIONAL WARGAMER</span>
       </div>
-      <div class="flex items-center gap-4">
-        <span class="hidden sm:inline">CABALLERO HOMESTEAD DESK</span>
-        <button onclick="toggleSound()" id="soundToggleBtn" class="hover:text-amber-900 font-bold flex items-center gap-1">
-          <span id="soundIcon">🔔</span> <span id="soundLabel">CHIMES: ON</span>
-        </button>
-        <button onclick="lockScreen()" class="hover:text-red-700 font-bold flex items-center gap-1">
-          <span>🔒</span> LOCK SCREEN
+      <div class="flex items-center gap-3">
+        <span class="hidden sm:inline">USD 449 EASTON • CAC FORT LEAVENWORTH</span>
+        <button onclick="toggleSound()" id="soundBtn" class="hover:text-amber-900 font-bold flex items-center gap-1">
+          <span id="soundIcon">🔔</span> <span id="soundText">SFX: ON</span>
         </button>
       </div>
     </div>
 
-    <!-- Newspaper Headline Block -->
-    <div class="max-w-7xl mx-auto px-4 py-3 sm:py-4">
-      <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+    <!-- Master HUD Strip -->
+    <div class="max-w-5xl mx-auto px-3 sm:px-4 py-2 sm:py-3">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
         
-        <!-- Left: Masthead Brand -->
-        <div class="text-center md:text-left">
-          <div class="text-[10px] font-mono tracking-widest text-[#8f7d66] uppercase font-bold">
-            EST. 1854 • LEAVENWORTH COUNTY, KANSAS • VOL. CXLVIII NO. 43
+        <!-- Left: Masthead Title & Operational Status -->
+        <div class="text-center sm:text-left flex-1 min-w-0">
+          <div class="text-[9px] font-mono tracking-widest text-[#766753] uppercase font-bold">
+            SOLO COMMAND SIMULATION • CABALLERO HOMESTEAD
           </div>
-          <h1 class="text-2xl sm:text-3xl lg:text-4xl font-headline font-bold text-[#231c15] tracking-tight leading-none">
+          <h1 class="text-lg sm:text-2xl font-headline font-bold text-ink truncate leading-tight">
             The Pleasant Ridge Gazette
           </h1>
-          <div class="text-xs font-editorial italic text-[#635848] mt-1 flex flex-wrap items-center justify-center md:justify-start gap-2">
-            <span class="font-bold text-[#b45309] font-sans not-italic text-[11px]">FAMILY FLOW SIMULATOR & ROUTINE TRAINER</span>
+          <div class="text-[11px] font-mono text-ink-light flex items-center gap-2 justify-center sm:justify-start">
+            <span class="font-bold text-[#b45309]" id="hudPhaseName">PHASE 2: SOLO COMMAND MORNING RUSH</span>
             <span>•</span>
-            <span>Modeling Daily School Commutes, Morning Preparation, and Energy Reserves</span>
+            <span class="text-[10px] text-[#766753]">MOM ON 05:00 MIDDLE SCHOOL SHIFT</span>
           </div>
         </div>
 
-        <!-- Right: Flow Meter & Baseline Lock -->
-        <div class="flex items-center gap-3">
-          
-          <!-- Household Peace & Flow Meter -->
-          <div class="bg-[#fbf8f0] border border-[#d7cdba] rounded-lg p-2.5 px-4 flex items-center gap-3 shadow-sm">
-            <div class="relative w-12 h-12 flex items-center justify-center">
-              <svg class="w-12 h-12 transform -rotate-90">
-                <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="4" class="text-[#e5dcce]" fill="transparent"/>
-                <circle id="peaceMeterRing" cx="24" cy="24" r="20" stroke="currentColor" stroke-width="4" class="text-emerald-600 transition-all duration-500" fill="transparent" stroke-dasharray="125.6" stroke-dashoffset="6.3"/>
-              </svg>
-              <span id="peaceMeterScore" class="absolute text-[12px] font-mono font-bold text-emerald-800">95%</span>
-            </div>
-            <div>
-              <div class="text-[9px] font-mono text-[#8f7d66] uppercase tracking-wider font-semibold">HOUSEHOLD FLOW METER</div>
-              <div id="peaceStatusBadge" class="text-xs font-headline font-bold text-emerald-800 flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
-                CALM & ON TRACK
-              </div>
-              <div class="text-[11px] font-mono text-[#635848]">
-                Cushion Buffer: <span id="peaceBufferDisplay" class="font-bold text-[#b45309]">+22 mins</span>
-              </div>
-            </div>
+        <!-- Center: Force Ratio & Success Odds Meter -->
+        <div class="flex items-center gap-2 sm:gap-3 bg-[#f4eee1] border border-[#c2b59f] rounded-lg px-3 py-1.5 shadow-inner">
+          <!-- Ratio Gauge -->
+          <div class="text-center">
+            <div class="text-[8px] font-mono text-[#766753] uppercase font-bold">FORCE RATIO</div>
+            <div id="hudForceRatio" class="text-lg sm:text-xl font-mono font-bold text-emerald-800 leading-none">1.52:1</div>
+            <div class="text-[8px] font-mono text-[#766753]">38 vs 25 Diff</div>
           </div>
 
-          <!-- Routine Baseline Lock Toggle -->
-          <button onclick="toggleBaselineLock()" id="baselineLockBtn" class="px-3.5 py-2.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-[#fffdfa] font-mono font-bold text-xs uppercase tracking-wider shadow transition-all flex items-center gap-2">
-            <span id="baselineLockIcon">🔒</span>
-            <span id="baselineLockLabel">[ BASELINE LOCKED ]</span>
-          </button>
+          <div class="h-8 w-px bg-[#c2b59f]"></div>
 
+          <!-- Odds Badge -->
+          <div class="text-center">
+            <div class="text-[8px] font-mono text-[#766753] uppercase font-bold">BUS & CAC ODDS</div>
+            <div id="hudOddsScore" class="text-lg sm:text-xl font-mono font-bold text-emerald-800 leading-none">94%</div>
+            <div id="hudOddsLabel" class="text-[8px] font-mono font-bold text-emerald-700">OPTIMAL FLOW</div>
+          </div>
         </div>
 
-      </div>
-    </div>
-
-    <!-- MASTER TIME & WEATHER BAR -->
-    <div class="bg-[#f6f3eb] border-t border-[#d7cdba] px-4 py-2.5">
-      <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-sm font-mono">
-        
-        <!-- Day Clock Controls -->
-        <div class="flex items-center flex-wrap gap-2 sm:gap-3">
-          
-          <!-- Digital Time Readout -->
-          <div class="bg-[#fffdfa] border border-[#c4b79f] rounded px-3 py-1 text-center shadow-inner">
-            <span class="text-[9px] uppercase tracking-widest text-[#8f7d66] block -mb-0.5 font-bold">DAY CLOCK</span>
-            <span id="clockDisplay" class="text-lg font-bold font-mono text-[#b45309] tracking-wider">06:30 AM</span>
-          </div>
-
-          <!-- Run/Pause Button -->
-          <button onclick="toggleClockRun()" id="clockRunBtn" class="px-3 py-1.5 rounded bg-[#b45309] hover:bg-[#92400e] text-[#fffdfa] font-bold text-xs uppercase tracking-wider flex items-center gap-1 transition-all shadow">
-            <span id="clockRunIcon">▶</span>
-            <span id="clockRunText">RUN</span>
-          </button>
-
-          <!-- +15m Step Button -->
-          <button onclick="stepClock(15)" class="px-2.5 py-1.5 rounded bg-[#eee7da] hover:bg-[#e4dcce] border border-[#c4b79f] text-[#231c15] text-xs font-semibold transition-all">
-            +15m
-          </button>
-
-          <!-- Reset Button -->
-          <button onclick="resetDayClock()" class="px-2.5 py-1.5 rounded bg-[#eee7da] hover:bg-[#e4dcce] border border-[#c4b79f] text-[#635848] hover:text-[#231c15] text-xs transition-all font-semibold">
-            ↺ RESET (06:30)
-          </button>
-
-          <!-- Speed Multipliers -->
-          <div class="flex items-center rounded bg-[#eee7da] border border-[#c4b79f] p-0.5 text-xs">
-            <button onclick="setTempo(1)" id="tempo1x" class="px-2 py-0.5 rounded text-[#b45309] font-bold bg-[#fffdfa] transition-all">1x</button>
-            <button onclick="setTempo(5)" id="tempo5x" class="px-2 py-0.5 rounded text-[#635848] hover:text-[#231c15] transition-all">5x</button>
-            <button onclick="setTempo(15)" id="tempo15x" class="px-2 py-0.5 rounded text-[#635848] hover:text-[#231c15] transition-all">15x</button>
-          </div>
-
-        </div>
-
-        <!-- Weather Desk Dropdown -->
+        <!-- Right: Time Clock & Run Controls -->
         <div class="flex items-center gap-2">
-          <span class="text-[11px] text-[#635848] uppercase tracking-wider font-semibold hidden sm:inline">WEATHER DESK:</span>
-          <select id="weatherSelect" onchange="handleWeatherChange(this.value)" class="bg-[#fffdfa] border border-[#c4b79f] text-[#231c15] text-xs rounded px-3 py-1.5 font-mono focus:outline-none focus:ring-1 focus:ring-[#b45309] cursor-pointer shadow-sm">
-            <option value="crisp">🍂 Crisp Fall Day (52°F, Clear Roads, Normal)</option>
-            <option value="rain">🌧️ Kansas Rain (46°F, Slick Roads, +5m Buffer)</option>
-            <option value="fog">🌫️ Morning Valley Fog (41°F, Cautious Driving)</option>
-            <option value="frost">❄️ First Frost (28°F, Truck Defrost, +10m Morning Buffer)</option>
-          </select>
           
-          <button onclick="triggerEveningDebriefModal()" class="px-2.5 py-1.5 rounded bg-[#eee7da] hover:bg-[#e4dcce] border border-[#c4b79f] text-[#635848] hover:text-[#231c15] text-xs font-bold transition-all" title="View Today's Scorecard">
-            📰 EVENING EDITION
-          </button>
+          <!-- Large Digital Clock -->
+          <div class="bg-[#fffef9] border-2 border-[#b45309] rounded-lg px-2.5 py-1 text-center shadow-sm">
+            <span class="text-[8px] uppercase tracking-widest text-[#766753] block -mb-1 font-bold">TIMELINE</span>
+            <span id="hudSimClock" class="text-xl sm:text-2xl font-bold font-mono text-[#b45309] tracking-wider">06:25 AM</span>
+          </div>
+
+          <!-- Sim Buttons -->
+          <div class="flex flex-col gap-1">
+            <button onclick="toggleSim()" id="simRunBtn" class="px-3 py-1.5 rounded bg-[#b45309] hover:bg-[#92400e] text-[#fffef9] font-mono font-bold text-xs uppercase tracking-wider shadow flex items-center justify-center gap-1 transition-all active:scale-95">
+              <span id="simRunIcon">▶</span> <span id="simRunLabel">RUN</span>
+            </button>
+            <div class="flex items-center gap-1 text-[10px] font-mono">
+              <button onclick="stepSim(5)" class="px-2 py-0.5 rounded bg-[#ede7d8] hover:bg-[#dfd7c5] border border-[#c2b59f] font-bold text-ink" title="Advance 5 minutes">
+                +5m
+              </button>
+              <button onclick="resetSim()" class="px-2 py-0.5 rounded bg-[#ede7d8] hover:bg-[#dfd7c5] border border-[#c2b59f] font-bold text-ink" title="Reset to 06:20 AM">
+                ↺ 06:20
+              </button>
+              <button onclick="cycleTempo()" id="simTempoBtn" class="px-2 py-0.5 rounded bg-[#ede7d8] border border-[#c2b59f] font-bold text-[#b45309]">
+                5x
+              </button>
+            </div>
+          </div>
+
         </div>
 
       </div>
     </div>
 
-    <!-- NAVIGATION TABS -->
-    <nav class="max-w-7xl mx-auto px-4 flex items-center gap-1 border-t border-[#d7cdba] overflow-x-auto text-xs font-mono">
-      <button onclick="switchTab('tabMap')" id="navTabMap" class="nav-tab px-4 py-2.5 font-bold border-b-2 border-[#b45309] text-[#b45309] flex items-center gap-2 transition-all whitespace-nowrap">
-        <span>🗺️</span> 1. COUNTY MAP & TRAVEL THEATER
-      </button>
-      <button onclick="switchTab('tabSchedule')" id="navTabSchedule" class="nav-tab px-4 py-2.5 font-bold border-b-2 border-transparent text-[#635848] hover:text-[#231c15] flex items-center gap-2 transition-all whitespace-nowrap">
-        <span>📅</span> 2. TODAY'S FAMILY SCHEDULE
-      </button>
-      <button onclick="switchTab('tabRoster')" id="navTabRoster" class="nav-tab px-4 py-2.5 font-bold border-b-2 border-transparent text-[#635848] hover:text-[#231c15] flex items-center gap-2 transition-all whitespace-nowrap">
-        <span>👥</span> 3. FAMILY ROSTER & MORNING ROUTINES
-      </button>
-      <button onclick="switchTab('tabFleet')" id="navTabFleet" class="nav-tab px-4 py-2.5 font-bold border-b-2 border-transparent text-[#635848] hover:text-[#231c15] flex items-center gap-2 transition-all whitespace-nowrap">
-        <span>🚙</span> 4. FAMILY VEHICLES & FLEET
-      </button>
-    </nav>
+    <!-- Jump-to-Gate Quick Bar -->
+    <div class="bg-[#f7f4ed] border-t border-[#dcd2bf] px-3 py-1">
+      <div class="max-w-5xl mx-auto flex items-center justify-between overflow-x-auto gap-2 text-[10px] font-mono">
+        <span class="text-[#766753] font-bold uppercase whitespace-nowrap">TIMELINE JUMPS:</span>
+        <div class="flex items-center gap-1.5 whitespace-nowrap">
+          <button onclick="jumpToSimTime(240)" class="px-2 py-0.5 rounded bg-[#fffef9] hover:bg-[#ede7d8] border border-[#dcd2bf]">04:00 (Wake)</button>
+          <button onclick="jumpToSimTime(300)" class="px-2 py-0.5 rounded bg-[#fffef9] hover:bg-[#ede7d8] border border-[#dcd2bf]">05:00 (Brit Departs)</button>
+          <button onclick="jumpToSimTime(385)" class="px-2 py-0.5 rounded bg-[#fffef9] hover:bg-[#ede7d8] border border-[#dcd2bf] font-bold text-[#b45309]">06:25 (Lincoln Wake)</button>
+          <button onclick="jumpToSimTime(420)" class="px-2 py-0.5 rounded bg-[#fffef9] hover:bg-[#ede7d8] border border-[#dcd2bf] font-bold text-amber-800">07:00 (Bus Sprint)</button>
+          <button onclick="jumpToSimTime(424)" class="px-2 py-0.5 rounded bg-[#fffef9] hover:bg-[#ede7d8] border border-[#b45309] font-bold text-red-700">07:04 (Gate 1 Bus)</button>
+          <button onclick="jumpToSimTime(460)" class="px-2 py-0.5 rounded bg-[#fffef9] hover:bg-[#ede7d8] border border-[#dcd2bf]">07:40 (Wheels Up)</button>
+          <button onclick="jumpToSimTime(540)" class="px-2 py-0.5 rounded bg-[#fffef9] hover:bg-[#ede7d8] border border-[#dcd2bf]">09:00 (CAC Desk)</button>
+        </div>
+      </div>
+    </div>
 
   </header>
 
   <!-- ==================================================================== -->
   <!-- MAIN WORKSPACE -->
   <!-- ==================================================================== -->
-  <main class="max-w-7xl mx-auto px-4 py-6 w-full flex-1">
+  <main class="max-w-5xl mx-auto px-3 sm:px-4 py-4 sm:py-6 w-full space-y-5">
     
     <!-- ================================================================== -->
-    <!-- TAB 1: COUNTY MAP & TRAVEL THEATER -->
+    <!-- 2. QUANTIFIABLE ASSET OVERLAYS (THE 4 FINITE LEVERS) -->
     <!-- ================================================================== -->
-    <div id="tabMap" class="tab-pane space-y-6">
-      
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        <!-- Vector Map (2 Columns) -->
-        <div class="lg:col-span-2 news-card rounded-xl p-4 flex flex-col">
-          
-          <div class="flex items-center justify-between pb-3 mb-3 border-b border-[#d7cdba]">
-            <div>
-              <h3 class="font-headline font-bold text-lg text-[#231c15]">
-                Leavenworth County Travel Theater
-              </h3>
-              <p class="text-xs font-editorial italic text-[#635848]">
-                Caballero Homestead to USD 449 Pleasant Ridge, Fort Leavenworth & Lansing
-              </p>
-            </div>
-            <div class="text-xs font-mono flex items-center gap-3">
-              <span class="flex items-center gap-1.5">
-                <span class="w-3 h-3 rounded-full bg-[#b45309] inline-block"></span>
-                F-150 (Dad / Josh)
-              </span>
-              <span class="flex items-center gap-1.5">
-                <span class="w-3 h-3 rounded-full bg-[#0284c7] inline-block"></span>
-                Explorer (Mom / Brittanie)
-              </span>
-            </div>
-          </div>
-
-          <!-- SVG Vector Map Canvas -->
-          <div class="relative w-full aspect-[16/10] bg-[#ede5d5] rounded-lg border border-[#c4b79f] overflow-hidden shadow-inner flex-1">
-            <svg id="countyMapSvg" viewBox="0 0 1000 620" class="w-full h-full select-none">
-              
-              <defs>
-                <pattern id="vintageGridPattern" width="40" height="40" patternUnits="userSpaceOnUse">
-                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(120, 105, 83, 0.08)" stroke-width="1"/>
-                </pattern>
-                <linearGradient id="riverVintageGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#467092" stop-opacity="0.7"/>
-                  <stop offset="50%" stop-color="#5a88ad" stop-opacity="0.5"/>
-                  <stop offset="100%" stop-color="#467092" stop-opacity="0.7"/>
-                </linearGradient>
-              </defs>
-
-              <!-- Map Background & Grid -->
-              <rect width="1000" height="620" fill="#ede5d5" />
-              <rect width="1000" height="620" fill="url(#vintageGridPattern)" />
-
-              <!-- MISSOURI RIVER BEND (Eastern Boundary) -->
-              <g id="riverGroup">
-                <path d="M 880 -10 C 860 80, 810 140, 810 220 C 810 300, 870 380, 880 470 C 890 530, 860 590, 850 630 L 1010 630 L 1010 -10 Z" 
-                      fill="url(#riverVintageGrad)" opacity="0.45" />
-                <path d="M 880 -10 C 860 80, 810 140, 810 220 C 810 300, 870 380, 880 470 C 890 530, 860 590, 850 630" 
-                      fill="none" stroke="#467092" stroke-width="3.5" stroke-opacity="0.8" />
-                <text x="835" y="280" fill="#467092" font-size="11" font-family="Playfair Display" font-style="italic" font-weight="bold" letter-spacing="2" transform="rotate(78 835 280)">
-                  MISSOURI RIVER REACHES
-                </text>
-              </g>
-
-              <!-- Road Corridor Paths -->
-              <g id="roadsGroup">
-                <!-- Corridor Alpha: Home Base to Pleasant Ridge Schools -->
-                <path id="path_alpha" d="M 240 360 C 230 290, 220 220, 210 150" 
-                      fill="none" stroke="#a39582" stroke-width="3" stroke-dasharray="5 4" />
-                <!-- Corridor Bravo: Home Base to Fort Leavenworth -->
-                <path id="path_bravo" d="M 240 360 C 380 340, 520 240, 640 180 C 700 150, 740 145, 780 140" 
-                      fill="none" stroke="#a39582" stroke-width="3" stroke-dasharray="5 4" />
-                <!-- Corridor Delta: Home Base to Lansing Sports Fields -->
-                <path id="path_delta" d="M 240 360 C 380 400, 530 430, 640 440 C 690 445, 720 448, 750 450" 
-                      fill="none" stroke="#a39582" stroke-width="3" stroke-dasharray="5 4" />
-                <!-- Corridor Echo: Pleasant Ridge to Lansing -->
-                <path id="path_echo" d="M 210 150 C 350 240, 550 350, 700 420 C 725 435, 735 440, 750 450" 
-                      fill="none" stroke="#a39582" stroke-width="2.5" stroke-dasharray="4 4" />
-              </g>
-
-              <!-- Road Highway Labels -->
-              <g fill="#786953" font-family="Newsreader" font-style="italic" font-size="12">
-                <text x="440" y="245">Highway K-92 to Leavenworth</text>
-                <text x="670" y="320">US-73 / K-7 Corridor</text>
-                <text x="140" y="270">Easton 207th St Connector</text>
-              </g>
-
-              <!-- DESTINATION NODES -->
-
-              <!-- 1. Home Base (Caballero Homestead) -->
-              <g id="nodeHome" class="cursor-pointer" onclick="showNodeDetails('Home Base')">
-                <circle cx="240" cy="360" r="22" fill="#fffdfa" stroke="#b45309" stroke-width="2" />
-                <circle cx="240" cy="360" r="7" fill="#b45309" />
-                <!-- Label Card -->
-                <rect x="150" y="390" width="180" height="36" rx="4" fill="#fffdfa" stroke="#b45309" stroke-width="1.5" />
-                <text x="240" y="405" fill="#231c15" font-size="11" font-family="Playfair Display" font-weight="bold" text-anchor="middle">HOME BASE</text>
-                <text x="240" y="418" fill="#635848" font-size="9" font-family="JetBrains Mono" text-anchor="middle">Caballero Homestead</text>
-              </g>
-
-              <!-- 2. Pleasant Ridge Schools (USD 449) -->
-              <g id="nodeSchools" class="cursor-pointer" onclick="showNodeDetails('Pleasant Ridge Schools')">
-                <circle cx="210" cy="150" r="22" fill="#fffdfa" stroke="#0284c7" stroke-width="2" />
-                <circle cx="210" cy="150" r="7" fill="#0284c7" />
-                <rect x="110" y="90" width="200" height="36" rx="4" fill="#fffdfa" stroke="#0284c7" stroke-width="1.5" />
-                <text x="210" y="105" fill="#231c15" font-size="11" font-family="Playfair Display" font-weight="bold" text-anchor="middle">PLEASANT RIDGE (USD 449)</text>
-                <text x="210" y="118" fill="#635848" font-size="9" font-family="JetBrains Mono" text-anchor="middle">Easton Campus & Car Line</text>
-              </g>
-
-              <!-- 3. Fort Leavenworth -->
-              <g id="nodeFort" class="cursor-pointer" onclick="showNodeDetails('Fort Leavenworth')">
-                <circle cx="780" cy="140" r="22" fill="#fffdfa" stroke="#b45309" stroke-width="2" />
-                <circle cx="780" cy="140" r="7" fill="#b45309" />
-                <rect x="685" y="80" width="190" height="36" rx="4" fill="#fffdfa" stroke="#b45309" stroke-width="1.5" />
-                <text x="780" y="95" fill="#231c15" font-size="11" font-family="Playfair Display" font-weight="bold" text-anchor="middle">FORT LEAVENWORTH</text>
-                <text x="780" y="108" fill="#635848" font-size="9" font-family="JetBrains Mono" text-anchor="middle">Sherman Ave / Post Office</text>
-              </g>
-
-              <!-- 4. Lansing Sports Fields -->
-              <g id="nodeLansing" class="cursor-pointer" onclick="showNodeDetails('Lansing Sports Fields')">
-                <circle cx="750" cy="450" r="22" fill="#fffdfa" stroke="#2d6a4f" stroke-width="2" />
-                <circle cx="750" cy="450" r="7" fill="#2d6a4f" />
-                <rect x="655" y="475" width="190" height="36" rx="4" fill="#fffdfa" stroke="#2d6a4f" stroke-width="1.5" />
-                <text x="750" y="490" fill="#231c15" font-size="11" font-family="Playfair Display" font-weight="bold" text-anchor="middle">LANSING SPORTS FIELDS</text>
-                <text x="750" y="503" fill="#635848" font-size="9" font-family="JetBrains Mono" text-anchor="middle">Soccer & Afternoon Practice</text>
-              </g>
-
-              <!-- VEHICLE TOKENS (Interpolated dynamically) -->
-
-              <!-- Ford F-150 Vehicle Token (Amber) -->
-              <g id="tokenF150" transform="translate(240, 360)" class="transition-transform duration-150">
-                <circle cx="0" cy="0" r="14" fill="#fef3c7" stroke="#b45309" stroke-width="2" />
-                <circle cx="0" cy="0" r="7" fill="#b45309" />
-                <g transform="translate(12, -12)">
-                  <rect x="0" y="-10" width="115" height="20" rx="3" fill="#fffdfa" stroke="#b45309" stroke-width="1" />
-                  <text x="6" y="4" fill="#b45309" font-size="9" font-family="JetBrains Mono" font-weight="bold">F-150 [Dad/Josh]</text>
-                </g>
-              </g>
-
-              <!-- Ford Explorer Vehicle Token (Sky Blue) -->
-              <g id="tokenExplorer" transform="translate(240, 360)" class="transition-transform duration-150">
-                <circle cx="0" cy="0" r="14" fill="#e0f2fe" stroke="#0284c7" stroke-width="2" />
-                <circle cx="0" cy="0" r="7" fill="#0284c7" />
-                <g transform="translate(12, 10)">
-                  <rect x="0" y="-10" width="125" height="20" rx="3" fill="#fffdfa" stroke="#0284c7" stroke-width="1" />
-                  <text x="6" y="4" fill="#0284c7" font-size="9" font-family="JetBrains Mono" font-weight="bold">Explorer [Mom/Britt]</text>
-                </g>
-              </g>
-
-            </svg>
-
-            <!-- Bottom Left Telemetry Badge -->
-            <div class="absolute bottom-3 left-3 bg-[#fffdfa]/95 border border-[#c4b79f] rounded px-3 py-2 text-[10px] font-mono text-[#231c15] shadow-sm pointer-events-none">
-              <div class="font-bold text-[#b45309] uppercase tracking-wider mb-0.5">FLEET STATUS</div>
-              <div>F-150 (Dad): <span id="mapF150Status" class="font-bold text-emerald-700">At Home Base</span></div>
-              <div>Explorer (Mom): <span id="mapExplorerStatus" class="font-bold text-emerald-700">At Home Base</span></div>
-            </div>
-
-          </div>
-
-          <!-- Rapid Trip Triggers -->
-          <div class="mt-4 pt-3 border-t border-[#d7cdba] flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
-            <div class="flex items-center gap-2">
-              <span class="text-[#635848] font-bold">DISPATCH TRIP:</span>
-              <button onclick="triggerTripImmediate(0)" class="px-2.5 py-1 rounded bg-[#eee7da] hover:bg-[#e4dcce] border border-[#c4b79f] text-[#231c15] font-bold">
-                🚌 School Run (07:15)
-              </button>
-              <button onclick="triggerTripImmediate(1)" class="px-2.5 py-1 rounded bg-[#eee7da] hover:bg-[#e4dcce] border border-[#c4b79f] text-[#231c15] font-bold">
-                🏢 Dad Commute (07:40)
-              </button>
-              <button onclick="triggerTripImmediate(3)" class="px-2.5 py-1 rounded bg-[#eee7da] hover:bg-[#e4dcce] border border-[#c4b79f] text-[#231c15] font-bold">
-                ⚽ Soccer Practice (16:45)
-              </button>
-            </div>
-            <div class="text-[11px] text-[#8f7d66] italic font-editorial">
-              Click map destinations to view travel details
-            </div>
-          </div>
-
+    <div class="news-card rounded-xl p-4 sm:p-5">
+      <div class="flex items-center justify-between pb-2 mb-3 border-b border-[#dcd2bf]">
+        <div>
+          <div class="text-[9px] font-mono uppercase tracking-widest text-[#766753] font-bold">PREPARATION & CHOKEPOINT LEVERS</div>
+          <h2 class="text-base sm:text-lg font-headline font-bold text-ink">
+            Quantifiable Asset Overlays
+          </h2>
         </div>
-
-        <!-- The Gazette Wire: Real-Time Scrolling Column (1 Column) -->
-        <div class="news-card rounded-xl p-4 flex flex-col h-[520px] lg:h-auto">
-          
-          <div class="flex items-center justify-between pb-3 mb-2 border-b border-[#d7cdba]">
-            <div>
-              <h3 class="font-headline font-bold text-base text-[#231c15]">
-                The Gazette Wire
-              </h3>
-              <p class="text-[11px] font-editorial italic text-[#635848]">
-                Real-Time Household Dispatch Column
-              </p>
-            </div>
-            <button onclick="clearWire()" class="text-[10px] font-mono text-[#8f7d66] hover:text-[#231c15]">
-              CLEAR WIRE
-            </button>
-          </div>
-
-          <!-- Wire Scroll Container -->
-          <div id="gazetteWireFeed" class="flex-1 overflow-y-auto space-y-2.5 pr-1 font-mono text-xs custom-scrollbar">
-            <!-- Dispatches injected here -->
-          </div>
-
-          <!-- Trigger Random Life Event Button -->
-          <div class="pt-3 mt-3 border-t border-[#d7cdba]">
-            <button onclick="triggerRandomLifeEvent()" class="w-full py-2.5 px-3 rounded-lg bg-[#b45309] hover:bg-[#92400e] text-[#fffdfa] text-xs font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow">
-              <span>🎲</span> TRIGGER RANDOM LIFE EVENT
-            </button>
-          </div>
-
+        <div class="text-[11px] font-mono text-[#766753]">
+          Allocate prep assets to eliminate mudroom & bus variance
         </div>
-
       </div>
 
+      <!-- 4 Levers Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 font-mono text-xs">
+        
+        <!-- Lever 1: Mudroom Staged -->
+        <label class="news-card-inset p-3 rounded-lg flex items-start gap-2.5 cursor-pointer hover:border-[#b45309] transition-all">
+          <input type="checkbox" id="leverMudroom" checked onchange="handleLeverChange()" class="mt-1 w-4 h-4 accent-amber-700 cursor-pointer">
+          <div>
+            <div class="font-bold text-ink flex items-center justify-between">
+              <span>Mudroom Staged</span>
+              <span class="text-emerald-800 font-bold">+6 Pts</span>
+            </div>
+            <div class="text-[10px] text-[#766753] font-editorial italic mt-0.5 leading-snug">
+              Clothes, bags & shoes staged night prior. Eliminates mudroom shoe search (-8m dwell).
+            </div>
+          </div>
+        </label>
+
+        <!-- Lever 2: Breakfast Prepped -->
+        <label class="news-card-inset p-3 rounded-lg flex items-start gap-2.5 cursor-pointer hover:border-[#b45309] transition-all">
+          <input type="checkbox" id="leverBreakfast" checked onchange="handleLeverChange()" class="mt-1 w-4 h-4 accent-amber-700 cursor-pointer">
+          <div>
+            <div class="font-bold text-ink flex items-center justify-between">
+              <span>Breakfast Ready</span>
+              <span class="text-emerald-800 font-bold">+5 Pts</span>
+            </div>
+            <div class="text-[10px] text-[#766753] font-editorial italic mt-0.5 leading-snug">
+              Oats, fruit & eggs prepped at 05:30. Streamlines breakfast dwell (-10m kitchen).
+            </div>
+          </div>
+        </label>
+
+        <!-- Lever 3: 06:25 Early Wake Trigger -->
+        <label class="news-card-inset p-3 rounded-lg flex items-start gap-2.5 cursor-pointer hover:border-[#b45309] transition-all">
+          <input type="checkbox" id="leverWake" checked onchange="handleLeverChange()" class="mt-1 w-4 h-4 accent-amber-700 cursor-pointer">
+          <div>
+            <div class="font-bold text-ink flex items-center justify-between">
+              <span>06:25 Lincoln Wake</span>
+              <span class="text-emerald-800 font-bold">+7 Pts</span>
+            </div>
+            <div class="text-[10px] text-[#766753] font-editorial italic mt-0.5 leading-snug">
+              Guarantees a 39-minute buffer before the 07:04 bus. Prevents morning rush panic.
+            </div>
+          </div>
+        </label>
+
+        <!-- Lever 4: Slow-Cooker Dinner -->
+        <label class="news-card-inset p-3 rounded-lg flex items-start gap-2.5 cursor-pointer hover:border-[#b45309] transition-all">
+          <input type="checkbox" id="leverDinner" checked onchange="handleLeverChange()" class="mt-1 w-4 h-4 accent-amber-700 cursor-pointer">
+          <div>
+            <div class="font-bold text-ink flex items-center justify-between">
+              <span>Slow-Cooker Active</span>
+              <span class="text-emerald-800 font-bold">+6 Pts</span>
+            </div>
+            <div class="text-[10px] text-[#766753] font-editorial italic mt-0.5 leading-snug">
+              Dinner prepped at 05:30. Guarantees 18:00 dinner, protecting the 20:00 bedtime.
+            </div>
+          </div>
+        </label>
+
+      </div>
     </div>
 
     <!-- ================================================================== -->
-    <!-- TAB 2: TODAY'S FAMILY SCHEDULE -->
+    <!-- 3. TWO-ECHELON SPATIAL WARGAMING BOARD -->
     <!-- ================================================================== -->
-    <div id="tabSchedule" class="tab-pane hidden space-y-6">
+    <div class="space-y-4">
       
-      <!-- Schedule Header -->
-      <div class="news-card rounded-xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div>
-          <div class="text-[10px] font-mono uppercase tracking-widest text-[#8f7d66] font-bold mb-0.5">DAILY TIMETABLE & ROUTE MATRIX</div>
-          <h2 class="text-xl sm:text-2xl font-headline font-bold text-[#231c15]">
-            Today's Family Schedule
-          </h2>
-          <p class="text-xs font-editorial italic text-[#635848] mt-0.5">
-            Synchronized departures, commute buffers, and school drop-off windows
-          </p>
-        </div>
-
-        <div class="flex items-center flex-wrap gap-3">
-          <!-- 500x Monte Carlo Button -->
-          <button onclick="runMonteCarloStressTest()" class="px-4 py-2.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-[#fffdfa] font-mono font-bold text-xs uppercase tracking-wider shadow flex items-center gap-2 transition-all">
-            <span>📊</span> RUN 500x DAY STRESS TEST
-          </button>
-          <!-- Add Trip Form Toggle Button -->
-          <button onclick="toggleAddTripModal(true)" class="px-4 py-2.5 rounded-lg bg-[#b45309] hover:bg-[#92400e] text-[#fffdfa] font-mono font-bold text-xs uppercase tracking-wider shadow flex items-center gap-2 transition-all">
-            <span>➕</span> ADD CUSTOM TRIP
-          </button>
-        </div>
-      </div>
-
-      <!-- Schedule Table -->
-      <div class="news-card rounded-xl shadow overflow-hidden">
-        <div class="overflow-x-auto">
-          <table class="w-full text-left font-mono text-xs">
-            <thead class="bg-[#eee7da] border-b border-[#d7cdba] text-[10px] text-[#635848] uppercase tracking-wider">
-              <tr>
-                <th class="py-3 px-4">DEPARTURE</th>
-                <th class="py-3 px-4">TRIP & PURPOSE</th>
-                <th class="py-3 px-4">ASSIGNED VEHICLE</th>
-                <th class="py-3 px-4">TRAVEL CREW</th>
-                <th class="py-3 px-4">ROUTE VECTOR</th>
-                <th class="py-3 px-4 text-center">CUSHION BUFFER</th>
-                <th class="py-3 px-4 text-center">STATUS</th>
-                <th class="py-3 px-4 text-right">ACTION</th>
-              </tr>
-            </thead>
-            <tbody id="scheduleTableBody" class="divide-y divide-[#e3dbc9]">
-              <!-- Populated dynamically -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- MONTE CARLO RELIABILITY REPORT -->
-      <div id="stressTestReportCard" class="news-card rounded-xl p-6 border-2 border-emerald-700/50 relative">
-        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between pb-4 mb-4 border-b border-[#d7cdba] gap-4">
-          <div>
-            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-mono font-bold uppercase tracking-wider mb-1">
-              <span>✓</span> 500-DAY MONTE CARLO RELIABILITY ASSESSMENT
-            </div>
-            <h3 class="text-xl font-headline font-bold text-[#231c15]">
-              Daily Routine Resilience & Peace Forecast
+      <!-- ECHELON 1: HOMESTEAD INTERNAL CHOKEPOINTS (MICRO-LEVEL) -->
+      <div class="news-card rounded-xl p-4 sm:p-5">
+        <div class="flex items-center justify-between pb-2 mb-3 border-b border-[#dcd2bf]">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-[#b45309]"></span>
+            <h3 class="font-headline font-bold text-base text-ink">
+              Echelon 1: Homestead Internal Chokepoints (Micro-Level)
             </h3>
           </div>
-
-          <div class="bg-[#fbf8f0] border border-[#c4b79f] px-4 py-2 rounded-lg flex items-center gap-4">
-            <div>
-              <div class="text-[9px] font-mono text-[#8f7d66] uppercase">ON-TIME CONFIDENCE</div>
-              <div id="stConfidenceScore" class="text-2xl font-bold font-mono text-emerald-800">92.4%</div>
-            </div>
-            <div class="text-[11px] font-editorial italic text-[#635848] leading-tight">
-              Calm & On-Time Arrivals<br>
-              Under Current Kansas Weather
-            </div>
-          </div>
+          <span class="text-[10px] font-mono text-[#766753]">
+            Tactical In-Home Sequence
+          </span>
         </div>
 
-        <!-- 3 Diagnostic Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5 font-mono text-xs">
-          
-          <div class="news-card-inner p-3.5 rounded-lg">
-            <div class="text-[10px] text-[#b45309] font-bold uppercase mb-1">TIGHTEST DEPARTURE WINDOW</div>
-            <div id="stTightestWindow" class="font-bold text-[#231c15] text-sm">
-              07:15 AM Morning School Run
-            </div>
-            <div class="text-[11px] text-[#635848] font-sans mt-1">
-              Morning shoe search and breakfast routines compress buffer by up to 10 minutes.
-            </div>
-          </div>
-
-          <div class="news-card-inner p-3.5 rounded-lg">
-            <div class="text-[10px] text-[#0284c7] font-bold uppercase mb-1">EXPECTED CUSHION MARGINS</div>
-            <div class="space-y-1 text-xs">
-              <div class="flex justify-between">
-                <span>Typical Day (P50):</span>
-                <span id="stMarginP50" class="font-bold text-emerald-800">+22m Buffer</span>
-              </div>
-              <div class="flex justify-between">
-                <span>Rushed Day (P80):</span>
-                <span id="stMarginP80" class="font-bold text-[#b45309]">+12m Buffer</span>
-              </div>
-              <div class="flex justify-between">
-                <span>Snag Day (P95):</span>
-                <span id="stMarginP95" class="font-bold text-red-700">+4m Buffer</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="news-card-inner p-3.5 rounded-lg">
-            <div class="text-[10px] text-emerald-800 font-bold uppercase mb-1">GAZETTE RECOMMENDATION</div>
-            <div class="text-xs text-[#231c15] font-sans leading-relaxed">
-              Staging backpacks and cleats in the front mudroom the evening prior expands the morning cushion by <strong>+8 minutes</strong>.
-            </div>
-          </div>
-
-        </div>
-
-        <!-- Canvas Chart -->
-        <div class="news-card-inner p-4 rounded-lg">
-          <div class="flex justify-between text-xs font-mono mb-2">
-            <span class="font-bold text-[#231c15]">PROBABILITY DISTRIBUTION: TOTAL DAILY TIME CUSHION (MINUTES)</span>
-            <span class="text-[#8f7d66]">500 Sampled Runs</span>
-          </div>
-          <div class="w-full h-36">
-            <canvas id="stressTestChart" class="w-full h-full"></canvas>
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- ================================================================== -->
-    <!-- TAB 3: FAMILY ROSTER & MORNING ROUTINES -->
-    <!-- ================================================================== -->
-    <div id="tabRoster" class="tab-pane hidden space-y-6">
-      
-      <!-- Roster Header -->
-      <div class="news-card rounded-xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div>
-          <div class="text-[10px] font-mono uppercase tracking-widest text-[#8f7d66] font-bold mb-0.5">FAMILY PERSONNEL & ROUTINE CALIBRATION</div>
-          <h2 class="text-xl sm:text-2xl font-headline font-bold text-[#231c15]">
-            Family Roster & Morning Routines
-          </h2>
-          <p class="text-xs font-editorial italic text-[#635848] mt-0.5">
-            Calibrate three-point PERT preparation times: Fast (O), Normal (M), and Slow (P) with Patience Reserve meters.
-          </p>
-        </div>
-
-        <div class="flex items-center gap-3">
-          <button onclick="saveRoutineRecords()" class="px-4 py-2.5 rounded-lg bg-[#b45309] hover:bg-[#92400e] text-[#fffdfa] font-mono font-bold text-xs uppercase tracking-wider shadow transition-all">
-            SAVE ROUTINE RECORDS
-          </button>
-          <button onclick="resetRoutineDefaults()" class="px-3 py-2.5 rounded-lg bg-[#eee7da] hover:bg-[#e4dcce] border border-[#c4b79f] text-[#635848] font-mono text-xs transition-all">
-            RESET DEFAULTS
-          </button>
-        </div>
-      </div>
-
-      <!-- Baseline Lock Notice -->
-      <div id="baselineLockNotice" class="bg-[#eee7da] border border-[#c4b79f] rounded-lg p-3 text-xs font-mono text-[#635848] flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <span class="font-bold text-[#231c15]">ROUTINE BASELINE STATUS:</span>
-          <span id="baselineNoticeText">Baseline is locked. Inputs are frozen to run consistent simulations. Toggle in the top header to edit.</span>
-        </div>
-        <div id="saveToast" class="text-emerald-800 font-bold hidden">
-          ✓ SAVED TO LOCAL STORAGE
-        </div>
-      </div>
-
-      <!-- 5 Family Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="rosterCardsContainer">
-        <!-- Rendered dynamically -->
-      </div>
-
-    </div>
-
-    <!-- ================================================================== -->
-    <!-- TAB 4: FAMILY VEHICLES & FLEET -->
-    <!-- ================================================================== -->
-    <div id="tabFleet" class="tab-pane hidden space-y-6">
-      
-      <div class="news-card rounded-xl p-5">
-        <div class="text-[10px] font-mono uppercase tracking-widest text-[#8f7d66] font-bold mb-0.5">FAMILY MOTOR POOL</div>
-        <h2 class="text-xl sm:text-2xl font-headline font-bold text-[#231c15]">
-          Family Vehicles & Travel Readiness
-        </h2>
-        <p class="text-xs font-editorial italic text-[#635848] mt-0.5">
-          Readiness status for daily school loops, highway commutes, and weekend athletics
+        <p class="text-xs font-editorial italic text-[#766753] mb-3">
+          Units physically move through internal zones. The Mudroom Threshold is the critical bottleneck before Lincoln's 07:04 Bus Gate.
         </p>
+
+        <!-- 3-Zone Flow Board -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          
+          <!-- Zone 1: Bedrooms -->
+          <div id="zoneBedrooms" class="news-card-inset rounded-xl p-3 border-2 border-transparent transition-all min-h-[140px] flex flex-col justify-between">
+            <div class="flex items-center justify-between pb-1.5 border-b border-[#dcd2bf]">
+              <div>
+                <span class="text-[9px] font-mono uppercase font-bold text-[#766753]">ZONE 1</span>
+                <h4 class="font-headline font-bold text-sm text-ink">Bedrooms</h4>
+              </div>
+              <span class="text-[10px] font-mono text-[#766753]">Wake & Dressing</span>
+            </div>
+
+            <!-- Units Container -->
+            <div id="unitsBedrooms" class="py-2 flex flex-wrap gap-2 items-center min-h-[50px]">
+              <!-- Tokens injected dynamically -->
+            </div>
+
+            <div class="text-[10px] font-mono text-[#766753] pt-1 border-t border-[#dcd2bf] flex justify-between">
+              <span>Lincoln Wake: <strong id="zoneWakeTime" class="text-ink">06:25 AM</strong></span>
+              <span>Bel & Birdie: 06:45 AM</span>
+            </div>
+          </div>
+
+          <!-- Zone 2: Kitchen -->
+          <div id="zoneKitchen" class="news-card-inset rounded-xl p-3 border-2 border-transparent transition-all min-h-[140px] flex flex-col justify-between">
+            <div class="flex items-center justify-between pb-1.5 border-b border-[#dcd2bf]">
+              <div>
+                <span class="text-[9px] font-mono uppercase font-bold text-[#766753]">ZONE 2</span>
+                <h4 class="font-headline font-bold text-sm text-ink">Kitchen Node</h4>
+              </div>
+              <span class="text-[10px] font-mono text-[#766753]">Fueling / Breakfast</span>
+            </div>
+
+            <div id="unitsKitchen" class="py-2 flex flex-wrap gap-2 items-center min-h-[50px]">
+              <!-- Tokens injected dynamically -->
+            </div>
+
+            <div class="text-[10px] font-mono text-[#766753] pt-1 border-t border-[#dcd2bf] flex justify-between">
+              <span>Breakfast Dwell: <strong id="zoneKitchenDwell" class="text-emerald-800">10 mins</strong></span>
+              <span id="slowCookerStatus">Slow-Cooker: ON</span>
+            </div>
+          </div>
+
+          <!-- Zone 3: Mudroom Threshold (Crucial Bottleneck) -->
+          <div id="zoneMudroom" class="news-card-inset rounded-xl p-3 border-2 border-amber-600/40 transition-all min-h-[140px] flex flex-col justify-between">
+            <div class="flex items-center justify-between pb-1.5 border-b border-[#dcd2bf]">
+              <div>
+                <span class="text-[9px] font-mono uppercase font-bold text-[#b45309]">ZONE 3 // BOTTLENECK</span>
+                <h4 class="font-headline font-bold text-sm text-ink">Mudroom Threshold</h4>
+              </div>
+              <span class="text-[10px] font-mono text-[#b45309] font-bold">CRITICAL NODE</span>
+            </div>
+
+            <div id="unitsMudroom" class="py-2 flex flex-wrap gap-2 items-center min-h-[50px]">
+              <!-- Tokens injected dynamically -->
+            </div>
+
+            <div class="text-[10px] font-mono text-[#766753] pt-1 border-t border-[#dcd2bf] flex justify-between">
+              <span>Mudroom Dwell: <strong id="zoneMudroomDwell" class="text-emerald-800">3 mins (Staged)</strong></span>
+              <span>Backpack / Shoes</span>
+            </div>
+          </div>
+
+        </div>
       </div>
 
-      <!-- Vehicle Cards -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
-        <!-- Ford F-150 -->
-        <div class="news-card rounded-xl p-6 border-2 border-amber-800/30">
-          <div class="flex items-start justify-between mb-4">
+      <!-- ECHELON 2: COUNTY TRANSIT GATES (MACRO-LEVEL) -->
+      <div class="news-card rounded-xl p-4 sm:p-5">
+        <div class="flex items-center justify-between pb-2 mb-3 border-b border-[#dcd2bf]">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-700"></span>
+            <h3 class="font-headline font-bold text-base text-ink">
+              Echelon 2: County Transit Gates (Macro-Level)
+            </h3>
+          </div>
+          <span class="text-[10px] font-mono text-[#766753]">
+            Leavenworth County Route Matrix
+          </span>
+        </div>
+
+        <!-- 4 Transit Gates Sequence -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          
+          <!-- Gate 1: Bus Stop -->
+          <div id="gateCard1" class="news-card-inset rounded-xl p-3.5 border-2 border-transparent transition-all flex flex-col justify-between">
             <div>
-              <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-amber-100 text-amber-900 text-[10px] font-mono font-bold uppercase mb-1">
-                UNIT 01 • HEAVY HAULER
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-[9px] font-mono font-bold text-[#766753]">GATE 1</span>
+                <span id="gate1Badge" class="px-1.5 py-0.5 rounded bg-[#ede7d8] text-[9px] font-mono font-bold">07:04 AM SHARP</span>
               </div>
-              <h3 class="text-xl font-headline font-bold text-[#231c15]">Ford F-150 (V8 4x4)</h3>
-              <div class="text-xs font-mono text-[#635848]">Primary Driver: <strong class="text-[#b45309]">Dad / Josh</strong></div>
+              <h4 class="font-headline font-bold text-sm text-ink">Bus Stop Node</h4>
+              <p class="text-[11px] font-editorial italic text-[#766753] mt-0.5">
+                Route 7 Bus arrives at 07:04. Lincoln MUST be physically present.
+              </p>
             </div>
-            <span class="px-2.5 py-1 rounded bg-emerald-100 text-emerald-800 text-xs font-mono font-bold">
-              READY FOR ROADS
-            </span>
-          </div>
 
-          <div class="grid grid-cols-3 gap-3 mb-4 font-mono text-xs">
-            <div class="news-card-inner p-2.5 rounded">
-              <div class="text-[10px] text-[#8f7d66]">SEATS</div>
-              <div class="text-base font-bold text-[#231c15]">5 Passengers</div>
-            </div>
-            <div class="news-card-inner p-2.5 rounded">
-              <div class="text-[10px] text-[#8f7d66]">GAS RANGE</div>
-              <div class="text-base font-bold text-[#b45309]" id="f150RangeVal">380 miles</div>
-            </div>
-            <div class="news-card-inner p-2.5 rounded">
-              <div class="text-[10px] text-[#8f7d66]">ALL-WEATHER</div>
-              <div class="text-base font-bold text-emerald-800">4x4 Traction</div>
+            <div class="my-2 min-h-[36px] flex items-center" id="unitsGate1"></div>
+
+            <div class="pt-2 border-t border-[#dcd2bf] flex items-center justify-between text-[10px] font-mono">
+              <span>Status:</span>
+              <span id="gate1Status" class="font-bold text-[#766753]">PENDING (07:04)</span>
             </div>
           </div>
 
-          <!-- Fuel Slider -->
-          <div class="news-card-inner p-3 rounded mb-4">
-            <div class="flex justify-between text-xs font-mono mb-1">
-              <span class="text-[#635848]">Fuel Tank Level:</span>
-              <span id="f150FuelReadout" class="font-bold text-[#b45309]">78% Full</span>
+          <!-- Gate 2: Pleasant Ridge Elementary -->
+          <div id="gateCard2" class="news-card-inset rounded-xl p-3.5 border-2 border-transparent transition-all flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-[9px] font-mono font-bold text-[#766753]">GATE 2</span>
+                <span id="gate2Badge" class="px-1.5 py-0.5 rounded bg-[#ede7d8] text-[9px] font-mono font-bold">07:50 AM</span>
+              </div>
+              <h4 class="font-headline font-bold text-sm text-ink">Pleasant Ridge (USD 449)</h4>
+              <p class="text-[11px] font-editorial italic text-[#766753] mt-0.5">
+                Bel drop-off. Vehicle wheels up from Homestead at 07:40 AM.
+              </p>
             </div>
-            <input type="range" min="10" max="100" value="78" oninput="updateFleetFuel('f150', this.value)" class="w-full accent-amber-700 cursor-pointer">
+
+            <div class="my-2 min-h-[36px] flex items-center" id="unitsGate2"></div>
+
+            <div class="pt-2 border-t border-[#dcd2bf] flex items-center justify-between text-[10px] font-mono">
+              <span>Status:</span>
+              <span id="gate2Status" class="font-bold text-[#766753]">PENDING (07:50)</span>
+            </div>
           </div>
 
-          <div class="text-xs font-sans text-[#635848] space-y-1.5">
-            <div class="font-bold font-mono text-[10px] uppercase text-[#8f7d66]">ROLES & ADVANTAGES:</div>
-            <div>• All-weather 4x4 handles Stranger Creek gravel roads and snow drifts.</div>
-            <div>• Truck bed holds sports gear, lumber, and seasonal farm equipment.</div>
-            <div>• Block heater prepared for below-freezing Kansas morning starts.</div>
+          <!-- Gate 3: The Triangle -->
+          <div id="gateCard3" class="news-card-inset rounded-xl p-3.5 border-2 border-transparent transition-all flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-[9px] font-mono font-bold text-[#766753]">GATE 3</span>
+                <span id="gate3Badge" class="px-1.5 py-0.5 rounded bg-[#ede7d8] text-[9px] font-mono font-bold">08:00 AM</span>
+              </div>
+              <h4 class="font-headline font-bold text-sm text-ink">The Triangle Node</h4>
+              <p class="text-[11px] font-editorial italic text-[#766753] mt-0.5">
+                Birdie drop-off (100ft from elementary entrance).
+              </p>
+            </div>
+
+            <div class="my-2 min-h-[36px] flex items-center" id="unitsGate3"></div>
+
+            <div class="pt-2 border-t border-[#dcd2bf] flex items-center justify-between text-[10px] font-mono">
+              <span>Status:</span>
+              <span id="gate3Status" class="font-bold text-[#766753]">PENDING (08:00)</span>
+            </div>
+          </div>
+
+          <!-- Gate 4: Fort Leavenworth CAC -->
+          <div id="gateCard4" class="news-card-inset rounded-xl p-3.5 border-2 border-transparent transition-all flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-[9px] font-mono font-bold text-[#766753]">GATE 4</span>
+                <span id="gate4Badge" class="px-1.5 py-0.5 rounded bg-[#ede7d8] text-[9px] font-mono font-bold">09:00 AM</span>
+              </div>
+              <h4 class="font-headline font-bold text-sm text-ink">Fort Leavenworth CAC</h4>
+              <p class="text-[11px] font-editorial italic text-[#766753] mt-0.5">
+                Dad commutes via K-92, completes workout/shower, sits at desk.
+              </p>
+            </div>
+
+            <div class="my-2 min-h-[36px] flex items-center" id="unitsGate4"></div>
+
+            <div class="pt-2 border-t border-[#dcd2bf] flex items-center justify-between text-[10px] font-mono">
+              <span>Status:</span>
+              <span id="gate4Status" class="font-bold text-[#766753]">PENDING (09:00)</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- CATASTROPHIC CASCADE ALERT BANNER (Shown when bus is missed) -->
+        <div id="cascadeAlertBanner" class="mt-4 p-3.5 bg-red-100 border-2 border-red-700 rounded-xl hidden">
+          <div class="flex items-start gap-3">
+            <span class="text-2xl">⚠️</span>
+            <div>
+              <div class="font-bold text-red-900 text-xs font-mono uppercase tracking-wider">
+                [CATASTROPHIC CASCADE TRIGGERED] LINCOLN MISSED 07:04 BUS!
+              </div>
+              <p class="text-xs text-red-800 font-sans mt-0.5 leading-relaxed">
+                Lincoln was trapped in the Mudroom searching for shoes when Route 7 arrived. Dad is forced to execute an emergency secondary school drop-off, compressing the 07:40 departure, delaying Bel & Birdie, and wiping out Dad's workout buffer before the 09:00 CAC desk gate!
+              </p>
+            </div>
           </div>
         </div>
 
-        <!-- Ford Explorer -->
-        <div class="news-card rounded-xl p-6 border-2 border-sky-800/30">
-          <div class="flex items-start justify-between mb-4">
-            <div>
-              <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-sky-100 text-sky-900 text-[10px] font-mono font-bold uppercase mb-1">
-                UNIT 02 • FAMILY CREW CARRIER
-              </div>
-              <h3 class="text-xl font-headline font-bold text-[#231c15]">Ford Explorer (EcoBoost AWD)</h3>
-              <div class="text-xs font-mono text-[#635848]">Primary Driver: <strong class="text-[#0284c7]">Mom / Brittanie</strong></div>
-            </div>
-            <span class="px-2.5 py-1 rounded bg-emerald-100 text-emerald-800 text-xs font-mono font-bold">
-              READY FOR ROADS
-            </span>
-          </div>
-
-          <div class="grid grid-cols-3 gap-3 mb-4 font-mono text-xs">
-            <div class="news-card-inner p-2.5 rounded">
-              <div class="text-[10px] text-[#8f7d66]">SEATS</div>
-              <div class="text-base font-bold text-[#231c15]">7 Passengers</div>
-            </div>
-            <div class="news-card-inner p-2.5 rounded">
-              <div class="text-[10px] text-[#8f7d66]">GAS RANGE</div>
-              <div class="text-base font-bold text-[#0284c7]" id="explorerRangeVal">350 miles</div>
-            </div>
-            <div class="news-card-inner p-2.5 rounded">
-              <div class="text-[10px] text-[#8f7d66]">DROP-OFF</div>
-              <div class="text-base font-bold text-emerald-800">Rapid Car Line</div>
-            </div>
-          </div>
-
-          <!-- Fuel Slider -->
-          <div class="news-card-inner p-3 rounded mb-4">
-            <div class="flex justify-between text-xs font-mono mb-1">
-              <span class="text-[#635848]">Fuel Tank Level:</span>
-              <span id="explorerFuelReadout" class="font-bold text-[#0284c7]">84% Full</span>
-            </div>
-            <input type="range" min="10" max="100" value="84" oninput="updateFleetFuel('explorer', this.value)" class="w-full accent-sky-700 cursor-pointer">
-          </div>
-
-          <div class="text-xs font-sans text-[#635848] space-y-1.5">
-            <div class="font-bold font-mono text-[10px] uppercase text-[#8f7d66]">ROLES & ADVANTAGES:</div>
-            <div>• Tri-row seating accommodates all 3 kids plus car seats comfortably.</div>
-            <div>• Rapid car-line egress optimized for USD 449 drop-off schedule.</div>
-            <div>• Rear cargo space dedicated for school backpacks and project boards.</div>
-          </div>
-        </div>
-
       </div>
 
+    </div>
+
+    <!-- ================================================================== -->
+    <!-- 4. OPERATIONAL DISPATCH TELETYPE (LIVE CHRONICLE) -->
+    <!-- ================================================================== -->
+    <div class="news-card rounded-xl p-4 sm:p-5">
+      <div class="flex items-center justify-between pb-2 mb-3 border-b border-[#dcd2bf]">
+        <div>
+          <div class="text-[9px] font-mono uppercase tracking-widest text-[#766753] font-bold">REAL-TIME CHRONICLE</div>
+          <h3 class="font-headline font-bold text-base text-ink">
+            The Gazette Operational Dispatch
+          </h3>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="clearDispatchLog()" class="text-[10px] font-mono text-[#766753] hover:text-ink">
+            CLEAR
+          </button>
+          <span class="px-2 py-0.5 rounded bg-[#ede7d8] border border-[#c2b59f] text-[9px] font-mono font-bold text-[#b45309]">
+            TELETYPE ACTIVE
+          </span>
+        </div>
+      </div>
+
+      <!-- Teletype Feed Container -->
+      <div id="dispatchLogContainer" class="h-44 sm:h-52 overflow-y-auto space-y-1.5 font-mono text-xs pr-1 custom-scrollbar">
+        <!-- Log entries injected dynamically -->
+      </div>
     </div>
 
   </main>
 
   <!-- ==================================================================== -->
-  <!-- 7. EVENING GAZETTE SPECIAL EDITION (END-OF-DAY SCORECARD MODAL) -->
-  <!-- ==================================================================== -->
-  <div id="eveningDebriefModal" style="display: none; z-index: 50;" class="fixed inset-0 bg-[#231c15]/80 backdrop-blur-sm items-center justify-center p-4">
-    <div class="max-w-2xl w-full bg-[#fbf8f0] border-2 border-[#786953] rounded-xl p-6 sm:p-8 shadow-2xl relative overflow-hidden custom-scrollbar max-h-[90vh] overflow-y-auto">
-      
-      <!-- Extra Edition Header -->
-      <div class="text-center pb-4 mb-5 border-b-2 border-[#786953]">
-        <div class="text-[11px] font-mono tracking-widest text-[#8f7d66] font-bold uppercase mb-1">
-          EVENING GAZETTE EXTRA EDITION • 20:30 PM WRAP-UP
-        </div>
-        <h2 class="text-3xl font-headline font-bold text-[#231c15]">
-          Daily Family Peace & Flow Report
-        </h2>
-        <p class="text-xs font-editorial italic text-[#635848] mt-1">
-          A Community Assessment of Punctuality, Energy Preserved, and Peaceful Routines
-        </p>
-      </div>
-
-      <!-- Scorecard Total Banner -->
-      <div class="bg-[#eee7da] border border-[#c4b79f] rounded-lg p-4 mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div>
-          <div class="text-xs font-mono text-[#635848] uppercase font-bold">TOTAL DAY PEACE SCORE</div>
-          <div class="text-4xl font-headline font-bold text-emerald-800 flex items-baseline gap-1">
-            <span id="scorecardTotalPoints">94</span>
-            <span class="text-lg text-[#635848] font-normal">/ 100</span>
-          </div>
-        </div>
-        <div class="text-right">
-          <div class="inline-block px-3 py-1 rounded bg-emerald-200 text-emerald-900 font-mono font-bold text-xs uppercase" id="scorecardGrade">
-            GRADE: A+ (HARMONIOUS FLOW)
-          </div>
-          <div class="text-[11px] font-editorial italic text-[#635848] mt-1" id="scorecardTagline">
-            Commitments met with family calm intact
-          </div>
-        </div>
-      </div>
-
-      <!-- 3 Score Breakdowns -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6 font-mono text-xs">
-        
-        <div class="news-card-inner p-3 rounded-lg text-center">
-          <div class="text-[10px] text-[#8f7d66] uppercase">PUNCTUALITY (40 PTS)</div>
-          <div class="text-xl font-bold text-emerald-800 mt-1" id="scorecardPunctuality">38 / 40</div>
-          <div class="text-[10px] text-[#635848] font-sans mt-0.5">All school & work gates reached on schedule</div>
-        </div>
-
-        <div class="news-card-inner p-3 rounded-lg text-center">
-          <div class="text-[10px] text-[#8f7d66] uppercase">PATIENCE (40 PTS)</div>
-          <div class="text-xl font-bold text-emerald-800 mt-1" id="scorecardPatience">38 / 40</div>
-          <div class="text-[10px] text-[#635848] font-sans mt-0.5">Family energy batteries preserved</div>
-        </div>
-
-        <div class="news-card-inner p-3 rounded-lg text-center">
-          <div class="text-[10px] text-[#8f7d66] uppercase">BUFFER (20 PTS)</div>
-          <div class="text-xl font-bold text-emerald-800 mt-1" id="scorecardBuffer">18 / 20</div>
-          <div class="text-[10px] text-[#635848] font-sans mt-0.5">Healthy cushion maintained through evening</div>
-        </div>
-
-      </div>
-
-      <!-- Gazette Narrative Editorial -->
-      <div class="news-card-inner p-4 rounded-lg mb-6 text-xs font-editorial leading-relaxed text-[#231c15] border-l-4 border-l-[#b45309]">
-        <h4 class="font-headline font-bold text-sm text-[#b45309] mb-1 font-sans">
-          THE EDITOR'S EVENING DISPATCH:
-        </h4>
-        <p id="scorecardEditorialText" class="italic text-[13px]">
-          "The Caballero household demonstrated remarkable rhythm today along the Easton corridor. Despite a minor morning coat search, the Explorer arrived at the USD 449 car-line with comfortable margin, allowing Sally Jo and Annabel to step out with cheerful smiles. Dad reached Sherman Ave on time, and afternoon soccer concluded before twilight settled over the county."
-        </p>
-      </div>
-
-      <!-- Close Button -->
-      <div class="pt-3 border-t border-[#d7cdba] flex justify-end gap-3">
-        <button onclick="closeEveningDebriefModal()" class="px-5 py-2.5 rounded-lg bg-[#b45309] hover:bg-[#92400e] text-[#fffdfa] font-mono font-bold text-xs uppercase tracking-wider shadow">
-          CLOSE & PLAN TOMORROW
-        </button>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ADD CUSTOM TRIP MODAL -->
-  <div id="addTripModal" style="display: none; z-index: 50;" class="fixed inset-0 bg-[#231c15]/75 backdrop-blur-sm items-center justify-center p-4">
-    <div class="max-w-md w-full bg-[#fbf8f0] border-2 border-[#786953] rounded-xl p-6 shadow-2xl">
-      <div class="flex items-center justify-between pb-3 mb-4 border-b border-[#d7cdba]">
-        <h3 class="font-headline font-bold text-lg text-[#231c15]">Add Custom Family Trip</h3>
-        <button onclick="toggleAddTripModal(false)" class="text-[#8f7d66] hover:text-[#231c15] font-mono text-sm">✕</button>
-      </div>
-
-      <form onsubmit="handleAddTripSubmit(event)" class="space-y-4 font-mono text-xs">
-        <div>
-          <label class="block text-[#635848] mb-1">DEPARTURE TIME</label>
-          <input type="time" id="newTripTime" required value="17:45" class="w-full bg-[#fffdfa] border border-[#c4b79f] rounded p-2 text-[#231c15]">
-        </div>
-        <div>
-          <label class="block text-[#635848] mb-1">TRIP NAME & DESTINATION</label>
-          <input type="text" id="newTripName" required value="Easton Public Library Run" class="w-full bg-[#fffdfa] border border-[#c4b79f] rounded p-2 text-[#231c15]">
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-[#635848] mb-1">VEHICLE</label>
-            <select id="newTripVehicle" class="w-full bg-[#fffdfa] border border-[#c4b79f] rounded p-2 text-[#231c15]">
-              <option value="Ford Explorer">Ford Explorer (Mom)</option>
-              <option value="Ford F-150">Ford F-150 (Dad)</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-[#635848] mb-1">DESTINATION NODE</label>
-            <select id="newTripDest" class="w-full bg-[#fffdfa] border border-[#c4b79f] rounded p-2 text-[#231c15]">
-              <option value="Pleasant Ridge Schools">Pleasant Ridge (USD 449)</option>
-              <option value="Lansing Sports Fields">Lansing Sports Fields</option>
-              <option value="Fort Leavenworth">Fort Leavenworth</option>
-              <option value="Home Base">Home Base</option>
-            </select>
-          </div>
-        </div>
-        <div>
-          <label class="block text-[#635848] mb-1">TRAVEL CREW</label>
-          <div class="grid grid-cols-2 gap-2 p-2 bg-[#eee7da] rounded border border-[#c4b79f] text-[11px]">
-            <label class="flex items-center gap-1.5"><input type="checkbox" id="crewJosh" class="accent-amber-700"> Dad (Josh)</label>
-            <label class="flex items-center gap-1.5"><input type="checkbox" id="crewBrittanie" checked class="accent-amber-700"> Mom (Brittanie)</label>
-            <label class="flex items-center gap-1.5"><input type="checkbox" id="crewLincoln" checked class="accent-amber-700"> Lincoln</label>
-            <label class="flex items-center gap-1.5"><input type="checkbox" id="crewAnnabel" checked class="accent-amber-700"> Annabel</label>
-            <label class="flex items-center gap-1.5"><input type="checkbox" id="crewSallyJo" class="accent-amber-700"> Sally Jo</label>
-          </div>
-        </div>
-        <div class="pt-3 border-t border-[#d7cdba] flex justify-end gap-2">
-          <button type="button" onclick="toggleAddTripModal(false)" class="px-4 py-2 rounded bg-[#eee7da] text-[#635848]">CANCEL</button>
-          <button type="submit" class="px-4 py-2 rounded bg-[#b45309] text-[#fffdfa] font-bold">ADD TO SCHEDULE</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- NODE DETAILS MODAL (When clicking map nodes) -->
-  <div id="nodeDetailModal" style="display: none; z-index: 50;" class="fixed inset-0 bg-[#231c15]/75 backdrop-blur-sm items-center justify-center p-4">
-    <div class="max-w-md w-full bg-[#fbf8f0] border-2 border-[#786953] rounded-xl p-5 shadow-2xl">
-      <div class="flex items-center justify-between pb-2 mb-3 border-b border-[#d7cdba]">
-        <h3 id="nodeModalTitle" class="font-headline font-bold text-lg text-[#231c15]">Destination Information</h3>
-        <button onclick="closeNodeModal()" class="text-[#8f7d66] hover:text-[#231c15] font-mono text-sm">✕</button>
-      </div>
-      <div id="nodeModalBody" class="font-sans text-xs space-y-3 text-[#231c15]"></div>
-      <div class="mt-4 pt-3 border-t border-[#d7cdba] flex justify-end">
-        <button onclick="closeNodeModal()" class="px-3 py-1.5 rounded bg-[#eee7da] text-[#231c15] text-xs font-mono font-bold">CLOSE</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================================================================== -->
-  <!-- JAVASCRIPT: LOGIC, SIMULATION & OR ENGINE -->
+  <!-- JAVASCRIPT: SYMBOLIC AI & DISCRETE EVENT STATE MACHINE -->
   <!-- ==================================================================== -->
   <script>
     /* ---------------------------------------------------------------------
-       1. GLOBAL STATE & AUDIO
+       1. STATE & MATHEMATICAL FORCE RATIO ENGINE
        --------------------------------------------------------------------- */
-    const AUTH_CODES = ['1776', '4490', '1234'];
-    let enteredCode = '';
-    let isUnlocked = true;
-    let isSoundOn = true;
+    // Sim Clock: minutes from midnight. Default start: 06:20 AM (380 mins)
+    const SIM_START = 380; // 06:20 AM
+    const SIM_END = 1230;  // 20:30 PM
+    let currentSimMin = SIM_START;
+    let isSimRunning = false;
+    let simTempo = 5; // default 5x
+    let simInterval = null;
+    let isSoundMuted = false;
 
-    // Routine Baseline Lock State
-    let isBaselineLocked = true; // true = Green [BASELINE LOCKED], false = Amber [ROUTINES EDITABLE]
-
-    // Master Simulation Clock State (06:30 AM to 20:30 PM)
-    const CLOCK_START_MIN = 390;  // 06:30 AM
-    const CLOCK_END_MIN = 1230;   // 20:30 PM (8:30 PM)
-    let currentClockMinutes = 390;
-    let isClockRunning = false;
-    let clockTempo = 1; // 1x, 5x, 15x
-    let clockIntervalId = null;
-
-    // Household Peace & Flow Meter State
-    let peacePercentage = 95; // Initializes at 95% (CALM & ON TRACK)
-    let bufferMinutes = 22;
-
-    // Active Weather Preset
-    const WEATHER_CONFIGS = {
-      crisp: { name: 'Crisp Fall Day', temp: 52, multiplier: 1.0, extraBuffer: 0, desc: 'Clear roads, normal transit' },
-      rain: { name: 'Kansas Rain', temp: 46, multiplier: 1.15, extraBuffer: 5, desc: 'Slick roads, +5m transit buffer' },
-      fog: { name: 'Morning Valley Fog', temp: 41, multiplier: 1.1, extraBuffer: 3, desc: 'Cautious driving in low valleys' },
-      frost: { name: 'First Frost', temp: 28, multiplier: 1.25, extraBuffer: 10, desc: 'Truck defrost, +10m morning prep buffer' }
+    // Unit Token Definitions
+    const UNITS = {
+      dad: { id: 'dad', name: 'Dad (Josh)', icon: '☕', color: '#b45309', zone: 'Bedrooms' },
+      lincoln: { id: 'lincoln', name: 'Lincoln', icon: '⚡', color: '#1d3557', zone: 'Bedrooms' },
+      bel: { id: 'bel', name: 'Bel', icon: '🎨', color: '#2d6a4f', zone: 'Bedrooms' },
+      birdie: { id: 'birdie', name: 'Birdie', icon: '🎈', color: '#c026d3', zone: 'Bedrooms' },
+      brit: { id: 'brit', name: 'Brit (Mom)', icon: '🌸', color: '#be185d', zone: 'Middle School' }
     };
-    let activeWeather = 'crisp';
 
-    // Audio Synthesizer (Web Audio API)
+    // Asset Overlays (The 4 Levers)
+    const ASSETS = {
+      mudroom: true,   // +6 Pts (-8m mudroom dwell)
+      breakfast: true, // +5 Pts (-10m kitchen dwell)
+      wake: true,      // +7 Pts (06:25 Lincoln wake)
+      dinner: true     // +6 Pts (guarantees 18:00 dinner)
+    };
+
+    // Gate States
+    const GATES = {
+      gate1: { cleared: false, missed: false, triggered: false }, // 07:04 Lincoln Bus
+      gate2: { cleared: false, missed: false, triggered: false }, // 07:50 Bel Elementary
+      gate3: { cleared: false, missed: false, triggered: false }, // 08:00 Birdie Triangle
+      gate4: { cleared: false, missed: false, triggered: false }  // 09:00 Dad CAC
+    };
+
+    let catastrophicCascadeActive = false;
+    let logEntries = [];
+
+    // Audio synthesizer
     let audioCtx = null;
-    function playBeep(freq, type = 'sine', duration = 0.08, gain = 0.06) {
-      if (!isSoundOn) return;
+    function playTone(freq, type = 'sine', duration = 0.08, gain = 0.06) {
+      if (isSoundMuted) return;
       try {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -1058,1230 +608,472 @@
         g.connect(audioCtx.destination);
         osc.start();
         osc.stop(audioCtx.currentTime + duration);
-      } catch (e) {}
+      } catch(e) {}
     }
 
     function toggleSound() {
-      isSoundOn = !isSoundOn;
-      document.getElementById('soundIcon').innerText = isSoundOn ? '🔔' : '🔕';
-      document.getElementById('soundLabel').innerText = isSoundOn ? 'CHIMES: ON' : 'CHIMES: OFF';
+      isSoundMuted = !isSoundMuted;
+      document.getElementById('soundIcon').innerText = isSoundMuted ? '🔕' : '🔔';
+      document.getElementById('soundText').innerText = isSoundMuted ? 'SFX: OFF' : 'SFX: ON';
     }
 
     /* ---------------------------------------------------------------------
-       2. FRONT DOOR ACCESS GATE (STRICT STRING COMPARISON & INSTANT UNLOCK)
+       2. FORCE RATIO & LEVER CALCULATIONS
        --------------------------------------------------------------------- */
-    function initFrontDoor() {
-      unlockDoorUI(false);
-    } else {
-        lockDoorUI();
-      }
-    }
+    function calculateForceRatio() {
+      const BASELINE_POINTS = 14;
+      const TASK_DIFFICULTY = 25;
+      
+      let allocatedPoints = BASELINE_POINTS;
+      if (ASSETS.mudroom) allocatedPoints += 6;
+      if (ASSETS.breakfast) allocatedPoints += 5;
+      if (ASSETS.wake) allocatedPoints += 7;
+      if (ASSETS.dinner) allocatedPoints += 6;
 
-    function handleKeypad(digit) {
-      if (enteredCode.length < 4) {
-        enteredCode += String(digit);
-        playBeep(620);
-        updatePinDots();
+      const ratio = (allocatedPoints / TASK_DIFFICULTY).toFixed(2);
+      
+      // Calculate Success Odds
+      let odds = 94;
+      let label = 'OPTIMAL FLOW';
+      let colorClass = 'text-emerald-800';
 
-        // Enforce strict string comparison upon reaching 4 digits
-        if (enteredCode.length === 4) {
-          setTimeout(evaluateCode, 80);
-        }
-      }
-    }
-
-    function autoFillPin(code) {
-      enteredCode = String(code);
-      playBeep(680);
-      updatePinDots();
-      setTimeout(evaluateCode, 80);
-    }
-
-    function clearKeypad() {
-      enteredCode = '';
-      playBeep(450);
-      updatePinDots();
-      document.getElementById('pinErrorMessage').innerText = '';
-    }
-
-    function backspaceKeypad() {
-      if (enteredCode.length > 0) {
-        enteredCode = enteredCode.slice(0, -1);
-        playBeep(520);
-        updatePinDots();
-        document.getElementById('pinErrorMessage').innerText = '';
-      }
-    }
-
-    function updatePinDots() {
-      for (let i = 0; i < 4; i++) {
-        const dot = document.getElementById(`dot${i}`);
-        const slot = document.getElementById(`pinSlot${i}`);
-        
-        if (i < enteredCode.length) {
-          // Dot active
-          if (dot) {
-            dot.style.backgroundColor = '#b45309';
-            dot.style.borderColor = '#b45309';
-            dot.style.transform = 'scale(1.2)';
-            dot.style.boxShadow = '0 0 8px rgba(180, 83, 9, 0.5)';
-          }
-          // Large digit slot
-          if (slot) {
-            slot.innerText = enteredCode[i];
-            slot.style.borderColor = '#b45309';
-            slot.style.backgroundColor = '#fef3c7';
-            slot.style.color = '#92400e';
-            slot.style.boxShadow = '0 0 10px rgba(180, 83, 9, 0.25)';
-          }
-        } else {
-          // Dot empty
-          if (dot) {
-            dot.style.backgroundColor = '#fbf8f0';
-            dot.style.borderColor = '#8f7d66';
-            dot.style.transform = 'scale(1)';
-            dot.style.boxShadow = 'none';
-          }
-          // Slot empty
-          if (slot) {
-            slot.innerText = '•';
-            slot.style.borderColor = '#8f7d66';
-            slot.style.backgroundColor = '#fffdfa';
-            slot.style.color = '#8f7d66';
-            slot.style.boxShadow = 'none';
-          }
-        }
-      }
-    }
-
-    // Physical Keyboard Listener
-    window.addEventListener('keydown', (e) => {
-      if (!isUnlocked) {
-        if (e.key >= '0' && e.key <= '9') {
-          handleKeypad(e.key);
-        } else if (e.key === 'Backspace') {
-          backspaceKeypad();
-        } else if (e.key === 'Escape' || e.key === 'Delete' || e.key === 'c' || e.key === 'C') {
-          clearKeypad();
-        } else if (e.key === 'Enter' || e.key === 'p' || e.key === 'P') {
-          passQuickEntry();
-        }
-      }
-    });
-
-    function evaluateCode() {
-      // Strict string comparison as specified: ['1776', '4490', '1234'].includes(String(pin))
-      if (AUTH_CODES.includes(String(enteredCode))) {
-        // Correct PIN
-        playBeep(523, 'triangle', 0.1);
-        setTimeout(() => playBeep(659, 'triangle', 0.1), 100);
-        setTimeout(() => playBeep(784, 'triangle', 0.2), 200);
-
-        for (let i = 0; i < 4; i++) {
-          document.getElementById(`dot${i}`).className = 'w-4 h-4 rounded-full border-2 border-emerald-700 bg-emerald-700 transition-all';
-        }
-        document.getElementById('pinErrorMessage').innerText = 'WELCOME HOME // DISPATCH OPEN';
-        document.getElementById('pinErrorMessage').className = 'text-xs font-mono text-emerald-800 h-4 font-bold tracking-wide';
-
-        setTimeout(() => {
-          sessionStorage.setItem('gazette_family_flow_unlocked', 'true');
-          unlockDoorUI(true);
-        }, 300);
+      if (allocatedPoints >= 34) {
+        odds = 94;
+        label = 'OPTIMAL (ALL GATES SECURE)';
+        colorClass = 'text-emerald-800';
+      } else if (allocatedPoints >= 26) {
+        odds = 76;
+        label = 'TIGHT BUFFER (RISK OF SLIP)';
+        colorClass = 'text-amber-700';
       } else {
-        // Invalid PIN
-        playBeep(180, 'sawtooth', 0.3, 0.12);
-        for (let i = 0; i < 4; i++) {
-          document.getElementById(`dot${i}`).className = 'w-4 h-4 rounded-full border-2 border-red-700 bg-red-700 transition-all';
-        }
-        const container = document.getElementById('pinDotsContainer');
-        container.classList.add('animate-shake');
-        document.getElementById('pinErrorMessage').innerText = 'PASSCODE NOT RECOGNIZED';
-        document.getElementById('pinErrorMessage').className = 'text-xs font-mono text-red-700 h-4 font-bold tracking-wide';
-
-        setTimeout(() => {
-          container.classList.remove('animate-shake');
-          clearKeypad();
-        }, 850);
-      }
-    }
-
-    function passQuickEntry() {
-      enteredCode = 'PASS';
-      sessionStorage.setItem('gazette_family_flow_unlocked', 'true');
-      playBeep(700, 'triangle', 0.15);
-      unlockDoorUI(true);
-    }
-
-    function unlockDoorUI(animate = true) {
-      isUnlocked = true;
-      const modal = document.getElementById('frontDoorModal');
-      if (animate) {
-        modal.classList.add('opacity-0', 'pointer-events-none');
-        setTimeout(() => modal.classList.add('hidden'), 250);
-      } else {
-        modal.classList.add('hidden', 'opacity-0', 'pointer-events-none');
+        odds = 48;
+        label = 'CASCADING RISK (BUS AT PERIL)';
+        colorClass = 'text-red-700';
       }
 
-      // CRITICAL: Ensure NO map or detail modals auto-open on initial unlock!
-      closeNodeModal();
-      closeEveningDebriefModal();
-      toggleAddTripModal(false);
+      document.getElementById('hudForceRatio').innerText = `${ratio}:1`;
+      document.getElementById('hudOddsScore').innerText = `${odds}%`;
+      document.getElementById('hudOddsLabel').innerText = label;
+      document.getElementById('hudForceRatio').className = `text-lg sm:text-xl font-mono font-bold leading-none ${colorClass}`;
+      document.getElementById('hudOddsScore').className = `text-lg sm:text-xl font-mono font-bold leading-none ${colorClass}`;
 
-      postWire('DISPATCH', 'Household Front Door unlocked. Gazette Family Flow Simulator ready.');
+      // Update zone labels
+      document.getElementById('zoneWakeTime').innerText = ASSETS.wake ? '06:25 AM' : '06:40 AM (Late)';
+      document.getElementById('zoneKitchenDwell').innerText = ASSETS.breakfast ? '10 mins (Prepped)' : '20 mins (Cooking)';
+      document.getElementById('zoneMudroomDwell').innerText = ASSETS.mudroom ? '3 mins (Staged)' : '16 mins (Search!)';
+      document.getElementById('slowCookerStatus').innerText = ASSETS.dinner ? 'Slow-Cooker: ON' : 'Dinner: UNPREPPED';
     }
 
-    function lockScreen() {
-      sessionStorage.removeItem('gazette_family_flow_unlocked');
-      lockDoorUI();
-    }
+    function handleLeverChange() {
+      ASSETS.mudroom = document.getElementById('leverMudroom').checked;
+      ASSETS.breakfast = document.getElementById('leverBreakfast').checked;
+      ASSETS.wake = document.getElementById('leverWake').checked;
+      ASSETS.dinner = document.getElementById('leverDinner').checked;
 
-    function lockDoorUI() {
-      isUnlocked = false;
-      clearKeypad();
-      const modal = document.getElementById('frontDoorModal');
-      modal.classList.remove('hidden', 'opacity-0', 'pointer-events-none'); modal.style.display = 'flex';
-      if (isClockRunning) toggleClockRun();
+      calculateForceRatio();
+      playTone(540);
+      postLog('COMMAND', `Asset allocation updated: Ratio is now ${document.getElementById('hudForceRatio').innerText}.`);
     }
 
     /* ---------------------------------------------------------------------
-       3. DAY CLOCK, WEATHER & FLOW GAUGE
+       3. DISCRETE-EVENT SIMULATION & ENTITY STATE MACHINE
        --------------------------------------------------------------------- */
-    function formatClockTime(min) {
+    function formatTime(min) {
       const h = Math.floor(min / 60);
       const m = Math.floor(min % 60);
       const period = h >= 12 ? 'PM' : 'AM';
-      const displayH = h % 12 === 0 ? 12 : h % 12;
-      const padM = m < 10 ? '0' + m : m;
-      const padH = displayH < 10 ? '0' + displayH : displayH;
-      return `${padH}:${padM} ${period}`;
+      const dh = h % 12 === 0 ? 12 : h % 12;
+      const ph = dh < 10 ? '0' + dh : dh;
+      const pm = m < 10 ? '0' + m : m;
+      return `${ph}:${pm} ${period}`;
     }
 
-    function updateClockUI() {
-      document.getElementById('clockDisplay').innerText = formatClockTime(currentClockMinutes);
-      updateFlowMeter();
-    }
+    function updateSimulationClock() {
+      document.getElementById('hudSimClock').innerText = formatTime(currentSimMin);
 
-    function toggleClockRun() {
-      isClockRunning = !isClockRunning;
-      const btn = document.getElementById('clockRunBtn');
-      const icon = document.getElementById('clockRunIcon');
-      const text = document.getElementById('clockRunText');
-
-      if (isClockRunning) {
-        playBeep(840);
-        btn.classList.remove('bg-[#b45309]', 'hover:bg-[#92400e]');
-        btn.classList.add('bg-emerald-700', 'hover:bg-emerald-800');
-        icon.innerText = '⏸';
-        text.innerText = 'PAUSE';
-        clockIntervalId = setInterval(clockTick, 1000 / clockTempo);
+      // Phase update
+      const phaseEl = document.getElementById('hudPhaseName');
+      if (currentSimMin < 300) {
+        phaseEl.innerText = 'PHASE 1: 04:00 AM WAKE & COMMAND PREP';
+      } else if (currentSimMin < 424) {
+        phaseEl.innerText = 'PHASE 2: SOLO COMMAND BUS RUN (GATE 1 AT 07:04)';
+      } else if (currentSimMin < 480) {
+        phaseEl.innerText = 'PHASE 3: ELEMENTARY & TRIANGLE DROP-OFFS';
+      } else if (currentSimMin < 540) {
+        phaseEl.innerText = 'PHASE 4: DAD COMMUTE & WORKOUT TO CAC DESK';
       } else {
-        playBeep(420);
-        btn.classList.remove('bg-emerald-700', 'hover:bg-emerald-800');
-        btn.classList.add('bg-[#b45309]', 'hover:bg-[#92400e]');
-        icon.innerText = '▶';
-        text.innerText = 'RUN';
-        clearInterval(clockIntervalId);
-        clockIntervalId = null;
+        phaseEl.innerText = 'PHASE 5: AFTERNOON, EVENING DINNER & BEDTIME';
       }
     }
 
-    function setTempo(val) {
-      clockTempo = val;
-      ['tempo1x', 'tempo5x', 'tempo15x'].forEach(id => {
-        const el = document.getElementById(id);
-        el.className = 'px-2 py-0.5 rounded text-[#635848] hover:text-[#231c15] transition-all';
-      });
-      document.getElementById(`tempo${val}x`).className = 'px-2 py-0.5 rounded text-[#b45309] font-bold bg-[#fffdfa] transition-all';
+    function simulationStep(deltaMin) {
+      const prevMin = currentSimMin;
+      currentSimMin += deltaMin;
 
-      if (isClockRunning) {
-        clearInterval(clockIntervalId);
-        clockIntervalId = setInterval(clockTick, 1000 / clockTempo);
-      }
-      playBeep(600);
-    }
-
-    function stepClock(mins) {
-      advanceClockMinutes(mins);
-      playBeep(650);
-    }
-
-    function resetDayClock() {
-      currentClockMinutes = CLOCK_START_MIN;
-      if (isClockRunning) toggleClockRun();
-
-      // Reset vehicles
-      VEHICLES.f150.status = 'At Home Base';
-      VEHICLES.f150.currentNode = 'Home Base';
-      VEHICLES.f150.destNode = null;
-      VEHICLES.f150.progress = 0;
-      VEHICLES.f150.activePathId = null;
-      VEHICLES.f150.dwellRemaining = 0;
-
-      VEHICLES.explorer.status = 'At Home Base';
-      VEHICLES.explorer.currentNode = 'Home Base';
-      VEHICLES.explorer.destNode = null;
-      VEHICLES.explorer.progress = 0;
-      VEHICLES.explorer.activePathId = null;
-      VEHICLES.explorer.dwellRemaining = 0;
-
-      // Reset trips
-      dailyTrips.forEach(trip => trip.status = 'Scheduled');
-
-      // Reset Peace Meter
-      peacePercentage = 95;
-      bufferMinutes = 22;
-
-      // Reset Family Energy
-      rosterList.forEach(m => m.patience = 100);
-
-      clearVehiclePaths();
-      renderVehicleTokens();
-      renderScheduleTable();
-      renderRosterCards();
-      updateClockUI();
-
-      postWire('DISPATCH', 'Day Clock reset to 06:30 AM morning baseline. Family refreshed.');
-    }
-
-    function clockTick() {
-      advanceClockMinutes(0.5); // Advance 30 seconds of sim time per tick
-    }
-
-    function advanceClockMinutes(delta) {
-      currentClockMinutes += delta;
-
-      // Check end of day (20:30 PM)
-      if (currentClockMinutes >= CLOCK_END_MIN) {
-        currentClockMinutes = CLOCK_END_MIN;
-        if (isClockRunning) toggleClockRun();
-        postWire('EDITORIAL', 'The day draws to a close at 20:30 PM. Evening debrief ready.');
-        triggerEveningDebriefModal();
+      if (currentSimMin >= SIM_END) {
+        currentSimMin = SIM_END;
+        if (isSimRunning) toggleSim();
+        postLog('EDITORIAL', '20:00 PM: Evening goal achieved. Dinner served, kids in bed.');
       }
 
-      // Check scheduled trips
-      checkDailyTripTriggers();
+      // Discrete State Machine Transitions for Units
+      resolveUnitLocations(currentSimMin, prevMin);
 
-      // Update vehicle transit physics
-      updateVehiclePhysics(delta);
+      // Evaluate Time Gates
+      evaluateGates(currentSimMin, prevMin);
 
-      // Refresh displays
-      updateClockUI();
-      renderVehicleTokens();
-      renderScheduleTable();
+      updateSimulationClock();
+      renderUnitTokens();
     }
 
-    function handleWeatherChange(val) {
-      activeWeather = val;
-      const w = WEATHER_CONFIGS[val];
-      playBeep(520);
-      postWire('WEATHER', `Weather Desk update: ${w.name} (${w.temp}°F). ${w.desc}.`);
-      updateFlowMeter();
-    }
-
-    function toggleBaselineLock() {
-      isBaselineLocked = !isBaselineLocked;
-      const btn = document.getElementById('baselineLockBtn');
-      const icon = document.getElementById('baselineLockIcon');
-      const label = document.getElementById('baselineLockLabel');
-      const notice = document.getElementById('baselineNoticeText');
-
-      if (isBaselineLocked) {
-        // Locked
-        btn.className = 'px-3.5 py-2.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-[#fffdfa] font-mono font-bold text-xs uppercase tracking-wider shadow transition-all flex items-center gap-2';
-        icon.innerText = '🔒';
-        label.innerText = '[ BASELINE LOCKED ]';
-        notice.innerText = 'Baseline is locked. Inputs are frozen to run consistent simulations. Toggle in the top header to edit.';
-        playBeep(520);
+    function resolveUnitLocations(time, prevTime) {
+      // 1. DAD (Josh)
+      if (time < 300) { // 04:00 - 05:00
+        UNITS.dad.zone = 'Bedrooms';
+      } else if (time < 460) { // 05:00 - 07:40
+        if (time < 424) {
+          UNITS.dad.zone = (UNITS.lincoln.zone === 'Mudroom') ? 'Mudroom' : 'Kitchen';
+        } else {
+          UNITS.dad.zone = 'Kitchen';
+        }
+      } else if (time < 470) { // 07:40 - 07:50
+        UNITS.dad.zone = 'Gate 2'; // en route to elementary
+      } else if (time < 480) { // 07:50 - 08:00
+        UNITS.dad.zone = 'Gate 3'; // The Triangle
       } else {
-        // Unlocked / Editable
-        btn.className = 'px-3.5 py-2.5 rounded-lg bg-[#b45309] hover:bg-[#92400e] text-[#fffdfa] font-mono font-bold text-xs uppercase tracking-wider shadow transition-all flex items-center gap-2';
-        icon.innerText = '🔓';
-        label.innerText = '[ ROUTINES EDITABLE ]';
-        notice.innerText = 'Routines are currently editable. Adjust morning preparation minutes and snag chances below.';
-        playBeep(740);
+        UNITS.dad.zone = 'Gate 4'; // Fort Leavenworth CAC desk
       }
-      renderRosterCards();
-    }
 
-    function updateFlowMeter() {
-      const ring = document.getElementById('peaceMeterRing');
-      const score = document.getElementById('peaceMeterScore');
-      const badge = document.getElementById('peaceStatusBadge');
-      const buffer = document.getElementById('peaceBufferDisplay');
+      // 2. LINCOLN
+      // Wake time determined by lever
+      const lincolnWake = ASSETS.wake ? 385 : 400; // 06:25 vs 06:40
+      const lincolnKitchenDuration = ASSETS.breakfast ? 10 : 18;
+      const lincolnMudroomEntry = lincolnWake + lincolnKitchenDuration;
+      const lincolnMudroomDuration = ASSETS.mudroom ? 3 : 16;
+      const lincolnArrivalBus = lincolnMudroomEntry + lincolnMudroomDuration;
 
-      // Adjust for weather
-      const w = WEATHER_CONFIGS[activeWeather];
-      let displayBuffer = bufferMinutes - w.extraBuffer;
-      let displayScore = Math.max(20, Math.min(100, peacePercentage - (w.extraBuffer * 1.5)));
-
-      score.innerText = `${Math.round(displayScore)}%`;
-      buffer.innerText = (displayBuffer >= 0 ? `+${displayBuffer}` : `${displayBuffer}`) + ' mins';
-
-      // Ring stroke-dashoffset: Circumference = 125.6
-      const offset = 125.6 - (125.6 * (displayScore / 100));
-      ring.style.strokeDashoffset = offset;
-
-      if (displayScore >= 80) {
-        ring.className.baseVal = 'text-emerald-700 transition-all duration-500';
-        score.className = 'absolute text-[12px] font-mono font-bold text-emerald-800';
-        badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-600"></span> CALM & ON TRACK';
-        badge.className = 'text-xs font-headline font-bold text-emerald-800 flex items-center gap-1.5';
-      } else if (displayScore >= 60) {
-        ring.className.baseVal = 'text-amber-600 transition-all duration-500';
-        score.className = 'absolute text-[12px] font-mono font-bold text-amber-800';
-        badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-500"></span> HURRIED BUT MANAGING';
-        badge.className = 'text-xs font-headline font-bold text-amber-800 flex items-center gap-1.5';
+      if (time < lincolnWake) {
+        UNITS.lincoln.zone = 'Bedrooms';
+      } else if (time < lincolnMudroomEntry) {
+        if (prevTime < lincolnWake) postLog('MOVEMENT', '⚡ Lincoln awake, entering Kitchen for breakfast fueling.');
+        UNITS.lincoln.zone = 'Kitchen';
+      } else if (time < lincolnArrivalBus) {
+        if (prevTime < lincolnMudroomEntry) postLog('CHOKEPOINT', '⚡ Lincoln entered Mudroom Threshold. Preparing shoes and backpack.');
+        UNITS.lincoln.zone = 'Mudroom';
       } else {
-        ring.className.baseVal = 'text-red-600 transition-all duration-500';
-        score.className = 'absolute text-[12px] font-mono font-bold text-red-800';
-        badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-600"></span> COMPRESSED BUFFER';
-        badge.className = 'text-xs font-headline font-bold text-red-800 flex items-center gap-1.5';
+        // Did Lincoln reach the bus before 07:04 (424 mins)?
+        if (lincolnArrivalBus <= 424) {
+          // Clean arrival at bus stop
+          if (time < 424) {
+            UNITS.lincoln.zone = 'Gate 1';
+            if (prevTime < lincolnArrivalBus) postLog('GATE 1', '⚡ Lincoln at Bus Stop (07:00). Waiting for Route 7 bus.');
+          } else {
+            UNITS.lincoln.zone = 'Gate 1'; // On Route 7 bus en route to middle school
+          }
+        } else {
+          // Delayed in Mudroom past 07:04!
+          if (time <= 424) {
+            UNITS.lincoln.zone = 'Mudroom';
+          } else {
+            // Trapped / Missed bus!
+            if (!catastrophicCascadeActive) {
+              triggerCatastrophicCascade();
+            }
+            UNITS.lincoln.zone = (time < 460) ? 'Mudroom' : 'Gate 2'; // forced into Dad's car at 07:40
+          }
+        }
+      }
+
+      // 3. BEL & BIRDIE
+      if (time < 405) { // before 06:45
+        UNITS.bel.zone = 'Bedrooms';
+        UNITS.birdie.zone = 'Bedrooms';
+      } else if (time < 445) { // 06:45 - 07:25
+        UNITS.bel.zone = 'Kitchen';
+        UNITS.birdie.zone = 'Kitchen';
+      } else if (time < 460) { // 07:25 - 07:40
+        UNITS.bel.zone = 'Mudroom';
+        UNITS.birdie.zone = 'Mudroom';
+      } else if (time < 470) { // 07:40 - 07:50
+        UNITS.bel.zone = 'Gate 2';
+        UNITS.birdie.zone = 'Gate 2';
+      } else if (time < 480) { // 07:50 - 08:00
+        UNITS.bel.zone = 'Gate 2'; // dropped at elementary
+        UNITS.birdie.zone = 'Gate 3'; // dropped at triangle
+      } else {
+        UNITS.bel.zone = 'Gate 2';
+        UNITS.birdie.zone = 'Gate 3';
       }
     }
 
     /* ---------------------------------------------------------------------
-       4. COUNTY MAP & TRAVEL THEATER (TAB 1)
+       4. TIME GATES EVALUATION
        --------------------------------------------------------------------- */
-    const VEHICLES = {
-      f150: {
-        name: 'Ford F-150',
-        driver: 'Dad / Josh',
-        color: '#b45309',
-        tokenElId: 'tokenF150',
-        status: 'At Home Base',
-        currentNode: 'Home Base',
-        destNode: null,
-        activePathId: null,
-        progress: 0,
-        dwellRemaining: 0,
-        activeTripIdx: null
-      },
-      explorer: {
-        name: 'Ford Explorer',
-        driver: 'Mom / Brittanie',
-        color: '#0284c7',
-        tokenElId: 'tokenExplorer',
-        status: 'At Home Base',
-        currentNode: 'Home Base',
-        destNode: null,
-        activePathId: null,
-        progress: 0,
-        dwellRemaining: 0,
-        activeTripIdx: null
-      }
-    };
-
-    const NODE_INTEL = {
-      'Home Base': {
-        name: 'Caballero Homestead (Home Base)',
-        details: 'The family homestead on the Easton country route. Starting point for morning school lunches, backpack checks, and vehicle departures.'
-      },
-      'Pleasant Ridge Schools': {
-        name: 'Pleasant Ridge (USD 449 Easton)',
-        details: 'Elementary and Middle School campus. Morning drop-off window is 07:35–07:55 AM. The afternoon pickup line begins forming by 15:05 PM.'
-      },
-      'Fort Leavenworth': {
-        name: 'Fort Leavenworth (Sherman Ave / Post)',
-        details: 'Dad's daily commute destination via Highway K-92. Sherman Ave access point runs smoothly on crisp mornings.'
-      },
-      'Lansing Sports Fields': {
-        name: 'Lansing Sports Complex',
-        details: 'Youth athletic fields along K-7 south of Leavenworth. Afternoon soccer practice destination for Lincoln at 17:00 PM.'
-      }
-    };
-
-    const NODE_COORDINATES = {
-      'Home Base': { x: 240, y: 360 },
-      'Pleasant Ridge Schools': { x: 210, y: 150 },
-      'Fort Leavenworth': { x: 780, y: 140 },
-      'Lansing Sports Fields': { x: 750, y: 450 }
-    };
-
-    function checkDailyTripTriggers() {
-      dailyTrips.forEach((trip, idx) => {
-        if (trip.status === 'Scheduled' && currentClockMinutes >= trip.simMin) {
-          launchTrip(idx);
+    function evaluateGates(time, prevTime) {
+      // Gate 1: 07:04 AM (424 mins)
+      if (time >= 424 && !GATES.gate1.triggered) {
+        GATES.gate1.triggered = true;
+        
+        if (UNITS.lincoln.zone === 'Gate 1') {
+          GATES.gate1.cleared = true;
+          document.getElementById('gate1Badge').className = 'px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-900 text-[9px] font-mono font-bold';
+          document.getElementById('gate1Badge').innerText = 'CLEARED 07:04';
+          document.getElementById('gate1Status').innerHTML = '<span class="text-emerald-800 font-bold">✓ ON ROUTE 7 BUS</span>';
+          document.getElementById('gateCard1').className = 'news-card-inset rounded-xl p-3.5 border-2 border-emerald-600 transition-all flex flex-col justify-between';
+          
+          playTone(784, 'triangle', 0.2);
+          postLog('GATE 1 SUCCESS', '✅ 07:04 AM: Lincoln cleanly boarded the Route 7 school bus! Morning timeline intact.');
+        } else {
+          GATES.gate1.missed = true;
+          document.getElementById('gate1Badge').className = 'px-1.5 py-0.5 rounded bg-red-100 text-red-900 text-[9px] font-mono font-bold';
+          document.getElementById('gate1Badge').innerText = 'MISSED 07:04';
+          document.getElementById('gate1Status').innerHTML = '<span class="text-red-700 font-bold">⚠️ MISSED BUS!</span>';
+          document.getElementById('gateCard1').className = 'news-card-inset rounded-xl p-3.5 border-2 border-red-600 transition-all flex flex-col justify-between';
+          
+          triggerCatastrophicCascade();
         }
-      });
-    }
+      }
 
-    function triggerTripImmediate(idx) {
-      if (!isUnlocked) return;
-      currentClockMinutes = dailyTrips[idx].simMin;
-      updateClockUI();
-      launchTrip(idx);
-    }
+      // Gate 2: 07:50 AM (470 mins) Bel Drop-off
+      if (time >= 470 && !GATES.gate2.triggered) {
+        GATES.gate2.triggered = true;
+        GATES.gate2.cleared = true;
+        document.getElementById('gate2Badge').className = 'px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-900 text-[9px] font-mono font-bold';
+        document.getElementById('gate2Badge').innerText = 'CLEARED 07:50';
+        document.getElementById('gate2Status').innerHTML = '<span class="text-emerald-800 font-bold">✓ BEL SAFELY DROPPED</span>';
+        document.getElementById('gateCard2').className = 'news-card-inset rounded-xl p-3.5 border-2 border-emerald-600 transition-all flex flex-col justify-between';
+        
+        playTone(659, 'triangle', 0.15);
+        postLog('GATE 2 SUCCESS', '🎨 07:50 AM: Bel dropped off at Pleasant Ridge Elementary on schedule.');
+      }
 
-    function launchTrip(idx) {
-      const trip = dailyTrips[idx];
-      const vKey = trip.vehicle.includes('F-150') ? 'f150' : 'explorer';
-      const veh = VEHICLES[vKey];
+      // Gate 3: 08:00 AM (480 mins) Birdie Triangle Drop-off
+      if (time >= 480 && !GATES.gate3.triggered) {
+        GATES.gate3.triggered = true;
+        GATES.gate3.cleared = true;
+        document.getElementById('gate3Badge').className = 'px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-900 text-[9px] font-mono font-bold';
+        document.getElementById('gate3Badge').innerText = 'CLEARED 08:00';
+        document.getElementById('gate3Status').innerHTML = '<span class="text-emerald-800 font-bold">✓ BIRDIE AT TRIANGLE</span>';
+        document.getElementById('gateCard3').className = 'news-card-inset rounded-xl p-3.5 border-2 border-emerald-600 transition-all flex flex-col justify-between';
+        
+        playTone(659, 'triangle', 0.15);
+        postLog('GATE 3 SUCCESS', '🎈 08:00 AM: Birdie dropped off at The Triangle on schedule.');
+      }
 
-      trip.status = 'In Transit';
-      veh.status = `En Route to ${trip.dest}`;
-      veh.destNode = trip.dest;
-      veh.activePathId = trip.pathId;
-      veh.progress = 0;
-      veh.activeTripIdx = idx;
-
-      activatePathLine(trip.pathId, vKey);
-      playBeep(640, 'triangle', 0.12);
-      postWire('DEPARTURE', `${trip.name}: ${veh.name} departed ${trip.origin} for ${trip.dest}. Crew: ${trip.crew.join(', ')}.`);
-    }
-
-    function activatePathLine(pathId, vKey) {
-      const el = document.getElementById(pathId);
-      if (el) {
-        el.classList.remove('active-travel-f150', 'active-travel-explorer');
-        el.classList.add(vKey === 'f150' ? 'active-travel-f150' : 'active-travel-explorer');
+      // Gate 4: 09:00 AM (540 mins) Dad CAC Desk
+      if (time >= 540 && !GATES.gate4.triggered) {
+        GATES.gate4.triggered = true;
+        
+        if (catastrophicCascadeActive) {
+          GATES.gate4.missed = true;
+          document.getElementById('gate4Badge').className = 'px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 text-[9px] font-mono font-bold';
+          document.getElementById('gate4Badge').innerText = 'DELAYED 09:18';
+          document.getElementById('gate4Status').innerHTML = '<span class="text-amber-800 font-bold">⚠️ WORKOUT COMPRESSED</span>';
+          document.getElementById('gateCard4').className = 'news-card-inset rounded-xl p-3.5 border-2 border-amber-600 transition-all flex flex-col justify-between';
+          
+          playTone(280, 'sawtooth', 0.25);
+          postLog('GATE 4 DELAY', '⚠️ 09:00 AM: Dad arrived at CAC desk late (09:18 AM). Workout eliminated due to morning bus cascade.');
+        } else {
+          GATES.gate4.cleared = true;
+          document.getElementById('gate4Badge').className = 'px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-900 text-[9px] font-mono font-bold';
+          document.getElementById('gate4Badge').innerText = 'SEATED 08:58';
+          document.getElementById('gate4Status').innerHTML = '<span class="text-emerald-800 font-bold">✓ AT CAC DESK (WORKOUT MET)</span>';
+          document.getElementById('gateCard4').className = 'news-card-inset rounded-xl p-3.5 border-2 border-emerald-600 transition-all flex flex-col justify-between';
+          
+          playTone(880, 'triangle', 0.25);
+          postLog('GATE 4 SUCCESS', '☕ 09:00 AM: Dad completed workout and seated at CAC desk on post before the bell.');
+        }
       }
     }
 
-    function clearVehiclePaths() {
-      ['path_alpha', 'path_bravo', 'path_delta', 'path_echo'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.classList.remove('active-travel-f150', 'active-travel-explorer');
-      });
+    function triggerCatastrophicCascade() {
+      catastrophicCascadeActive = true;
+      document.getElementById('cascadeAlertBanner').classList.remove('hidden');
+      
+      playTone(180, 'sawtooth', 0.4, 0.15);
+      postLog('CATASTROPHIC CASCADE', '🚨 Lincoln missed the 07:04 bus! Mudroom friction cascade enforced.');
     }
 
-    function updateVehiclePhysics(delta) {
-      const w = WEATHER_CONFIGS[activeWeather];
-
-      ['f150', 'explorer'].forEach(vKey => {
-        const veh = VEHICLES[vKey];
-
-        if (veh.status.startsWith('En Route')) {
-          const trip = dailyTrips[veh.activeTripIdx];
-          const nominalDuration = (trip ? trip.duration : 18) * w.multiplier;
-
-          veh.progress += delta / nominalDuration;
-
-          if (veh.progress >= 1.0) {
-            veh.progress = 1.0;
-            veh.status = `Arrived at ${veh.destNode}`;
-            veh.currentNode = veh.destNode;
-            veh.dwellRemaining = 10; // 10m dwell period
-            if (trip) trip.status = 'Arrived (Dwell)';
-
-            clearVehiclePaths();
-            playBeep(784, 'triangle', 0.15);
-            postWire('ARRIVAL', `${trip ? trip.name : 'Trip'}: Arrived on schedule at ${veh.currentNode}. Entering drop-off/parking dwell.`);
-          }
-        } else if (veh.dwellRemaining > 0) {
-          veh.dwellRemaining -= delta;
-          if (veh.dwellRemaining <= 0) {
-            veh.dwellRemaining = 0;
-            veh.status = `Stationary at ${veh.currentNode}`;
-            const trip = dailyTrips[veh.activeTripIdx];
-            if (trip) trip.status = 'Completed';
-          }
-        }
-      });
-
-      document.getElementById('mapF150Status').innerText = VEHICLES.f150.status;
-      document.getElementById('mapExplorerStatus').innerText = VEHICLES.explorer.status;
-    }
-
-    function renderVehicleTokens() {
-      ['f150', 'explorer'].forEach(vKey => {
-        const veh = VEHICLES[vKey];
-        const token = document.getElementById(veh.tokenElId);
-        if (!token) return;
-
-        let x = 240;
-        let y = 360;
-
-        if (veh.status.startsWith('En Route') && veh.activePathId) {
-          const path = document.getElementById(veh.activePathId);
-          if (path) {
-            const len = path.getTotalLength();
-            const pt = path.getPointAtLength(veh.progress * len);
-            x = pt.x;
-            y = pt.y;
-          }
-        } else if (NODE_COORDINATES[veh.currentNode]) {
-          x = NODE_COORDINATES[veh.currentNode].x;
-          y = NODE_COORDINATES[veh.currentNode].y;
-          if (vKey === 'explorer' && VEHICLES.f150.currentNode === veh.currentNode) {
-            x += 20;
-            y -= 15;
-          }
-        }
-
-        token.setAttribute('transform', `translate(${x}, ${y})`);
-      });
-    }
-
-    function showNodeDetails(nodeName) {
-      const info = NODE_INTEL[nodeName];
-      if (!info) return;
-
-      document.getElementById('nodeModalTitle').innerText = info.name;
-      document.getElementById('nodeModalBody').innerHTML = `
-        <div class="p-3 bg-[#eee7da] rounded border border-[#c4b79f]">
-          <p class="text-xs leading-relaxed text-[#231c15]">${info.details}</p>
-        </div>
-        <div class="text-[11px] font-mono text-[#635848] flex justify-between">
-          <span>Speed Limit: 45–55 MPH</span>
-          <span class="text-emerald-800 font-bold">Corridor Open</span>
+    /* ---------------------------------------------------------------------
+       5. UNIT TOKEN RENDERING
+       --------------------------------------------------------------------- */
+    function createTokenEl(unit) {
+      return `
+        <div class="token-bounce inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-[#fffef9] border border-[#c2b59f] shadow-sm text-xs font-mono select-none" style="border-left: 3px solid ${unit.color};">
+          <span class="text-sm">${unit.icon}</span>
+          <span class="font-bold text-ink">${unit.name}</span>
         </div>
       `;
-      document.getElementById('nodeDetailModal').classList.remove('hidden');
-      document.getElementById('nodeDetailModal').classList.add('flex');
     }
 
-    function closeNodeModal() {
-      document.getElementById('nodeDetailModal').classList.add('hidden');
-      document.getElementById('nodeDetailModal').classList.remove('flex');
+    function renderUnitTokens() {
+      // Clear containers
+      const containers = {
+        'Bedrooms': document.getElementById('unitsBedrooms'),
+        'Kitchen': document.getElementById('unitsKitchen'),
+        'Mudroom': document.getElementById('unitsMudroom'),
+        'Gate 1': document.getElementById('unitsGate1'),
+        'Gate 2': document.getElementById('unitsGate2'),
+        'Gate 3': document.getElementById('unitsGate3'),
+        'Gate 4': document.getElementById('unitsGate4'),
+      };
+
+      for (let k in containers) {
+        if (containers[k]) containers[k].innerHTML = '';
+      }
+
+      // Distribute tokens
+      ['dad', 'lincoln', 'bel', 'birdie'].forEach(key => {
+        const u = UNITS[key];
+        const container = containers[u.zone];
+        if (container) {
+          container.innerHTML += createTokenEl(u);
+        }
+      });
     }
 
     /* ---------------------------------------------------------------------
-       5. THE GAZETTE WIRE (LIVE DISPATCH & RANDOM LIFE EVENTS)
+       6. LOGGING & TELETYPE
        --------------------------------------------------------------------- */
-    let wireFeedItems = [];
-
-    function postWire(tag, text) {
-      wireFeedItems.unshift({
-        time: formatClockTime(currentClockMinutes),
+    function postLog(tag, msg) {
+      logEntries.unshift({
+        time: formatTime(currentSimMin),
         tag: tag,
-        text: text
+        msg: msg
       });
-      if (wireFeedItems.length > 40) wireFeedItems.pop();
-      renderWire();
+      if (logEntries.length > 50) logEntries.pop();
+      renderLog();
     }
 
-    function clearWire() {
-      wireFeedItems = [];
-      renderWire();
+    function clearDispatchLog() {
+      logEntries = [];
+      renderLog();
     }
 
-    function renderWire() {
-      const container = document.getElementById('gazetteWireFeed');
-      if (!container) return;
+    function renderLog() {
+      const el = document.getElementById('dispatchLogContainer');
+      if (!el) return;
 
-      if (wireFeedItems.length === 0) {
-        container.innerHTML = `
-          <div class="text-center py-10 text-[#8f7d66] font-mono text-xs italic font-editorial">
-            The Gazette wire is quiet. Awaiting morning dispatches...
-          </div>
-        `;
+      if (logEntries.length === 0) {
+        el.innerHTML = '<div class="text-[#766753] italic text-center py-8">Teletype awaiting morning dispatches...</div>';
         return;
       }
 
-      container.innerHTML = wireFeedItems.map(item => {
-        let tagBadge = 'bg-[#eee7da] text-[#635848] border-[#c4b79f]';
-        if (item.tag === 'DEPARTURE') tagBadge = 'bg-amber-100 text-amber-900 border-amber-300';
-        if (item.tag === 'ARRIVAL') tagBadge = 'bg-emerald-100 text-emerald-900 border-emerald-300';
-        if (item.tag === 'FAMILY SNAG') tagBadge = 'bg-red-100 text-red-900 border-red-300 font-bold';
-        if (item.tag === 'WEATHER') tagBadge = 'bg-sky-100 text-sky-900 border-sky-300';
-        if (item.tag === 'EDITORIAL') tagBadge = 'bg-purple-100 text-purple-900 border-purple-300';
+      el.innerHTML = logEntries.map(e => {
+        let tagBadge = 'bg-[#ede7d8] text-[#766753] border-[#c2b59f]';
+        if (e.tag.includes('SUCCESS') || e.tag.includes('CLEARED')) tagBadge = 'bg-emerald-100 text-emerald-900 border-emerald-300 font-bold';
+        if (e.tag.includes('CASCADE') || e.tag.includes('MISSED')) tagBadge = 'bg-red-100 text-red-900 border-red-300 font-bold';
+        if (e.tag.includes('CHOKEPOINT')) tagBadge = 'bg-amber-100 text-amber-900 border-amber-300 font-bold';
 
         return `
-          <div class="p-2.5 rounded bg-[#fffdfa] border border-[#d7cdba] hover:border-[#8f7d66] transition-all text-xs">
-            <div class="flex items-center justify-between mb-1">
-              <span class="text-[10px] text-[#8f7d66] font-mono">${item.time}</span>
-              <span class="px-1.5 py-0.2 rounded border text-[9px] font-mono uppercase ${tagBadge}">
-                [${item.tag}]
-              </span>
-            </div>
-            <div class="text-[#231c15] text-[11px] font-sans leading-relaxed">${item.text}</div>
+          <div class="p-1.5 rounded bg-[#fffef9] border border-[#dcd2bf] flex items-start gap-2">
+            <span class="text-[10px] text-[#766753] whitespace-nowrap">${e.time}</span>
+            <span class="px-1.5 py-0.2 rounded border text-[9px] uppercase whitespace-nowrap ${tagBadge}">[${e.tag}]</span>
+            <span class="text-ink leading-relaxed">${e.msg}</span>
           </div>
         `;
       }).join('');
     }
 
-    const RANDOM_SNAGS = [
-      { member: 'Lincoln', delay: 8, text: 'Mudroom Cleat Search: Lincoln's left soccer cleat slipped into the shoe bin void. 8-minute family search resolved!' },
-      { member: 'Sally Jo', delay: 10, text: 'Breakfast Syrup Spurt: A spirited pancake splash necessitated a quick shirt swap before car-line roll (+10m).' },
-      { member: 'Annabel', delay: 6, text: 'Art Folder Rescue: Annabel sprinted back up the porch steps for the weekly watercolor project folder (+6m).' },
-      { member: 'Brittanie', delay: 5, text: 'Water Bottle Checklist: Mom verified five stainless steel bottles were packed with ice before the garage door closed (+5m).' },
-      { member: 'Josh', delay: 7, text: 'Highway 92 Combine Slowdown: Friendly farmer moving seasonal John Deere equipment created a scenic country pace (+7m).' },
-      { member: 'General', delay: 5, text: 'USD 449 Bus Route Rhythm: Followed the school bus stop sequence through the Easton 207th connector (+5m).' }
-    ];
-
-    function triggerRandomLifeEvent() {
-      const snag = RANDOM_SNAGS[Math.floor(Math.random() * RANDOM_SNAGS.length)];
-      
-      // Decrease peace percentage and buffer
-      peacePercentage = Math.max(35, peacePercentage - Math.floor(Math.random() * 6) - 4);
-      bufferMinutes = Math.max(-5, bufferMinutes - snag.delay);
-
-      // Deplete specific member patience if applicable
-      if (snag.member !== 'General') {
-        const mem = rosterList.find(m => m.name.includes(snag.member));
-        if (mem) {
-          mem.patience = Math.max(30, mem.patience - Math.floor(Math.random() * 12) - 8);
-        }
-      }
-
-      playBeep(320, 'sawtooth', 0.2);
-      postWire('FAMILY SNAG', `🌾 Life Event: ${snag.text}`);
-      updateFlowMeter();
-      renderRosterCards();
-    }
-
     /* ---------------------------------------------------------------------
-       6. TODAY'S FAMILY SCHEDULE (TAB 2)
+       7. SIMULATION CONTROLS & TIMELINE JUMPS
        --------------------------------------------------------------------- */
-    let dailyTrips = [
-      {
-        id: 'trip_1',
-        timeStr: '07:15 AM',
-        simMin: 435, // 07:15
-        name: 'Morning School Run',
-        vehicle: 'Ford Explorer',
-        crew: ['Mom', 'Lincoln', 'Annabel', 'Sally Jo'],
-        origin: 'Home Base',
-        dest: 'Pleasant Ridge Schools',
-        pathId: 'path_alpha',
-        cushion: 18,
-        duration: 16,
-        status: 'Scheduled'
-      },
-      {
-        id: 'trip_2',
-        timeStr: '07:40 AM',
-        simMin: 460, // 07:40
-        name: 'Dad's Commute to Post',
-        vehicle: 'Ford F-150',
-        crew: ['Dad (Josh)'],
-        origin: 'Home Base',
-        dest: 'Fort Leavenworth',
-        pathId: 'path_bravo',
-        cushion: 24,
-        duration: 26,
-        status: 'Scheduled'
-      },
-      {
-        id: 'trip_3',
-        timeStr: '15:10 PM',
-        simMin: 910, // 15:10
-        name: 'Pleasant Ridge Afternoon Pickup',
-        vehicle: 'Ford Explorer',
-        crew: ['Mom (Brittanie)'],
-        origin: 'Home Base',
-        dest: 'Pleasant Ridge Schools',
-        pathId: 'path_alpha',
-        cushion: 16,
-        duration: 18,
-        status: 'Scheduled'
-      },
-      {
-        id: 'trip_4',
-        timeStr: '16:45 PM',
-        simMin: 1005, // 16:45
-        name: 'Lincoln's Soccer Practice',
-        vehicle: 'Ford F-150',
-        crew: ['Dad', 'Lincoln'],
-        origin: 'Home Base',
-        dest: 'Lansing Sports Fields',
-        pathId: 'path_delta',
-        cushion: 20,
-        duration: 28,
-        status: 'Scheduled'
-      }
-    ];
+    function toggleSim() {
+      isSimRunning = !isSimRunning;
+      const btn = document.getElementById('simRunBtn');
+      const icon = document.getElementById('simRunIcon');
+      const label = document.getElementById('simRunLabel');
 
-    function renderScheduleTable() {
-      const tbody = document.getElementById('scheduleTableBody');
-      if (!tbody) return;
-
-      tbody.innerHTML = dailyTrips.map((trip, idx) => {
-        let badge = '<span class="px-2 py-0.5 rounded bg-[#eee7da] text-[#635848] text-[10px]">Scheduled</span>';
-        if (trip.status.startsWith('In Transit')) badge = '<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-bold">En Route</span>';
-        if (trip.status.startsWith('Arrived')) badge = '<span class="px-2 py-0.5 rounded bg-sky-100 text-sky-900 text-[10px] font-bold">At Destination</span>';
-        if (trip.status === 'Completed') badge = '<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-900 text-[10px] font-bold">Completed</span>';
-
-        const vehBadge = trip.vehicle.includes('F-150')
-          ? '<span class="text-[#b45309] font-bold">Ford F-150</span>'
-          : '<span class="text-[#0284c7] font-bold">Ford Explorer</span>';
-
-        return `
-          <tr class="hover:bg-[#f6f3eb] transition-colors">
-            <td class="py-3 px-4 font-bold text-[#231c15]">${trip.timeStr}</td>
-            <td class="py-3 px-4">
-              <div class="font-bold text-[#231c15]">${trip.name}</div>
-              <div class="text-[10px] text-[#635848]">Estimated: ~${trip.duration} mins</div>
-            </td>
-            <td class="py-3 px-4">${vehBadge}</td>
-            <td class="py-3 px-4">
-              <div class="flex flex-wrap gap-1">
-                ${trip.crew.map(c => `<span class="px-1.5 py-0.2 rounded bg-[#eee7da] border border-[#c4b79f] text-[10px] text-[#231c15]">${c}</span>`).join('')}
-              </div>
-            </td>
-            <td class="py-3 px-4 text-[#635848]">
-              ${trip.origin} ➔ <strong class="text-[#231c15]">${trip.dest}</strong>
-            </td>
-            <td class="py-3 px-4 text-center font-bold text-emerald-800">+${trip.cushion}m</td>
-            <td class="py-3 px-4 text-center">${badge}</td>
-            <td class="py-3 px-4 text-right">
-              <div class="flex items-center justify-end gap-1.5">
-                <button onclick="triggerTripImmediate(${idx})" class="px-2 py-1 rounded bg-[#eee7da] hover:bg-[#e4dcce] text-[#231c15] text-[10px] font-bold">
-                  ▶ START
-                </button>
-                <button onclick="deleteTrip(${idx})" class="px-1.5 py-1 rounded text-[#8f7d66] hover:text-red-700 text-xs">
-                  ✕
-                </button>
-              </div>
-            </td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    function deleteTrip(idx) {
-      dailyTrips.splice(idx, 1);
-      renderScheduleTable();
-      playBeep(450);
-    }
-
-    function toggleAddTripModal(show) {
-      const modal = document.getElementById('addTripModal');
-      if (show) {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        playBeep(550);
+      if (isSimRunning) {
+        btn.className = 'px-3 py-1.5 rounded bg-emerald-700 hover:bg-emerald-800 text-[#fffef9] font-mono font-bold text-xs uppercase tracking-wider shadow flex items-center justify-center gap-1 transition-all active:scale-95';
+        icon.innerText = '⏸';
+        label.innerText = 'PAUSE';
+        simInterval = setInterval(() => simulationStep(1), 1000 / simTempo);
+        playTone(720);
       } else {
-        modal.classList.add('hidden'); modal.style.display = 'none';
-        modal.classList.remove('flex');
+        btn.className = 'px-3 py-1.5 rounded bg-[#b45309] hover:bg-[#92400e] text-[#fffef9] font-mono font-bold text-xs uppercase tracking-wider shadow flex items-center justify-center gap-1 transition-all active:scale-95';
+        icon.innerText = '▶';
+        label.innerText = 'RUN';
+        clearInterval(simInterval);
+        simInterval = null;
+        playTone(400);
       }
     }
 
-    function handleAddTripSubmit(e) {
-      e.preventDefault();
-      const timeVal = document.getElementById('newTripTime').value;
-      const [h, m] = timeVal.split(':').map(Number);
-      const simMin = h * 60 + m;
-
-      const crew = [];
-      if (document.getElementById('crewJosh').checked) crew.push('Dad');
-      if (document.getElementById('crewBrittanie').checked) crew.push('Mom');
-      if (document.getElementById('crewLincoln').checked) crew.push('Lincoln');
-      if (document.getElementById('crewAnnabel').checked) crew.push('Annabel');
-      if (document.getElementById('crewSallyJo').checked) crew.push('Sally Jo');
-
-      const dest = document.getElementById('newTripDest').value;
-      let pathId = 'path_alpha';
-      if (dest === 'Fort Leavenworth') pathId = 'path_bravo';
-      if (dest === 'Lansing Sports Fields') pathId = 'path_delta';
-
-      dailyTrips.push({
-        id: 'trip_' + Date.now(),
-        timeStr: formatClockTime(simMin),
-        simMin: simMin,
-        name: document.getElementById('newTripName').value,
-        vehicle: document.getElementById('newTripVehicle').value,
-        crew: crew.length > 0 ? crew : ['Mom'],
-        origin: 'Home Base',
-        dest: dest,
-        pathId: pathId,
-        cushion: 15,
-        duration: 20,
-        status: 'Scheduled'
-      });
-
-      dailyTrips.sort((a, b) => a.simMin - b.simMin);
-      toggleAddTripModal(false);
-      renderScheduleTable();
-      postWire('DISPATCH', `New trip added to schedule: ${dailyTrips[dailyTrips.length - 1].name} at ${formatClockTime(simMin)}.`);
-      playBeep(720);
+    function stepSim(mins) {
+      simulationStep(mins);
+      playTone(600);
     }
 
-    // 500x MONTE CARLO STRESS TEST
-    function runMonteCarloStressTest() {
-      playBeep(680);
-      setTimeout(() => playBeep(880), 100);
+    function cycleTempo() {
+      if (simTempo === 1) simTempo = 5;
+      else if (simTempo === 5) simTempo = 15;
+      else simTempo = 1;
 
-      const ITERATIONS = 500;
-      const w = WEATHER_CONFIGS[activeWeather];
-      const bufferDist = [];
-      let onTimeRuns = 0;
+      document.getElementById('simTempoBtn').innerText = `${simTempo}x`;
+      if (isSimRunning) {
+        clearInterval(simInterval);
+        simInterval = setInterval(() => simulationStep(1), 1000 / simTempo);
+      }
+      playTone(550);
+    }
 
-      for (let i = 0; i < ITERATIONS; i++) {
-        let dayCushion = 25; // baseline morning cushion
+    function resetSim() {
+      currentSimMin = SIM_START;
+      if (isSimRunning) toggleSim();
 
-        dailyTrips.forEach(trip => {
-          let legSnag = 0;
+      catastrophicCascadeActive = false;
+      document.getElementById('cascadeAlertBanner').classList.add('hidden');
 
-          // Member routine variance
-          trip.crew.forEach(name => {
-            const mem = rosterList.find(m => m.name.includes(name));
-            if (mem) {
-              const pertMean = (mem.pertO + 4 * mem.pertM + mem.pertP) / 6;
-              const variance = (mem.pertP - mem.pertO) / 6;
-              legSnag += Math.max(0, (pertMean - mem.pertM) + (Math.random() - 0.5) * variance);
-
-              if (Math.random() * 100 < mem.snagRate) {
-                legSnag += Math.floor(Math.random() * 6) + 3;
-              }
-            }
-          });
-
-          // Weather factor
-          legSnag += w.extraBuffer * 0.4;
-          dayCushion -= legSnag * 0.25;
-        });
-
-        bufferDist.push(Math.round(dayCushion));
-        if (dayCushion > 5) onTimeRuns++;
+      // Reset gates
+      for (let k in GATES) {
+        GATES[k].cleared = false;
+        GATES[k].missed = false;
+        GATES[k].triggered = false;
       }
 
-      bufferDist.sort((a, b) => a - b);
+      document.getElementById('gate1Badge').className = 'px-1.5 py-0.5 rounded bg-[#ede7d8] text-[9px] font-mono font-bold';
+      document.getElementById('gate1Badge').innerText = '07:04 AM SHARP';
+      document.getElementById('gate1Status').innerHTML = '<span class="text-[#766753]">PENDING (07:04)</span>';
+      document.getElementById('gateCard1').className = 'news-card-inset rounded-xl p-3.5 border-2 border-transparent transition-all flex flex-col justify-between';
 
-      const confidence = ((onTimeRuns / ITERATIONS) * 100).toFixed(1);
-      const p50 = bufferDist[Math.floor(ITERATIONS * 0.50)];
-      const p80 = bufferDist[Math.floor(ITERATIONS * 0.20)];
-      const p95 = bufferDist[Math.floor(ITERATIONS * 0.05)];
+      document.getElementById('gate2Badge').innerText = '07:50 AM';
+      document.getElementById('gate2Status').innerHTML = '<span class="text-[#766753]">PENDING (07:50)</span>';
+      document.getElementById('gateCard2').className = 'news-card-inset rounded-xl p-3.5 border-2 border-transparent transition-all flex flex-col justify-between';
 
-      document.getElementById('stConfidenceScore').innerText = `${confidence}%`;
-      document.getElementById('stMarginP50').innerText = `+${p50}m Buffer`;
-      document.getElementById('stMarginP80').innerText = `+${p80}m Buffer`;
-      document.getElementById('stMarginP95').innerText = `+${p95}m Buffer`;
+      document.getElementById('gate3Badge').innerText = '08:00 AM';
+      document.getElementById('gate3Status').innerHTML = '<span class="text-[#766753]">PENDING (08:00)</span>';
+      document.getElementById('gateCard3').className = 'news-card-inset rounded-xl p-3.5 border-2 border-transparent transition-all flex flex-col justify-between';
 
-      drawStressTestChart(bufferDist);
-      postWire('DISPATCH', `500x Routine Stress Test complete. On-time family confidence: ${confidence}%.`);
+      document.getElementById('gate4Badge').innerText = '09:00 AM';
+      document.getElementById('gate4Status').innerHTML = '<span class="text-[#766753]">PENDING (09:00)</span>';
+      document.getElementById('gateCard4').className = 'news-card-inset rounded-xl p-3.5 border-2 border-transparent transition-all flex flex-col justify-between';
+
+      resolveUnitLocations(currentSimMin, currentSimMin);
+      updateSimulationClock();
+      renderUnitTokens();
+      postLog('COMMAND', 'Simulation reset to 06:20 AM baseline.');
+      playTone(450);
     }
 
-    function drawStressTestChart(data) {
-      const canvas = document.getElementById('stressTestChart');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-
-      const dpr = window.devicePixelRatio || 1;
-      const rect = canvas.getBoundingClientRect();
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      ctx.scale(dpr, dpr);
-
-      const w = rect.width;
-      const h = rect.height;
-      ctx.clearRect(0, 0, w, h);
-
-      // 25 bins
-      const BINS = 25;
-      const minVal = Math.min(...data);
-      const maxVal = Math.max(...data, 30);
-      const binWidth = (maxVal - minVal) / BINS;
-      const bins = new Array(BINS).fill(0);
-
-      data.forEach(val => {
-        const idx = Math.min(BINS - 1, Math.max(0, Math.floor((val - minVal) / binWidth)));
-        bins[idx]++;
-      });
-
-      const maxCount = Math.max(...bins, 1);
-      const colW = (w - 30) / BINS;
-
-      bins.forEach((count, i) => {
-        const barH = (count / maxCount) * (h - 25);
-        const x = 15 + i * colW;
-        const y = h - 10 - barH;
-
-        ctx.fillStyle = i < BINS * 0.3 ? '#b45309' : '#2d6a4f';
-        ctx.fillRect(x, y, colW - 2, barH);
-      });
-
-      // Bottom baseline
-      ctx.strokeStyle = '#c4b79f';
-      ctx.beginPath();
-      ctx.moveTo(10, h - 10);
-      ctx.lineTo(w - 10, h - 10);
-      ctx.stroke();
-    }
-
-    /* ---------------------------------------------------------------------
-       7. FAMILY ROSTER & MORNING ROUTINES (TAB 3)
-       --------------------------------------------------------------------- */
-    const DEFAULT_ROSTER = [
-      {
-        id: 'josh',
-        name: 'Josh (Dad)',
-        title: 'Family Route Lead & Heavy Hauler',
-        vehicle: 'Ford F-150',
-        patience: 100,
-        pertO: 15,
-        pertM: 22,
-        pertP: 35,
-        snagRate: 12,
-        superpower: 'Route Intuition: Knows rural bypasses around combine tractors and gravel ruts on Highway 92.',
-        snag: 'Gate Queue Snag: Caught in unexpected civilian badge line on Sherman Ave (+7m).'
-      },
-      {
-        id: 'brittanie',
-        name: 'Brittanie (Mom)',
-        title: 'Daily Flow Director & Coordinator',
-        vehicle: 'Ford Explorer',
-        patience: 100,
-        pertO: 12,
-        pertM: 18,
-        pertP: 30,
-        snagRate: 15,
-        superpower: 'Car-Line Rhythm: Master of USD 449 drop-off flow; backpacks and lunch bags pre-positioned.',
-        snag: 'Pre-Roll Audit: Mandatory water bottle and permission slip verification before wheels roll (+5m).'
-      },
-      {
-        id: 'lincoln',
-        name: 'Lincoln (10)',
-        title: 'The Explorer & Sports Enthusiast',
-        vehicle: 'Both',
-        patience: 100,
-        pertO: 8,
-        pertM: 14,
-        pertP: 32,
-        snagRate: 35,
-        superpower: 'Sports Motivation: Moves with cheetah-like speed when soccer practice or balls are involved.',
-        snag: 'Mudroom Mystery: Left soccer cleat or practice jersey vanishes into the shoe bin (+10m).'
-      },
-      {
-        id: 'annabel',
-        name: 'Annabel',
-        title: 'The Organizer & Creative Mind',
-        vehicle: 'Ford Explorer',
-        patience: 100,
-        pertO: 10,
-        pertM: 16,
-        pertP: 28,
-        snagRate: 22,
-        superpower: 'Careful Preparedness: Maintains color-coded folders and reading logs with artistic precision.',
-        snag: 'Wardrobe Reassessment: Sudden morning weather check demands a complete sweater or boot change (+8m).'
-      },
-      {
-        id: 'sallyjo',
-        name: 'Sally Jo',
-        title: 'The Little Spark & Sunshine',
-        vehicle: 'Ford Explorer',
-        patience: 100,
-        pertO: 12,
-        pertM: 20,
-        pertP: 40,
-        snagRate: 40,
-        superpower: 'Family Radiance: Brings contagious morning laughter that elevates the whole household spirit.',
-        snag: 'Syrup & Shoe Resistance: Sticky hands or shoe buckle hesitation right when the car door opens (+12m).'
-      }
-    ];
-
-    let rosterList = JSON.parse(localStorage.getItem('gazette_family_flow_roster')) || JSON.parse(JSON.stringify(DEFAULT_ROSTER));
-
-    function renderRosterCards() {
-      const container = document.getElementById('rosterCardsContainer');
-      if (!container) return;
-
-      container.innerHTML = rosterList.map((person, idx) => {
-        const mu = ((person.pertO + 4 * person.pertM + person.pertP) / 6).toFixed(1);
-        const disabledAttr = isBaselineLocked ? 'disabled' : '';
-        const inputBg = isBaselineLocked ? 'bg-[#eee7da]/60 text-[#635848] cursor-not-allowed' : 'bg-[#fffdfa] text-[#231c15]';
-
-        return `
-          <div class="news-card rounded-xl p-5 flex flex-col justify-between">
-            <div>
-              <!-- Header -->
-              <div class="flex items-start justify-between pb-3 mb-3 border-b border-[#d7cdba]">
-                <div>
-                  <h3 class="text-lg font-headline font-bold text-[#231c15]">${person.name}</h3>
-                  <div class="text-[11px] font-mono text-[#8f7d66]">${person.title}</div>
-                </div>
-                <div class="w-9 h-9 rounded-full bg-[#eee7da] border border-[#c4b79f] flex items-center justify-center font-bold font-headline text-[#231c15]">
-                  ${person.name[0]}
-                </div>
-              </div>
-
-              <!-- Patience & Energy Battery Bar -->
-              <div class="mb-4 news-card-inner p-3 rounded-lg">
-                <div class="flex justify-between text-xs font-mono mb-1">
-                  <span class="text-[#635848] font-bold">Patience & Energy Reserve:</span>
-                  <span class="font-bold text-emerald-800" id="patienceReadout_${idx}">${person.patience}%</span>
-                </div>
-                <div class="w-full h-3 bg-[#e3dbc9] rounded-full overflow-hidden">
-                  <div class="h-full bg-emerald-600 transition-all duration-300" style="width: ${person.patience}%;"></div>
-                </div>
-              </div>
-
-              <!-- PERT Cycle Times -->
-              <div class="mb-4">
-                <div class="flex justify-between items-center mb-1 text-xs font-mono">
-                  <span class="text-[#231c15] font-bold">PREP TIME (MINS):</span>
-                  <span class="text-[#b45309] font-bold" id="muDisplay_${idx}">Expected: ${mu}m</span>
-                </div>
-                <div class="grid grid-cols-3 gap-2 font-mono text-xs text-center">
-                  <div class="news-card-inner p-1.5 rounded">
-                    <span class="text-[9px] text-[#8f7d66] block">FAST (O)</span>
-                    <input type="number" min="1" max="60" value="${person.pertO}" ${disabledAttr}
-                           oninput="updatePert(${idx}, 'pertO', this.value)"
-                           class="w-full text-center font-bold rounded ${inputBg} p-1">
-                  </div>
-                  <div class="news-card-inner p-1.5 rounded">
-                    <span class="text-[9px] text-[#8f7d66] block">NORMAL (M)</span>
-                    <input type="number" min="1" max="60" value="${person.pertM}" ${disabledAttr}
-                           oninput="updatePert(${idx}, 'pertM', this.value)"
-                           class="w-full text-center font-bold rounded ${inputBg} p-1">
-                  </div>
-                  <div class="news-card-inner p-1.5 rounded">
-                    <span class="text-[9px] text-[#8f7d66] block">SLOW (P)</span>
-                    <input type="number" min="1" max="60" value="${person.pertP}" ${disabledAttr}
-                           oninput="updatePert(${idx}, 'pertP', this.value)"
-                           class="w-full text-center font-bold rounded ${inputBg} p-1">
-                  </div>
-                </div>
-              </div>
-
-              <!-- Daily Snag Likelihood Slider -->
-              <div class="mb-4 news-card-inner p-2.5 rounded font-mono text-xs">
-                <div class="flex justify-between mb-1">
-                  <span class="text-[#635848]">Daily Snag Likelihood:</span>
-                  <span class="font-bold text-[#b45309]" id="snagReadout_${idx}">${person.snagRate}%</span>
-                </div>
-                <input type="range" min="5" max="50" value="${person.snagRate}" ${disabledAttr}
-                       oninput="updateSnagRate(${idx}, this.value)"
-                       class="w-full accent-amber-700 cursor-pointer">
-              </div>
-
-              <!-- Superpower & Snag -->
-              <div class="space-y-2 text-xs font-sans">
-                <div class="news-card-inner p-2.5 rounded">
-                  <span class="text-[10px] font-mono font-bold text-emerald-800 uppercase block mb-0.5">FAMILY SUPERPOWER</span>
-                  <p class="text-[#231c15] leading-relaxed">${person.superpower}</p>
-                </div>
-                <div class="news-card-inner p-2.5 rounded">
-                  <span class="text-[10px] font-mono font-bold text-[#b45309] uppercase block mb-0.5">COMMON SNAG</span>
-                  <p class="text-[#231c15] leading-relaxed">${person.snag}</p>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function updatePert(idx, field, val) {
-      rosterList[idx][field] = parseFloat(val) || 0;
-      const p = rosterList[idx];
-      const mu = ((p.pertO + 4 * p.pertM + p.pertP) / 6).toFixed(1);
-      document.getElementById(`muDisplay_${idx}`).innerText = `Expected: ${mu}m`;
-    }
-
-    function updateSnagRate(idx, val) {
-      rosterList[idx].snagRate = parseInt(val) || 10;
-      document.getElementById(`snagReadout_${idx}`).innerText = `${val}%`;
-    }
-
-    function saveRoutineRecords() {
-      localStorage.setItem('gazette_family_flow_roster', JSON.stringify(rosterList));
-      const toast = document.getElementById('saveToast');
-      toast.classList.remove('hidden');
-      playBeep(784, 'triangle', 0.15);
-      setTimeout(() => toast.classList.add('hidden'), 3000);
-      postWire('DISPATCH', 'Family Routine Records committed to local storage.');
-    }
-
-    function resetRoutineDefaults() {
-      rosterList = JSON.parse(JSON.stringify(DEFAULT_ROSTER));
-      localStorage.removeItem('gazette_family_flow_roster');
-      renderRosterCards();
-      playBeep(520);
-      postWire('DISPATCH', 'Family routines restored to baseline defaults.');
-    }
-
-    /* ---------------------------------------------------------------------
-       8. FAMILY VEHICLES & FLEET (TAB 4)
-       --------------------------------------------------------------------- */
-    function updateFleetFuel(vKey, val) {
-      const miles = Math.round((val / 100) * (vKey === 'f150' ? 480 : 420));
-      if (vKey === 'f150') {
-        document.getElementById('f150FuelReadout').innerText = `${val}% Full`;
-        document.getElementById('f150RangeVal').innerText = `${miles} miles`;
-      } else {
-        document.getElementById('explorerFuelReadout').innerText = `${val}% Full`;
-        document.getElementById('explorerRangeVal').innerText = `${miles} miles`;
-      }
-    }
-
-    /* ---------------------------------------------------------------------
-       9. EVENING GAZETTE EXTRA EDITION (END-OF-DAY SCORECARD)
-       --------------------------------------------------------------------- */
-    function triggerEveningDebriefModal() {
-      // Calculate scores out of 100
-      let punctuality = 38;
-      let patience = Math.round(rosterList.reduce((acc, m) => acc + m.patience, 0) / (rosterList.length * 2.5)); // out of 40
-      let buffer = Math.max(10, Math.min(20, Math.round(bufferMinutes * 0.9)));
-      let total = Math.min(100, Math.max(50, punctuality + patience + buffer));
-
-      document.getElementById('scorecardTotalPoints').innerText = total;
-      document.getElementById('scorecardPunctuality').innerText = `${punctuality} / 40`;
-      document.getElementById('scorecardPatience').innerText = `${patience} / 40`;
-      document.getElementById('scorecardBuffer').innerText = `${buffer} / 20`;
-
-      const gradeEl = document.getElementById('scorecardGrade');
-      const taglineEl = document.getElementById('scorecardTagline');
-      const editorialEl = document.getElementById('scorecardEditorialText');
-
-      if (total >= 90) {
-        gradeEl.innerText = 'GRADE: A+ (HARMONIOUS FLOW)';
-        gradeEl.className = 'inline-block px-3 py-1 rounded bg-emerald-200 text-emerald-900 font-mono font-bold text-xs uppercase';
-        taglineEl.innerText = 'All commitments met with abundant family patience intact';
-        editorialEl.innerText = '"The Caballero household operated in magnificent harmony today along the Easton corridor. Despite the morning gravel rhythms, the Explorer reached the USD 449 drop-off loop with time to spare, allowing Sally Jo and Annabel to disembark with cheerful smiles. Dad was punctual on Sherman Ave, and evening practice wrapped smoothly before twilight."';
-      } else if (total >= 75) {
-        gradeEl.innerText = 'GRADE: B+ (RESILIENT DAY)';
-        gradeEl.className = 'inline-block px-3 py-1 rounded bg-amber-200 text-amber-900 font-mono font-bold text-xs uppercase';
-        taglineEl.innerText = 'Minor morning hurdles absorbed by healthy buffers';
-        editorialEl.innerText = '"A busy county day tested family patience during the morning rush, but the household cushion absorbed the delay. While a missing cleat added brief excitement in the mudroom, Lincoln made it to afternoon drills right as the whistle blew."';
-      } else {
-        gradeEl.innerText = 'GRADE: C (TESTED BUFFERS)';
-        gradeEl.className = 'inline-block px-3 py-1 rounded bg-red-200 text-red-900 font-mono font-bold text-xs uppercase';
-        taglineEl.innerText = 'Weather and snags narrowed buffers; reset recommended';
-        editorialEl.innerText = '"Challenging weather and multiple concurrent snags tightened the schedule today. The Gazette suggests laying out backpacks, water bottles, and outerwear by the front door tonight to restore full morning peace."';
-      }
-
-      document.getElementById('eveningDebriefModal').classList.remove('hidden');
-      document.getElementById('eveningDebriefModal').classList.add('flex');
-      playBeep(700, 'triangle', 0.2);
-    }
-
-    function closeEveningDebriefModal() {
-      document.getElementById('eveningDebriefModal').classList.add('hidden');
-      document.getElementById('eveningDebriefModal').classList.remove('flex');
-    }
-
-    /* ---------------------------------------------------------------------
-       10. TAB NAVIGATION & INITIALIZATION
-       --------------------------------------------------------------------- */
-    function switchTab(tabId) {
-      ['tabMap', 'tabSchedule', 'tabRoster', 'tabFleet'].forEach(id => {
-        document.getElementById(id).classList.add('hidden');
-      });
-      document.getElementById(tabId).classList.remove('hidden');
-
-      ['navTabMap', 'navTabSchedule', 'navTabRoster', 'navTabFleet'].forEach(id => {
-        const el = document.getElementById(id);
-        el.className = 'nav-tab px-4 py-2.5 font-bold border-b-2 border-transparent text-[#635848] hover:text-[#231c15] flex items-center gap-2 transition-all whitespace-nowrap';
-      });
-
-      let navId = 'navTabMap';
-      if (tabId === 'tabSchedule') navId = 'navTabSchedule';
-      if (tabId === 'tabRoster') navId = 'navTabRoster';
-      if (tabId === 'tabFleet') navId = 'navTabFleet';
-
-      document.getElementById(navId).className = 'nav-tab px-4 py-2.5 font-bold border-b-2 border-[#b45309] text-[#b45309] flex items-center gap-2 transition-all whitespace-nowrap';
-      playBeep(580);
-
-      if (tabId === 'tabSchedule') {
-        setTimeout(runMonteCarloStressTest, 50);
-      }
+    function jumpToSimTime(targetMin) {
+      const prevMin = currentSimMin;
+      currentSimMin = targetMin;
+      resolveUnitLocations(currentSimMin, prevMin);
+      evaluateGates(currentSimMin, prevMin);
+      updateSimulationClock();
+      renderUnitTokens();
+      postLog('NAVIGATE', `Timeline jumped to ${formatTime(targetMin)}.`);
+      playTone(620);
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      initFrontDoor();
-      updateClockUI();
-      renderVehicleTokens();
-      renderScheduleTable();
-      renderRosterCards();
-
-      postWire('DISPATCH', 'The Pleasant Ridge Gazette Family Flow Simulator initialized.');
-      postWire('WEATHER', 'Morning forecast: Crisp Fall Day (52°F). Normal county road conditions.');
-      postWire('DISPATCH', 'Vehicles staged at Caballero Homestead: Ford Explorer & Ford F-150 ready.');
-
-      // Pre-run baseline Monte Carlo
-      runMonteCarloStressTest();
+      calculateForceRatio();
+      updateSimulationClock();
+      resolveUnitLocations(currentSimMin, currentSimMin);
+      renderUnitTokens();
+      postLog('DISPATCH', 'The Pleasant Ridge Gazette Daily Operational Simulator initialized at 06:20 AM.');
+      postLog('DISPATCH', 'Josh is solo in-home commander. Mom on 05:00 middle school cleaning shift.');
     });
   </script>
 </body>
