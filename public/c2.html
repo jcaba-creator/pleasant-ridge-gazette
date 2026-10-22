@@ -152,7 +152,7 @@
   <div class="scanlines fixed inset-0 z-40"></div>
 
   <!-- AUTHENTICATION & SECURITY GATE MODAL -->
-  <div id="authGateModal" class="fixed inset-0 z-50 bg-tactical-950/95 backdrop-blur-md flex items-center justify-center p-4 transition-all duration-300">
+  <div id="authGateModal" style="z-index: 99999;" class="fixed inset-0 bg-tactical-950/95 backdrop-blur-md flex items-center justify-center p-4 transition-all duration-300">
     <div class="max-w-md w-full bg-tactical-900 border-2 border-amber-600/40 rounded-xl p-6 sm:p-8 shadow-2xl relative newspaper-border overflow-hidden">
       <!-- Watermark stamp -->
       <div class="absolute -right-12 -bottom-12 text-slate-800/20 font-masthead text-8xl font-black pointer-events-none select-none uppercase rotate-12">
@@ -172,34 +172,49 @@
 
       <!-- PIN Input Status Display -->
       <div class="bg-tactical-950 border border-slate-700/60 rounded-lg p-4 mb-6 text-center shadow-inner relative">
-        <div class="text-[10px] font-mono text-slate-400 uppercase tracking-widest mb-3">ENTER 4-DIGIT AUTHORIZATION PIN</div>
+        <div class="text-[10px] font-mono text-slate-400 uppercase tracking-widest mb-2 font-bold">ENTER 4-DIGIT AUTHORIZATION PIN</div>
         
+        <!-- Large Monospace Digit Readout Boxes -->
+        <div class="flex items-center justify-center gap-3 mb-3" id="pinDisplayBoxes">
+          <div class="w-12 h-14 rounded-lg border-2 border-slate-700 bg-tactical-900 flex items-center justify-center text-2xl font-mono font-bold text-amber-400 shadow-sm transition-all" id="pinSlot0">•</div>
+          <div class="w-12 h-14 rounded-lg border-2 border-slate-700 bg-tactical-900 flex items-center justify-center text-2xl font-mono font-bold text-amber-400 shadow-sm transition-all" id="pinSlot1">•</div>
+          <div class="w-12 h-14 rounded-lg border-2 border-slate-700 bg-tactical-900 flex items-center justify-center text-2xl font-mono font-bold text-amber-400 shadow-sm transition-all" id="pinSlot2">•</div>
+          <div class="w-12 h-14 rounded-lg border-2 border-slate-700 bg-tactical-900 flex items-center justify-center text-2xl font-mono font-bold text-amber-400 shadow-sm transition-all" id="pinSlot3">•</div>
+        </div>
+
         <!-- 4 Visual Status Dots -->
         <div class="flex items-center justify-center gap-4 mb-2" id="pinDotsContainer">
-          <div class="w-4 h-4 rounded-full border-2 border-slate-600 bg-tactical-900 transition-all duration-150 pin-dot" id="dot0"></div>
-          <div class="w-4 h-4 rounded-full border-2 border-slate-600 bg-tactical-900 transition-all duration-150 pin-dot" id="dot1"></div>
-          <div class="w-4 h-4 rounded-full border-2 border-slate-600 bg-tactical-900 transition-all duration-150 pin-dot" id="dot2"></div>
-          <div class="w-4 h-4 rounded-full border-2 border-slate-600 bg-tactical-900 transition-all duration-150 pin-dot" id="dot3"></div>
+          <div class="w-3.5 h-3.5 rounded-full border-2 border-slate-600 bg-tactical-900 transition-all duration-150 pin-dot" id="dot0"></div>
+          <div class="w-3.5 h-3.5 rounded-full border-2 border-slate-600 bg-tactical-900 transition-all duration-150 pin-dot" id="dot1"></div>
+          <div class="w-3.5 h-3.5 rounded-full border-2 border-slate-600 bg-tactical-900 transition-all duration-150 pin-dot" id="dot2"></div>
+          <div class="w-3.5 h-3.5 rounded-full border-2 border-slate-600 bg-tactical-900 transition-all duration-150 pin-dot" id="dot3"></div>
         </div>
 
         <div id="pinErrorMessage" class="text-xs font-mono text-red-400 h-4 font-semibold tracking-wide"></div>
-        <div class="text-[10px] font-mono text-slate-500 mt-1">AUTHORIZED CODES: 1776, 4490, 1234</div>
+        
+        <!-- One-Touch Quick Click Passcode Shortcuts -->
+        <div class="text-[11px] font-mono text-slate-400 mt-2 flex items-center justify-center gap-2">
+          <span class="font-bold">SHORTCUTS:</span>
+          <button type="button" onclick="autoFillPinC2('1776')" class="px-2.5 py-0.5 rounded bg-tactical-850 hover:bg-amber-500 hover:text-black border border-slate-700 font-bold text-amber-400 transition-all cursor-pointer shadow-sm">1776</button>
+          <button type="button" onclick="autoFillPinC2('4490')" class="px-2.5 py-0.5 rounded bg-tactical-850 hover:bg-amber-500 hover:text-black border border-slate-700 font-bold text-amber-400 transition-all cursor-pointer shadow-sm">4490</button>
+          <button type="button" onclick="autoFillPinC2('1234')" class="px-2.5 py-0.5 rounded bg-tactical-850 hover:bg-amber-500 hover:text-black border border-slate-700 font-bold text-amber-400 transition-all cursor-pointer shadow-sm">1234</button>
+        </div>
       </div>
 
       <!-- Keypad Grid -->
       <div class="grid grid-cols-3 gap-3 mb-4">
-        <button onclick="handleKeypadInput('1')" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 border border-slate-700 text-lg font-mono font-bold text-amber-100 active:scale-95 transition-all shadow-sm">1</button>
-        <button onclick="handleKeypadInput('2')" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 border border-slate-700 text-lg font-mono font-bold text-amber-100 active:scale-95 transition-all shadow-sm">2</button>
-        <button onclick="handleKeypadInput('3')" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 border border-slate-700 text-lg font-mono font-bold text-amber-100 active:scale-95 transition-all shadow-sm">3</button>
-        <button onclick="handleKeypadInput('4')" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 border border-slate-700 text-lg font-mono font-bold text-amber-100 active:scale-95 transition-all shadow-sm">4</button>
-        <button onclick="handleKeypadInput('5')" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 border border-slate-700 text-lg font-mono font-bold text-amber-100 active:scale-95 transition-all shadow-sm">5</button>
-        <button onclick="handleKeypadInput('6')" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 border border-slate-700 text-lg font-mono font-bold text-amber-100 active:scale-95 transition-all shadow-sm">6</button>
-        <button onclick="handleKeypadInput('7')" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 border border-slate-700 text-lg font-mono font-bold text-amber-100 active:scale-95 transition-all shadow-sm">7</button>
-        <button onclick="handleKeypadInput('8')" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 border border-slate-700 text-lg font-mono font-bold text-amber-100 active:scale-95 transition-all shadow-sm">8</button>
-        <button onclick="handleKeypadInput('9')" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 border border-slate-700 text-lg font-mono font-bold text-amber-100 active:scale-95 transition-all shadow-sm">9</button>
-        <button onclick="clearKeypadInput()" class="h-12 rounded-lg bg-slate-800/80 hover:bg-red-900/40 border border-slate-700 hover:border-red-500 text-xs font-mono font-bold text-slate-300 active:scale-95 transition-all">CLR</button>
-        <button onclick="handleKeypadInput('0')" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 border border-slate-700 text-lg font-mono font-bold text-amber-100 active:scale-95 transition-all shadow-sm">0</button>
-        <button onclick="backspaceKeypadInput()" class="h-12 rounded-lg bg-slate-800/80 hover:bg-amber-900/40 border border-slate-700 hover:border-amber-500 text-sm font-mono font-bold text-slate-300 active:scale-95 transition-all">⌫</button>
+        <button type="button" onclick="handleKeypadInput('1')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 active:scale-95 border-2 border-slate-700 hover:border-amber-500 text-xl font-mono font-bold text-amber-100 shadow transition-all flex items-center justify-center">1</button>
+        <button type="button" onclick="handleKeypadInput('2')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 active:scale-95 border-2 border-slate-700 hover:border-amber-500 text-xl font-mono font-bold text-amber-100 shadow transition-all flex items-center justify-center">2</button>
+        <button type="button" onclick="handleKeypadInput('3')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 active:scale-95 border-2 border-slate-700 hover:border-amber-500 text-xl font-mono font-bold text-amber-100 shadow transition-all flex items-center justify-center">3</button>
+        <button type="button" onclick="handleKeypadInput('4')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 active:scale-95 border-2 border-slate-700 hover:border-amber-500 text-xl font-mono font-bold text-amber-100 shadow transition-all flex items-center justify-center">4</button>
+        <button type="button" onclick="handleKeypadInput('5')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 active:scale-95 border-2 border-slate-700 hover:border-amber-500 text-xl font-mono font-bold text-amber-100 shadow transition-all flex items-center justify-center">5</button>
+        <button type="button" onclick="handleKeypadInput('6')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 active:scale-95 border-2 border-slate-700 hover:border-amber-500 text-xl font-mono font-bold text-amber-100 shadow transition-all flex items-center justify-center">6</button>
+        <button type="button" onclick="handleKeypadInput('7')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 active:scale-95 border-2 border-slate-700 hover:border-amber-500 text-xl font-mono font-bold text-amber-100 shadow transition-all flex items-center justify-center">7</button>
+        <button type="button" onclick="handleKeypadInput('8')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 active:scale-95 border-2 border-slate-700 hover:border-amber-500 text-xl font-mono font-bold text-amber-100 shadow transition-all flex items-center justify-center">8</button>
+        <button type="button" onclick="handleKeypadInput('9')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 active:scale-95 border-2 border-slate-700 hover:border-amber-500 text-xl font-mono font-bold text-amber-100 shadow transition-all flex items-center justify-center">9</button>
+        <button type="button" onclick="clearKeypadInput()" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-slate-800/80 hover:bg-red-900/60 active:scale-95 border-2 border-slate-700 hover:border-red-500 text-xs font-mono font-bold text-slate-300 transition-all flex items-center justify-center">CLR</button>
+        <button type="button" onclick="handleKeypadInput('0')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-tactical-850 hover:bg-tactical-700 active:scale-95 border-2 border-slate-700 hover:border-amber-500 text-xl font-mono font-bold text-amber-100 shadow transition-all flex items-center justify-center">0</button>
+        <button type="button" onclick="backspaceKeypadInput()" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-slate-800/80 hover:bg-amber-900/60 active:scale-95 border-2 border-slate-700 hover:border-amber-500 text-base font-mono font-bold text-slate-300 transition-all flex items-center justify-center">⌫</button>
       </div>
 
       <!-- Quick Bypass for Testing -->
@@ -1131,7 +1146,7 @@
     </main>
 
     <!-- INJECT TACTICAL MISSION LEG MODAL -->
-    <div id="missionInjectModal" class="fixed inset-0 z-50 bg-tactical-950/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div id="missionInjectModal" style="display: none; z-index: 50;" class="fixed inset-0 bg-tactical-950/80 backdrop-blur-sm items-center justify-center p-4">
       <div class="max-w-lg w-full bg-tactical-900 border border-amber-500/50 rounded-xl p-6 shadow-2xl newspaper-border">
         
         <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
@@ -1221,7 +1236,7 @@
     </div>
 
     <!-- NODE INTEL MODAL (Popup when clicking map nodes) -->
-    <div id="nodeIntelModal" class="fixed inset-0 z-50 bg-tactical-950/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div id="nodeIntelModal" style="display: none; z-index: 50;" class="fixed inset-0 bg-tactical-950/80 backdrop-blur-sm items-center justify-center p-4">
       <div class="max-w-md w-full bg-tactical-900 border border-slate-700 rounded-xl p-5 shadow-2xl newspaper-border">
         <div class="flex items-center justify-between pb-2 mb-3 border-b border-slate-800">
           <h3 id="nodeIntelTitle" class="font-headline font-bold text-amber-100 text-lg">Sector Node Intelligence</h3>
@@ -1505,9 +1520,16 @@
         playKeypadBeep();
         updatePinDotsUI();
         if (enteredPin.length === 4) {
-          evaluateEnteredPin();
+          setTimeout(evaluateEnteredPin, 80);
         }
       }
+    }
+
+    function autoFillPinC2(code) {
+      enteredPin = String(code);
+      playKeypadBeep();
+      updatePinDotsUI();
+      setTimeout(evaluateEnteredPin, 80);
     }
 
     function clearKeypadInput() {
@@ -1529,15 +1551,54 @@
     function updatePinDotsUI() {
       for (let i = 0; i < 4; i++) {
         const dot = document.getElementById(`dot${i}`);
+        const slot = document.getElementById(`pinSlot${i}`);
+        
         if (i < enteredPin.length) {
-          dot.classList.remove('bg-tactical-900', 'border-slate-600');
-          dot.classList.add('bg-amber-400', 'border-amber-400', 'shadow-[0_0_12px_#f59e0b]', 'scale-110');
+          if (dot) {
+            dot.style.backgroundColor = '#f59e0b';
+            dot.style.borderColor = '#f59e0b';
+            dot.style.transform = 'scale(1.2)';
+            dot.style.boxShadow = '0 0 10px rgba(245, 158, 11, 0.7)';
+          }
+          if (slot) {
+            slot.innerText = enteredPin[i];
+            slot.style.borderColor = '#f59e0b';
+            slot.style.backgroundColor = 'rgba(245, 158, 11, 0.15)';
+            slot.style.color = '#fbbf24';
+            slot.style.boxShadow = '0 0 12px rgba(245, 158, 11, 0.3)';
+          }
         } else {
-          dot.classList.remove('bg-amber-400', 'border-amber-400', 'shadow-[0_0_12px_#f59e0b]', 'scale-110', 'bg-red-500', 'border-red-500', 'bg-emerald-500', 'border-emerald-500');
-          dot.classList.add('bg-tactical-900', 'border-slate-600');
+          if (dot) {
+            dot.style.backgroundColor = '#0a0f1d';
+            dot.style.borderColor = '#475569';
+            dot.style.transform = 'scale(1)';
+            dot.style.boxShadow = 'none';
+          }
+          if (slot) {
+            slot.innerText = '•';
+            slot.style.borderColor = '#334155';
+            slot.style.backgroundColor = '#0a0f1d';
+            slot.style.color = '#64748b';
+            slot.style.boxShadow = 'none';
+          }
         }
       }
     }
+
+    // Physical Keyboard Listener for C2
+    window.addEventListener('keydown', (e) => {
+      if (!isGateUnlocked) {
+        if (e.key >= '0' && e.key <= '9') {
+          handleKeypadInput(e.key);
+        } else if (e.key === 'Backspace') {
+          backspaceKeypadInput();
+        } else if (e.key === 'Escape' || e.key === 'Delete' || e.key === 'c' || e.key === 'C') {
+          clearKeypadInput();
+        } else if (e.key === 'Enter' || e.key === 'p' || e.key === 'P') {
+          bypassAuthGate();
+        }
+      }
+    });
 
     function evaluateEnteredPin() {
       if (AUTH_VALID_PINS.includes(enteredPin)) {
@@ -1603,7 +1664,7 @@
       isGateUnlocked = false;
       clearKeypadInput();
       const modal = document.getElementById('authGateModal');
-      modal.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
+      modal.classList.remove('hidden', 'opacity-0', 'pointer-events-none'); modal.style.display = 'flex';
       if (isSimRunning) toggleSimulationClock();
     }
 
@@ -2113,7 +2174,7 @@
         modal.classList.add('flex');
         playKeypadBeep();
       } else {
-        modal.classList.add('hidden');
+        modal.classList.add('hidden'); modal.style.display = 'none';
         modal.classList.remove('flex');
       }
     }

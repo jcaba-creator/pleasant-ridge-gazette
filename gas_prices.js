@@ -1,7 +1,7 @@
 window.GAZETTE_GAS_FEED = {
   "status": "success",
-  "last_updated_iso": "2026-10-21T19:24:19.116151",
-  "last_updated_human": "Wednesday, October 21, 2026 - 07:24 PM",
+  "last_updated_iso": "2026-10-21T19:34:34.458492",
+  "last_updated_human": "Wednesday, October 21, 2026 - 07:34 PM",
   "date_header": "Wednesday, Oct 21, 2026",
   "cheapest_station": {
     "name": "Sunoco",

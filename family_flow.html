@@ -121,7 +121,7 @@
   <!-- ==================================================================== -->
   <!-- 1. FRONT DOOR ACCESS GATE (VINTAGE DISPATCH LOCKBOX) -->
   <!-- ==================================================================== -->
-  <div id="frontDoorModal" class="fixed inset-0 z-50 bg-[#231c15]/75 backdrop-blur-sm flex items-center justify-center p-4 transition-all duration-300">
+  <div id="frontDoorModal" style="z-index: 99999;" class="fixed inset-0 bg-[#231c15]/75 backdrop-blur-sm flex items-center justify-center p-4 transition-all duration-300">
     <div class="max-w-md w-full bg-[#fbf8f0] border-2 border-[#786953] rounded-xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
       
       <!-- Lockbox Top Stamp -->
@@ -139,36 +139,51 @@
 
       <!-- PIN Input Status Display -->
       <div class="bg-[#eee7da] border border-[#c4b79f] rounded-lg p-4 mb-5 text-center shadow-inner">
-        <div class="text-[10px] font-mono text-[#635848] uppercase tracking-widest mb-3 font-semibold">
+        <div class="text-[10px] font-mono text-[#635848] uppercase tracking-widest mb-2 font-semibold">
           ENTER 4-DIGIT HOUSEHOLD PASSCODE
         </div>
         
+        <!-- Large Monospace Digit Readout Boxes -->
+        <div class="flex items-center justify-center gap-3 mb-3" id="pinDisplayBoxes">
+          <div class="w-12 h-14 rounded-lg border-2 border-[#8f7d66] bg-[#fffdfa] flex items-center justify-center text-2xl font-mono font-bold text-[#231c15] shadow-sm transition-all" id="pinSlot0">•</div>
+          <div class="w-12 h-14 rounded-lg border-2 border-[#8f7d66] bg-[#fffdfa] flex items-center justify-center text-2xl font-mono font-bold text-[#231c15] shadow-sm transition-all" id="pinSlot1">•</div>
+          <div class="w-12 h-14 rounded-lg border-2 border-[#8f7d66] bg-[#fffdfa] flex items-center justify-center text-2xl font-mono font-bold text-[#231c15] shadow-sm transition-all" id="pinSlot2">•</div>
+          <div class="w-12 h-14 rounded-lg border-2 border-[#8f7d66] bg-[#fffdfa] flex items-center justify-center text-2xl font-mono font-bold text-[#231c15] shadow-sm transition-all" id="pinSlot3">•</div>
+        </div>
+
         <!-- 4 Visual Status Dots -->
         <div class="flex items-center justify-center gap-4 mb-2" id="pinDotsContainer">
-          <div class="w-4 h-4 rounded-full border-2 border-[#8f7d66] bg-[#fbf8f0] transition-all duration-150 pin-dot" id="dot0"></div>
-          <div class="w-4 h-4 rounded-full border-2 border-[#8f7d66] bg-[#fbf8f0] transition-all duration-150 pin-dot" id="dot1"></div>
-          <div class="w-4 h-4 rounded-full border-2 border-[#8f7d66] bg-[#fbf8f0] transition-all duration-150 pin-dot" id="dot2"></div>
-          <div class="w-4 h-4 rounded-full border-2 border-[#8f7d66] bg-[#fbf8f0] transition-all duration-150 pin-dot" id="dot3"></div>
+          <div class="w-3.5 h-3.5 rounded-full border-2 border-[#8f7d66] bg-[#fbf8f0] transition-all duration-150 pin-dot" id="dot0"></div>
+          <div class="w-3.5 h-3.5 rounded-full border-2 border-[#8f7d66] bg-[#fbf8f0] transition-all duration-150 pin-dot" id="dot1"></div>
+          <div class="w-3.5 h-3.5 rounded-full border-2 border-[#8f7d66] bg-[#fbf8f0] transition-all duration-150 pin-dot" id="dot2"></div>
+          <div class="w-3.5 h-3.5 rounded-full border-2 border-[#8f7d66] bg-[#fbf8f0] transition-all duration-150 pin-dot" id="dot3"></div>
         </div>
 
         <div id="pinErrorMessage" class="text-xs font-mono text-red-600 h-4 font-bold tracking-wide"></div>
-        <div class="text-[10px] font-mono text-[#786953] mt-1">COMMUNITY CODES: 1776, 4490, 1234</div>
+        
+        <!-- One-Touch Quick Click Passcode Shortcuts -->
+        <div class="text-[11px] font-mono text-[#635848] mt-2 flex items-center justify-center gap-2">
+          <span class="font-bold">CLICK TO ENTER:</span>
+          <button type="button" onclick="autoFillPin('1776')" class="px-2.5 py-0.5 rounded bg-[#fffdfa] hover:bg-[#b45309] hover:text-white border border-[#c4b79f] font-bold text-[#b45309] transition-all cursor-pointer shadow-sm">1776</button>
+          <button type="button" onclick="autoFillPin('4490')" class="px-2.5 py-0.5 rounded bg-[#fffdfa] hover:bg-[#b45309] hover:text-white border border-[#c4b79f] font-bold text-[#b45309] transition-all cursor-pointer shadow-sm">4490</button>
+          <button type="button" onclick="autoFillPin('1234')" class="px-2.5 py-0.5 rounded bg-[#fffdfa] hover:bg-[#b45309] hover:text-white border border-[#c4b79f] font-bold text-[#b45309] transition-all cursor-pointer shadow-sm">1234</button>
+        </div>
       </div>
 
-      <!-- Keypad Grid -->
+      <!-- Keypad Grid with High-Contrast Clickable Buttons -->
       <div class="grid grid-cols-3 gap-2.5 mb-4">
-        <button onclick="handleKeypad('1')" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 border border-[#c4b79f] text-lg font-mono font-bold text-[#231c15] shadow-sm transition-all">1</button>
-        <button onclick="handleKeypad('2')" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 border border-[#c4b79f] text-lg font-mono font-bold text-[#231c15] shadow-sm transition-all">2</button>
-        <button onclick="handleKeypad('3')" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 border border-[#c4b79f] text-lg font-mono font-bold text-[#231c15] shadow-sm transition-all">3</button>
-        <button onclick="handleKeypad('4')" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 border border-[#c4b79f] text-lg font-mono font-bold text-[#231c15] shadow-sm transition-all">4</button>
-        <button onclick="handleKeypad('5')" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 border border-[#c4b79f] text-lg font-mono font-bold text-[#231c15] shadow-sm transition-all">5</button>
-        <button onclick="handleKeypad('6')" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 border border-[#c4b79f] text-lg font-mono font-bold text-[#231c15] shadow-sm transition-all">6</button>
-        <button onclick="handleKeypad('7')" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 border border-[#c4b79f] text-lg font-mono font-bold text-[#231c15] shadow-sm transition-all">7</button>
-        <button onclick="handleKeypad('8')" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 border border-[#c4b79f] text-lg font-mono font-bold text-[#231c15] shadow-sm transition-all">8</button>
-        <button onclick="handleKeypad('9')" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 border border-[#c4b79f] text-lg font-mono font-bold text-[#231c15] shadow-sm transition-all">9</button>
-        <button onclick="clearKeypad()" class="h-12 rounded-lg bg-[#eee7da] hover:bg-[#e4dcce] active:scale-95 border border-[#c4b79f] text-xs font-mono font-bold text-[#635848] transition-all">CLEAR</button>
-        <button onclick="handleKeypad('0')" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 border border-[#c4b79f] text-lg font-mono font-bold text-[#231c15] shadow-sm transition-all">0</button>
-        <button onclick="backspaceKeypad()" class="h-12 rounded-lg bg-[#eee7da] hover:bg-[#e4dcce] active:scale-95 border border-[#c4b79f] text-sm font-mono font-bold text-[#635848] transition-all">⌫</button>
+        <button type="button" onclick="handleKeypad('1')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 active:bg-[#e4dcce] border-2 border-[#c4b79f] hover:border-[#8f7d66] text-xl font-mono font-bold text-[#231c15] shadow transition-all flex items-center justify-center">1</button>
+        <button type="button" onclick="handleKeypad('2')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 active:bg-[#e4dcce] border-2 border-[#c4b79f] hover:border-[#8f7d66] text-xl font-mono font-bold text-[#231c15] shadow transition-all flex items-center justify-center">2</button>
+        <button type="button" onclick="handleKeypad('3')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 active:bg-[#e4dcce] border-2 border-[#c4b79f] hover:border-[#8f7d66] text-xl font-mono font-bold text-[#231c15] shadow transition-all flex items-center justify-center">3</button>
+        <button type="button" onclick="handleKeypad('4')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 active:bg-[#e4dcce] border-2 border-[#c4b79f] hover:border-[#8f7d66] text-xl font-mono font-bold text-[#231c15] shadow transition-all flex items-center justify-center">4</button>
+        <button type="button" onclick="handleKeypad('5')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 active:bg-[#e4dcce] border-2 border-[#c4b79f] hover:border-[#8f7d66] text-xl font-mono font-bold text-[#231c15] shadow transition-all flex items-center justify-center">5</button>
+        <button type="button" onclick="handleKeypad('6')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 active:bg-[#e4dcce] border-2 border-[#c4b79f] hover:border-[#8f7d66] text-xl font-mono font-bold text-[#231c15] shadow transition-all flex items-center justify-center">6</button>
+        <button type="button" onclick="handleKeypad('7')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 active:bg-[#e4dcce] border-2 border-[#c4b79f] hover:border-[#8f7d66] text-xl font-mono font-bold text-[#231c15] shadow transition-all flex items-center justify-center">7</button>
+        <button type="button" onclick="handleKeypad('8')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 active:bg-[#e4dcce] border-2 border-[#c4b79f] hover:border-[#8f7d66] text-xl font-mono font-bold text-[#231c15] shadow transition-all flex items-center justify-center">8</button>
+        <button type="button" onclick="handleKeypad('9')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 active:bg-[#e4dcce] border-2 border-[#c4b79f] hover:border-[#8f7d66] text-xl font-mono font-bold text-[#231c15] shadow transition-all flex items-center justify-center">9</button>
+        <button type="button" onclick="clearKeypad()" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-[#eee7da] hover:bg-[#e4dcce] active:scale-95 border-2 border-[#c4b79f] hover:border-[#8f7d66] text-xs font-mono font-bold text-[#635848] transition-all flex items-center justify-center">CLEAR</button>
+        <button type="button" onclick="handleKeypad('0')" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-[#fffdfa] hover:bg-[#f6f3eb] active:scale-95 active:bg-[#e4dcce] border-2 border-[#c4b79f] hover:border-[#8f7d66] text-xl font-mono font-bold text-[#231c15] shadow transition-all flex items-center justify-center">0</button>
+        <button type="button" onclick="backspaceKeypad()" style="cursor: pointer; touch-action: manipulation; user-select: none;" class="h-12 rounded-lg bg-[#eee7da] hover:bg-[#e4dcce] active:scale-95 border-2 border-[#c4b79f] hover:border-[#8f7d66] text-base font-mono font-bold text-[#635848] transition-all flex items-center justify-center">⌫</button>
       </div>
 
       <!-- Quick Entry Pass Button -->
@@ -845,7 +860,7 @@
   <!-- ==================================================================== -->
   <!-- 7. EVENING GAZETTE SPECIAL EDITION (END-OF-DAY SCORECARD MODAL) -->
   <!-- ==================================================================== -->
-  <div id="eveningDebriefModal" class="fixed inset-0 z-50 bg-[#231c15]/80 backdrop-blur-sm hidden items-center justify-center p-4">
+  <div id="eveningDebriefModal" style="display: none; z-index: 50;" class="fixed inset-0 bg-[#231c15]/80 backdrop-blur-sm items-center justify-center p-4">
     <div class="max-w-2xl w-full bg-[#fbf8f0] border-2 border-[#786953] rounded-xl p-6 sm:p-8 shadow-2xl relative overflow-hidden custom-scrollbar max-h-[90vh] overflow-y-auto">
       
       <!-- Extra Edition Header -->
@@ -924,7 +939,7 @@
   </div>
 
   <!-- ADD CUSTOM TRIP MODAL -->
-  <div id="addTripModal" class="fixed inset-0 z-50 bg-[#231c15]/75 backdrop-blur-sm hidden items-center justify-center p-4">
+  <div id="addTripModal" style="display: none; z-index: 50;" class="fixed inset-0 bg-[#231c15]/75 backdrop-blur-sm items-center justify-center p-4">
     <div class="max-w-md w-full bg-[#fbf8f0] border-2 border-[#786953] rounded-xl p-6 shadow-2xl">
       <div class="flex items-center justify-between pb-3 mb-4 border-b border-[#d7cdba]">
         <h3 class="font-headline font-bold text-lg text-[#231c15]">Add Custom Family Trip</h3>
@@ -977,7 +992,7 @@
   </div>
 
   <!-- NODE DETAILS MODAL (When clicking map nodes) -->
-  <div id="nodeDetailModal" class="fixed inset-0 z-50 bg-[#231c15]/75 backdrop-blur-sm hidden items-center justify-center p-4">
+  <div id="nodeDetailModal" style="display: none; z-index: 50;" class="fixed inset-0 bg-[#231c15]/75 backdrop-blur-sm items-center justify-center p-4">
     <div class="max-w-md w-full bg-[#fbf8f0] border-2 border-[#786953] rounded-xl p-5 shadow-2xl">
       <div class="flex items-center justify-between pb-2 mb-3 border-b border-[#d7cdba]">
         <h3 id="nodeModalTitle" class="font-headline font-bold text-lg text-[#231c15]">Destination Information</h3>
@@ -1072,9 +1087,16 @@
 
         // Enforce strict string comparison upon reaching 4 digits
         if (enteredCode.length === 4) {
-          evaluateCode();
+          setTimeout(evaluateCode, 80);
         }
       }
+    }
+
+    function autoFillPin(code) {
+      enteredCode = String(code);
+      playBeep(680);
+      updatePinDots();
+      setTimeout(evaluateCode, 80);
     }
 
     function clearKeypad() {
@@ -1096,13 +1118,58 @@
     function updatePinDots() {
       for (let i = 0; i < 4; i++) {
         const dot = document.getElementById(`dot${i}`);
+        const slot = document.getElementById(`pinSlot${i}`);
+        
         if (i < enteredCode.length) {
-          dot.className = 'w-4 h-4 rounded-full border-2 border-[#b45309] bg-[#b45309] transition-all duration-150 scale-110 shadow-sm';
+          // Dot active
+          if (dot) {
+            dot.style.backgroundColor = '#b45309';
+            dot.style.borderColor = '#b45309';
+            dot.style.transform = 'scale(1.2)';
+            dot.style.boxShadow = '0 0 8px rgba(180, 83, 9, 0.5)';
+          }
+          // Large digit slot
+          if (slot) {
+            slot.innerText = enteredCode[i];
+            slot.style.borderColor = '#b45309';
+            slot.style.backgroundColor = '#fef3c7';
+            slot.style.color = '#92400e';
+            slot.style.boxShadow = '0 0 10px rgba(180, 83, 9, 0.25)';
+          }
         } else {
-          dot.className = 'w-4 h-4 rounded-full border-2 border-[#8f7d66] bg-[#fbf8f0] transition-all duration-150';
+          // Dot empty
+          if (dot) {
+            dot.style.backgroundColor = '#fbf8f0';
+            dot.style.borderColor = '#8f7d66';
+            dot.style.transform = 'scale(1)';
+            dot.style.boxShadow = 'none';
+          }
+          // Slot empty
+          if (slot) {
+            slot.innerText = '•';
+            slot.style.borderColor = '#8f7d66';
+            slot.style.backgroundColor = '#fffdfa';
+            slot.style.color = '#8f7d66';
+            slot.style.boxShadow = 'none';
+          }
         }
       }
     }
+
+    // Physical Keyboard Listener
+    window.addEventListener('keydown', (e) => {
+      if (!isUnlocked) {
+        if (e.key >= '0' && e.key <= '9') {
+          handleKeypad(e.key);
+        } else if (e.key === 'Backspace') {
+          backspaceKeypad();
+        } else if (e.key === 'Escape' || e.key === 'Delete' || e.key === 'c' || e.key === 'C') {
+          clearKeypad();
+        } else if (e.key === 'Enter' || e.key === 'p' || e.key === 'P') {
+          passQuickEntry();
+        }
+      }
+    });
 
     function evaluateCode() {
       // Strict string comparison as specified: ['1776', '4490', '1234'].includes(String(pin))
@@ -1174,7 +1241,7 @@
       isUnlocked = false;
       clearKeypad();
       const modal = document.getElementById('frontDoorModal');
-      modal.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
+      modal.classList.remove('hidden', 'opacity-0', 'pointer-events-none'); modal.style.display = 'flex';
       if (isClockRunning) toggleClockRun();
     }
 
@@ -1777,7 +1844,7 @@
         modal.classList.add('flex');
         playBeep(550);
       } else {
-        modal.classList.add('hidden');
+        modal.classList.add('hidden'); modal.style.display = 'none';
         modal.classList.remove('flex');
       }
     }
