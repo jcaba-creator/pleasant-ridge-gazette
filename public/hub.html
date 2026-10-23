@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bold Bovine OS | Modular Launcher Hub</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card-bg: #161b22;
+      --card-hover: #1c2128;
+      --border: #30363d;
+      --text: #c9d1d9;
+      --heading: #58a6ff;
+      --ok: #238636;
+      --ok-text: #3fb950;
+      --warn: #9e6a03;
+      --warn-text: #d29922;
+      --danger: #da3633;
+      --danger-text: #f85149;
+      --accent: #1f6feb;
+      --gold: #d29922;
+      --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+      --font-header: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+    }
+
+    body.theme-broadsheet {
+      --bg: #f5f0e6;
+      --card-bg: #fffdf9;
+      --card-hover: #fcf9f2;
+      --border: #d4c8b8;
+      --text: #2c2523;
+      --heading: #5a2e1d;
+      --ok: #2e6930;
+      --ok-text: #2e6930;
+      --warn: #8c531b;
+      --warn-text: #8c531b;
+      --danger: #9c2724;
+      --danger-text: #9c2724;
+      --accent: #78350f;
+      --gold: #b45309;
+      --font-body: Georgia, "Times New Roman", serif;
+      --font-header: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      padding: 20px;
+      line-height: 1.5;
+      transition: background 0.2s, color 0.2s;
+    }
+    .container { max-width: 1280px; margin: 0 auto; }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 14px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    h1, h2, h3, h4 { font-family: var(--font-header); color: var(--heading); }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    button {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 13px;
+      transition: opacity 0.2s;
+    }
+    button:hover { opacity: 0.9; }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    .badge-ok { background: rgba(35, 134, 54, 0.2); color: var(--ok-text); border: 1px solid var(--ok); }
+    .badge-warn { background: rgba(210, 153, 34, 0.2); color: var(--warn-text); border: 1px solid var(--warn); }
+    .badge-danger { background: rgba(248, 81, 73, 0.2); color: var(--danger-text); border: 1px solid var(--danger); }
+    .badge-gold { background: rgba(210, 153, 34, 0.2); color: var(--gold); border: 1px solid var(--gold); }
+
+    /* Operational Strategy Banner */
+    .strategy-banner {
+      background: rgba(210, 153, 34, 0.08);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--gold);
+      border-radius: 6px;
+      padding: 12px 18px;
+      margin-bottom: 24px;
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    /* Modules Grid */
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .module-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.15s, border-color 0.15s, background 0.15s;
+      text-decoration: none;
+      color: inherit;
+    }
+    .module-card:hover {
+      transform: translateY(-2px);
+      background: var(--card-hover);
+      border-color: var(--heading);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+    .card-title {
+      font-size: 17px;
+      font-weight: bold;
+      color: var(--heading);
+    }
+    .card-desc {
+      font-size: 13px;
+      color: var(--text);
+      margin-bottom: 14px;
+      line-height: 1.45;
+    }
+    .card-specs {
+      background: rgba(0,0,0,0.2);
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #8b949e;
+      margin-bottom: 14px;
+    }
+    body.theme-broadsheet .card-specs {
+      background: rgba(0,0,0,0.03);
+    }
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+      color: #8b949e;
+    }
+
+    /* Knee-Board Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      max-width: 620px;
+      width: 100%;
+      padding: 20px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .kneeboard-strip {
+      background: #ffffff;
+      color: #000000;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 12px;
+      line-height: 1.5;
+      padding: 16px;
+      border: 2px dashed #333;
+      border-radius: 4px;
+      white-space: pre-wrap;
+      margin: 14px 0;
+    }
+
+    /* Universal Floating Scratchpad */
+    #scratchpad-drawer {
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      width: 360px;
+      max-width: 90vw;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      z-index: 9999;
+      transition: transform 0.3s ease;
+    }
+    #scratchpad-drawer.collapsed {
+      transform: translateY(calc(100% - 42px));
+    }
+    .sp-header {
+      padding: 10px 14px;
+      background: var(--border);
+      font-weight: bold;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      border-radius: 7px 7px 0 0;
+    }
+    .sp-body {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 480px;
+      overflow-y: auto;
+    }
+    textarea, select {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div>
+      <h1>Bold Bovine OS</h1>
+      <small style="color: #8b949e;">Modular Operations Hub | Strict Isolation Architecture | Easton & Leavenworth Corridor</small>
+    </div>
+    <div class="header-actions">
+      <button onclick="toggleTheme()" style="background:var(--border); color:var(--text); padding:6px 12px; font-size:12px;">Toggle Theme</button>
+      <button onclick="openKneeBoardModal()" style="background:var(--gold); color:#000; font-size:12px; padding:6px 14px; font-weight:bold;">
+        🖨️ Daily Knee-Board Dispatch
+      </button>
+    </div>
+  </header>
+
+  <!-- STORE-AND-FORWARD DISPATCH BANNER -->
+  <div class="strategy-banner">
+    <div>
+      <strong>Tactical Posture: Store-and-Forward (DDIL Architecture)</strong>
+      <div style="color:#8b949e; font-size:12px; margin-top:2px;">
+        Each module is an isolated, zero-dependency engine. Access them offline without monolithic code coupling.
+      </div>
+    </div>
+    <div style="font-size:12px;">
+      📍 <strong>Current Time:</strong> <span id="clock-display" style="font-weight:bold; color:var(--heading);"></span>
+    </div>
+  </div>
+
+  <!-- STANDALONE MODULES GRID -->
+  <div class="modules-grid">
+    <!-- 1. HOUSEHOLD & PROPERTY OS -->
+    <a href="household_master_system.html" class="module-card">
+      <div>
+        <div class="card-top">
+          <span class="card-title">🏡 Household & Regional OS</span>
+          <span class="badge badge-ok">Core Hub</span>
+        </div>
+        <p class="card-desc">
+          People, credential expirations, 200A Square D electrical panel continuous derating, well/septic infrastructure, and verified Easton-to-Leavenworth local business directory.
+        </p>
+        <div class="card-specs">
+          <strong>Coverage:</strong> Joshua & Brittanie, Easton Homestead, 11 Local Corridor Businesses, WebCrypto AES-GCM-256 at rest.
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>household_master_system.html</span>
+        <strong style="color:var(--heading);">Launch Module →</strong>
+      </div>
+    </a>
+
+    <!-- 2. FLEET OPERATIONS CORE -->
+    <a href="fleet_system.html" class="module-card">
+      <div>
+        <div class="card-top">
+          <span class="card-title">🚜 Fleet & Mobility Operations</span>
+          <span class="badge badge-warn">5 Assets</span>
+        </div>
+        <p class="card-desc">
+          OEM maintenance intervals, exact fluid capacities, cold tire pressures, parts sourcing, and critical failure watchouts (10R80 CDF drum, MERCON ULV rule).
+        </p>
+        <div class="card-specs">
+          <strong>Tracked:</strong> 2024 F-150 (5.0L Coyote), 2020 Explorer, 2014 Infiniti, 2-Horse Trailer, Cub Cadet XT1.
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>fleet_system.html</span>
+        <strong style="color:var(--heading);">Launch Module →</strong>
+      </div>
+    </a>
+
+    <!-- 3. FAMILY RX EXPERT SYSTEM -->
+    <a href="family_rx_system.html" class="module-card">
+      <div>
+        <div class="card-top">
+          <span class="card-title">💊 Family Rx & Health Engine</span>
+          <span class="badge badge-danger">Triage Active</span>
+        </div>
+        <p class="card-desc">
+          Deterministic constraint engine for medication replenishment cadences, pharmacy hours, clinic lunch blackouts, pediatric safety gates, and stockout escalation scripts.
+        </p>
+        <div class="card-specs">
+          <strong>Features:</strong> Simulated Time-Gate, Pediatric Weight Gates, 3-Day Emergency Bridge Scripts, Local-Only Storage.
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>family_rx_system.html</span>
+        <strong style="color:var(--heading);">Launch Module →</strong>
+      </div>
+    </a>
+
+    <!-- 4. CULINARY EXPERT SYSTEM -->
+    <a href="culinary_chef_system.html" class="module-card">
+      <div>
+        <div class="card-top">
+          <span class="card-title">🍳 Culinary Expert System</span>
+          <span class="badge badge-gold">Inference Engine</span>
+        </div>
+        <p class="card-desc">
+          Forward-chaining production rule engine transforming household leftovers and pantry odds into elevated culinary dishes with child/picky-eater deconstruction paths.
+        </p>
+        <div class="card-specs">
+          <strong>Features:</strong> Crispy Rice Squares, Chicken Velouté, Tuscan Panzanella, Pain Perdu, Root Velvet Purée.
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>culinary_chef_system.html</span>
+        <strong style="color:var(--heading);">Launch Module →</strong>
+      </div>
+    </a>
+
+    <!-- 5. SYMBOLIC ENTITY NAVIGATOR -->
+    <a href="Symbolic_Entity_Navigator.html" class="module-card">
+      <div>
+        <div class="card-top">
+          <span class="card-title">🌐 Symbolic Entity Navigator</span>
+          <span class="badge badge-ok">Spatial Grid</span>
+        </div>
+        <p class="card-desc">
+          4-Zone matrix tracker linking physical farm infrastructure, shop benches, mobile assets, and office tools into a unified searchable entity taxonomy.
+        </p>
+        <div class="card-specs">
+          <strong>Zones:</strong> Zone 1 (AM Shift), Zone 2 (W2 Office), Zone 3 (PM Shift), Zone 4 (On the Road).
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>Symbolic_Entity_Navigator.html</span>
+        <strong style="color:var(--heading);">Launch Module →</strong>
+      </div>
+    </a>
+
+    <!-- 6. OPERATIONAL WARGAME & LOGISTICS C2 -->
+    <a href="../pleasant-ridge-gazette/c2.html" class="module-card">
+      <div>
+        <div class="card-top">
+          <span class="card-title">🎖️ Logistics C2 & Adjudicator</span>
+          <span class="badge badge-info">Tactical</span>
+        </div>
+        <p class="card-desc">
+          Division-level consumable burn-rate modeler and deterministic Lanchester attrition calculator running locally in browser.
+        </p>
+        <div class="card-specs">
+          <strong>Focus:</strong> Class III (Fuel) and Class V (Ammo) logistics adjudication and consumption rates.
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>c2.html</span>
+        <strong style="color:var(--heading);">Launch Module →</strong>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- KNEE-BOARD DISPATCH MODAL (ZONE 2 POCKET CARD) -->
+<div class="modal-overlay" id="kneeboard-modal">
+  <div class="modal-card">
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:8px;">
+      <h3>Daily Knee-Board Dispatch (Zone 2 Air-Gap Strip)</h3>
+      <button onclick="closeKneeBoardModal()" style="background:transparent; color:#8b949e; font-size:18px; border:none; cursor:pointer;">✕</button>
+    </div>
+    <p style="font-size:12px; color:#8b949e; margin-top:8px;">
+      Print or copy this 3x5" pocket strip before leaving for your W2 government desk. It carries zero network dependencies and gives you the exact call scripts, hours, and part numbers for Zone 2.
+    </p>
+
+    <div class="kneeboard-strip" id="kneeboard-text">
+============================================================
+BOLD BOVINE TACTICAL DISPATCH | DATE: <span id="kb-date"></span>
+============================================================
+ZONE 2 (W2 OFFICE / CALLS OUTSIDE CLINIC LUNCH BLACKOUTS):
+[ ] 10:15 - CALL Main Street Pharmacy (913-773-8199)
+    * Refill Amoxicillin Susp 250mg/5mL for Child A
+    * Warning: LUNCH BLACKOUT 13:30 - 14:00!
+[ ] 11:30 - PORTAL Dr. Evans (https://mychart.health.org)
+    * Verify electronic sign-off if refills = 0
+[ ] 14:30 - ORDER 16x25x1 MERV 11 Furnace Filter
+    * Tractor Supply Leavenworth (913-727-2488) or Online
+
+ZONE 3 (PM FARM & HOMESTEAD PHYSICAL OPS):
+[ ] Drain outdoor sillcock lines and shut interior gate valves
+[ ] Lift rubber stall mats in Calico trailer (wood rot check)
+[ ] Check dipstick oil on 2024 F-150 (5.0L Coyote)
+
+RAW SCRATCHPAD / INCOMING OBSERVATIONS:
+- 
+- 
+============================================================
+    </div>
+
+    <div style="display:flex; justify-content:flex-end; gap:8px;">
+      <button onclick="printKneeBoard()" style="background:var(--ok);">🖨️ Print Dispatch Card</button>
+      <button onclick="copyKneeBoard()" style="background:var(--border);">📋 Copy to Clipboard</button>
+      <button onclick="closeKneeBoardModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- UNIVERSAL FIELD SCRATCHPAD INBOX -->
+<div id="scratchpad-drawer" class="collapsed">
+  <div class="sp-header" onclick="toggleScratchpad()">
+    <span>📝 FIELD SCRATCHPAD INBOX</span>
+    <span id="sp-indicator">▲</span>
+  </div>
+  <div class="sp-body">
+    <div style="display:flex; gap:6px;">
+      <select id="sp-zone" style="flex:1;">
+        <option value="Zone 1: AM Shift">Zone 1: AM Shift</option>
+        <option value="Zone 2: W2 Office">Zone 2: W2 Office</option>
+        <option value="Zone 3: PM Shift">Zone 3: PM Shift</option>
+        <option value="Zone 4: On the Road">Zone 4: On the Road</option>
+      </select>
+      <select id="sp-cat" style="flex:1;">
+        <option value="OBSERVATION">Observation</option>
+        <option value="MAINTENANCE">Maintenance</option>
+        <option value="SUPPLY_RUN">Supply Run</option>
+        <option value="IDEA">Idea</option>
+      </select>
+    </div>
+    <textarea id="sp-text" rows="3" placeholder="Quick operational observation..."></textarea>
+    <div style="display:flex; justify-content:space-between; gap:6px;">
+      <button onclick="saveScratchpadNote()" style="flex:1; background:#238636;">Log Note</button>
+      <button onclick="syncScratchpadRelay()" style="flex:1; background:#1f6feb;">Sync Cloud</button>
+    </div>
+    <div id="sp-notes-list" style="margin-top:8px; font-size:11px; max-height:160px; overflow-y:auto;"></div>
+  </div>
+</div>
+
+<script>
+// Theme Switcher
+function toggleTheme() {
+  document.body.classList.toggle('theme-broadsheet');
+  const isBroadsheet = document.body.classList.contains('theme-broadsheet');
+  localStorage.setItem('bb_hub_theme', isBroadsheet ? 'broadsheet' : 'slate');
+}
+if (localStorage.getItem('bb_hub_theme') === 'broadsheet') {
+  document.body.classList.add('theme-broadsheet');
+}
+
+// Clock
+function updateClock() {
+  const now = new Date();
+  document.getElementById("clock-display").innerText = now.toLocaleDateString(undefined, {
+    weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+  });
+  document.getElementById("kb-date").innerText = now.toISOString().split("T")[0];
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// Knee-Board Modal
+function openKneeBoardModal() {
+  document.getElementById('kneeboard-modal').classList.add('active');
+}
+function closeKneeBoardModal() {
+  document.getElementById('kneeboard-modal').classList.remove('active');
+}
+function printKneeBoard() {
+  const content = document.getElementById('kneeboard-text').innerText;
+  const w = window.open('', '', 'width=600,height=600');
+  w.document.write(`<pre style="font-family:monospace; font-size:12px; padding:20px;">${content}</pre>`);
+  w.document.close();
+  w.focus();
+  w.print();
+  w.close();
+}
+function copyKneeBoard() {
+  const content = document.getElementById('kneeboard-text').innerText;
+  navigator.clipboard.writeText(content).then(() => alert("Knee-board dispatch copied to clipboard!"));
+}
+
+// Scratchpad Drawer
+function toggleScratchpad() {
+  const d = document.getElementById("scratchpad-drawer");
+  d.classList.toggle("collapsed");
+  document.getElementById("sp-indicator").innerText = d.classList.contains("collapsed") ? "▲" : "▼";
+}
+
+function saveScratchpadNote() {
+  const text = document.getElementById("sp-text").value.trim();
+  if (!text) return alert("Enter note text.");
+  const note = {
+    id: "sp_" + Date.now(),
+    timestamp: new Date().toISOString(),
+    zone: document.getElementById("sp-zone").value,
+    category: document.getElementById("sp-cat").value,
+    note: text,
+    synced: false
+  };
+  const list = JSON.parse(localStorage.getItem("bb_scratchpad_notes") || "[]");
+  list.unshift(note);
+  localStorage.setItem("bb_scratchpad_notes", JSON.stringify(list));
+  document.getElementById("sp-text").value = "";
+  renderScratchpadList();
+}
+
+function renderScratchpadList() {
+  const div = document.getElementById("sp-notes-list");
+  if (!div) return;
+  const list = JSON.parse(localStorage.getItem("bb_scratchpad_notes") || "[]");
+  if (list.length === 0) {
+    div.innerHTML = "<div style='color:#8b949e; text-align:center;'>No pending notes</div>";
+    return;
+  }
+  div.innerHTML = list.slice(0, 5).map(n => `
+    <div style="border-bottom:1px solid var(--border); padding:3px 0;">
+      <span class="badge badge-ok">${n.category}</span> <strong>${n.zone}</strong>
+      <div style="margin-top:2px;">${n.note}</div>
+      <small style="color:#8b949e;">${new Date(n.timestamp).toLocaleTimeString()} | ${n.synced ? 'Synced' : 'Local'}</small>
+    </div>
+  `).join("");
+}
+
+async function syncScratchpadRelay() {
+  const notes = JSON.parse(localStorage.getItem("bb_scratchpad_notes") || "[]");
+  const unsynced = notes.filter(n => !n.synced);
+  if (unsynced.length === 0) return alert("All notes already synced.");
+  try {
+    const res = await fetch("https://pleasant-ridge-gazette.vercel.app/api/scratchpad", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ notes: unsynced })
+    });
+    if (res.ok) {
+      notes.forEach(n => n.synced = true);
+      localStorage.setItem("bb_scratchpad_notes", JSON.stringify(notes));
+      renderScratchpadList();
+      alert(`Synced ${unsynced.length} notes to cloud relay!`);
+    } else {
+      alert("Relay sync error: " + res.status);
+    }
+  } catch(e) {
+    alert("Offline mode active. Notes safely retained in local storage.");
+  }
+}
+
+renderScratchpadList();
+</script>
+</body>
+</html>
