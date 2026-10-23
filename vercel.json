@@ -4,6 +4,26 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/field-ops",
+      "destination": "/Symbolic_Entity_Navigator.html"
+    },
+    {
+      "source": "/ledger",
+      "destination": "/Symbolic_Entity_Navigator.html"
+    },
+    {
+      "source": "/symbolic",
+      "destination": "/Symbolic_Entity_Navigator.html"
+    },
+    {
+      "source": "/navigator.html",
+      "destination": "/Symbolic_Entity_Navigator.html"
+    },
+    {
+      "source": "/navigator",
+      "destination": "/Symbolic_Entity_Navigator.html"
+    },
+    {
       "source": "/c2",
       "destination": "/c2.html"
     },
