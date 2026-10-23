@@ -12,6 +12,7 @@ echo.
 echo [1/4] Updating live corridor fuel and grocery prices...
 python "%~dp0update_gas_feed.py"
 python "%~dp0update_groceries_feed.py"
+python "%~dp0sync_scratchpad_to_drive.py"
 
 copy /Y "%~dp0gas_prices.json" "%~dp0public\gas_prices.json" >nul 2>&1
 copy /Y "%~dp0gas_prices.js" "%~dp0public\gas_prices.js" >nul 2>&1

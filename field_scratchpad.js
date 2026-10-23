@@ -7,6 +7,7 @@
   window.__BoldBovineScratchpadLoaded = true;
 
   const STORAGE_KEY = "bold_bovine_scratchpad_v1";
+  const CLOUD_SYNC_ENDPOINT = "https://pleasant-ridge-gazette.vercel.app/api/scratchpad";
   const PRIMARY_ZONES = [
     "Shop / Garage",
     "Home / Interior",
@@ -22,6 +23,8 @@
     "📅 Routine Backlog"
   ];
 
+  let isSyncing = false;
+
   function getObservations() {
     try {
       const data = localStorage.getItem(STORAGE_KEY);
@@ -31,12 +34,97 @@
     }
   }
 
-  function saveObservations(list) {
+  function saveObservations(list, skipCloud) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
       updateBadge();
       window.dispatchEvent(new Event("scratchpad_updated"));
+      if (!skipCloud) {
+        syncWithCloud();
+      }
     } catch(e) {}
+  }
+
+  async function syncWithCloud(forcePushAll) {
+    if (isSyncing) return;
+    isSyncing = true;
+    updateCloudStatus("syncing");
+
+    try {
+      const res = await fetch(CLOUD_SYNC_ENDPOINT, {
+        method: "GET",
+        headers: { "Accept": "application/json" },
+        cache: "no-store"
+      });
+
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const data = await res.json();
+      const cloudItems = Array.isArray(data.items) ? data.items : [];
+
+      let localList = getObservations();
+      const localMap = new Map(localList.map(i => [i.id, i]));
+      const cloudMap = new Map(cloudItems.map(i => [i.id, i]));
+
+      let localModified = false;
+      let unsyncedLocalItems = [];
+
+      for (const cItem of cloudItems) {
+        if (!localMap.has(cItem.id)) {
+          localList.unshift(cItem);
+          localModified = true;
+        } else {
+          const lItem = localMap.get(cItem.id);
+          if (cItem.status !== lItem.status && new Date(cItem.timestamp || 0) >= new Date(lItem.timestamp || 0)) {
+            Object.assign(lItem, cItem);
+            localModified = true;
+          }
+        }
+      }
+
+      for (const lItem of localList) {
+        if (!cloudMap.has(lItem.id) || forcePushAll) {
+          unsyncedLocalItems.push(lItem);
+        }
+      }
+
+      if (localModified) {
+        saveObservations(localList, true);
+        if (typeof renderList === "function") renderList();
+      }
+
+      if (unsyncedLocalItems.length > 0) {
+        await fetch(CLOUD_SYNC_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(unsyncedLocalItems),
+          keepalive: true
+        });
+      }
+
+      updateCloudStatus("synced");
+    } catch(err) {
+      console.warn("[SCRATCHPAD_CLOUD_SYNC]", err);
+      updateCloudStatus("offline");
+    } finally {
+      isSyncing = false;
+    }
+  }
+
+  function updateCloudStatus(status) {
+    const el = document.getElementById("bb-cloud-status");
+    if (!el) return;
+    if (status === "syncing") {
+      el.innerHTML = "⏳ Syncing...";
+      el.style.opacity = "0.7";
+    } else if (status === "synced") {
+      el.innerHTML = "☁️ Relay Synced";
+      el.style.opacity = "1";
+      el.style.color = "var(--sp-forest)";
+    } else if (status === "offline") {
+      el.innerHTML = "⚡ Local Cache";
+      el.style.opacity = "0.85";
+      el.style.color = "var(--sp-amber)";
+    }
   }
 
   function getPageContext() {
@@ -177,6 +265,29 @@
       margin-top: 2px;
       font-family: 'Space Mono', monospace;
     }
+    .bb-cloud-btn {
+      background: var(--sp-bg-input);
+      border: var(--sp-border);
+      color: var(--sp-ink);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 4px 9px;
+      border-radius: 3px;
+      box-shadow: 1px 1px 0px var(--sp-ink);
+      font-family: 'Space Mono', monospace;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .bb-cloud-btn:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 2px 2px 0px var(--sp-ink);
+    }
+
     .bb-btn-close {
       background: var(--sp-bg-card);
       border: var(--sp-border);
@@ -455,7 +566,10 @@
         <h2>Field Scratchpad & Sprint Staging</h2>
         <div class="bb-subtitle" id="bb-page-context-sub">Context: Page • Alt+S to toggle</div>
       </div>
-      <button class="bb-btn-close" id="bb-btn-close-drawer" title="Close (Esc)">✕</button>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button id="bb-cloud-status" class="bb-cloud-btn" title="Central Cloud Relay Sync (Click to Sync)">☁️ Synced</button>
+        <button class="bb-btn-close" id="bb-btn-close-drawer" title="Close (Esc)">✕</button>
+      </div>
     </div>
 
     <div class="bb-drawer-body">
@@ -550,6 +664,7 @@
       document.getElementById("bb-page-context-sub").textContent = `Context: ${ctx.title} (${ctx.path}) • Alt+S`;
       renderList();
       setTimeout(() => document.getElementById("bb-input-text").focus(), 150);
+      syncWithCloud();
     } else {
       drawerEl.classList.remove("active");
       overlayEl.classList.remove("active");
@@ -827,4 +942,15 @@
   });
 
   updateBadge();
+
+  const cloudBtn = document.getElementById("bb-cloud-status");
+  if (cloudBtn) {
+    cloudBtn.addEventListener("click", () => {
+      syncWithCloud(true);
+      showToast("🔄 Syncing with Central Cloud Relay...");
+    });
+  }
+
+  // Initial background cloud sync
+  setTimeout(() => syncWithCloud(), 1200);
 })();

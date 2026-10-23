@@ -8,6 +8,7 @@ echo [%date% %time%] Initiating Scheduled Sweep... >> %LOGFILE%
 python "%~dp0update_gas_feed.py" >> %LOGFILE% 2>&1
 python "%~dp0update_groceries_feed.py" >> %LOGFILE% 2>&1
 python "%~dp0record_telemetry.py" >> %LOGFILE% 2>&1
+python "%~dp0sync_scratchpad_to_drive.py" >> %LOGFILE% 2>&1
 
 copy /Y "%~dp0gas_prices.json" "%~dp0public\gas_prices.json" >nul 2>&1
 copy /Y "%~dp0gas_prices.js" "%~dp0public\gas_prices.js" >nul 2>&1
