@@ -1,0 +1,100 @@
+{
+  "metadata": {
+    "system": "Bold Bovine OS",
+    "subsystem": "Fleet Core & Mobility Operations",
+    "version": "2.0.0",
+    "primary_zones": [
+      "Mobile / Vehicles",
+      "Shop / Garage",
+      "Pastures / Land",
+      "Office / Desk",
+      "Home / Interior"
+    ]
+  },
+  "assets": {
+    "ford_f150_2024": {
+      "id": "ford_f150_2024",
+      "current_metric": 32106,
+      "metric_type": "miles",
+      "zone": "Mobile / Vehicles",
+      "sub_location": "Driveway / Shop Apron",
+      "operator": "Josh",
+      "service_history": {
+        "f150_oil": 30000,
+        "f150_tire_rot": 30000,
+        "f150_engine_air": 20000,
+        "f150_cabin_air": 20000,
+        "f150_spark_plugs": 0,
+        "f150_trans_drain": 0,
+        "f150_transfer_case": 0,
+        "f150_rear_diff": 0
+      }
+    },
+    "ford_explorer_2020": {
+      "id": "ford_explorer_2020",
+      "current_metric": 71200,
+      "metric_type": "miles",
+      "zone": "Mobile / Vehicles",
+      "sub_location": "Home Carport / Bay 2",
+      "operator": "Joint",
+      "service_history": {
+        "exp_oil": 70000,
+        "exp_tire_rot": 70000,
+        "exp_engine_air": 60000,
+        "exp_cabin_air": 60000,
+        "exp_spark_plugs": 45000,
+        "exp_trans_service": 60000,
+        "exp_coolant": 180
+      }
+    },
+    "infiniti_sedan": {
+      "id": "infiniti_sedan",
+      "current_metric": 82000,
+      "metric_type": "miles",
+      "zone": "Mobile / Vehicles",
+      "sub_location": "Driveway / Road Bay",
+      "operator": "Josh",
+      "service_history": {
+        "inf_oil": 80000,
+        "inf_tire_rot": 80000,
+        "inf_air_filters": 70000,
+        "inf_brake_fluid": 250,
+        "inf_iacv_audit": 180,
+        "inf_spark_plugs": 60000
+      }
+    },
+    "bumper_pull_horse_trailer": {
+      "id": "bumper_pull_horse_trailer",
+      "current_metric": 0,
+      "metric_type": "days",
+      "zone": "Pastures / Land",
+      "sub_location": "Outbuilding / Equipment Pad",
+      "operator": "Josh",
+      "service_history": {
+        "trl_floor_check": 60,
+        "trl_bearings": 180,
+        "trl_breakaway": 30,
+        "trl_brakes": 180,
+        "trl_coupler": 30,
+        "trl_tire_audit": 15
+      }
+    },
+    "cub_cadet_zero_turn": {
+      "id": "cub_cadet_zero_turn",
+      "current_metric": 6,
+      "metric_type": "hours",
+      "zone": "Shop / Garage",
+      "sub_location": "White Shed Bay 3",
+      "operator": "Josh",
+      "service_history": {
+        "mow_oil": 100,
+        "mow_grease": 105,
+        "mow_blades": 105,
+        "mow_deck_clean": 110,
+        "mow_air_filter": 80,
+        "mow_pto_clutch": 100,
+        "mow_winterize": 300
+      }
+    }
+  }
+}

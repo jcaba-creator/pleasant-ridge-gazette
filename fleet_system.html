@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="broadsheet">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bold Bovine OS // Fleet Operations Core</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root, [data-theme="broadsheet"] {
+      --bg: #fdfaf5;
+      --card-bg: #ffffff;
+      --surface: #f7f3ea;
+      --border: #111111;
+      --border-subtle: rgba(17, 17, 17, 0.2);
+      --text: #111111;
+      --text-muted: #374151;
+      --text-dim: #6b7280;
+      --heading: #1b4332;
+      --ok: #1b4332;
+      --ok-text: #1b4332;
+      --ok-bg: rgba(27, 67, 50, 0.08);
+      --warn: #b45309;
+      --warn-text: #b45309;
+      --warn-bg: rgba(180, 83, 9, 0.08);
+      --danger: #991b1b;
+      --danger-text: #991b1b;
+      --danger-bg: rgba(153, 27, 27, 0.08);
+      --accent: #1b4332;
+      --shadow-hard: 3px 3px 0px #111111;
+      --shadow-hover: 5px 5px 0px #111111;
+      --font-serif: 'Newsreader', Georgia, serif;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      --font-mono: 'Space Mono', monospace;
+    }
+
+    [data-theme="hearth"] {
+      --bg: #171412;
+      --card-bg: #221d1a;
+      --surface: #1a1613;
+      --border: rgba(214, 180, 140, 0.35);
+      --border-subtle: rgba(214, 180, 140, 0.15);
+      --text: #f5f0e8;
+      --text-muted: #c7beaf;
+      --text-dim: #8f8576;
+      --heading: #4ade80;
+      --ok: #4ade80;
+      --ok-text: #4ade80;
+      --ok-bg: rgba(74, 222, 128, 0.1);
+      --warn: #f59e0b;
+      --warn-text: #f59e0b;
+      --warn-bg: rgba(245, 158, 11, 0.1);
+      --danger: #f87171;
+      --danger-text: #f87171;
+      --danger-bg: rgba(248, 113, 113, 0.1);
+      --accent: #d97706;
+      --shadow-hard: 3px 3px 0px #0c0a09;
+      --shadow-hover: 5px 5px 0px #0c0a09;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 0 0 80px;
+      line-height: 1.5;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .utility-bar {
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--surface);
+      padding: 6px 24px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .container { max-width: 1400px; margin: 0 auto; padding: 20px 24px; }
+    
+    header.masthead {
+      border-bottom: 3px double var(--border);
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .masthead-title {
+      font-family: var(--font-serif);
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 1.1;
+      margin: 0;
+      color: var(--text);
+    }
+    .masthead-kicker {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--warn);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* SECURITY BAR & VAULT LOCK */
+    .security-bar {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      box-shadow: var(--shadow-hard);
+      padding: 12px 18px;
+      border-radius: 4px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 13px;
+    }
+    .security-bar input {
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      padding: 6px 12px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+
+    /* CONTROLS (3-AXIS MATRIX) */
+    .controls {
+      display: grid;
+      grid-template-columns: 2fr 1.5fr 1fr;
+      gap: 14px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      box-shadow: var(--shadow-hard);
+      padding: 16px;
+      margin-bottom: 28px;
+    }
+    @media (max-width: 900px) {
+      .controls { grid-template-columns: 1fr; }
+    }
+
+    input, select, button {
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      font-family: inherit;
+      font-size: 13px;
+    }
+    input:focus, select:focus {
+      outline: 2px solid var(--accent);
+    }
+
+    button.btn-primary {
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 700;
+      border: 1.5px solid var(--border);
+      box-shadow: 2px 2px 0px var(--border);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    button.btn-primary:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0px var(--border);
+    }
+
+    .theme-toggle-btn {
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      box-shadow: 2px 2px 0px var(--border);
+      color: var(--text);
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    /* ASSET CARDS GRID */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(620px, 1fr));
+      gap: 24px;
+    }
+    @media (max-width: 700px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .asset-card {
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      box-shadow: var(--shadow-hard);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .asset-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1.5px solid var(--border-subtle);
+      padding-bottom: 12px;
+      gap: 12px;
+    }
+    .asset-name {
+      font-family: var(--font-serif);
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0;
+      color: var(--text);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 2px;
+      border: 1px solid currentColor;
+      text-transform: uppercase;
+    }
+    .badge-ok { background: var(--ok-bg); color: var(--ok-text); }
+    .badge-warn { background: var(--warn-bg); color: var(--warn-text); }
+    .badge-danger { background: var(--danger-bg); color: var(--danger-text); }
+
+    table.rules-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin-top: 6px;
+    }
+    table.rules-table th, table.rules-table td {
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 8px 10px;
+      text-align: left;
+    }
+    table.rules-table th {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      background: var(--surface);
+    }
+
+    .spec-grid {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      padding: 12px 14px;
+      font-size: 12px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 8px 16px;
+    }
+    .spec-item strong {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      display: block;
+    }
+
+    .trouble-box {
+      background: var(--danger-bg);
+      border-left: 3px solid var(--danger);
+      padding: 10px 14px;
+      font-size: 12px;
+    }
+    .trouble-box strong {
+      color: var(--danger-text);
+      display: block;
+      margin-bottom: 6px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .trouble-box ul { margin: 0; padding-left: 18px; }
+    .trouble-box li { margin-bottom: 4px; }
+
+    .parts-box {
+      background: var(--ok-bg);
+      border-left: 3px solid var(--ok);
+      padding: 10px 14px;
+      font-size: 12px;
+    }
+    .parts-box strong {
+      color: var(--ok-text);
+      display: block;
+      margin-bottom: 4px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .btn-action-task {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      box-shadow: 1px 1px 0px var(--border);
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.1s ease;
+    }
+    .btn-action-task:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 2px 2px 0px var(--border);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- UTILITY STRIP -->
+  <div class="utility-bar">
+    <div>
+      <span style="color:var(--heading);">BOLD BOVINE OS</span> · <span>FLEET MOBILITY & LOGISTICS ENGINE</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <span id="clock" style="font-family:var(--font-mono); font-size:11px;"></span>
+      <button class="theme-toggle-btn" id="theme-toggle">📰 Broadsheet Mode</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <header class="masthead">
+      <div>
+        <div class="masthead-kicker">§ MASTER FLEET OPERATING DOSSIER & MAINTENANCE ENGINE</div>
+        <h1 class="masthead-title">Autonomous Fleet Core Operations</h1>
+        <div style="font-size:13px; color:var(--text-muted); margin-top:4px;">
+          Deterministic Evaluation Triad · OEM Truth · 100% Offline & Private · Easton Dispatch
+        </div>
+      </div>
+      <div style="text-align:right;">
+        <span class="badge badge-ok" id="active-asset-count">5 ACTIVE ASSETS</span>
+      </div>
+    </header>
+
+    <!-- VAULT SECURITY STRIP -->
+    <div class="security-bar">
+      <strong style="font-family:var(--font-mono); font-size:11px; text-transform:uppercase;">🔒 WebCrypto Vault Lock:</strong>
+      <input type="password" id="vault-passphrase" placeholder="Passphrase for AES-GCM">
+      <button class="btn-primary" onclick="saveEncryptedVault()">Encrypt State</button>
+      <button class="btn-primary" onclick="loadEncryptedVault()" style="background:#238636;">Decrypt & Load</button>
+      <span id="vault-status" style="margin-left:auto; font-family:var(--font-mono); font-size:11px; color:var(--text-dim);">Plain LocalStorage Active</span>
+    </div>
+
+    <!-- 3-AXIS COMPOUND CONTROLS -->
+    <div class="controls">
+      <div>
+        <label style="font-size:11px; font-weight:800; text-transform:uppercase; display:block; margin-bottom:4px; color:var(--text-muted);">[1] WHAT (Keyword / Spec / Part / Recall)</label>
+        <input type="text" id="query-what" placeholder="Search Coyote, EcoBoost, FL-500S, torque, bearing, mat rot..." oninput="render()" style="width:100%;">
+      </div>
+      <div>
+        <label style="font-size:11px; font-weight:800; text-transform:uppercase; display:block; margin-bottom:4px; color:var(--text-muted);">[2] WHERE (Primary Zone / Location)</label>
+        <select id="query-where" onchange="render()" style="width:100%;">
+          <option value="ALL">All Physical Zones</option>
+          <option value="Mobile / Vehicles">Mobile / Vehicles</option>
+          <option value="Shop / Garage">Shop / Garage</option>
+          <option value="Pastures / Land">Pastures / Land</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:11px; font-weight:800; text-transform:uppercase; display:block; margin-bottom:4px; color:var(--text-muted);">[3] WHEN / STATUS (Deterministic Rules)</label>
+        <select id="query-status" onchange="render()" style="width:100%;">
+          <option value="ALL">All Maintenance States</option>
+          <option value="ACTION">⚠️ Action Required (Due / Overdue)</option>
+          <option value="NOMINAL">🟢 Nominal Status</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- FLEET ASSETS GRID -->
+    <div class="grid" id="fleet-grid"></div>
+  </div>
+
+<script>
+// Static Domain Knowledge Base
+const BOK = {
+  "ford_f150_2024": {
+    "name": "2024 Ford F-150 SuperCrew 4x4 XL",
+    "category": "motor_vehicle",
+    "default_zone": "Mobile / Vehicles",
+    "sub_location": "Driveway / Shop Apron",
+    "identifiers": {
+      "vin": "1FTFW1L59RKD32476",
+      "title_no": "AB4874098",
+      "engine_code": "5.0L Ti-VCT 32V DOHC Coyote V8 (400 HP / 410 lb-ft)",
+      "transmission_code": "10R80 10-Speed SelectShift Automatic",
+      "drivetrain": "Electronic Shift-on-the-Fly 4WD with Locking Rear Differential",
+      "color": "Oxford White",
+      "financing": "Ford Credit #65832848 (AutoPay Active)",
+      "registration_target": "Leavenworth County, KS (Due: Nov 11, 2026)"
+    },
+    "specs": {
+      "engine_oil": "7.75 qts (7.3 L) Motorcraft SAE 5W-30 Full Synthetic (WSS-M2C961-A1)",
+      "oil_filter": "Motorcraft FL-500S (FL-500-S) with anti-drainback valve",
+      "oil_drain_plug_torque": "20 lb-ft (27 Nm) - 15mm hex bolt",
+      "engine_air_filter": "Motorcraft FA-1927 / FA-1950",
+      "cabin_air_filter": "Motorcraft FP-98 (Behind passenger glovebox compartment)",
+      "spark_plugs": "Motorcraft SP-589 / SP-548 (Gap: 0.039 - 0.043 in / 1.0 - 1.1 mm, Torque: 133 lb-in / 15 Nm)",
+      "transmission_fluid": "11.6 - 13.1 qts dry / ~6 qts pan service: Motorcraft MERCON ULV (WSS-M2C949-A ONLY)",
+      "transfer_case_fluid": "1.5 qts Motorcraft MERCON LV (WSS-M2C938-A)",
+      "front_axle_fluid": "1.8 qts SAE 75W-85 Synthetic Hypoid Gear Oil",
+      "rear_axle_fluid": "2.4 - 2.75 qts SAE 75W-85 Synthetic + 4 oz Friction Modifier XL-3 (if Limited Slip)",
+      "lug_nut_torque": "150 lb-ft (204 Nm) - 21mm socket on M14x1.5 studs",
+      "tire_pressure_cold": "35 PSI front / 35 PSI rear (per Door B-pillar decal)",
+      "towing_hitch": "Class IV 2.5-inch receiver, integrated trailer brake controller, 11,500 lbs max tow"
+    },
+    "troubleshooting_and_watchouts": [
+      "10R80 CDF Clutch Drum Bushing: Monitor for harsh 3-4 and 7-8 upshifts or delayed reverse engagement; updated Ford CDF drum (JL3Z-7H351-B) has internal retaining lip to prevent bushing displacement.",
+      "MERCON ULV vs MERCON LV Warning: Automatic transmission 10R80 strictly requires MERCON ULV. Standard MERCON LV will degrade clutch friction packs and destroy valve body solenoids.",
+      "NHTSA Recall (Fuel Tank Mounting): Verify fuel tank support strap torque and corrosion resistance to prevent detachment or fuel line strain.",
+      "Trailer Brake Controller (ITRM) Communication: Inspect integrated trailer relay module; software calibration fix prevents loss of trailer electric brake signal.",
+      "Heavy Towing / Bobcat 743 Transport: Real-world payload is ~1,800 lbs. Trailer tongue weight (10-15%) consumes payload directly. Must use Class IV Weight-Distribution Hitch with spring bars and 4-point Grade 70 5/16' transport chain tie-downs at 45 deg angles per 49 CFR 393.130.",
+      "5.0L Coyote Oil Monitoring: Check dipstick every 1,500 miles. Severe duty 5,000-mile interval prevents timing chain tensioner sludge."
+    ],
+    "parts_sourcing": {
+      "oil_and_filter": "Motorcraft FL-500S & 5W-30 Full Synthetic (RockAuto, Walmart, O'Reilly)",
+      "transmission_fluid": "Motorcraft XT-12-QULV MERCON ULV (Dealership or RockAuto)",
+      "spark_plugs": "Motorcraft SP-589 (RockAuto #SP589)",
+      "filters": "Motorcraft FA-1927 Air & FP-98 Cabin",
+      "tie_down_rigging": "Grade 70 5/16' Transport Chain + Forged Ratchet Binders (4,700 lb WLL) from Tractor Supply / Harbor Freight"
+    },
+    "rules": [
+      {
+        "id": "f150_oil",
+        "item": "5.0L V8 Engine Oil & FL-500S Filter Change",
+        "trigger": "miles",
+        "interval": 5000,
+        "buffer": 500,
+        "spec": "7.75 qts SAE 5W-30 Full Synthetic + Motorcraft FL-500S; torque drain plug to 20 lb-ft"
+      },
+      {
+        "id": "f150_tire_rot",
+        "item": "Tire Rotation, PSI & Lug Torque Audit",
+        "trigger": "miles",
+        "interval": 5000,
+        "buffer": 500,
+        "spec": "Rearward-cross pattern; set cold PSI to 35; torque 21mm lugs to 150 lb-ft"
+      },
+      {
+        "id": "f150_engine_air",
+        "item": "Engine Air Filter Inspection/Replacement",
+        "trigger": "miles",
+        "interval": 15000,
+        "buffer": 1000,
+        "spec": "Inspect Motorcraft FA-1927; replace if gravel dust caked"
+      },
+      {
+        "id": "f150_cabin_air",
+        "item": "Cabin Air Filter Replacement",
+        "trigger": "miles",
+        "interval": 20000,
+        "buffer": 1000,
+        "spec": "Behind glovebox; Motorcraft FP-98"
+      },
+      {
+        "id": "f150_spark_plugs",
+        "item": "Iridium Spark Plug Replacement (Coyote V8)",
+        "trigger": "miles",
+        "interval": 60000,
+        "buffer": 3000,
+        "spec": "8x Motorcraft SP-589 gapped to 0.041 in; torque to 133 lb-in"
+      },
+      {
+        "id": "f150_trans_drain",
+        "item": "10R80 Transmission Fluid & Filter Service",
+        "trigger": "miles",
+        "interval": 50000,
+        "buffer": 3000,
+        "spec": "Drain and refill ~6 qts Motorcraft MERCON ULV ONLY; check level at 180 deg F"
+      },
+      {
+        "id": "f150_transfer_case",
+        "item": "Transfer Case Fluid Drain & Fill",
+        "trigger": "miles",
+        "interval": 50000,
+        "buffer": 3000,
+        "spec": "1.5 qts Motorcraft MERCON LV"
+      },
+      {
+        "id": "f150_rear_diff",
+        "item": "Rear Differential Fluid & Friction Modifier",
+        "trigger": "miles",
+        "interval": 50000,
+        "buffer": 3000,
+        "spec": "2.5 qts 75W-85 Synthetic Gear Lube + 4 oz XL-3 modifier"
+      }
+    ]
+  },
+  "ford_explorer_2020": {
+    "name": "2020 Ford Explorer XLT 4WD",
+    "category": "motor_vehicle",
+    "default_zone": "Mobile / Vehicles",
+    "sub_location": "Home Carport / Bay 2",
+    "identifiers": {
+      "vin": "1FMSK8DH0LGC96226",
+      "engine_code": "2.3L Ti-VCT EcoBoost Turbocharged I4 (300 HP / 310 lb-ft)",
+      "transmission_code": "10R60 10-Speed SelectShift Automatic",
+      "drivetrain": "Intelligent 4WD with Terrain Management System",
+      "status": "Debt Paid in Full (Aug 2026 CFCU) - Dedicated Clean Family & Highway Transport",
+      "owner_manual_code": "LL2J 19A321 AB (Third Printing)"
+    },
+    "specs": {
+      "engine_oil": "5.7 qts (5.4 L) SAE 5W-30 Full Synthetic (WSS-M2C961-A1 / API SP)",
+      "oil_filter": "Motorcraft FL-910S (FL-910-S)",
+      "oil_drain_plug_torque": "20 lb-ft (27 Nm) - 15mm hex head",
+      "engine_air_filter": "Motorcraft FA-1923 / FA-1950",
+      "cabin_air_filter": "Motorcraft FP-91 / FP-93",
+      "spark_plugs": "Motorcraft SP-578 / CYFS-12Y-PCT (Gap: 0.028 - 0.031 in / 0.70 - 0.80 mm, Torque: 133 lb-in)",
+      "transmission_fluid": "12.6 qts dry / ~6 qts service pan drop: Motorcraft MERCON ULV (WSS-M2C949-A ONLY)",
+      "coolant": "11.2 qts (10.6 L) Motorcraft Yellow Prediluted 50/50 Antifreeze (WSS-M97B57-A2)",
+      "rear_axle_ptu": "SAE 75W-85 Synthetic Hypoid Gear Oil (WSS-M2C942-A)",
+      "lug_nut_torque": "150 lb-ft (204 Nm) - 21mm socket on M14x1.5 studs",
+      "tire_pressure_cold": "35 PSI front / 35 PSI rear (255/55R20)",
+      "brake_pads": "Front: 6.5mm / Rear: 5.0mm (RockAuto Carbon-Fiber Ceramic)"
+    },
+    "troubleshooting_and_watchouts": [
+      "NHTSA Recall (Rear Axle Subframe Bolt Fracture): Single horizontal mounting bolt can shear under torsional load, causing rear differential drop and driveshaft disconnect (Recall 22V242000 / 23V675000). Inspect differential mounting bushings and verify updated 4-bolt bracket/cover installed.",
+      "10R60 Transmission Harsh Shifts: TSB 20-2277 / 21-2249 reprogrammed PCM/TCM shift adaptives for harsh 1-2 upshifts and 3-1 deceleration clunks.",
+      "Degas Bottle & Water Pump Micro-Cracks: 2.3L external water pump and plastic degas bottle seam prone to micro-cracks; inspect monthly for sweet coolant odor or crust.",
+      "PTU Fluid Degradation: Power Transfer Unit sits adjacent to exhaust downpipe; service PTU fluid every 30,000\u201345,000 miles to prevent bearing starvation.",
+      "360-Degree Camera Blue Screen: Recall 23V598000 addressed image processing module failure."
+    ],
+    "parts_sourcing": {
+      "oil_and_filter": "Motorcraft FL-910S & 5W-30 Full Synthetic (Costco Kirkland or Mobil 1)",
+      "tires": "Costco Wholesale Michelin / Bridgestone 255/55R20 with Road Hazard Warranty",
+      "brakes": "RockAuto PowerStop Z23 Evolution Sport Carbon-Fiber Ceramic Brake Kit",
+      "spark_plugs": "Motorcraft SP-578 (RockAuto / Ford Parts)",
+      "coolant": "Motorcraft Yellow Prediluted VC-13DL-G"
+    },
+    "rules": [
+      {
+        "id": "exp_oil",
+        "item": "2.3L EcoBoost Engine Oil & FL-910S Filter Change",
+        "trigger": "miles",
+        "interval": 5000,
+        "buffer": 500,
+        "spec": "5.7 qts 5W-30 Full Synthetic + Motorcraft FL-910S; torque drain plug to 20 lb-ft"
+      },
+      {
+        "id": "exp_tire_rot",
+        "item": "Tire Rotation, PSI & Lug Torque Check",
+        "trigger": "miles",
+        "interval": 5000,
+        "buffer": 500,
+        "spec": "Rearward cross; cold 35 PSI; torque lugs to 150 lb-ft"
+      },
+      {
+        "id": "exp_engine_air",
+        "item": "Engine Air Filter Replacement",
+        "trigger": "miles",
+        "interval": 15000,
+        "buffer": 1000,
+        "spec": "Motorcraft FA-1923 / FA-1950"
+      },
+      {
+        "id": "exp_cabin_air",
+        "item": "Cabin Air Filter Replacement",
+        "trigger": "miles",
+        "interval": 20000,
+        "buffer": 1000,
+        "spec": "Behind glovebox; Motorcraft FP-91 / FP-93"
+      },
+      {
+        "id": "exp_spark_plugs",
+        "item": "Spark Plug Replacement (Turbocharged Direct Inj)",
+        "trigger": "miles",
+        "interval": 45000,
+        "buffer": 2000,
+        "spec": "Motorcraft SP-578 gapped to 0.028-0.031 in; torque to 133 lb-in"
+      },
+      {
+        "id": "exp_trans_service",
+        "item": "10R60 Transmission Drain & Fill",
+        "trigger": "miles",
+        "interval": 60000,
+        "buffer": 3000,
+        "spec": "~6 qts Motorcraft MERCON ULV ONLY; inspect level at 190 deg F"
+      },
+      {
+        "id": "exp_coolant",
+        "item": "Coolant Drain & Flush",
+        "trigger": "days",
+        "interval": 1095,
+        "buffer": 60,
+        "spec": "Motorcraft Yellow 50/50 prediluted; inspect degas bottle seam"
+      }
+    ]
+  },
+  "infiniti_sedan": {
+    "name": "Infiniti Sedan (I30 / G37 Commuter Fleet)",
+    "category": "motor_vehicle",
+    "default_zone": "Mobile / Vehicles",
+    "sub_location": "Driveway / Road Bay",
+    "identifiers": {
+      "vin_i30": "JNKCA31AXYT119735 (2000 I30t)",
+      "engines_covered": "VQ30DE-K 3.0L V6 (227 HP) & VQ37VHR 3.7L 24V V6 (328 HP)",
+      "transmissions_covered": "4-Speed RE4F04B & 7-Speed RE7R01A Automatic",
+      "drivetrain": "FWD (I30) / RWD-AWD (G37)",
+      "role": "High-Efficiency Agile Pavement Commuter for Zone 2 Duty at Fort Leavenworth"
+    },
+    "specs": {
+      "engine_oil": "5.1 - 5.2 qts SAE 5W-30 Full Synthetic (API SP / ILSAC GF-6 / Ester-approved)",
+      "oil_filter": "Nissan/Infiniti OEM 15208-65F0E (or Mobil 1 M1-108A / Wix 51358)",
+      "oil_drain_plug_torque": "25 lb-ft (34 Nm) - 14mm head with new copper crush washer",
+      "air_filter": "Twin dual intake elements required on VQ37VHR (Nissan 16546-JK20A); single panel on VQ30DE",
+      "transmission_fluid": "Nissan Matic S (for 7-speed) or Matic D (for 4-speed) - drain and fill ~4.0 qts",
+      "brake_fluid": "DOT 4 High Temp Synthetic (moisture test < 2%)",
+      "coolant": "Nissan Long Life Blue 50/50 Prediluted Antifreeze/Coolant",
+      "spark_plugs": "NGK Laser Iridium (DILKAR7B11 / PFR6G-11) gapped to 0.043 in (1.1 mm)",
+      "lug_nut_torque": "80 lb-ft (108 Nm) - 21mm hex shank mag nuts",
+      "tire_pressure_cold": "35 PSI front / 35 PSI rear"
+    },
+    "troubleshooting_and_watchouts": [
+      "A33 VQ30DE-K Idle Air Control Valve (IACV) Coolant Leak Onto ECU: The #1 catastrophic failure on 2000-2001 I30/Maxima. IACV gasket degrades, letting engine coolant drip directly into stepper motor coils. This shorts the motor and sends a high-voltage surge back into the ECU, frying the STA509A MOSFET chip on the motherboard. Fix: Loop/bypass the 5/16' coolant lines to the IACV or replace gasket immediately.",
+      "VQ37VHR Rear Timing Cover Oil Gallery Gaskets: Pre-2013 VQ37VHR paper gallery gaskets blow out behind the front timing cover, dropping hot idle oil pressure and throwing VTC codes (P0011/P0021). Fix: EPS / CZP reinforced metal-backed gaskets with Allen bolts.",
+      "Serpentine Belt Alignment & Chirp: Inspect idler pulleys and automatic belt tensioner; listen for cold startup chirp indicating pulley bearing dry-out.",
+      "Electronic Steering Column Lock (ESCL): Steering lock actuator motor jams, leaving car stranded in 'LOCK'. Preventative: Pull steering lock fuse in IPDM while in ACC mode."
+    ],
+    "parts_sourcing": {
+      "oil_and_filter": "Nissan OEM 15208-65F0E & 5W-30 Full Synthetic (Nissan Parts Deal / RockAuto)",
+      "iacv_repair": "BWD / Hitachi IACV + Fel-Pro Gasket; RadioShack/DigiKey STA509A MOSFET transistor",
+      "timing_gaskets": "EPS VQ37VHR Upgraded Metal Gallery Gasket Kit",
+      "brakes": "Centric Premium Rotors & Akebono ProACT Ceramic Brake Pads",
+      "spark_plugs": "NGK Laser Iridium (RockAuto)"
+    },
+    "rules": [
+      {
+        "id": "inf_oil",
+        "item": "Engine Oil & OEM 15208-65F0E Filter Service",
+        "trigger": "miles",
+        "interval": 4500,
+        "buffer": 400,
+        "spec": "5.2 qts 5W-30 Full Synthetic + OEM 15208-65F0E; new crush washer; 25 lb-ft plug"
+      },
+      {
+        "id": "inf_tire_rot",
+        "item": "Tire Rotation, Balance & Lug Torque",
+        "trigger": "miles",
+        "interval": 5000,
+        "buffer": 500,
+        "spec": "Verify directional/staggered tread; cold 35 PSI; torque to 80 lb-ft"
+      },
+      {
+        "id": "inf_air_filters",
+        "item": "Engine Air Filter Elements Replacement",
+        "trigger": "miles",
+        "interval": 15000,
+        "buffer": 1000,
+        "spec": "Replace air filters (twin elements on VQ37VHR)"
+      },
+      {
+        "id": "inf_brake_fluid",
+        "item": "DOT 4 Brake Fluid Moisture & Flush",
+        "trigger": "days",
+        "interval": 730,
+        "buffer": 45,
+        "spec": "Moisture pen check (< 2%); flush lines with fresh DOT 4 fluid"
+      },
+      {
+        "id": "inf_iacv_audit",
+        "item": "IACV Coolant Chamber Inspection / Bypass",
+        "trigger": "days",
+        "interval": 365,
+        "buffer": 30,
+        "spec": "Verify zero coolant seepage at throttle body / IACV to protect ECU MOSFETs"
+      },
+      {
+        "id": "inf_spark_plugs",
+        "item": "NGK Laser Iridium Spark Plugs",
+        "trigger": "miles",
+        "interval": 60000,
+        "buffer": 3000,
+        "spec": "6x NGK Laser Iridium pre-gapped to 0.043 in; torque to 18 lb-ft"
+      }
+    ]
+  },
+  "bumper_pull_horse_trailer": {
+    "name": "Black Bumper Pull Horse Trailer",
+    "category": "towing_equipment",
+    "default_zone": "Pastures / Land",
+    "sub_location": "Outbuilding / Equipment Pad",
+    "identifiers": {
+      "type": "Tandem-Axle Livestock & Equipment Transport Trailer",
+      "color": "Black Enamel",
+      "hitch_spec": "Class IV 2-5/16 in Ball Coupler",
+      "floor_construction": "Treated 2x8 Yellow Pine under 3/4 in Vulcanized Rubber Stall Mats",
+      "towing_rig": "2024 Ford F-150 SuperCrew 4x4 with Weight-Distribution Hitch"
+    },
+    "specs": {
+      "coupler_size": "2-5/16 in Ball (Class IV stamped latch; 18-20 in ball height to top of ball)",
+      "safety_chains": "Dual Grade 70 5/16 in Transport Chains with safety latch hooks (Crossed in X-cradle)",
+      "breakaway_system": "12V 5Ah Sealed Lead Acid (SLA) battery + weatherproof switch + steel lanyard",
+      "breakaway_battery_voltage": "Must test > 12.4V before every towing event; replace battery every 2-3 years",
+      "axles": "Tandem Dexter 3,500 lb (or 5,200 lb) with integrated 10x2-1/4 in electric drum brakes on BOTH axles",
+      "wheel_bearings": "Inner L68149 / Outer LM67048 with double-lip grease seals (10-19 / 1.719 in ID)",
+      "wheel_bearing_grease": "NLGI No. 2 High-Temp Red Lithium Complex EP (Dropping point > 450 deg F)",
+      "trailer_tires": "ST205/75R15 or ST225/75R15 Special Trailer Radials (Load Range D: 65 PSI | Load Range E: 80 PSI)",
+      "tire_replacement_rule": "Strict 5 to 6 year replacement lifecycle regardless of remaining tread depth (UV/ozone dry-rot)",
+      "lug_nut_torque": "90 - 120 lb-ft (Retorque at 25, 50, and 100 miles after any wheel removal)",
+      "wiring_plug": "Standard RV 7-Way Spade Blade connector"
+    },
+    "troubleshooting_and_watchouts": [
+      "Subfloor Wood Rot Under Rubber Stall Mats: The #1 cause of catastrophic livestock transport accidents. Horse urine and wash-down water contain acid and ammonia that pool beneath heavy rubber mats. The acid rots treated 2x8 dimensional lumber and corrodes steel crossmembers invisibly until a horse steps through the floor during highway transit. Mandatory: Pull stall mats every 6 months, scrape debris, probe wood with awl, pressure wash, sun-dry completely, and seal with wood preservative.",
+      "Electric Brake Shoe Adjustment & Magnet Wear: Uneven braking causes trailer to shove truck sideways during panic stops. Inspect magnet faces for annular wear grooves. Adjust star-wheel shoe clearance: rotate jacked wheel, tighten until shoes drag, then back off 7-10 clicks until wheel spins freely with slight whisper.",
+      "Breakaway Lanyard & Battery Freeze: In winter, 12V SLA battery freezes and drops below 10.5V. Test with multimeter before every haul; pull pin manually to confirm all 4 brakes lock solid.",
+      "Tongue Weight & Weight Distribution: Tongue weight must be 10-15% of gross trailer weight. For heavy loads (> 5,000 lbs), engage weight-distribution spring bars to level truck headlights and restore front axle steering authority."
+    ],
+    "parts_sourcing": {
+      "bearings_and_seals": "Dexter Trailer Bearing Kit (Timken L68149/LM67048 + Double-Lip Seal 10-19) from etrailer or Tractor Supply",
+      "breakaway_battery": "12V 5Ah SLA Rechargeable Battery (ExpertPower EXP1250 / Casil CA1250)",
+      "grease": "Lucas Oil Red 'N' Tacky #2 Multi-Purpose Lithium Grease",
+      "tires": "Goodyear Endurance ST Radial Trailer Tires (Tire Rack / Discount Tire)",
+      "brake_assemblies": "Dexter 10x2-1/4 in Electric Brake Assembly Pair (Left #K23-026-00 / Right #K23-027-00)"
+    },
+    "rules": [
+      {
+        "id": "trl_floor_check",
+        "item": "Pull Rubber Mats & Subfloor Structural Inspection",
+        "trigger": "days",
+        "interval": 180,
+        "buffer": 20,
+        "spec": "Pull all mats; scrape manure/urine acid; probe 2x8 wood with awl; check steel crossmember welds"
+      },
+      {
+        "id": "trl_bearings",
+        "item": "Wheel Bearing Repack & Double-Lip Seal Replacement",
+        "trigger": "days",
+        "interval": 365,
+        "buffer": 30,
+        "spec": "Disassemble 4 hubs; solvent wash; hand-pack Timken bearings with NLGI No. 2 Red Lithium; new seals"
+      },
+      {
+        "id": "trl_breakaway",
+        "item": "Breakaway Battery Load Test & Pin Verification",
+        "trigger": "days",
+        "interval": 90,
+        "buffer": 14,
+        "spec": "Multimeter test (> 12.4V); pull emergency pin to verify instant 4-wheel electric brake lock"
+      },
+      {
+        "id": "trl_brakes",
+        "item": "Electric Brake Shoe & Magnet Wear Inspection",
+        "trigger": "days",
+        "interval": 365,
+        "buffer": 30,
+        "spec": "Inspect shoe lining (> 1/16 in); inspect magnet face for uneven grooving; adjust star wheel"
+      },
+      {
+        "id": "trl_coupler",
+        "item": "Coupler Latch, Jack Zerk & Safety Chain Inspection",
+        "trigger": "days",
+        "interval": 90,
+        "buffer": 14,
+        "spec": "Grease jack zerk fitting; dry-film lube ball pocket; verify Grade 70 safety hooks and latches"
+      },
+      {
+        "id": "trl_tire_audit",
+        "item": "Trailer Tire Cold PSI & Sidewall Date Code Audit",
+        "trigger": "days",
+        "interval": 30,
+        "buffer": 7,
+        "spec": "Verify cold pressure per sidewall (65-80 PSI); verify DOT date code is under 5 years old"
+      }
+    ]
+  },
+  "cub_cadet_zero_turn": {
+    "name": "Cub Cadet Ultima ZT1 / ZT2 Zero Turn Lawn Mower",
+    "category": "lawn_equipment",
+    "default_zone": "Shop / Garage",
+    "sub_location": "White Shed Bay 3 / Shop Apron",
+    "identifiers": {
+      "series": "Ultima ZT1 / ZT2 Series",
+      "cutting_deck": "50 in or 54 in AeroForce Fabricated 11-Gauge Triple-Blade Deck",
+      "engine_options": "Kohler 7000 Series V-Twin (KT725/735 22-24 HP) or Kawasaki FR691V (23 HP)",
+      "transmissions": "Dual Hydro-Gear EZT-2200 or ZT-2800 Hydrostatic Transaxles",
+      "operating_hours": 112,
+      "fuel_capacity": "3.5 Gallons"
+    },
+    "specs": {
+      "engine_oil": "1.8 - 2.0 qts SAE 10W-30 (or SAE 20W-50 / 10W-40 in summer > 85 deg F)",
+      "oil_filter": "Kohler OEM 12-050-01-S (extra capacity 52-050-02-S) or Kawasaki 49065-7010 / 49065-0721",
+      "air_filter": "Dual-stage pleated paper cartridge + oiled foam pre-cleaner (Kohler 16-083-04-S / Kawasaki 11013-0752)",
+      "fuel_filter": "In-line 15-micron clear fuel filter (Kohler 25-050-22-S)",
+      "spark_plugs": "Champion RC12YC or NGK BPR4ES (Gap: 0.030 in / 0.76 mm, Torque: 18-22 lb-ft)",
+      "cutting_blades": "3-Blade set high-lift mulching/discharge (Torque spindle center bolts to 70-90 lb-ft)",
+      "deck_belt": "Cub Cadet OEM Kevlar-wrapped belt (Part # 954-04329A for 54 in / 954-04328 for 50 in)",
+      "tire_pressures": "Front Casters: 20-25 PSI | Rear Drive Wheels: 10-12 PSI (Critical: Must be matched L/R for tracking)",
+      "spindle_grease": "NLGI No. 2 Multi-Purpose Lithium Grease (3 deck spindle zerks + 2 front caster pivot zerks)",
+      "pto_clutch_air_gap": "0.012 in feeler gauge through 3 adjustment slots"
+    },
+    "troubleshooting_and_watchouts": [
+      "Hydrostatic Tracking Drift (Veering Left/Right): If mower pulls to one side when pushing both lap bars full forward, do NOT adjust control linkages first. Check rear tire pressure first. A 2 PSI difference between rear drive tires causes immediate steering pull. If tires are exactly 10-12 PSI, adjust the linkage stop bolts or dampener nuts under the seat.",
+      "Electric PTO Clutch Slip & High Air Gap: If blades fail to engage or slip under tall grass load, check the electric PTO clutch air gap. Insert a 0.012-inch feeler gauge through the 3 perimeter slots; tighten the 3 spring-loaded adjustment nuts evenly until slight drag is felt.",
+      "Ethanol Phase Separation & Carburetor Gelling: Ethanol-blended fuel sitting in the float bowl during winter separates, causing water corrosion and brass pilot jet clogging (engine surges or only runs on choke). Use ethanol-free 91+ gas or add Sta-Bil/Sea Foam; drain float bowl before winter mothballing.",
+      "Grass Caking Under Deck: Compacted thatch under the deck restricts air velocity, dulls blade tips, and overloads the Kevlar deck belt. Scrape deck underside every 15 operating hours."
+    ],
+    "parts_sourcing": {
+      "oil_and_filters": "Kohler 12-050-01-S / Kawasaki 49065-7010 & Rotella T4 10W-30 (Tractor Supply, Amazon)",
+      "deck_belts": "Cub Cadet OEM 954-04329A Kevlar Deck Belt (Cub Cadet Direct / MTD Parts)",
+      "blades": "Cub Cadet 2-in-1 High Lift Blades (Set of 3) or Oregon 98-086 Gator Blades",
+      "pto_clutch": "Warner Electric PTO Clutch 5219-152 / Cub Cadet 917-05121",
+      "fuel_treatment": "Sea Foam Motor Treatment or Sta-Bil Storage Fuel Stabilizer"
+    },
+    "rules": [
+      {
+        "id": "mow_oil",
+        "item": "V-Twin Engine Oil & OEM Filter Service",
+        "trigger": "hours",
+        "interval": 50,
+        "buffer": 5,
+        "spec": "2.0 qts SAE 10W-30 + OEM Kohler/Kawasaki filter; verify level on dipstick"
+      },
+      {
+        "id": "mow_grease",
+        "item": "Deck Spindle & Caster Pivot Zerk Greasing",
+        "trigger": "hours",
+        "interval": 25,
+        "buffer": 5,
+        "spec": "NLGI No. 2 Red Grease into 3 spindle zerks and 2 caster pivots until fresh purge"
+      },
+      {
+        "id": "mow_blades",
+        "item": "Blade Sharpening, Balance & Torque Audit",
+        "trigger": "hours",
+        "interval": 25,
+        "buffer": 5,
+        "spec": "Grind 30 deg bevel; balance on cone balancer; torque spindle center bolts to 80 lb-ft"
+      },
+      {
+        "id": "mow_deck_clean",
+        "item": "Deck Underside Scraping & Belt Inspection",
+        "trigger": "hours",
+        "interval": 15,
+        "buffer": 3,
+        "spec": "Scrape compacted clippings; inspect Kevlar belt for edge fraying; check idler pulley tension"
+      },
+      {
+        "id": "mow_air_filter",
+        "item": "Air Filter Pre-Cleaner Wash & Paper Inspection",
+        "trigger": "hours",
+        "interval": 50,
+        "buffer": 10,
+        "spec": "Wash foam pre-cleaner in warm soapy water, dry and oil lightly; tap paper cartridge clean"
+      },
+      {
+        "id": "mow_pto_clutch",
+        "item": "Electric PTO Clutch Air Gap Feeler Gauge Audit",
+        "trigger": "hours",
+        "interval": 100,
+        "buffer": 15,
+        "spec": "Feeler gauge check (0.012 in) through 3 slots; adjust nuts evenly to restore blade grab"
+      },
+      {
+        "id": "mow_winterize",
+        "item": "End-of-Season Fuel Drain & Cylinder Fogging",
+        "trigger": "days",
+        "interval": 365,
+        "buffer": 30,
+        "spec": "Drain carb bowl; treat tank with Sta-Bil; remove battery to trickle tender"
+      }
+    ]
+  }
+};
+
+// Dynamic Mutable Instance State
+let STATE = {
+  "metadata": {
+    "system": "Bold Bovine OS",
+    "subsystem": "Fleet Core & Mobility Operations",
+    "version": "2.0.0",
+    "primary_zones": [
+      "Mobile / Vehicles",
+      "Shop / Garage",
+      "Pastures / Land",
+      "Office / Desk",
+      "Home / Interior"
+    ]
+  },
+  "assets": {
+    "ford_f150_2024": {
+      "id": "ford_f150_2024",
+      "current_metric": 32106,
+      "metric_type": "miles",
+      "zone": "Mobile / Vehicles",
+      "sub_location": "Driveway / Shop Apron",
+      "operator": "Josh",
+      "service_history": {
+        "f150_oil": 30000,
+        "f150_tire_rot": 30000,
+        "f150_engine_air": 20000,
+        "f150_cabin_air": 20000,
+        "f150_spark_plugs": 0,
+        "f150_trans_drain": 0,
+        "f150_transfer_case": 0,
+        "f150_rear_diff": 0
+      }
+    },
+    "ford_explorer_2020": {
+      "id": "ford_explorer_2020",
+      "current_metric": 71200,
+      "metric_type": "miles",
+      "zone": "Mobile / Vehicles",
+      "sub_location": "Home Carport / Bay 2",
+      "operator": "Joint",
+      "service_history": {
+        "exp_oil": 70000,
+        "exp_tire_rot": 70000,
+        "exp_engine_air": 60000,
+        "exp_cabin_air": 60000,
+        "exp_spark_plugs": 45000,
+        "exp_trans_service": 60000,
+        "exp_coolant": 180
+      }
+    },
+    "infiniti_sedan": {
+      "id": "infiniti_sedan",
+      "current_metric": 82000,
+      "metric_type": "miles",
+      "zone": "Mobile / Vehicles",
+      "sub_location": "Driveway / Road Bay",
+      "operator": "Josh",
+      "service_history": {
+        "inf_oil": 80000,
+        "inf_tire_rot": 80000,
+        "inf_air_filters": 70000,
+        "inf_brake_fluid": 250,
+        "inf_iacv_audit": 180,
+        "inf_spark_plugs": 60000
+      }
+    },
+    "bumper_pull_horse_trailer": {
+      "id": "bumper_pull_horse_trailer",
+      "current_metric": 0,
+      "metric_type": "days",
+      "zone": "Pastures / Land",
+      "sub_location": "Outbuilding / Equipment Pad",
+      "operator": "Josh",
+      "service_history": {
+        "trl_floor_check": 60,
+        "trl_bearings": 180,
+        "trl_breakaway": 30,
+        "trl_brakes": 180,
+        "trl_coupler": 30,
+        "trl_tire_audit": 15
+      }
+    },
+    "cub_cadet_zero_turn": {
+      "id": "cub_cadet_zero_turn",
+      "current_metric": 6,
+      "metric_type": "hours",
+      "zone": "Shop / Garage",
+      "sub_location": "White Shed Bay 3",
+      "operator": "Josh",
+      "service_history": {
+        "mow_oil": 100,
+        "mow_grease": 105,
+        "mow_blades": 105,
+        "mow_deck_clean": 110,
+        "mow_air_filter": 80,
+        "mow_pto_clutch": 100,
+        "mow_winterize": 300
+      }
+    }
+  }
+};
+
+// -------------------------------------------------------------------------
+// THEME SWITCHER
+// -------------------------------------------------------------------------
+function initTheme() {
+  const t = localStorage.getItem("bb_os_theme") || "broadsheet";
+  setTheme(t);
+}
+function setTheme(t) {
+  document.documentElement.setAttribute("data-theme", t);
+  localStorage.setItem("bb_os_theme", t);
+  const btn = document.getElementById("theme-toggle");
+  btn.textContent = t === "hearth" ? "☕ Hearth Dark" : "📰 Broadsheet Mode";
+}
+document.getElementById("theme-toggle").addEventListener("click", () => {
+  const cur = document.documentElement.getAttribute("data-theme") || "broadsheet";
+  setTheme(cur === "broadsheet" ? "hearth" : "broadsheet");
+});
+initTheme();
+
+// -------------------------------------------------------------------------
+// DETERMINISTIC EVALUATION ENGINE
+// -------------------------------------------------------------------------
+function evaluateRule(rule, currentMetric, lastServiced) {
+  const diff = currentMetric - (lastServiced || 0);
+  const remaining = rule.interval - diff;
+
+  if (remaining <= 0) {
+    return { status: "OVERDUE", code: "danger", delta: Math.abs(remaining), diff: diff };
+  } else if (remaining <= rule.buffer) {
+    return { status: "DUE SOON", code: "warn", delta: remaining, diff: diff };
+  }
+  return { status: "NOMINAL", code: "ok", delta: remaining, diff: diff };
+}
+
+function updateMetric(assetId, newValue) {
+  STATE.assets[assetId].current_metric = parseFloat(newValue) || 0;
+  saveLocal();
+  render();
+}
+
+function logService(assetId, ruleId) {
+  const cur = STATE.assets[assetId].current_metric;
+  STATE.assets[assetId].service_history[ruleId] = cur;
+  saveLocal();
+  render();
+}
+
+function copyTaskToLedger(assetName, zone, operator, ruleItem, spec) {
+  const line = `* [ ] Service: ${ruleItem} (${assetName}) | Zone: ${zone} | Assigned: ${operator} | Spec: ${spec} | Logged: ${new Date().toLocaleDateString()}`;
+  navigator.clipboard.writeText(line).then(() => {
+    alert("📋 Copied Atomic Task for Bold Bovine Ledger:\n\n" + line);
+  });
+}
+
+function saveLocal() {
+  localStorage.setItem("household_fleet_state_v2", JSON.stringify(STATE));
+}
+
+function loadLocal() {
+  const raw = localStorage.getItem("household_fleet_state_v2");
+  if (raw) {
+    try { STATE = JSON.parse(raw); } catch(e) {}
+  }
+}
+
+// -------------------------------------------------------------------------
+// LOCAL ENCRYPTION AT REST (WebCrypto AES-GCM)
+// -------------------------------------------------------------------------
+async function getKey(password, salt) {
+  const enc = new TextEncoder();
+  const keyMaterial = await window.crypto.subtle.importKey(
+    "raw", enc.encode(password), "PBKDF2", false, ["deriveKey"]
+  );
+  return window.crypto.subtle.deriveKey(
+    { name: "PBKDF2", salt: salt, iterations: 100000, hash: "SHA-256" },
+    keyMaterial,
+    { name: "AES-GCM", length: 256 },
+    false,
+    ["encrypt", "decrypt"]
+  );
+}
+
+async function saveEncryptedVault() {
+  const pwd = document.getElementById("vault-passphrase").value;
+  if (!pwd) return alert("Enter a passphrase to lock the vault.");
+  
+  const salt = window.crypto.getRandomValues(new Uint8Array(16));
+  const iv = window.crypto.getRandomValues(new Uint8Array(12));
+  const key = await getKey(pwd, salt);
+  const enc = new TextEncoder();
+  const ciphertext = await window.crypto.subtle.encrypt(
+    { name: "AES-GCM", iv: iv },
+    key,
+    enc.encode(JSON.stringify(STATE))
+  );
+
+  const payload = {
+    salt: Array.from(salt),
+    iv: Array.from(iv),
+    data: Array.from(new Uint8Array(ciphertext))
+  };
+
+  localStorage.setItem("household_fleet_state_encrypted_v2", JSON.stringify(payload));
+  document.getElementById("vault-status").innerHTML = "<strong style='color:var(--ok-text);'>Encrypted In LocalStorage</strong>";
+  alert("Fleet state successfully encrypted with AES-GCM.");
+}
+
+async function loadEncryptedVault() {
+  const pwd = document.getElementById("vault-passphrase").value;
+  if (!pwd) return alert("Enter passphrase to decrypt.");
+  const raw = localStorage.getItem("household_fleet_state_encrypted_v2");
+  if (!raw) return alert("No encrypted payload found in localStorage.");
+
+  try {
+    const payload = JSON.parse(raw);
+    const salt = new Uint8Array(payload.salt);
+    const iv = new Uint8Array(payload.iv);
+    const data = new Uint8Array(payload.data);
+    const key = await getKey(pwd, salt);
+
+    const decrypted = await window.crypto.subtle.decrypt(
+      { name: "AES-GCM", iv: iv },
+      key,
+      data
+    );
+
+    STATE = JSON.parse(new TextDecoder().decode(decrypted));
+    document.getElementById("vault-status").innerHTML = "<strong style='color:var(--heading);'>Decrypted Vault Active</strong>";
+    render();
+    alert("Vault decrypted successfully.");
+  } catch(e) {
+    alert("Decryption failed. Invalid passphrase.");
+  }
+}
+
+// -------------------------------------------------------------------------
+// RENDER INTERFACE (3-Axis Compound Filtering)
+// -------------------------------------------------------------------------
+function render() {
+  const qWhat = document.getElementById("query-what").value.toLowerCase().trim();
+  const qWhere = document.getElementById("query-where").value;
+  const qStatus = document.getElementById("query-status").value;
+  const container = document.getElementById("fleet-grid");
+  container.innerHTML = "";
+
+  Object.keys(BOK).forEach(id => {
+    const bok = BOK[id];
+    const asset = STATE.assets[id];
+
+    // Spatial Filter
+    if (qWhere !== "ALL" && asset.zone !== qWhere) return;
+
+    // Evaluate Rules
+    let rowsHtml = "";
+    let hasAction = false;
+    let cardMatchesWhat = bok.name.toLowerCase().includes(qWhat) || 
+                          asset.zone.toLowerCase().includes(qWhat) ||
+                          JSON.stringify(bok.specs).toLowerCase().includes(qWhat) ||
+                          JSON.stringify(bok.troubleshooting_and_watchouts).toLowerCase().includes(qWhat);
+
+    bok.rules.forEach(rule => {
+      const last = asset.service_history[rule.id] || 0;
+      const res = evaluateRule(rule, asset.current_metric, last);
+
+      if (res.code !== "ok") hasAction = true;
+
+      // Status Filter
+      if (qStatus === "ACTION" && res.code === "ok") return;
+      if (qStatus === "NOMINAL" && res.code !== "ok") return;
+
+      // Keyword Filter against rule
+      const ruleMatchesWhat = rule.item.toLowerCase().includes(qWhat) || 
+                              rule.spec.toLowerCase().includes(qWhat);
+      if (qWhat && !ruleMatchesWhat && !cardMatchesWhat) return;
+
+      rowsHtml += `
+        <tr>
+          <td>
+            <strong>${rule.item}</strong><br>
+            <small style="color:var(--text-muted);">${rule.spec}</small>
+          </td>
+          <td style="font-family:var(--font-mono);">${rule.interval.toLocaleString()} ${asset.metric_type}</td>
+          <td style="font-family:var(--font-mono);">${last.toLocaleString()}</td>
+          <td><span class="badge badge-${res.code}">${res.status} (${res.delta.toLocaleString()} ${asset.metric_type})</span></td>
+          <td style="white-space:nowrap;">
+            <button class="btn-action-task" onclick="logService('${id}', '${rule.id}')">✓ Done</button>
+            <button class="btn-action-task" onclick="copyTaskToLedger('${bok.name.replace(/'/g, "\\'")}', '${asset.zone}', '${asset.operator}', '${rule.item.replace(/'/g, "\\'")}', '${rule.spec.replace(/'/g, "\\'")}')">📋 Copy</button>
+          </td>
+        </tr>
+      `;
+    });
+
+    if (!rowsHtml && qStatus !== "ALL") return;
+    if (qWhat && !cardMatchesWhat && !rowsHtml) return;
+
+    // Spec Box
+    let specsHtml = Object.entries(bok.specs)
+      .map(([k, v]) => `<div class="spec-item"><strong>${k.replace(/_/g, ' ')}</strong>${v}</div>`)
+      .join("");
+
+    // Troubleshooting / Watchouts
+    let watchHtml = bok.troubleshooting_and_watchouts
+      .map(w => `<li>${w}</li>`)
+      .join("");
+
+    // Parts Sourcing
+    let partsHtml = Object.entries(bok.parts_sourcing || {})
+      .map(([k, v]) => `<div><strong>${k.replace(/_/g, ' ').toUpperCase()}:</strong> ${v}</div>`)
+      .join("");
+
+    const card = document.createElement("div");
+    card.className = "asset-card";
+    card.innerHTML = `
+      <div class="asset-header">
+        <div>
+          <div style="font-family:var(--font-mono); font-size:11px; color:var(--text-dim); text-transform:uppercase;">
+            ${asset.zone} · ${asset.sub_location} · Operator: ${asset.operator}
+          </div>
+          <h2 class="asset-name">${bok.name}</h2>
+        </div>
+        <div style="text-align:right;">
+          <label style="font-family:var(--font-mono); font-size:10px; color:var(--text-dim); display:block; text-transform:uppercase;">CURRENT ${asset.metric_type.toUpperCase()}</label>
+          <input type="number" value="${asset.current_metric}" id="metric-${id}" style="width:130px; font-family:var(--font-mono); font-weight:700; text-align:right;"
+                 onchange="updateMetric('${id}', this.value)">
+        </div>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table class="rules-table">
+          <thead>
+            <tr>
+              <th>Procedure / Subsystem</th>
+              <th>Interval</th>
+              <th>Last Serviced</th>
+              <th>Deterministic Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsHtml || `<tr><td colspan="5" style="text-align:center; color:var(--text-dim); padding:16px;">All rules nominal or filter criteria not met</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="spec-grid">
+        ${specsHtml}
+      </div>
+
+      <div class="trouble-box">
+        <strong>⚠️ Field Watchouts, Recalls & Mechanical Failure Modes:</strong>
+        <ul>${watchHtml}</ul>
+      </div>
+
+      <div class="parts-box">
+        <strong>📦 OEM Parts Sourcing & Approved Equivalents:</strong>
+        ${partsHtml}
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+// Initialize
+loadLocal();
+render();
+setInterval(() => {
+  document.getElementById("clock").innerText = new Date().toLocaleDateString(undefined, {
+    weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'
+  }) + " · Easton";
+}, 1000);
+</script>
+</body>
+</html>

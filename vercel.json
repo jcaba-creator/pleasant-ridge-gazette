@@ -4,6 +4,14 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/fleet",
+      "destination": "/fleet_system.html"
+    },
+    {
+      "source": "/fleet.html",
+      "destination": "/fleet_system.html"
+    },
+    {
       "source": "/field-ops",
       "destination": "/Symbolic_Entity_Navigator.html"
     },

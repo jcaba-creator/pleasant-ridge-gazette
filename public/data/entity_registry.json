@@ -1,0 +1,909 @@
+[
+  {
+    "id": "tool_xtool_d1",
+    "name": "xTool D1 Pro 20W Laser",
+    "domain": "shop_fabrication",
+    "entity_type": "equipment",
+    "keywords": [
+      "laser",
+      "engraver",
+      "diode",
+      "cutter",
+      "optics",
+      "billow breeze",
+      "leather",
+      "acrylic",
+      "wood"
+    ],
+    "spatial": {
+      "zone": "Shop / Garage",
+      "sub_location": "Bay 2 (Laser Cell)",
+      "coordinates": {
+        "x": 12,
+        "y": 4
+      },
+      "geofence_id": "outbuilding_workshop"
+    },
+    "temporal": {
+      "created_date": "2026-05-10",
+      "last_inspected": "2026-10-01",
+      "next_maintenance_due": "2026-11-01",
+      "active_state": "operational"
+    },
+    "relationships": {
+      "assigned_operator": "Josh",
+      "power_source": "circuit_panel_shop_b4",
+      "parent_system": "billow_breeze_micro_manufacturing"
+    },
+    "deterministic_rules": [
+      {
+        "rule_id": "lens_cleaning_interval",
+        "description": "Optical Lens Inspection & Isopropyl Cleaning",
+        "trigger_type": "operating_hours",
+        "threshold": 10,
+        "current_value": 8.5,
+        "action_required": "Clean laser lens with 99% isopropyl alcohol"
+      },
+      {
+        "rule_id": "window_exhaust_seal_check",
+        "description": "Exhaust Window Port Negative Pressure Seal",
+        "trigger_type": "date",
+        "target_date": "2026-10-25",
+        "action_required": "Inspect EPDM seal on window exhaust port"
+      }
+    ],
+    "attributes": {
+      "optical_power_watts": 20,
+      "wavelength_nm": 455,
+      "spot_size_mm": "0.08 x 0.06",
+      "air_assist_psi": "15-20",
+      "time_buffer_rule": "+25% temporal capacity"
+    }
+  },
+  {
+    "id": "tool_htvront_heatpress",
+    "name": "HTVRONT Auto Commercial Heat Press",
+    "domain": "shop_fabrication",
+    "entity_type": "equipment",
+    "keywords": [
+      "heat press",
+      "apparel",
+      "dtf",
+      "shirts",
+      "hoodies",
+      "platen",
+      "sublimation",
+      "billow breeze"
+    ],
+    "spatial": {
+      "zone": "Shop / Garage",
+      "sub_location": "Bay 1 (DTF Press Island)",
+      "coordinates": {
+        "x": 8,
+        "y": 6
+      },
+      "geofence_id": "outbuilding_workshop"
+    },
+    "temporal": {
+      "created_date": "2026-06-01",
+      "last_inspected": "2026-10-15",
+      "next_maintenance_due": "2026-11-15",
+      "active_state": "operational"
+    },
+    "relationships": {
+      "assigned_operator": "Joint",
+      "power_source": "circuit_panel_shop_b2",
+      "parent_system": "billow_breeze_micro_manufacturing"
+    },
+    "deterministic_rules": [
+      {
+        "rule_id": "platen_teflon_inspection",
+        "description": "Platen Non-Stick Coating & Teflon Sheet Check",
+        "trigger_type": "operating_hours",
+        "threshold": 50,
+        "current_value": 48.0,
+        "action_required": "Inspect upper heating platen for adhesive buildup"
+      }
+    ],
+    "attributes": {
+      "dwell_time_seconds": 15,
+      "operating_temp_f": "310-315",
+      "platen_size_inches": "15 x 15",
+      "peel_mode": "Cold-peel polyurethane crystallization"
+    }
+  },
+  {
+    "id": "machinery_bobcat_743",
+    "name": "Bobcat 743 Skid Steer Loader",
+    "domain": "farm_infrastructure",
+    "entity_type": "machinery",
+    "keywords": [
+      "bobcat",
+      "skid steer",
+      "loader",
+      "hydraulics",
+      "kubota diesel",
+      "earthmoving",
+      "bale spear"
+    ],
+    "spatial": {
+      "zone": "Shop / Garage",
+      "sub_location": "Heavy Equipment Bay",
+      "coordinates": {
+        "x": 2,
+        "y": 14
+      },
+      "geofence_id": "outbuilding_shed"
+    },
+    "temporal": {
+      "created_date": "2026-04-12",
+      "last_inspected": "2026-09-20",
+      "next_maintenance_due": "2026-10-20",
+      "active_state": "action_required"
+    },
+    "relationships": {
+      "assigned_operator": "Josh",
+      "power_source": "kubota_v1702_diesel",
+      "parent_system": "homestead_earthmoving_fleet"
+    },
+    "deterministic_rules": [
+      {
+        "rule_id": "hydraulic_fluid_filter_due",
+        "description": "Hydraulic Filter & Return Line Inspection",
+        "trigger_type": "operating_hours",
+        "threshold": 100,
+        "current_value": 102.5,
+        "action_required": "Replace hydraulic return filter cartridge & top off AW-46 fluid"
+      },
+      {
+        "rule_id": "pivot_grease_points",
+        "description": "Chassis & Loader Arm Zerk Greasing",
+        "trigger_type": "date",
+        "target_date": "2026-10-18",
+        "action_required": "Grease all 14 loader arm pivot zerk fittings"
+      }
+    ],
+    "attributes": {
+      "engine": "Kubota V1702 4-Cylinder Diesel",
+      "rated_operating_capacity_lbs": 1300,
+      "tire_pressure_psi": 45,
+      "fuel_tank_gallons": 14
+    }
+  },
+  {
+    "id": "infra_water_system_multicell",
+    "name": "Multi-Cell Homestead Water Hydraulics Station",
+    "domain": "farm_infrastructure",
+    "entity_type": "infrastructure",
+    "keywords": [
+      "water",
+      "well",
+      "pressure tank",
+      "uv sterilizer",
+      "sediment filter",
+      "paddock hydrant",
+      "pump"
+    ],
+    "spatial": {
+      "zone": "Pastures / Land",
+      "sub_location": "Wellhead Utility Vault",
+      "coordinates": {
+        "x": 18,
+        "y": 2
+      },
+      "geofence_id": "wellhead_station"
+    },
+    "temporal": {
+      "created_date": "2026-06-15",
+      "last_inspected": "2026-10-01",
+      "next_maintenance_due": "2026-11-01",
+      "active_state": "operational"
+    },
+    "relationships": {
+      "assigned_operator": "Josh",
+      "power_source": "circuit_panel_well_240v",
+      "parent_system": "homestead_utility_resilience"
+    },
+    "deterministic_rules": [
+      {
+        "rule_id": "sediment_filter_differential",
+        "description": "5-Micron Spun Polypropylene Sediment Filter Cartridge",
+        "trigger_type": "date",
+        "target_date": "2026-10-24",
+        "action_required": "Depressurize canister and replace 5-micron pre-filter cartridge"
+      }
+    ],
+    "attributes": {
+      "cut_in_pressure_psi": 40,
+      "cut_out_pressure_psi": 60,
+      "flow_rate_gpm": 12,
+      "hydrants_serviced": [
+        "Paddock 1 Quick-Coupler",
+        "Garden Spigot",
+        "White Shed Washdown"
+      ]
+    }
+  },
+  {
+    "id": "infra_hvac_lennox_system",
+    "name": "Lennox Central HVAC & Smart Inrush Monitor",
+    "domain": "home_interior",
+    "entity_type": "infrastructure",
+    "keywords": [
+      "hvac",
+      "lennox",
+      "furnace",
+      "heat pump",
+      "inrush current",
+      "filter",
+      "thermostat",
+      "capacitor"
+    ],
+    "spatial": {
+      "zone": "Home / Interior",
+      "sub_location": "Basement Utility Room",
+      "coordinates": {
+        "x": 4,
+        "y": 8
+      },
+      "geofence_id": "main_residence"
+    },
+    "temporal": {
+      "created_date": "2026-01-01",
+      "last_inspected": "2026-09-15",
+      "next_maintenance_due": "2026-10-15",
+      "active_state": "action_required"
+    },
+    "relationships": {
+      "assigned_operator": "Josh",
+      "power_source": "main_breaker_panel_hvac_40a",
+      "parent_system": "household_climate_os"
+    },
+    "deterministic_rules": [
+      {
+        "rule_id": "merv11_air_filter_replacement",
+        "description": "MERV-11 16x25x1 Pleated Filter Exchange",
+        "trigger_type": "date",
+        "target_date": "2026-10-15",
+        "action_required": "Replace 16x25x1 return filter in furnace intake boot"
+      },
+      {
+        "rule_id": "run_capacitor_tolerance_test",
+        "description": "Dual Run Capacitor Microfarad (uF) Tolerance Audit",
+        "trigger_type": "date",
+        "target_date": "2026-11-01",
+        "action_required": "Meter capacitance on Herm/Fan posts within \u00b16% rated value"
+      }
+    ],
+    "attributes": {
+      "filter_size": "16 x 25 x 1 MERV-11",
+      "refrigerant_type": "R-410A",
+      "contactor_rating_amps": 30,
+      "smart_telemetry": "Active via Home Assistant bridge"
+    }
+  },
+  {
+    "id": "livestock_kunekune_swine",
+    "name": "Rotational Kunekune Pastured Swine Herd",
+    "domain": "land_pastures",
+    "entity_type": "livestock",
+    "keywords": [
+      "kunekune",
+      "pigs",
+      "swine",
+      "rotational grazing",
+      "silvopasture",
+      "deep bedding",
+      "paddock"
+    ],
+    "spatial": {
+      "zone": "Pastures / Land",
+      "sub_location": "North Pasture Paddock 1",
+      "coordinates": {
+        "x": 35,
+        "y": 50
+      },
+      "geofence_id": "pasture_north"
+    },
+    "temporal": {
+      "created_date": "2026-05-01",
+      "last_inspected": "2026-10-21",
+      "next_maintenance_due": "2026-10-28",
+      "active_state": "operational"
+    },
+    "relationships": {
+      "assigned_operator": "Joint",
+      "power_source": "solar_fence_energizer_speedrite",
+      "parent_system": "bare_root_acres_regenerative_farm"
+    },
+    "deterministic_rules": [
+      {
+        "rule_id": "paddock_rotation_interval",
+        "description": "5-Day Pasture Forage Recovery Move",
+        "trigger_type": "date",
+        "target_date": "2026-10-26",
+        "action_required": "Shift polywire fence line to Paddock 2; refresh water trough"
+      }
+    ],
+    "attributes": {
+      "head_count": 4,
+      "grazing_strategy": "Non-rooting rotational grazing + fermented grain supplement",
+      "fence_energizer_volts": 7200,
+      "waterer_type": "Float-valve freeze-protected barrel"
+    }
+  },
+  {
+    "id": "livestock_pastured_broilers",
+    "name": "Mobile Pastured Broiler Solarium & Layer Flock",
+    "domain": "land_pastures",
+    "entity_type": "livestock",
+    "keywords": [
+      "poultry",
+      "broilers",
+      "layers",
+      "solarium",
+      "chicken tractor",
+      "eggs",
+      "salatin skid"
+    ],
+    "spatial": {
+      "zone": "Pastures / Land",
+      "sub_location": "Pasture Alley 2",
+      "coordinates": {
+        "x": 28,
+        "y": 42
+      },
+      "geofence_id": "pasture_alleyways"
+    },
+    "temporal": {
+      "created_date": "2026-06-01",
+      "last_inspected": "2026-10-21",
+      "next_maintenance_due": "2026-10-23",
+      "active_state": "operational"
+    },
+    "relationships": {
+      "assigned_operator": "Josh",
+      "power_source": "battery_led_lighting_12v",
+      "parent_system": "bare_root_acres_regenerative_farm"
+    },
+    "deterministic_rules": [
+      {
+        "rule_id": "daily_shelter_skid_move",
+        "description": "24-Hour Solarium Skid Pull to Fresh Greens",
+        "trigger_type": "date",
+        "target_date": "2026-10-23",
+        "action_required": "Hook dolly handle and advance chicken tractor 12 feet"
+      }
+    ],
+    "attributes": {
+      "shelter_dimensions": "10 x 12 ft Salatin heavy-runner skid",
+      "feed_type": "Non-GMO localized cracked corn / pea protein blend",
+      "predator_defense": "Electric net perimeter + welded hardware cloth apron"
+    }
+  },
+  {
+    "id": "tool_wondermill_grain",
+    "name": "WonderMill Electric Grain Mill",
+    "domain": "home_interior",
+    "entity_type": "equipment",
+    "keywords": [
+      "grain mill",
+      "flour",
+      "wondermill",
+      "wheat berries",
+      "baking",
+      "pantry",
+      "food storage"
+    ],
+    "spatial": {
+      "zone": "Home / Interior",
+      "sub_location": "Kitchen Food Prep Island",
+      "coordinates": {
+        "x": 6,
+        "y": 4
+      },
+      "geofence_id": "main_residence"
+    },
+    "temporal": {
+      "created_date": "2026-07-01",
+      "last_inspected": "2026-10-12",
+      "next_maintenance_due": "2026-11-12",
+      "active_state": "operational"
+    },
+    "relationships": {
+      "assigned_operator": "Joint",
+      "power_source": "kitchen_gfi_circuit_120v",
+      "parent_system": "homestead_pantry_os"
+    },
+    "deterministic_rules": [
+      {
+        "rule_id": "canister_air_filter_brushing",
+        "description": "Foam Air Relief Filter De-Dusting",
+        "trigger_type": "operating_hours",
+        "threshold": 10,
+        "current_value": 7.0,
+        "action_required": "Wash canister foam air relief filter and air-dry"
+      }
+    ],
+    "attributes": {
+      "motor_watts": 1250,
+      "milling_speed": "100 lbs per hour",
+      "grind_settings": [
+        "Pastry",
+        "Bread",
+        "Coarse / Polenta"
+      ],
+      "primary_grain": "Hard Red Winter Wheat & Einkorn"
+    }
+  },
+  {
+    "id": "infra_petsafe_fence",
+    "name": "PetSafe YardMax Electric Boundary Containment",
+    "domain": "farm_infrastructure",
+    "entity_type": "infrastructure",
+    "keywords": [
+      "petsafe",
+      "dog fence",
+      "boundary",
+      "collar",
+      "transmitter",
+      "canine volt",
+      "wire loop"
+    ],
+    "spatial": {
+      "zone": "Pastures / Land",
+      "sub_location": "Garage Transmitter Station",
+      "coordinates": {
+        "x": 10,
+        "y": 8
+      },
+      "geofence_id": "homestead_boundary"
+    },
+    "temporal": {
+      "created_date": "2026-05-15",
+      "last_inspected": "2026-10-14",
+      "next_maintenance_due": "2026-10-24",
+      "active_state": "operational"
+    },
+    "relationships": {
+      "assigned_operator": "Josh",
+      "power_source": "garage_outlet_ups_backup",
+      "parent_system": "homestead_k9_containment"
+    },
+    "deterministic_rules": [
+      {
+        "rule_id": "collar_recharge_audit",
+        "description": "Receiver Collar Lithium Battery Verification",
+        "trigger_type": "date",
+        "target_date": "2026-10-24",
+        "action_required": "Place receiver collars on charging docks for weekly top-off"
+      }
+    ],
+    "attributes": {
+      "boundary_length_ft": 1850,
+      "wire_gauge": "14 AWG solid copper direct-burial",
+      "backup_power": "APC 650VA UPS inline"
+    }
+  },
+  {
+    "id": "workstation_c2_homestead",
+    "name": "Homestead Command & Control (C2) Workstation",
+    "domain": "office_operations",
+    "entity_type": "infrastructure",
+    "keywords": [
+      "c2",
+      "workstation",
+      "office",
+      "computer",
+      "desk",
+      "backup",
+      "network",
+      "storage"
+    ],
+    "spatial": {
+      "zone": "Office / Desk",
+      "sub_location": "Main Executive Desk A",
+      "coordinates": {
+        "x": 5,
+        "y": 2
+      },
+      "geofence_id": "main_residence_office"
+    },
+    "temporal": {
+      "created_date": "2026-01-01",
+      "last_inspected": "2026-10-15",
+      "next_maintenance_due": "2026-11-15",
+      "active_state": "operational"
+    },
+    "relationships": {
+      "assigned_operator": "Josh",
+      "power_source": "ups_battery_backup_1500va",
+      "parent_system": "bold_bovine_core_os"
+    },
+    "deterministic_rules": [
+      {
+        "rule_id": "offline_vault_backup_audit",
+        "description": "Weekly Cold-Storage Differential Backup Verification",
+        "trigger_type": "date",
+        "target_date": "2026-10-26",
+        "action_required": "Verify Google Drive vault snapshot parity against local NVMe"
+      }
+    ],
+    "attributes": {
+      "primary_storage": "4TB NVMe RAID-1",
+      "network_link": "Gigabit Ethernet + Cellular Failover",
+      "battery_runtime_min": 45
+    }
+  },
+  {
+    "id": "vehicle_ford_f150_2024",
+    "name": "2024 Ford F-150 SuperCrew 4x4 XL",
+    "domain": "fleet_transport",
+    "entity_type": "vehicle",
+    "keywords": [
+      "f150",
+      "truck",
+      "ford",
+      "5.0l coyote",
+      "v8",
+      "towing",
+      "livestock haul",
+      "10r80",
+      "bobcat transport",
+      "mercon ulv",
+      "fl-500s"
+    ],
+    "spatial": {
+      "zone": "Mobile / Vehicles",
+      "sub_location": "Driveway / Shop Apron",
+      "coordinates": {
+        "x": 0,
+        "y": 0
+      },
+      "geofence_id": "homestead_exterior"
+    },
+    "temporal": {
+      "created_date": "2026-09-12",
+      "last_inspected": "2026-10-13",
+      "next_maintenance_due": "2026-11-11",
+      "active_state": "operational"
+    },
+    "relationships": {
+      "assigned_operator": "Josh",
+      "power_source": "5.0L Ti-VCT V8 Coyote",
+      "parent_system": "homestead_primary_logistics",
+      "trailer_pairing": "vehicle_horse_trailer_bumper_pull"
+    },
+    "deterministic_rules": [
+      {
+        "rule_id": "registration_deadline",
+        "description": "Leavenworth County Treasurer Title & Tag Deadline",
+        "trigger_type": "date",
+        "target_date": "2026-11-11",
+        "action_required": "Submit Morris Smith Ford Kansas Title AB4874098 & DST-8 to county treasurer"
+      },
+      {
+        "rule_id": "f150_oil_change",
+        "description": "5.0L V8 Engine Oil & FL-500S Filter Service",
+        "trigger_type": "odometer_miles",
+        "threshold": 5000,
+        "current_value": 2106,
+        "action_required": "7.75 qts SAE 5W-30 Full Synthetic + Motorcraft FL-500S; torque drain plug to 20 lb-ft"
+      },
+      {
+        "rule_id": "lug_torque_towing",
+        "description": "Wheel Lug Nut Torque (150 lb-ft) & Cold Tire Pressure (35 PSI)",
+        "trigger_type": "date",
+        "target_date": "2026-11-01",
+        "action_required": "Re-torque 21mm lugs to 150 lb-ft with torque wrench; check cold PSI to 35"
+      },
+      {
+        "rule_id": "heavy_towing_tie_down",
+        "description": "Bobcat 743 4-Point Transport Chain Inspection",
+        "trigger_type": "date",
+        "target_date": "2026-11-15",
+        "action_required": "Inspect 4x Grade 70 5/16' chains (4,700 lb WLL) & forged ratchet binders per 49 CFR 393.130"
+      }
+    ],
+    "attributes": {
+      "vin": "1FTFW1L59RKD32476",
+      "engine": "5.0L Ti-VCT 32V DOHC Coyote V8 (400 HP / 410 lb-ft)",
+      "transmission": "10R80 10-Speed Automatic (MERCON ULV ONLY)",
+      "oil_capacity_quarts": 7.75,
+      "oil_filter_oem": "Motorcraft FL-500S",
+      "spark_plug_gap_in": "0.039 - 0.043",
+      "towing_capacity_lbs": 11500,
+      "payload_capacity_lbs": 1850,
+      "hitch_spec": "Class IV 2.5-inch receiver with Weight-Distribution Shank"
+    }
+  },
+  {
+    "id": "vehicle_ford_explorer_2020",
+    "name": "2020 Ford Explorer XLT 4WD",
+    "domain": "fleet_transport",
+    "entity_type": "vehicle",
+    "keywords": [
+      "explorer",
+      "ford",
+      "family",
+      "commute",
+      "suv",
+      "ecoboost",
+      "2.3l",
+      "fl-910s",
+      "mercon ulv"
+    ],
+    "spatial": {
+      "zone": "Mobile / Vehicles",
+      "sub_location": "Home Carport / Bay 2",
+      "coordinates": {
+        "x": 1,
+        "y": 2
+      },
+      "geofence_id": "homestead_exterior"
+    },
+    "temporal": {
+      "created_date": "2026-01-10",
+      "last_inspected": "2026-09-18",
+      "next_maintenance_due": "2026-11-15",
+      "active_state": "operational"
+    },
+    "relationships": {
+      "assigned_operator": "Joint",
+      "power_source": "2.3L Ti-VCT EcoBoost I4",
+      "parent_system": "homestead_family_transport"
+    },
+    "deterministic_rules": [
+      {
+        "rule_id": "oil_change_interval",
+        "description": "Synthetic Motor Oil 5W-30 & Motorcraft Filter FL-910S",
+        "trigger_type": "odometer_miles",
+        "threshold": 5000,
+        "current_value": 1200,
+        "action_required": "5.7 qts 5W-30 Full Synthetic + Motorcraft FL-910S; torque drain plug to 20 lb-ft"
+      },
+      {
+        "rule_id": "subframe_bolt_inspection",
+        "description": "Rear Differential Subframe Mounting Bolt Audit (NHTSA 22V242000)",
+        "trigger_type": "date",
+        "target_date": "2026-11-20",
+        "action_required": "Visual inspection of rear axle horizontal mounting bolt and subframe bushings for torque/cracks"
+      },
+      {
+        "rule_id": "coolant_degas_bottle_check",
+        "description": "Coolant Degas Bottle Seam & Water Pump Inspection",
+        "trigger_type": "date",
+        "target_date": "2026-11-05",
+        "action_required": "Inspect plastic degas expansion tank for micro-cracks and verify Motorcraft Yellow coolant level"
+      }
+    ],
+    "attributes": {
+      "vin": "1FMSK8DH0LGC96226",
+      "engine": "2.3L EcoBoost Turbocharged I4",
+      "transmission": "10R60 10-Speed Automatic (MERCON ULV)",
+      "oil_capacity_quarts": 5.7,
+      "oil_filter_oem": "Motorcraft FL-910S",
+      "spark_plug_gap_in": "0.028 - 0.031",
+      "brake_pad_front_mm": 6.5,
+      "brake_pad_rear_mm": 5.0,
+      "financial_status": "Debt Paid in Full (Aug 2026)"
+    }
+  },
+  {
+    "id": "vehicle_infiniti_sedan",
+    "name": "Infiniti Sedan (I30 / G37 Commuter Fleet)",
+    "domain": "fleet_transport",
+    "entity_type": "vehicle",
+    "keywords": [
+      "infiniti",
+      "i30",
+      "g37",
+      "sedan",
+      "commute",
+      "fort leavenworth",
+      "vq30",
+      "vq37",
+      "15208-65f0e"
+    ],
+    "spatial": {
+      "zone": "Mobile / Vehicles",
+      "sub_location": "Driveway / Road Bay",
+      "coordinates": {
+        "x": 2,
+        "y": 1
+      },
+      "geofence_id": "homestead_exterior"
+    },
+    "temporal": {
+      "created_date": "2026-03-29",
+      "last_inspected": "2026-08-15",
+      "next_maintenance_due": "2026-11-10",
+      "active_state": "operational"
+    },
+    "relationships": {
+      "assigned_operator": "Josh",
+      "power_source": "Nissan VQ-Series 24V DOHC V6",
+      "parent_system": "homestead_commuter_mobility"
+    },
+    "deterministic_rules": [
+      {
+        "rule_id": "inf_oil_change",
+        "description": "5W-30 Full Synthetic & OEM 15208-65F0E Filter Service",
+        "trigger_type": "odometer_miles",
+        "threshold": 4500,
+        "current_value": 2000,
+        "action_required": "5.2 qts 5W-30 Full Synthetic + OEM 15208-65F0E; new copper crush washer; torque to 25 lb-ft"
+      },
+      {
+        "rule_id": "inf_iacv_ecu_safeguard",
+        "description": "IACV Coolant Chamber Seepage & ECU Protection Audit",
+        "trigger_type": "date",
+        "target_date": "2026-11-15",
+        "action_required": "Inspect throttle body / IACV coolant lines for seepage to prevent short-circuiting ECU MOSFET chips"
+      },
+      {
+        "rule_id": "inf_brake_fluid_moisture",
+        "description": "DOT 4 Brake Fluid Moisture Testing",
+        "trigger_type": "date",
+        "target_date": "2026-12-01",
+        "action_required": "Test moisture content with electronic tester (< 2%); flush lines if dark amber"
+      }
+    ],
+    "attributes": {
+      "vin_i30": "JNKCA31AXYT119735",
+      "engine": "Nissan VQ30DE-K / VQ37VHR 24V DOHC V6",
+      "oil_filter_oem": "Nissan/Infiniti 15208-65F0E",
+      "oil_capacity_quarts": 5.2,
+      "lug_nut_torque": "80 lb-ft (21mm shank mag nut)",
+      "role": "High-Efficiency Zone 2 Commuter at Fort Leavenworth"
+    }
+  },
+  {
+    "id": "vehicle_horse_trailer_bumper_pull",
+    "name": "Black Bumper Pull Horse Trailer (Tandem Axle)",
+    "domain": "farm_infrastructure",
+    "entity_type": "towing_equipment",
+    "keywords": [
+      "horse trailer",
+      "trailer",
+      "bumper pull",
+      "livestock",
+      "dexter axle",
+      "electric brakes",
+      "stall mats",
+      "wood rot",
+      "breakaway"
+    ],
+    "spatial": {
+      "zone": "Pastures / Land",
+      "sub_location": "Outbuilding / Equipment Pad",
+      "coordinates": {
+        "x": 14,
+        "y": 8
+      },
+      "geofence_id": "outbuilding_equipment_pad"
+    },
+    "temporal": {
+      "created_date": "2026-03-15",
+      "last_inspected": "2026-08-20",
+      "next_maintenance_due": "2026-11-20",
+      "active_state": "operational"
+    },
+    "relationships": {
+      "assigned_operator": "Josh",
+      "power_source": "aux_12v_battery_and_7way",
+      "parent_system": "homestead_livestock_logistics",
+      "tow_vehicle": "vehicle_ford_f150_2024"
+    },
+    "deterministic_rules": [
+      {
+        "rule_id": "subfloor_mat_rot_audit",
+        "description": "Stall Mat Removal & 2x8 Wood Subfloor Acid Rot Audit",
+        "trigger_type": "date",
+        "target_date": "2026-11-20",
+        "action_required": "Pull 3/4' rubber mats; scrape manure/urine; probe wood with awl; inspect steel crossmembers"
+      },
+      {
+        "rule_id": "wheel_bearing_repack",
+        "description": "Tandem Dexter Wheel Bearing Repack & Seal Replacement",
+        "trigger_type": "date",
+        "target_date": "2026-12-15",
+        "action_required": "Solvent wash L68149/LM67048 bearings; hand-pack with NLGI No. 2 Red Lithium grease; install new 10-19 seals"
+      },
+      {
+        "rule_id": "breakaway_battery_load_test",
+        "description": "12V 5Ah SLA Breakaway Battery & Switch Verification",
+        "trigger_type": "date",
+        "target_date": "2026-11-05",
+        "action_required": "Multimeter test (> 12.4V); pull pin to confirm all 4 electric drum brakes lock solid"
+      }
+    ],
+    "attributes": {
+      "coupler_size": "2-5/16 in Ball",
+      "safety_chains": "Grade 70 5/16-inch Transport Chains",
+      "breakaway_battery": "12V 5Ah Sealed Lead Acid",
+      "bearings": "Timken L68149 / LM67048 (Seal: 10-19)",
+      "tire_spec": "ST Radial 205/75R15 or 225/75R15 (65-80 PSI cold)",
+      "lug_torque": "90 - 120 lb-ft"
+    }
+  },
+  {
+    "id": "machinery_cub_cadet_zt1",
+    "name": "Cub Cadet Ultima ZT1 54\" Zero-Turn Mower",
+    "domain": "farm_infrastructure",
+    "entity_type": "machinery",
+    "keywords": [
+      "mower",
+      "zero turn",
+      "cub cadet",
+      "kohler",
+      "pasture edge",
+      "white shed",
+      "deck belts",
+      "spindle grease",
+      "pto clutch"
+    ],
+    "spatial": {
+      "zone": "Shop / Garage",
+      "sub_location": "White Shed Bay 3",
+      "coordinates": {
+        "x": 6,
+        "y": 10
+      },
+      "geofence_id": "outbuilding_white_shed"
+    },
+    "temporal": {
+      "created_date": "2026-04-20",
+      "last_inspected": "2026-10-05",
+      "next_maintenance_due": "2026-11-05",
+      "active_state": "operational"
+    },
+    "relationships": {
+      "assigned_operator": "Josh",
+      "power_source": "kohler_7000_v_twin",
+      "parent_system": "homestead_grounds_maintenance"
+    },
+    "deterministic_rules": [
+      {
+        "rule_id": "mower_engine_oil",
+        "description": "Kohler 7000 V-Twin Engine Oil & 12-050-01-S Filter Change",
+        "trigger_type": "operating_hours",
+        "threshold": 50,
+        "current_value": 12,
+        "action_required": "2.0 qts SAE 10W-30 + OEM Kohler 12-050-01-S spin-on filter"
+      },
+      {
+        "rule_id": "spindle_grease_interval",
+        "description": "Deck Spindle Bearing & Caster Greasing",
+        "trigger_type": "operating_hours",
+        "threshold": 25,
+        "current_value": 7,
+        "action_required": "Pump NLGI No. 2 red grease into 3 deck spindles and 2 front caster wheel pivots"
+      },
+      {
+        "rule_id": "pto_clutch_air_gap",
+        "description": "Electric PTO Clutch 0.012\" Feeler Gauge Audit",
+        "trigger_type": "operating_hours",
+        "threshold": 100,
+        "current_value": 12,
+        "action_required": "Insert 0.012 in feeler gauge through 3 clutch slots; tighten nuts evenly to stop slip"
+      },
+      {
+        "rule_id": "tire_tracking_psi",
+        "description": "Hydrostatic Drive Tracking & Tire Pressure Balance",
+        "trigger_type": "date",
+        "target_date": "2026-11-01",
+        "action_required": "Match rear drive tire pressures exactly to 10-12 PSI to maintain straight-line tracking"
+      }
+    ],
+    "attributes": {
+      "operating_hours": 112,
+      "cutting_deck_width_inches": 54,
+      "blades": "3-Blade high-lift mulching (Torque: 70-90 lb-ft)",
+      "deck_belt_oem": "Cub Cadet 954-04329A Kevlar",
+      "oil_filter_oem": "Kohler 12-050-01-S",
+      "fuel_capacity_gallons": 3.5,
+      "rear_tire_psi": 10
+    }
+  }
+]

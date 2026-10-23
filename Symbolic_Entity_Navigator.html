@@ -1156,158 +1156,6 @@
     }
   },
   {
-    "id": "vehicle_ford_f150_2024",
-    "name": "2024 Ford F-150 SuperCrew",
-    "domain": "fleet_transport",
-    "entity_type": "vehicle",
-    "keywords": [
-      "truck",
-      "f150",
-      "ford",
-      "towing",
-      "heavy transport",
-      "livestock haul",
-      "fleet"
-    ],
-    "spatial": {
-      "zone": "Mobile / Vehicles",
-      "sub_location": "Driveway / Shop Apron",
-      "coordinates": {
-        "x": 0,
-        "y": 0
-      },
-      "geofence_id": "homestead_exterior"
-    },
-    "temporal": {
-      "created_date": "2026-09-15",
-      "last_inspected": "2026-10-10",
-      "next_maintenance_due": "2026-12-10",
-      "active_state": "operational"
-    },
-    "relationships": {
-      "assigned_operator": "Josh",
-      "power_source": "fuel_gasoline",
-      "parent_system": "homestead_primary_logistics"
-    },
-    "deterministic_rules": [
-      {
-        "rule_id": "tire_rotation_and_torque",
-        "description": "Lug Nut Torque Verification (150 lb-ft) Post-Towing",
-        "trigger_type": "date",
-        "target_date": "2026-11-01",
-        "action_required": "Check cold tire pressures (35 PSI) and re-torque wheel lugs"
-      }
-    ],
-    "attributes": {
-      "towing_capacity_lbs": 11500,
-      "hitch_class": "Class IV 2.5-inch receiver",
-      "registration_status": "Road-Legal Compliant",
-      "primary_use": "Livestock trailers & commercial wholesale supply runs"
-    }
-  },
-  {
-    "id": "vehicle_ford_explorer_2020",
-    "name": "2020 Ford Explorer XLT",
-    "domain": "fleet_transport",
-    "entity_type": "vehicle",
-    "keywords": [
-      "explorer",
-      "ford",
-      "family",
-      "commute",
-      "suv",
-      "brakes",
-      "oil life"
-    ],
-    "spatial": {
-      "zone": "Mobile / Vehicles",
-      "sub_location": "Home Carport",
-      "coordinates": {
-        "x": 1,
-        "y": 2
-      },
-      "geofence_id": "homestead_exterior"
-    },
-    "temporal": {
-      "created_date": "2026-01-10",
-      "last_inspected": "2026-09-18",
-      "next_maintenance_due": "2026-10-28",
-      "active_state": "operational"
-    },
-    "relationships": {
-      "assigned_operator": "Joint",
-      "power_source": "fuel_gasoline",
-      "parent_system": "homestead_family_transport"
-    },
-    "deterministic_rules": [
-      {
-        "rule_id": "oil_life_monitor",
-        "description": "Synthetic Motor Oil 5W-30 & Motorcraft Filter FL-500S",
-        "trigger_type": "operating_hours",
-        "threshold": 5000,
-        "current_value": 4650,
-        "action_required": "Prepare oil drain pan, 6 quarts 5W-30 full synthetic"
-      }
-    ],
-    "attributes": {
-      "oil_spec": "5W-30 Full Synthetic",
-      "brake_pad_front_mm": 6.5,
-      "brake_pad_rear_mm": 5.0,
-      "seating_capacity": 7
-    }
-  },
-  {
-    "id": "machinery_cub_cadet_zt1",
-    "name": "Cub Cadet Ultima ZT1 54\" Zero-Turn Mower",
-    "domain": "farm_infrastructure",
-    "entity_type": "machinery",
-    "keywords": [
-      "mower",
-      "zero turn",
-      "cub cadet",
-      "kohler",
-      "pasture edge",
-      "white shed",
-      "deck belts"
-    ],
-    "spatial": {
-      "zone": "Shop / Garage",
-      "sub_location": "White Shed Bay 3",
-      "coordinates": {
-        "x": 6,
-        "y": 10
-      },
-      "geofence_id": "outbuilding_white_shed"
-    },
-    "temporal": {
-      "created_date": "2026-04-20",
-      "last_inspected": "2026-10-05",
-      "next_maintenance_due": "2026-11-05",
-      "active_state": "operational"
-    },
-    "relationships": {
-      "assigned_operator": "Josh",
-      "power_source": "kohler_7000_v_twin",
-      "parent_system": "homestead_grounds_maintenance"
-    },
-    "deterministic_rules": [
-      {
-        "rule_id": "spindle_grease_interval",
-        "description": "Deck Spindle Bearing Greasing",
-        "trigger_type": "operating_hours",
-        "threshold": 25,
-        "current_value": 24.0,
-        "action_required": "Pump red grease into 3 deck spindles and front caster wheels"
-      }
-    ],
-    "attributes": {
-      "cutting_deck_width_inches": 54,
-      "blades": "3-Blade high-lift mulching",
-      "fuel_capacity_gallons": 3.5,
-      "tire_pressure_drive_psi": 12
-    }
-  },
-  {
     "id": "infra_water_system_multicell",
     "name": "Multi-Cell Homestead Water Hydraulics Station",
     "domain": "farm_infrastructure",
@@ -1670,6 +1518,377 @@
       "primary_storage": "4TB NVMe RAID-1",
       "network_link": "Gigabit Ethernet + Cellular Failover",
       "battery_runtime_min": 45
+    }
+  },
+  {
+    "id": "vehicle_ford_f150_2024",
+    "name": "2024 Ford F-150 SuperCrew 4x4 XL",
+    "domain": "fleet_transport",
+    "entity_type": "vehicle",
+    "keywords": [
+      "f150",
+      "truck",
+      "ford",
+      "5.0l coyote",
+      "v8",
+      "towing",
+      "livestock haul",
+      "10r80",
+      "bobcat transport",
+      "mercon ulv",
+      "fl-500s"
+    ],
+    "spatial": {
+      "zone": "Mobile / Vehicles",
+      "sub_location": "Driveway / Shop Apron",
+      "coordinates": {
+        "x": 0,
+        "y": 0
+      },
+      "geofence_id": "homestead_exterior"
+    },
+    "temporal": {
+      "created_date": "2026-09-12",
+      "last_inspected": "2026-10-13",
+      "next_maintenance_due": "2026-11-11",
+      "active_state": "operational"
+    },
+    "relationships": {
+      "assigned_operator": "Josh",
+      "power_source": "5.0L Ti-VCT V8 Coyote",
+      "parent_system": "homestead_primary_logistics",
+      "trailer_pairing": "vehicle_horse_trailer_bumper_pull"
+    },
+    "deterministic_rules": [
+      {
+        "rule_id": "registration_deadline",
+        "description": "Leavenworth County Treasurer Title & Tag Deadline",
+        "trigger_type": "date",
+        "target_date": "2026-11-11",
+        "action_required": "Submit Morris Smith Ford Kansas Title AB4874098 & DST-8 to county treasurer"
+      },
+      {
+        "rule_id": "f150_oil_change",
+        "description": "5.0L V8 Engine Oil & FL-500S Filter Service",
+        "trigger_type": "odometer_miles",
+        "threshold": 5000,
+        "current_value": 2106,
+        "action_required": "7.75 qts SAE 5W-30 Full Synthetic + Motorcraft FL-500S; torque drain plug to 20 lb-ft"
+      },
+      {
+        "rule_id": "lug_torque_towing",
+        "description": "Wheel Lug Nut Torque (150 lb-ft) & Cold Tire Pressure (35 PSI)",
+        "trigger_type": "date",
+        "target_date": "2026-11-01",
+        "action_required": "Re-torque 21mm lugs to 150 lb-ft with torque wrench; check cold PSI to 35"
+      },
+      {
+        "rule_id": "heavy_towing_tie_down",
+        "description": "Bobcat 743 4-Point Transport Chain Inspection",
+        "trigger_type": "date",
+        "target_date": "2026-11-15",
+        "action_required": "Inspect 4x Grade 70 5/16' chains (4,700 lb WLL) & forged ratchet binders per 49 CFR 393.130"
+      }
+    ],
+    "attributes": {
+      "vin": "1FTFW1L59RKD32476",
+      "engine": "5.0L Ti-VCT 32V DOHC Coyote V8 (400 HP / 410 lb-ft)",
+      "transmission": "10R80 10-Speed Automatic (MERCON ULV ONLY)",
+      "oil_capacity_quarts": 7.75,
+      "oil_filter_oem": "Motorcraft FL-500S",
+      "spark_plug_gap_in": "0.039 - 0.043",
+      "towing_capacity_lbs": 11500,
+      "payload_capacity_lbs": 1850,
+      "hitch_spec": "Class IV 2.5-inch receiver with Weight-Distribution Shank"
+    }
+  },
+  {
+    "id": "vehicle_ford_explorer_2020",
+    "name": "2020 Ford Explorer XLT 4WD",
+    "domain": "fleet_transport",
+    "entity_type": "vehicle",
+    "keywords": [
+      "explorer",
+      "ford",
+      "family",
+      "commute",
+      "suv",
+      "ecoboost",
+      "2.3l",
+      "fl-910s",
+      "mercon ulv"
+    ],
+    "spatial": {
+      "zone": "Mobile / Vehicles",
+      "sub_location": "Home Carport / Bay 2",
+      "coordinates": {
+        "x": 1,
+        "y": 2
+      },
+      "geofence_id": "homestead_exterior"
+    },
+    "temporal": {
+      "created_date": "2026-01-10",
+      "last_inspected": "2026-09-18",
+      "next_maintenance_due": "2026-11-15",
+      "active_state": "operational"
+    },
+    "relationships": {
+      "assigned_operator": "Joint",
+      "power_source": "2.3L Ti-VCT EcoBoost I4",
+      "parent_system": "homestead_family_transport"
+    },
+    "deterministic_rules": [
+      {
+        "rule_id": "oil_change_interval",
+        "description": "Synthetic Motor Oil 5W-30 & Motorcraft Filter FL-910S",
+        "trigger_type": "odometer_miles",
+        "threshold": 5000,
+        "current_value": 1200,
+        "action_required": "5.7 qts 5W-30 Full Synthetic + Motorcraft FL-910S; torque drain plug to 20 lb-ft"
+      },
+      {
+        "rule_id": "subframe_bolt_inspection",
+        "description": "Rear Differential Subframe Mounting Bolt Audit (NHTSA 22V242000)",
+        "trigger_type": "date",
+        "target_date": "2026-11-20",
+        "action_required": "Visual inspection of rear axle horizontal mounting bolt and subframe bushings for torque/cracks"
+      },
+      {
+        "rule_id": "coolant_degas_bottle_check",
+        "description": "Coolant Degas Bottle Seam & Water Pump Inspection",
+        "trigger_type": "date",
+        "target_date": "2026-11-05",
+        "action_required": "Inspect plastic degas expansion tank for micro-cracks and verify Motorcraft Yellow coolant level"
+      }
+    ],
+    "attributes": {
+      "vin": "1FMSK8DH0LGC96226",
+      "engine": "2.3L EcoBoost Turbocharged I4",
+      "transmission": "10R60 10-Speed Automatic (MERCON ULV)",
+      "oil_capacity_quarts": 5.7,
+      "oil_filter_oem": "Motorcraft FL-910S",
+      "spark_plug_gap_in": "0.028 - 0.031",
+      "brake_pad_front_mm": 6.5,
+      "brake_pad_rear_mm": 5.0,
+      "financial_status": "Debt Paid in Full (Aug 2026)"
+    }
+  },
+  {
+    "id": "vehicle_infiniti_sedan",
+    "name": "Infiniti Sedan (I30 / G37 Commuter Fleet)",
+    "domain": "fleet_transport",
+    "entity_type": "vehicle",
+    "keywords": [
+      "infiniti",
+      "i30",
+      "g37",
+      "sedan",
+      "commute",
+      "fort leavenworth",
+      "vq30",
+      "vq37",
+      "15208-65f0e"
+    ],
+    "spatial": {
+      "zone": "Mobile / Vehicles",
+      "sub_location": "Driveway / Road Bay",
+      "coordinates": {
+        "x": 2,
+        "y": 1
+      },
+      "geofence_id": "homestead_exterior"
+    },
+    "temporal": {
+      "created_date": "2026-03-29",
+      "last_inspected": "2026-08-15",
+      "next_maintenance_due": "2026-11-10",
+      "active_state": "operational"
+    },
+    "relationships": {
+      "assigned_operator": "Josh",
+      "power_source": "Nissan VQ-Series 24V DOHC V6",
+      "parent_system": "homestead_commuter_mobility"
+    },
+    "deterministic_rules": [
+      {
+        "rule_id": "inf_oil_change",
+        "description": "5W-30 Full Synthetic & OEM 15208-65F0E Filter Service",
+        "trigger_type": "odometer_miles",
+        "threshold": 4500,
+        "current_value": 2000,
+        "action_required": "5.2 qts 5W-30 Full Synthetic + OEM 15208-65F0E; new copper crush washer; torque to 25 lb-ft"
+      },
+      {
+        "rule_id": "inf_iacv_ecu_safeguard",
+        "description": "IACV Coolant Chamber Seepage & ECU Protection Audit",
+        "trigger_type": "date",
+        "target_date": "2026-11-15",
+        "action_required": "Inspect throttle body / IACV coolant lines for seepage to prevent short-circuiting ECU MOSFET chips"
+      },
+      {
+        "rule_id": "inf_brake_fluid_moisture",
+        "description": "DOT 4 Brake Fluid Moisture Testing",
+        "trigger_type": "date",
+        "target_date": "2026-12-01",
+        "action_required": "Test moisture content with electronic tester (< 2%); flush lines if dark amber"
+      }
+    ],
+    "attributes": {
+      "vin_i30": "JNKCA31AXYT119735",
+      "engine": "Nissan VQ30DE-K / VQ37VHR 24V DOHC V6",
+      "oil_filter_oem": "Nissan/Infiniti 15208-65F0E",
+      "oil_capacity_quarts": 5.2,
+      "lug_nut_torque": "80 lb-ft (21mm shank mag nut)",
+      "role": "High-Efficiency Zone 2 Commuter at Fort Leavenworth"
+    }
+  },
+  {
+    "id": "vehicle_horse_trailer_bumper_pull",
+    "name": "Black Bumper Pull Horse Trailer (Tandem Axle)",
+    "domain": "farm_infrastructure",
+    "entity_type": "towing_equipment",
+    "keywords": [
+      "horse trailer",
+      "trailer",
+      "bumper pull",
+      "livestock",
+      "dexter axle",
+      "electric brakes",
+      "stall mats",
+      "wood rot",
+      "breakaway"
+    ],
+    "spatial": {
+      "zone": "Pastures / Land",
+      "sub_location": "Outbuilding / Equipment Pad",
+      "coordinates": {
+        "x": 14,
+        "y": 8
+      },
+      "geofence_id": "outbuilding_equipment_pad"
+    },
+    "temporal": {
+      "created_date": "2026-03-15",
+      "last_inspected": "2026-08-20",
+      "next_maintenance_due": "2026-11-20",
+      "active_state": "operational"
+    },
+    "relationships": {
+      "assigned_operator": "Josh",
+      "power_source": "aux_12v_battery_and_7way",
+      "parent_system": "homestead_livestock_logistics",
+      "tow_vehicle": "vehicle_ford_f150_2024"
+    },
+    "deterministic_rules": [
+      {
+        "rule_id": "subfloor_mat_rot_audit",
+        "description": "Stall Mat Removal & 2x8 Wood Subfloor Acid Rot Audit",
+        "trigger_type": "date",
+        "target_date": "2026-11-20",
+        "action_required": "Pull 3/4' rubber mats; scrape manure/urine; probe wood with awl; inspect steel crossmembers"
+      },
+      {
+        "rule_id": "wheel_bearing_repack",
+        "description": "Tandem Dexter Wheel Bearing Repack & Seal Replacement",
+        "trigger_type": "date",
+        "target_date": "2026-12-15",
+        "action_required": "Solvent wash L68149/LM67048 bearings; hand-pack with NLGI No. 2 Red Lithium grease; install new 10-19 seals"
+      },
+      {
+        "rule_id": "breakaway_battery_load_test",
+        "description": "12V 5Ah SLA Breakaway Battery & Switch Verification",
+        "trigger_type": "date",
+        "target_date": "2026-11-05",
+        "action_required": "Multimeter test (> 12.4V); pull pin to confirm all 4 electric drum brakes lock solid"
+      }
+    ],
+    "attributes": {
+      "coupler_size": "2-5/16 in Ball",
+      "safety_chains": "Grade 70 5/16-inch Transport Chains",
+      "breakaway_battery": "12V 5Ah Sealed Lead Acid",
+      "bearings": "Timken L68149 / LM67048 (Seal: 10-19)",
+      "tire_spec": "ST Radial 205/75R15 or 225/75R15 (65-80 PSI cold)",
+      "lug_torque": "90 - 120 lb-ft"
+    }
+  },
+  {
+    "id": "machinery_cub_cadet_zt1",
+    "name": "Cub Cadet Ultima ZT1 54\" Zero-Turn Mower",
+    "domain": "farm_infrastructure",
+    "entity_type": "machinery",
+    "keywords": [
+      "mower",
+      "zero turn",
+      "cub cadet",
+      "kohler",
+      "pasture edge",
+      "white shed",
+      "deck belts",
+      "spindle grease",
+      "pto clutch"
+    ],
+    "spatial": {
+      "zone": "Shop / Garage",
+      "sub_location": "White Shed Bay 3",
+      "coordinates": {
+        "x": 6,
+        "y": 10
+      },
+      "geofence_id": "outbuilding_white_shed"
+    },
+    "temporal": {
+      "created_date": "2026-04-20",
+      "last_inspected": "2026-10-05",
+      "next_maintenance_due": "2026-11-05",
+      "active_state": "operational"
+    },
+    "relationships": {
+      "assigned_operator": "Josh",
+      "power_source": "kohler_7000_v_twin",
+      "parent_system": "homestead_grounds_maintenance"
+    },
+    "deterministic_rules": [
+      {
+        "rule_id": "mower_engine_oil",
+        "description": "Kohler 7000 V-Twin Engine Oil & 12-050-01-S Filter Change",
+        "trigger_type": "operating_hours",
+        "threshold": 50,
+        "current_value": 12,
+        "action_required": "2.0 qts SAE 10W-30 + OEM Kohler 12-050-01-S spin-on filter"
+      },
+      {
+        "rule_id": "spindle_grease_interval",
+        "description": "Deck Spindle Bearing & Caster Greasing",
+        "trigger_type": "operating_hours",
+        "threshold": 25,
+        "current_value": 7,
+        "action_required": "Pump NLGI No. 2 red grease into 3 deck spindles and 2 front caster wheel pivots"
+      },
+      {
+        "rule_id": "pto_clutch_air_gap",
+        "description": "Electric PTO Clutch 0.012\" Feeler Gauge Audit",
+        "trigger_type": "operating_hours",
+        "threshold": 100,
+        "current_value": 12,
+        "action_required": "Insert 0.012 in feeler gauge through 3 clutch slots; tighten nuts evenly to stop slip"
+      },
+      {
+        "rule_id": "tire_tracking_psi",
+        "description": "Hydrostatic Drive Tracking & Tire Pressure Balance",
+        "trigger_type": "date",
+        "target_date": "2026-11-01",
+        "action_required": "Match rear drive tire pressures exactly to 10-12 PSI to maintain straight-line tracking"
+      }
+    ],
+    "attributes": {
+      "operating_hours": 112,
+      "cutting_deck_width_inches": 54,
+      "blades": "3-Blade high-lift mulching (Torque: 70-90 lb-ft)",
+      "deck_belt_oem": "Cub Cadet 954-04329A Kevlar",
+      "oil_filter_oem": "Kohler 12-050-01-S",
+      "fuel_capacity_gallons": 3.5,
+      "rear_tire_psi": 10
     }
   }
 ];
