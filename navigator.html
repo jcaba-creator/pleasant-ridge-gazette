@@ -881,6 +881,76 @@
   </div>
 
   <script>
+    // CLASSIFIED PIN PROTECTION ENGINE (PIN: 23836)
+    const PIN_AUTHORIZATION_CODE = "23836";
+    const PIN_SESSION_STORAGE_KEY = "bb_pin_authenticated_v1";
+
+    function checkPinState() {
+      const isAuth = sessionStorage.getItem(PIN_SESSION_STORAGE_KEY) === "true";
+      const gateEl = document.getElementById("bb-pin-gate");
+      if (gateEl) {
+        if (isAuth) {
+          gateEl.classList.add("unlocked");
+        } else {
+          gateEl.classList.remove("unlocked");
+          setTimeout(() => {
+            const inputEl = document.getElementById("bb-pin-input");
+            if (inputEl) inputEl.focus();
+          }, 60);
+        }
+      }
+    }
+
+    function unlockWithPin() {
+      const inputEl = document.getElementById("bb-pin-input");
+      const errEl = document.getElementById("bb-pin-error");
+      const cardEl = document.getElementById("bb-pin-card");
+      if (!inputEl) return;
+      const entered = inputEl.value.trim();
+      if (entered === PIN_AUTHORIZATION_CODE) {
+        sessionStorage.setItem(PIN_SESSION_STORAGE_KEY, "true");
+        if (errEl) errEl.textContent = "";
+        inputEl.value = "";
+        checkPinState();
+      } else {
+        if (errEl) errEl.textContent = "INVALID AUTHORIZATION PIN";
+        if (cardEl) {
+          cardEl.classList.add("pin-shake");
+          setTimeout(() => cardEl.classList.remove("pin-shake"), 400);
+        }
+        inputEl.value = "";
+        inputEl.focus();
+      }
+    }
+
+    function lockTerminal() {
+      sessionStorage.removeItem(PIN_SESSION_STORAGE_KEY);
+      const inputEl = document.getElementById("bb-pin-input");
+      const errEl = document.getElementById("bb-pin-error");
+      if (errEl) errEl.textContent = "";
+      if (inputEl) inputEl.value = "";
+      checkPinState();
+    }
+
+    // Attach gate check & handlers
+    window.addEventListener("DOMContentLoaded", () => {
+      checkPinState();
+      const submitBtn = document.getElementById("bb-pin-submit");
+      const inputEl = document.getElementById("bb-pin-input");
+      if (submitBtn) submitBtn.addEventListener("click", unlockWithPin);
+      if (inputEl) {
+        inputEl.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            unlockWithPin();
+          }
+        });
+      }
+    });
+    if (document.readyState === "interactive" || document.readyState === "complete") {
+      checkPinState();
+    }
+
     // THEME ENGINE
     const THEME_KEY = "bb_os_theme";
     function initTheme() {
