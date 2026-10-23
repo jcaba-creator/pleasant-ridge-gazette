@@ -1,15 +1,1 @@
-[
-  {
-    "id": "obs-test-fleet-20261022",
-    "text": "Initial Fleet Sync: Verify F-150 title registration packet & order 8 qts Motorcraft 5W-30 Full Synthetic with FL-500S filter",
-    "zone": "Mobile / Vehicles",
-    "sprint": "\u26a1 Immediate Sprint",
-    "operator": "Josh",
-    "urgency": "urgent",
-    "pageTitle": "Fleet Mobility Core",
-    "pagePath": "fleet",
-    "timestamp": "2026-10-23T01:23:12.744Z",
-    "status": "active",
-    "sourceHost": "pleasant-ridge-gazette.vercel.app"
-  }
-]
+[]
