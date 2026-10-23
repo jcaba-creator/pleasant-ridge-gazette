@@ -1,0 +1,31 @@
+# Strict Isolation .gitignore for The Pleasant Ridge Gazette (Public Civic Edition)
+
+# Sovereign Homestead / Private System Exclusions
+*rx*
+*Rx*
+*prescription*
+*fleet*
+*Fleet*
+*master*
+*Master*
+*navigator*
+*Navigator*
+*scratchpad*
+*Scratchpad*
+*backlog*
+*c2*
+*flow*
+*bok*
+*entity*
+*.env*
+*.key
+token.json
+credentials.json
+
+# Local OS & Python caches
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+*.log
+.vercel/
