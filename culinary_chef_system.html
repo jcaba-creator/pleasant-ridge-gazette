@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Culinary Expert System | Household Leftover Elevation Engine</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card-bg: #161b22;
+      --border: #30363d;
+      --text: #c9d1d9;
+      --heading: #58a6ff;
+      --ok: #238636;
+      --ok-text: #3fb950;
+      --warn: #9e6a03;
+      --warn-text: #d29922;
+      --danger: #da3633;
+      --danger-text: #f85149;
+      --accent: #1f6feb;
+      --gold: #d29922;
+      --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+      --font-header: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+    }
+
+    body.theme-broadsheet {
+      --bg: #f5f0e6;
+      --card-bg: #fffdf9;
+      --border: #d4c8b8;
+      --text: #2c2523;
+      --heading: #5a2e1d;
+      --ok: #2e6930;
+      --ok-text: #2e6930;
+      --warn: #8c531b;
+      --warn-text: #8c531b;
+      --danger: #9c2724;
+      --danger-text: #9c2724;
+      --accent: #78350f;
+      --gold: #b45309;
+      --font-body: Georgia, "Times New Roman", serif;
+      --font-header: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 16px;
+      line-height: 1.5;
+      transition: background 0.2s, color 0.2s;
+    }
+    .container { max-width: 1400px; margin: 0 auto; }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    h1, h2, h3, h4 { font-family: var(--font-header); color: var(--heading); margin-top: 0; }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 20px;
+    }
+    @media (max-width: 960px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    button {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 13px;
+      transition: opacity 0.2s;
+    }
+    button:hover { opacity: 0.9; }
+
+    .tag-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .tag-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 4px 10px;
+      border-radius: 16px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .tag-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      font-weight: bold;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    .badge-ok { background: rgba(35, 134, 54, 0.2); color: var(--ok-text); border: 1px solid var(--ok); }
+    .badge-warn { background: rgba(210, 153, 34, 0.2); color: var(--warn-text); border: 1px solid var(--warn); }
+    .badge-danger { background: rgba(248, 81, 73, 0.2); color: var(--danger-text); border: 1px solid var(--danger); }
+    .badge-gold { background: rgba(210, 153, 34, 0.2); color: var(--gold); border: 1px solid var(--gold); }
+
+    /* Dish Elevation Styling */
+    .dish-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--gold);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .dish-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+    }
+    .dish-culinary-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--gold);
+      font-style: italic;
+    }
+    .dish-vernacular-title {
+      font-size: 13px;
+      color: var(--text);
+      font-weight: normal;
+      margin-top: 2px;
+    }
+
+    .picky-box {
+      background: rgba(210, 153, 34, 0.08);
+      border: 1px dashed var(--gold);
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin: 12px 0;
+      font-size: 12px;
+    }
+    .picky-box strong { color: var(--warn-text); }
+
+    .step-list, .guide-list {
+      padding-left: 20px;
+      font-size: 13px;
+      margin: 6px 0;
+    }
+    .step-list li, .guide-list li {
+      margin-bottom: 4px;
+    }
+
+    .trace-box {
+      background: rgba(0,0,0,0.25);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 11px;
+      color: #8b949e;
+      max-height: 140px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div>
+      <h1>Culinary Expert System</h1>
+      <small style="color: #8b949e;">Deterministic Production Rule Engine | Client-Side Leftover Elevation & Picky Deconstruction</small>
+    </div>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <button onclick="toggleTheme()" style="background:var(--border); color:var(--text); padding:6px 12px;">Toggle Theme</button>
+      <button onclick="runInference()" style="background:var(--ok); font-size:14px; padding:8px 18px;">🔥 Run Chef Engine</button>
+    </div>
+  </header>
+
+  <!-- QUICK PRESETS -->
+  <div class="card" style="margin-bottom: 16px; padding: 12px;">
+    <strong style="font-size: 12px; color: var(--heading);">QUICK HOUSEHOLD PRESETS:</strong>
+    <span style="display: inline-flex; gap: 8px; flex-wrap: wrap; margin-left: 10px;">
+      <button onclick="applyPreset('rice_chicken')" style="background:var(--border); font-size:12px; padding:4px 10px;">🍗 Sunday Roast (Rice + Chicken + Roux)</button>
+      <button onclick="applyPreset('stale_bread')" style="background:var(--border); font-size:12px; padding:4px 10px;">🥖 Stale Bread Salvage (Panzanella / Pain Perdu)</button>
+      <button onclick="applyPreset('pasta_greens')" style="background:var(--border); font-size:12px; padding:4px 10px;">🍝 Pasta & Crisper Greens (Cold Salad + Crema)</button>
+      <button onclick="applyPreset('beef_roots')" style="background:var(--border); font-size:12px; padding:4px 10px;">🥩 Pot Roast & Roasted Roots (Bistro Hash)</button>
+      <button onclick="resetSelections()" style="background:transparent; color:#8b949e; border:1px solid var(--border); font-size:12px; padding:4px 10px;">Reset All</button>
+    </span>
+  </div>
+
+  <div class="grid">
+    <!-- LEFT COLUMN: WORKING MEMORY FACTS & CONSTRAINTS -->
+    <div>
+      <!-- 1. LEFTOVERS INVENTORY -->
+      <div class="card">
+        <h3>1. Active Leftovers (Working Memory)</h3>
+        <small style="color:#8b949e;">Select available cooked proteins, starches, or produce:</small>
+        
+        <div style="margin-top:10px;">
+          <strong style="font-size:11px; text-transform:uppercase; color:var(--heading);">Starches & Breads</strong>
+          <div class="tag-cloud" id="leftovers-starches">
+            <span class="tag-btn" onclick="toggleTag(this, 'leftover', 'rice')">Rice</span>
+            <span class="tag-btn" onclick="toggleTag(this, 'leftover', 'bread')">Bread / Baguette</span>
+            <span class="tag-btn" onclick="toggleTag(this, 'leftover', 'pasta')">Pasta / Noodles</span>
+            <span class="tag-btn" onclick="toggleTag(this, 'leftover', 'potatoes')">Potatoes</span>
+          </div>
+        </div>
+
+        <div style="margin-top:10px;">
+          <strong style="font-size:11px; text-transform:uppercase; color:var(--heading);">Proteins</strong>
+          <div class="tag-cloud" id="leftovers-proteins">
+            <span class="tag-btn" onclick="toggleTag(this, 'leftover', 'chicken')">Chicken (Scrap/Rotisserie)</span>
+            <span class="tag-btn" onclick="toggleTag(this, 'leftover', 'beef')">Beef / Roast Scraps</span>
+            <span class="tag-btn" onclick="toggleTag(this, 'leftover', 'pork')">Pork / Carnitas</span>
+            <span class="tag-btn" onclick="toggleTag(this, 'leftover', 'eggs')">Cooked Eggs</span>
+          </div>
+        </div>
+
+        <div style="margin-top:10px;">
+          <strong style="font-size:11px; text-transform:uppercase; color:var(--heading);">Vegetables & Produce</strong>
+          <div class="tag-cloud" id="leftovers-veg">
+            <span class="tag-btn" onclick="toggleTag(this, 'leftover', 'greens')">Wilted Greens / Herbs</span>
+            <span class="tag-btn" onclick="toggleTag(this, 'leftover', 'carrots')">Roasted Carrots / Roots</span>
+            <span class="tag-btn" onclick="toggleTag(this, 'leftover', 'sweet potatoes')">Sweet Potatoes</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. PANTRY INGREDIENTS -->
+      <div class="card">
+        <h3>2. Pantry Staples Available</h3>
+        <small style="color:#8b949e;">Culinary binding agents, cooking fats, and acids:</small>
+        
+        <div class="tag-cloud" id="pantry-tags">
+          <span class="tag-btn active" onclick="toggleTag(this, 'pantry', 'butter')">Butter</span>
+          <span class="tag-btn active" onclick="toggleTag(this, 'pantry', 'oil')">Cooking Oil</span>
+          <span class="tag-btn" onclick="toggleTag(this, 'pantry', 'olive oil')">Olive Oil</span>
+          <span class="tag-btn" onclick="toggleTag(this, 'pantry', 'flour')">Flour</span>
+          <span class="tag-btn" onclick="toggleTag(this, 'pantry', 'egg')">Fresh Eggs</span>
+          <span class="tag-btn" onclick="toggleTag(this, 'pantry', 'mayonnaise')">Mayonnaise</span>
+          <span class="tag-btn" onclick="toggleTag(this, 'pantry', 'yogurt')">Yogurt / Sour Cream</span>
+          <span class="tag-btn" onclick="toggleTag(this, 'pantry', 'vinegar')">Vinegar / Acid</span>
+          <span class="tag-btn" onclick="toggleTag(this, 'pantry', 'lemon')">Lemon</span>
+        </div>
+      </div>
+
+      <!-- 3. PICKY EATER CONSTRAINTS -->
+      <div class="card">
+        <h3>3. Child & Picky Eater Constraints</h3>
+        <small style="color:#8b949e;">Activates child deconstruction rules & texture segregation:</small>
+        
+        <div class="tag-cloud" id="constraint-tags">
+          <span class="tag-btn active" onclick="toggleTag(this, 'constraint', 'no-mixing-textures')">No Mixing Textures</span>
+          <span class="tag-btn active" onclick="toggleTag(this, 'constraint', 'no-sauce-touching')">No Sauce Touching</span>
+          <span class="tag-btn" onclick="toggleTag(this, 'constraint', 'plain-presentation')">Plain Presentation Only</span>
+          <span class="tag-btn" onclick="toggleTag(this, 'constraint', 'dip-on-side')">Dipping Sauce on Side</span>
+        </div>
+      </div>
+
+      <!-- 4. INFERENCE TRACE LOG -->
+      <div class="card">
+        <h4 style="margin-bottom:6px;">Forward-Chaining Rule Agenda Trace</h4>
+        <div class="trace-box" id="inference-trace">Engine ready. Select facts and click 'Run Chef Engine'.</div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: ELEVATED CULINARY RESULTS -->
+    <div>
+      <div class="card" style="background:transparent; border:none; padding:0; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline;">
+          <h2>Elevated Culinary Transformations</h2>
+          <span id="dishes-count" class="badge badge-ok">0 Dishes Inferred</span>
+        </div>
+        <p style="font-size:12px; color:#8b949e; margin-top:-4px;">
+          Deterministic consequences synthesized from matched preconditions, ranked by conflict salience.
+        </p>
+      </div>
+
+      <div id="dishes-container">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// -------------------------------------------------------------------------
+// EXPERT ENGINE CORE & RULES
+// -------------------------------------------------------------------------
+class ExpertEngine {
+  constructor() {
+    this.workingMemory = new Map();
+    this.rules = [];
+    this.generatedDishes = [];
+    this.firingLog = [];
+  }
+  assertFact(fact) { this.workingMemory.set(fact.id, fact); }
+  retractFact(factId) { this.workingMemory.delete(factId); }
+  addRule(rule) {
+    this.rules.push(rule);
+    this.rules.sort((a, b) => b.salience - a.salience);
+  }
+  getFacts() { return Array.from(this.workingMemory.values()); }
+  clear() {
+    this.workingMemory.clear();
+    this.generatedDishes = [];
+    this.firingLog = [];
+  }
+  run() {
+    let ruleFired = true;
+    const firedRuleIds = new Set();
+    while (ruleFired) {
+      ruleFired = false;
+      const currentFacts = this.getFacts();
+      for (const rule of this.rules) {
+        if (!firedRuleIds.has(rule.id) && rule.conditions(currentFacts)) {
+          this.firingLog.push(`[Salience ${rule.salience}] Rule Fired: ${rule.name}`);
+          rule.consequences(currentFacts, this);
+          firedRuleIds.add(rule.id);
+          ruleFired = true;
+          break;
+        }
+      }
+    }
+  }
+}
+
+const culinaryRules = [
+  // 1. Crispy Rice Squares
+  {
+    id: 'CYCLE_RICE_ARANCINI_CRISPY_BASE',
+    name: 'Transform Day-Old Rice into Crispy Rice Cakes',
+    salience: 100,
+    conditions: (facts) => {
+      const hasOldRice = facts.some(f => f.type === 'leftover' && f.attributes.item === 'rice');
+      const hasFat = facts.some(f => f.type === 'ingredient' && ['butter', 'oil', 'olive oil'].includes(f.attributes.item));
+      return hasOldRice && hasFat;
+    },
+    consequences: (facts, engine) => {
+      const hasProtein = facts.find(f => f.type === 'leftover' && f.attributes.category === 'protein');
+      const proteinName = hasProtein ? hasProtein.attributes.item : 'Garden Egg';
+      const capProtein = proteinName.charAt(0).toUpperCase() + proteinName.slice(1);
+
+      engine.generatedDishes.push({
+        id: 'dish_crispy_rice_pave',
+        derivedFromRule: 'CYCLE_RICE_ARANCINI_CRISPY_BASE',
+        culinaryTitle: `Pavé de Riz Croustillant avec Effiloché de ${capProtein}`,
+        vernacularTitle: 'Crispy Pan-Fried Rice Squares with Shredded Protein',
+        prepTimeMinutes: 12,
+        costTier: 'ultra-cheap',
+        deconstructedPickyAlternative: 'Separate crispy rice patties from the protein; serve protein cold or warm with ketchup/dip of choice on the rim.',
+        presentationGuidance: [
+          'Sear the rice patty in a square mold until deep golden brown on top and bottom.',
+          'Place protein centrally in an elevated stack; do not spread across the plate.',
+          'Garnish with cracked black pepper and green scallion diagonals.'
+        ],
+        executionSteps: [
+          'Compress cold leftover rice into a flat square using parchment paper.',
+          'Pan-fry in neutral oil or butter over medium-high heat until a distinct crust forms (3 min/side).',
+          'Warm protein separately with a dash of pan drippings or soy glaze and rest atop the patty.'
+        ]
+      });
+    }
+  },
+
+  // 2. Chicken Velouté
+  {
+    id: 'CYCLE_SHREDDED_CHICKEN_VELOUTE',
+    name: 'Elevate Scrap Chicken into Velouté Pot-Pie Skillet',
+    salience: 90,
+    conditions: (facts) => {
+      const hasChicken = facts.some(f => f.type === 'leftover' && f.attributes.item === 'chicken');
+      const hasFlour = facts.some(f => f.type === 'ingredient' && f.attributes.item === 'flour');
+      const hasButter = facts.some(f => f.type === 'ingredient' && f.attributes.item === 'butter');
+      return hasChicken && hasFlour && hasButter;
+    },
+    consequences: (facts, engine) => {
+      engine.generatedDishes.push({
+        id: 'dish_chicken_veloute',
+        derivedFromRule: 'CYCLE_SHREDDED_CHICKEN_VELOUTE',
+        culinaryTitle: 'Fricassée de Volaille Déstructurée en Croûte Dorée',
+        vernacularTitle: 'Quick Skillet Chicken Velouté with Toast Points',
+        prepTimeMinutes: 15,
+        costTier: 'budget',
+        deconstructedPickyAlternative: 'Keep dry chicken strips separate; reserve toast triangles plain on side without gravy immersion.',
+        presentationGuidance: [
+          'Cut sandwich bread on the bias into thin, sharp triangles (croutons dorés).',
+          'Spoon the velvety sauce directly into a shallow bowl, leaning toast points against the rim.',
+          'Dust lightly with paprika or dried parsley along the perimeter.'
+        ],
+        executionSteps: [
+          'Melt 2 tbsp butter, whisk in 2 tbsp flour for 60 seconds (blonde roux).',
+          'Slowly add 1 cup water/broth or milk until thickened into a glossy coating sauce.',
+          'Fold in shredded chicken to rehydrate; serve bubbling hot over toasted points.'
+        ]
+      });
+    }
+  },
+
+  // 3. Wilted Greens -> Herb Crema
+  {
+    id: 'CYCLE_VEG_STEM_EMULSION',
+    name: 'Transform Limp Greens into Herb Emulsion / Green Goddess Dressing',
+    salience: 80,
+    conditions: (facts) => {
+      const hasGreens = facts.some(f => f.type === 'leftover' && ['greens', 'spinach', 'kale', 'lettuce', 'herbs'].includes(f.attributes.item));
+      const hasCreamBase = facts.some(f => f.type === 'ingredient' && ['mayonnaise', 'yogurt', 'sour cream', 'mayo'].includes(f.attributes.item));
+      return hasGreens && hasCreamBase;
+    },
+    consequences: (facts, engine) => {
+      engine.generatedDishes.push({
+        id: 'dish_herb_emulsion',
+        derivedFromRule: 'CYCLE_VEG_STEM_EMULSION',
+        culinaryTitle: 'Émulsion Fine d’Herbes Rustiques',
+        vernacularTitle: 'Zero-Waste Herb Crema Dip',
+        prepTimeMinutes: 5,
+        costTier: 'ultra-cheap',
+        deconstructedPickyAlternative: 'Present in a separate 2-oz ramekin; label as "Chef Dipping Sauce" rather than veggie sauce.',
+        presentationGuidance: [
+          'Serve in a low, wide ramekin with an olive oil channel through the center.',
+          'Wipe rim completely clean of speckles.'
+        ],
+        executionSteps: [
+          'Flash-blanch greens or stems in boiling water for 15 seconds, shock in cold water.',
+          'Blend smooth with mayo/yogurt, pinch of salt, and lemon juice or vinegar until pastel green.'
+        ]
+      });
+    }
+  },
+
+  // 4. Stale Bread -> Panzanella
+  {
+    id: 'CYCLE_STALE_BREAD_PANZANELLA',
+    name: 'Transform Stale Crusts into Tuscan Panzanella Salad',
+    salience: 75,
+    conditions: (facts) => {
+      const hasStaleBread = facts.some(f => (f.type === 'leftover' || f.type === 'ingredient') && ['bread', 'stale bread', 'baguette'].includes(f.attributes.item));
+      const hasOil = facts.some(f => f.type === 'ingredient' && ['oil', 'olive oil', 'butter'].includes(f.attributes.item));
+      const hasAcid = facts.some(f => f.type === 'ingredient' && ['vinegar', 'lemon'].includes(f.attributes.item));
+      return hasStaleBread && hasOil && hasAcid;
+    },
+    consequences: (facts, engine) => {
+      engine.generatedDishes.push({
+        id: 'dish_panzanella_toscana',
+        derivedFromRule: 'CYCLE_STALE_BREAD_PANZANELLA',
+        culinaryTitle: 'Panzanella Rustica Toscane aux Croûtons Dorés & Vinaigre Doux',
+        vernacularTitle: 'Crispy Tuscan Bread Salad with Herb Vinaigrette',
+        prepTimeMinutes: 10,
+        costTier: 'ultra-cheap',
+        deconstructedPickyAlternative: 'Bake croutons extra crunchy and serve completely dry in a snack cup alongside cheese sticks or cucumber slices; keep vinaigrette reserved.',
+        presentationGuidance: [
+          'Tear bread by hand rather than knife-cutting to expose craggy crevices that catch the dressing.',
+          'Mound lightly in a wide shallow bowl with torn basil or parsley leaves on top.',
+          'Finish with coarse sea salt crystals and a zigzag drizzle of olive oil.'
+        ],
+        executionSteps: [
+          'Toss hand-torn stale bread chunks in olive oil, salt, and garlic powder.',
+          'Toast in a dry cast iron skillet until golden and crisp on the edges (4-5 mins).',
+          'Whisk oil, vinegar, salt, and pepper; toss warm croutons with diced veggies 5 mins before serving.'
+        ]
+      });
+    }
+  },
+
+  // 5. Stale Bread -> Pain Perdu
+  {
+    id: 'CYCLE_STALE_BREAD_PAIN_PERDU',
+    name: 'Revive Dry Bread as Classic French Pain Perdu',
+    salience: 70,
+    conditions: (facts) => {
+      const hasBread = facts.some(f => (f.type === 'leftover' || f.type === 'ingredient') && ['bread', 'stale bread', 'toast'].includes(f.attributes.item));
+      const hasEggs = facts.some(f => f.type === 'ingredient' && ['egg', 'eggs'].includes(f.attributes.item));
+      const hasFat = facts.some(f => f.type === 'ingredient' && ['butter', 'oil'].includes(f.attributes.item));
+      return hasBread && hasEggs && hasFat;
+    },
+    consequences: (facts, engine) => {
+      engine.generatedDishes.push({
+        id: 'dish_pain_perdu_dore',
+        derivedFromRule: 'CYCLE_STALE_BREAD_PAIN_PERDU',
+        culinaryTitle: 'Pain Perdu Caramélisé au Beurre Mousseline',
+        vernacularTitle: 'Custard-Soaked Pan-Seared Brioche / Golden French Toast',
+        prepTimeMinutes: 8,
+        costTier: 'ultra-cheap',
+        deconstructedPickyAlternative: 'Slice into uniform finger sticks (French Toast Dippers). Serve dry on plate with maple syrup or fruit jam in a separate dip bowl.',
+        presentationGuidance: [
+          'Dust lightly with powdered sugar or cinnamon across a diagonal angle.',
+          'Stack two thick slices staggered at a 45-degree angle.',
+          'Place a pat of cold whipped butter dead-center to melt into the hot crust.'
+        ],
+        executionSteps: [
+          'Whisk egg with a splash of milk or water, pinch of salt (and optional vanilla/cinnamon).',
+          'Soak dry bread for 30 seconds per side until heavy but not collapsing.',
+          'Sear in foaming butter over medium heat for 3 mins per side until mahogany golden and puffed.'
+        ]
+      });
+    }
+  },
+
+  // 6. Roasted Roots -> Velvet Purée
+  {
+    id: 'CYCLE_ROASTED_ROOTS_PUREE',
+    name: 'Transform Cold Roasted Roots into Brown-Butter Velvet Purée',
+    salience: 65,
+    conditions: (facts) => {
+      const hasRoots = facts.some(f => f.type === 'leftover' && ['carrots', 'potatoes', 'sweet potatoes'].includes(f.attributes.item));
+      const hasButter = facts.some(f => f.type === 'ingredient' && ['butter', 'olive oil'].includes(f.attributes.item));
+      return hasRoots && hasButter;
+    },
+    consequences: (facts, engine) => {
+      const rootFact = facts.find(f => f.type === 'leftover' && ['carrots', 'potatoes', 'sweet potatoes'].includes(f.attributes.item));
+      const rootName = rootFact ? rootFact.attributes.item : 'Racines';
+      const capRoot = rootName.charAt(0).toUpperCase() + rootName.slice(1);
+
+      engine.generatedDishes.push({
+        id: 'dish_velvet_roots_puree',
+        derivedFromRule: 'CYCLE_ROASTED_ROOTS_PUREE',
+        culinaryTitle: `Mousseline Veloutée de ${capRoot} au Beurre Noisette`,
+        vernacularTitle: 'Brown-Butter Glazed Velvet Root Mash',
+        prepTimeMinutes: 8,
+        costTier: 'budget',
+        deconstructedPickyAlternative: 'Warm a portion of the roasted roots whole without mashing; serve plain as "roasted carrot coins" or "crispy potato bites" with butter on the side.',
+        presentationGuidance: [
+          'Spoon puree into the center of a warm plate and create a circular well using the back of a warmed spoon.',
+          'Pool nut-brown foaming butter inside the well.',
+          'Garnish with flaky sea salt and cracked black pepper.'
+        ],
+        executionSteps: [
+          'Warm leftover roasted vegetables with 2 tbsp of water or broth.',
+          'Puree in a blender or food processor until completely silky.',
+          'In a small pan, brown 2 tbsp butter until hazelnut-scented; fold half into the purée and spoon the rest over the top.'
+        ]
+      });
+    }
+  },
+
+  // 7. Cold Pasta -> Mediterranean Farfalle Salad
+  {
+    id: 'CYCLE_COLD_PASTA_ELEVATED_SALAD',
+    name: 'Elevate Cold Pasta into Mediterranean Farfalle Salad',
+    salience: 60,
+    conditions: (facts) => {
+      const hasPasta = facts.some(f => f.type === 'leftover' && ['pasta', 'noodles'].includes(f.attributes.item));
+      const hasOil = facts.some(f => f.type === 'ingredient' && ['oil', 'olive oil'].includes(f.attributes.item));
+      return hasPasta && hasOil;
+    },
+    consequences: (facts, engine) => {
+      engine.generatedDishes.push({
+        id: 'dish_cold_pasta_provencale',
+        derivedFromRule: 'CYCLE_COLD_PASTA_ELEVATED_SALAD',
+        culinaryTitle: 'Salade de Pâtes Estivale à l’Huile Vierge et Éclats d’Ail Confit',
+        vernacularTitle: 'Garlic-Herb Tossed Mediterranean Cold Pasta',
+        prepTimeMinutes: 7,
+        costTier: 'ultra-cheap',
+        deconstructedPickyAlternative: 'Reserve plain cold noodles in a separate bowl tossed only in melted butter or mild olive oil; omit vinegar, onions, and herbs.',
+        presentationGuidance: [
+          'Toss pasta gently to coat every surface in glossy emulsion; do not let it look dry.',
+          'Serve in a deep white bowl with shaved parmesan or crisp breadcrumbs piled at the center.',
+          'Sprinkle fresh cracked pepper around the inner perimeter.'
+        ],
+        executionSteps: [
+          'Rinse cold pasta briefly in warm water to loosen starches, then shock with cold water and drain thoroughly.',
+          'Whisk 3 tbsp olive oil with 1 tbsp lemon juice/vinegar, pinch of salt, dried oregano, and minced garlic.',
+          'Toss noodles with vinaigrette; fold in any diced leftover cheeses, olives, or cherry tomatoes.'
+        ]
+      });
+    }
+  },
+
+  // 8. Shredded Beef -> Cast-Iron Skillet Hash
+  {
+    id: 'CYCLE_LEFTOVER_BEEF_HASH',
+    name: 'Cast-Iron Skillet Shredded Beef & Herb Hash',
+    salience: 55,
+    conditions: (facts) => {
+      const hasBeef = facts.some(f => f.type === 'leftover' && ['beef', 'roast beef'].includes(f.attributes.item));
+      const hasFat = facts.some(f => f.type === 'ingredient' && ['butter', 'oil'].includes(f.attributes.item));
+      return hasBeef && hasFat;
+    },
+    consequences: (facts, engine) => {
+      engine.generatedDishes.push({
+        id: 'dish_beef_parmentier_hash',
+        derivedFromRule: 'CYCLE_LEFTOVER_BEEF_HASH',
+        culinaryTitle: 'Hachis Parmentier Poêlé au Beurre Mousseline & Croûte d’Oignons',
+        vernacularTitle: 'Crispy Skillet Braised Beef & Herb Potato Hash',
+        prepTimeMinutes: 14,
+        costTier: 'budget',
+        deconstructedPickyAlternative: 'Serve shredded beef warm in a dry pile; keep potatoes or starches unmixed and unseasoned with herbs.',
+        presentationGuidance: [
+          'Press hash firmly into cast-iron skillet to form a cohesive golden crust before serving.',
+          'Optionally top with a sunny-side egg with a trembling, glossy yolk.',
+          'Garnish rim with finely sliced chives.'
+        ],
+        executionSteps: [
+          'Shred cold beef along the grain into bite-sized fibers.',
+          'Sear diced cold potatoes or onions in sizzling butter until caramelized and crisp.',
+          'Fold in beef shreds, pressing flat against the hot pan for 3 minutes without stirring to build a deep crust.'
+        ]
+      });
+    }
+  }
+];
+
+// -------------------------------------------------------------------------
+// UI STATE & INTERACTION
+// -------------------------------------------------------------------------
+let selectedLeftovers = new Set(['rice', 'chicken']);
+let selectedPantry = new Set(['butter', 'flour', 'oil']);
+let selectedConstraints = new Set(['no-mixing-textures', 'no-sauce-touching']);
+
+function toggleTheme() {
+  document.body.classList.toggle('theme-broadsheet');
+  const isBroadsheet = document.body.classList.contains('theme-broadsheet');
+  localStorage.setItem('chef_theme', isBroadsheet ? 'broadsheet' : 'slate');
+}
+if (localStorage.getItem('chef_theme') === 'broadsheet') {
+  document.body.classList.add('theme-broadsheet');
+}
+
+function toggleTag(el, category, value) {
+  el.classList.toggle('active');
+  const set = category === 'leftover' ? selectedLeftovers : (category === 'pantry' ? selectedPantry : selectedConstraints);
+  if (el.classList.contains('active')) {
+    set.add(value);
+  } else {
+    set.delete(value);
+  }
+  runInference();
+}
+
+function resetSelections() {
+  selectedLeftovers.clear();
+  selectedPantry.clear();
+  selectedConstraints.clear();
+  document.querySelectorAll('.tag-btn').forEach(el => el.classList.remove('active'));
+  runInference();
+}
+
+function applyPreset(presetKey) {
+  resetSelections();
+  if (presetKey === 'rice_chicken') {
+    ['rice', 'chicken'].forEach(i => selectedLeftovers.add(i));
+    ['butter', 'flour', 'oil'].forEach(i => selectedPantry.add(i));
+    ['no-mixing-textures', 'no-sauce-touching'].forEach(i => selectedConstraints.add(i));
+  } else if (presetKey === 'stale_bread') {
+    ['bread', 'carrots'].forEach(i => selectedLeftovers.add(i));
+    ['butter', 'egg', 'oil', 'vinegar'].forEach(i => selectedPantry.add(i));
+    ['plain-presentation'].forEach(i => selectedConstraints.add(i));
+  } else if (presetKey === 'pasta_greens') {
+    ['pasta', 'greens'].forEach(i => selectedLeftovers.add(i));
+    ['olive oil', 'mayonnaise', 'lemon'].forEach(i => selectedPantry.add(i));
+    ['dip-on-side'].forEach(i => selectedConstraints.add(i));
+  } else if (presetKey === 'beef_roots') {
+    ['beef', 'potatoes', 'carrots'].forEach(i => selectedLeftovers.add(i));
+    ['butter', 'oil'].forEach(i => selectedPantry.add(i));
+    ['no-mixing-textures'].forEach(i => selectedConstraints.add(i));
+  }
+  syncTagUI();
+  runInference();
+}
+
+function syncTagUI() {
+  document.querySelectorAll('#leftovers-starches .tag-btn, #leftovers-proteins .tag-btn, #leftovers-veg .tag-btn').forEach(el => {
+    const val = el.getAttribute('onclick').match(/'([^']+)'\)$/)[1];
+    el.classList.toggle('active', selectedLeftovers.has(val));
+  });
+  document.querySelectorAll('#pantry-tags .tag-btn').forEach(el => {
+    const val = el.getAttribute('onclick').match(/'([^']+)'\)$/)[1];
+    el.classList.toggle('active', selectedPantry.has(val));
+  });
+  document.querySelectorAll('#constraint-tags .tag-btn').forEach(el => {
+    const val = el.getAttribute('onclick').match(/'([^']+)'\)$/)[1];
+    el.classList.toggle('active', selectedConstraints.has(val));
+  });
+}
+
+// -------------------------------------------------------------------------
+// INFERENCE EXECUTION
+// -------------------------------------------------------------------------
+function runInference() {
+  const engine = new ExpertEngine();
+  culinaryRules.forEach(r => engine.addRule(r));
+
+  // Assert Leftovers
+  Array.from(selectedLeftovers).forEach((item, idx) => {
+    const isProtein = ['chicken', 'beef', 'pork', 'eggs'].includes(item);
+    engine.assertFact({
+      id: `leftover_${idx}`,
+      type: 'leftover',
+      attributes: { item: item, category: isProtein ? 'protein' : 'base' }
+    });
+  });
+
+  // Assert Pantry
+  Array.from(selectedPantry).forEach((item, idx) => {
+    engine.assertFact({
+      id: `pantry_${idx}`,
+      type: 'ingredient',
+      attributes: { item: item }
+    });
+  });
+
+  // Assert Constraints
+  Array.from(selectedConstraints).forEach((c, idx) => {
+    engine.assertFact({
+      id: `constraint_${idx}`,
+      type: 'constraint',
+      attributes: { rule: c }
+    });
+  });
+
+  engine.run();
+
+  // Update Trace Log
+  const traceDiv = document.getElementById("inference-trace");
+  if (engine.firingLog.length === 0) {
+    traceDiv.innerHTML = `<span style="color:#8b949e;">No rules matched current facts in working memory. Add compatible ingredients (e.g., butter, flour, oil) to satisfy preconditions.</span>`;
+  } else {
+    traceDiv.innerHTML = engine.firingLog.map(log => `<div>${log}</div>`).join("");
+  }
+
+  // Update Dish Cards
+  renderDishes(engine.generatedDishes);
+}
+
+function renderDishes(dishes) {
+  const container = document.getElementById("dishes-container");
+  const countBadge = document.getElementById("dishes-count");
+  countBadge.innerText = `${dishes.length} Dish${dishes.length === 1 ? '' : 'es'} Inferred`;
+
+  if (dishes.length === 0) {
+    container.innerHTML = `
+      <div class="card" style="text-align:center; padding: 40px; color:#8b949e;">
+        <h3>No Recipe Preconditions Satisfied</h3>
+        <p>Try enabling common pantry staples like <strong>Butter</strong>, <strong>Cooking Oil</strong>, or <strong>Flour</strong>, or choose a quick preset above.</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = dishes.map(dish => `
+    <div class="dish-card">
+      <div class="dish-header">
+        <div>
+          <div class="dish-culinary-title">${dish.culinaryTitle}</div>
+          <div class="dish-vernacular-title"><strong>Vernacular:</strong> ${dish.vernacularTitle}</div>
+        </div>
+        <div style="display:flex; gap:6px;">
+          <span class="badge badge-gold">⏱️ ${dish.prepTimeMinutes} MIN</span>
+          <span class="badge badge-ok">${dish.costTier.toUpperCase()}</span>
+        </div>
+      </div>
+
+      <!-- PICKY EATER DECONSTRUCTION PATH -->
+      <div class="picky-box">
+        <strong>👶 Child / Picky-Eater Deconstruction Path:</strong>
+        <div style="margin-top:4px;">${dish.deconstructedPickyAlternative}</div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-top:12px;">
+        <div>
+          <strong style="font-size:12px; color:var(--heading);">Execution Steps:</strong>
+          <ol class="step-list">
+            ${dish.executionSteps.map(s => `<li>${s}</li>`).join("")}
+          </ol>
+        </div>
+        <div>
+          <strong style="font-size:12px; color:var(--heading);">Plating & Presentation Guidance:</strong>
+          <ul class="guide-list">
+            ${dish.presentationGuidance.map(g => `<li>${g}</li>`).join("")}
+          </ul>
+        </div>
+      </div>
+
+      <div style="margin-top:14px; display:flex; justify-content:flex-end;">
+        <button onclick="saveDishToScratchpad('${dish.vernacularTitle}')" style="background:var(--border); font-size:11px; padding:4px 10px;">
+          📝 Save to Field Scratchpad
+        </button>
+      </div>
+    </div>
+  `).join("");
+}
+
+function saveDishToScratchpad(title) {
+  const note = {
+    id: "sp_" + Date.now(),
+    timestamp: new Date().toISOString(),
+    zone: "Home / Interior",
+    category: "OBSERVATION",
+    note: "Planned Culinary Transformation: " + title,
+    synced: false
+  };
+  const existing = JSON.parse(localStorage.getItem("bb_scratchpad_notes") || "[]");
+  existing.unshift(note);
+  localStorage.setItem("bb_scratchpad_notes", JSON.stringify(existing));
+  alert(`Saved "${title}" to Field Scratchpad Inbox!`);
+}
+
+// Initial Sync & Run
+syncTagUI();
+runInference();
+</script>
+</body>
+</html>

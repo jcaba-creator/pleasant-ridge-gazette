@@ -4,6 +4,14 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/culinary",
+      "destination": "/culinary_chef_system.html"
+    },
+    {
+      "source": "/chef",
+      "destination": "/culinary_chef_system.html"
+    },
+    {
       "source": "/master",
       "destination": "/household_master_system.html"
     },
