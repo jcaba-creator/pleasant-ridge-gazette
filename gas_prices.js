@@ -1,7 +1,7 @@
 window.GAZETTE_GAS_FEED = {
   "status": "success",
-  "last_updated_iso": "2026-10-23T06:11:14.717732",
-  "last_updated_human": "Friday, October 23, 2026 - 06:11 AM",
+  "last_updated_iso": "2026-10-23T15:00:09.325642",
+  "last_updated_human": "Friday, October 23, 2026 - 03:00 PM",
   "date_header": "Friday, Oct 23, 2026",
   "cheapest_station": {
     "name": "Sunoco",
@@ -16,7 +16,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "501 Limit St (Leavenworth)",
       "address": "501 Limit St (Leavenworth)",
       "price": 3.83,
-      "updated": "2026-10-22T21:16:45.944Z",
+      "updated": "2026-10-23T19:44:30.957Z",
       "is_estimate": false
     },
     {
@@ -25,7 +25,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "10th Ave / Eisenhower (Leavenworth)",
       "address": "1050 Eisenhower Road (Leavenworth)",
       "price": 3.84,
-      "updated": "2026-10-23T11:01:41.945Z",
+      "updated": "2026-10-23T19:30:47.882Z",
       "is_estimate": false
     },
     {
@@ -34,7 +34,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "Main Post (Ft. Leavenworth)",
       "address": "335 Kansas Ave (Fort Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-21T18:26:56.266Z",
+      "updated": "2026-10-23T19:43:45.314Z",
       "is_estimate": false
     },
     {
@@ -61,7 +61,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "Metropolitan Ave (Leavenworth)",
       "address": "609 Metropolitan Ave (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-22T04:10:26.136Z",
+      "updated": "2026-10-23T19:39:49.800Z",
       "is_estimate": false
     },
     {
@@ -70,7 +70,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "2100 S 4th St (Leavenworth)",
       "address": "2100 S 4th St (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-23T10:47:22.543Z",
+      "updated": "2026-10-23T18:45:42.468Z",
       "is_estimate": false
     },
     {
@@ -79,7 +79,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "2004 Spruce St (Leavenworth)",
       "address": "2004 Spruce St (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-23T10:46:43.234Z",
+      "updated": "2026-10-23T19:45:59.289Z",
       "is_estimate": false
     },
     {
@@ -124,7 +124,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "Parallel Pkwy Corridor",
       "address": "10580 Parallel Pkwy (Kansas City)",
       "price": 3.93,
-      "updated": "2026-10-23T01:03:43.591Z",
+      "updated": "2026-10-23T13:46:01.693Z",
       "is_estimate": false
     },
     {
