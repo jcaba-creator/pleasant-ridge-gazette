@@ -1,7 +1,7 @@
 window.GAZETTE_GAS_FEED = {
   "status": "success",
-  "last_updated_iso": "2026-10-23T05:00:05.584929",
-  "last_updated_human": "Friday, October 23, 2026 - 05:00 AM",
+  "last_updated_iso": "2026-10-23T06:11:14.717732",
+  "last_updated_human": "Friday, October 23, 2026 - 06:11 AM",
   "date_header": "Friday, Oct 23, 2026",
   "cheapest_station": {
     "name": "Sunoco",
@@ -25,7 +25,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "10th Ave / Eisenhower (Leavenworth)",
       "address": "1050 Eisenhower Road (Leavenworth)",
       "price": 3.84,
-      "updated": "2026-10-23T09:31:50.661Z",
+      "updated": "2026-10-23T11:01:41.945Z",
       "is_estimate": false
     },
     {
@@ -70,7 +70,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "2100 S 4th St (Leavenworth)",
       "address": "2100 S 4th St (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-23T08:48:00.796Z",
+      "updated": "2026-10-23T10:47:22.543Z",
       "is_estimate": false
     },
     {
@@ -79,7 +79,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "2004 Spruce St (Leavenworth)",
       "address": "2004 Spruce St (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-23T08:46:35.034Z",
+      "updated": "2026-10-23T10:46:43.234Z",
       "is_estimate": false
     },
     {
