@@ -4,6 +4,14 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/master",
+      "destination": "/household_master_system.html"
+    },
+    {
+      "source": "/household",
+      "destination": "/household_master_system.html"
+    },
+    {
       "source": "/fleet",
       "destination": "/fleet_system.html"
     },
