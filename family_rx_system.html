@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Family Rx Expert System | Event-Driven Medication & Constraint Engine</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card-bg: #161b22;
+      --border: #30363d;
+      --text: #c9d1d9;
+      --heading: #58a6ff;
+      --ok: #238636;
+      --ok-text: #3fb950;
+      --warn: #9e6a03;
+      --warn-text: #d29922;
+      --danger: #da3633;
+      --danger-text: #f85149;
+      --accent: #1f6feb;
+      --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+      --font-header: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+    }
+
+    body.theme-broadsheet {
+      --bg: #f5f0e6;
+      --card-bg: #fffdf9;
+      --border: #d4c8b8;
+      --text: #2c2523;
+      --heading: #5a2e1d;
+      --ok: #2e6930;
+      --ok-text: #2e6930;
+      --warn: #8c531b;
+      --warn-text: #8c531b;
+      --danger: #9c2724;
+      --danger-text: #9c2724;
+      --accent: #78350f;
+      --font-body: Georgia, "Times New Roman", serif;
+      --font-header: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 16px;
+      line-height: 1.5;
+      transition: background 0.2s, color 0.2s;
+    }
+    .container { max-width: 1400px; margin: 0 auto; }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    h1, h2, h3, h4 { font-family: var(--font-header); color: var(--heading); margin-top: 0; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    button {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 13px;
+      transition: opacity 0.2s;
+    }
+    button:hover { opacity: 0.9; }
+
+    input, select, textarea {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 13px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    .badge-ok { background: rgba(35, 134, 54, 0.2); color: var(--ok-text); border: 1px solid var(--ok); }
+    .badge-warn { background: rgba(210, 153, 34, 0.2); color: var(--warn-text); border: 1px solid var(--warn); }
+    .badge-danger { background: rgba(248, 81, 73, 0.2); color: var(--danger-text); border: 1px solid var(--danger); }
+    .badge-info { background: rgba(31, 111, 235, 0.2); color: var(--heading); border: 1px solid var(--accent); }
+
+    /* Alert Banner */
+    .alert-banner {
+      background: rgba(248, 81, 73, 0.1);
+      border: 1px solid var(--danger);
+      border-left: 6px solid var(--danger);
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+    }
+    .alert-banner.warn {
+      background: rgba(210, 153, 34, 0.1);
+      border-color: var(--warn);
+      border-left-color: var(--warn);
+    }
+    .alert-banner.nominal {
+      background: rgba(35, 134, 54, 0.1);
+      border-color: var(--ok);
+      border-left-color: var(--ok);
+    }
+
+    /* Modal Styling */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      max-width: 650px;
+      width: 100%;
+      padding: 20px;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .playbook-text {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 14px;
+      font-family: monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      color: var(--text);
+      margin: 12px 0;
+    }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }
+    th, td { border-bottom: 1px solid var(--border); padding: 8px; text-align: left; }
+    th { color: #8b949e; font-size: 12px; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div>
+      <h1>Family Rx Expert System</h1>
+      <small style="color: #8b949e;">Event-Driven Medication, Constraint & Replenishment Engine | Offline-First</small>
+    </div>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <button onclick="toggleTheme()" style="background:var(--border); color:var(--text); padding:6px 12px; font-size:12px;">Toggle Theme</button>
+      <div id="simulated-time-display" style="font-weight: bold; color: var(--heading); font-size:14px;"></div>
+    </div>
+  </header>
+
+  <!-- TIME SIMULATION & CONSTRAINT BAR -->
+  <div class="card" style="padding:10px 16px; display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+    <strong>Simulate Time Gate:</strong>
+    <input type="time" id="sim-time" value="13:45" onchange="runEvaluation()" style="padding:4px 8px;">
+    <button onclick="setTimeNow()" style="background:var(--border); padding:4px 10px; font-size:12px;">Use Real Time</button>
+    <button onclick="setLunchTime()" style="background:var(--border); padding:4px 10px; font-size:12px;">Test Lunch Blackout (13:45)</button>
+    <button onclick="setMorningTime()" style="background:var(--border); padding:4px 10px; font-size:12px;">Test Morning Open (10:00)</button>
+    <span id="time-explainer" style="font-size:12px; color:#8b949e; margin-left:auto;">Testing constraint rules against pharmacy lunch blackouts</span>
+  </div>
+
+  <!-- REFILL ALERT BANNER -->
+  <div id="alert-banner-container"></div>
+
+  <!-- MAIN DASHBOARD -->
+  <div class="grid">
+    <!-- 1. DAILY RUN SHEET -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <h3>Daily Administration Run Sheet</h3>
+        <span class="badge badge-info">Per-Person Cadence</span>
+      </div>
+      <div id="run-sheet-container"></div>
+    </div>
+
+    <!-- 2. REFILL RUN LEDGER -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <h3>Pharmacy Refill Run Ledger</h3>
+        <span class="badge badge-warn">Replenishment Cadence</span>
+      </div>
+      <div id="refill-ledger-container"></div>
+    </div>
+  </div>
+
+  <!-- ACTIVE PRESCRIPTION INVENTORY CARDS -->
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+      <div>
+        <h3>Active Family Prescription Inventory & Constraint Matrices</h3>
+        <small style="color:#8b949e;">Remaining doses, doses per day, days supply, storage conditions, and emergency playbooks</small>
+      </div>
+      <button onclick="openAddRxModal()" style="background:var(--ok); font-size:12px; padding:6px 12px;">+ Add Medication</button>
+    </div>
+    <div class="grid" id="prescriptions-grid"></div>
+  </div>
+
+  <!-- CLINICAL PROVIDER & PHARMACY DIRECTORY -->
+  <div class="grid">
+    <div class="card">
+      <h4>Registered Pharmacies & Blackouts</h4>
+      <div id="pharmacies-list"></div>
+    </div>
+    <div class="card">
+      <h4>Prescribing Clinicians & Clinic Hours</h4>
+      <div id="providers-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- EMERGENCY PLAYBOOK MODAL -->
+<div class="modal-overlay" id="playbook-modal">
+  <div class="modal-card">
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:8px;">
+      <h3 id="playbook-title" style="margin:0;">Emergency Triage Playbook</h3>
+      <button onclick="closePlaybookModal()" style="background:transparent; color:#8b949e; font-size:18px; border:none; cursor:pointer;">✕</button>
+    </div>
+    <div style="margin:12px 0; display:flex; gap:6px;">
+      <button onclick="switchPlaybookTab('OUT_OF_STOCK')" id="btn-tab-oos" style="flex:1;">🚨 Out of Stock</button>
+      <button onclick="switchPlaybookTab('DELAYED_RENEWAL')" id="btn-tab-renew" style="flex:1; background:var(--border);">⏳ 0 Refills / Late</button>
+      <button onclick="switchPlaybookTab('MISSED_DOSE')" id="btn-tab-missed" style="flex:1; background:var(--border);">⚠️ Missed Dose</button>
+    </div>
+    <div class="playbook-text" id="playbook-content"></div>
+    <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:12px;">
+      <button onclick="savePlaybookNoteToScratchpad()" style="background:var(--border); font-size:12px;">📝 Log Call to Field Scratchpad</button>
+      <button onclick="closePlaybookModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// -------------------------------------------------------------------------
+// DATA MODEL & INITIAL SEED (LOCALSTORAGE BACKED)
+// -------------------------------------------------------------------------
+const SEED_DATA = {
+  members: [
+    { id: 'mem_josh', name: 'Joshua Caballero', birthDate: '1989-06-04', group: 'adult' },
+    { id: 'mem_brit', name: 'Brittanie Caballero', birthDate: '1990-03-15', group: 'adult' },
+    { id: 'mem_child_a', name: 'Child A', birthDate: '2019-04-10', group: 'pediatric' },
+    { id: 'mem_child_b', name: 'Child B', birthDate: '2021-08-20', group: 'pediatric' }
+  ],
+  providers: [
+    {
+      id: 'prov_peds',
+      name: 'Dr. Evans, MD',
+      clinicName: 'St. Luke Pediatric Specialty Clinic',
+      phone: '913-555-0144',
+      portalUrl: 'https://mychart.health.org',
+      operatingHours: { open: '08:00', close: '17:00' },
+      lunchBreak: { start: '12:00', end: '13:00' }
+    },
+    {
+      id: 'prov_family',
+      name: 'Dr. Sarah Miller, DO',
+      clinicName: 'Leavenworth Family Care',
+      phone: '913-684-1100',
+      portalUrl: 'https://leavenworthfamily.patientportal.net',
+      operatingHours: { open: '08:30', close: '16:30' },
+      lunchBreak: { start: '12:00', end: '13:00' }
+    }
+  ],
+  pharmacies: [
+    {
+      id: 'pharm_main',
+      name: 'Main Street Community Pharmacy (Easton Corridor)',
+      location: '209 Kickapoo Corridor Branch',
+      phone: '913-773-8199',
+      driveThru: true,
+      hours: { open: '08:30', close: '18:00' },
+      lunchBreak: { start: '13:30', end: '14:00' }
+    },
+    {
+      id: 'pharm_lv_cvs',
+      name: 'CVS Pharmacy (Leavenworth S 4th St)',
+      location: '3400 S 4th St, Leavenworth, KS',
+      phone: '913-682-1234',
+      driveThru: true,
+      hours: { open: '08:00', close: '20:00' },
+      lunchBreak: { start: '13:30', end: '14:00' }
+    }
+  ],
+  prescriptions: [
+    {
+      id: 'rx_amox',
+      medicationName: 'Amoxicillin Susp 250mg/5mL',
+      dosage: '5mL BID (Twice Daily)',
+      prescribedForId: 'mem_child_a',
+      providerId: 'prov_peds',
+      preferredPharmacyId: 'pharm_main',
+      daysSupply: 10,
+      remainingDoses: 2, // 1 day left -> Triggers Refill Rule
+      dosesPerDay: 2,
+      scheduleConditions: ['keep_refrigerated', 'take_with_food'],
+      ageRestrictedPediatricWarning: 'Confirm patient current weight. Shake bottle vigorously 15 seconds before measuring with oral syringe.'
+    },
+    {
+      id: 'rx_albuterol',
+      medicationName: 'Albuterol HFA Inhaler 90mcg',
+      dosage: '2 puffs Q4-6H PRN wheezing',
+      prescribedForId: 'mem_child_b',
+      providerId: 'prov_peds',
+      preferredPharmacyId: 'pharm_main',
+      daysSupply: 30,
+      remainingDoses: 38,
+      dosesPerDay: 2,
+      scheduleConditions: ['use_spacer_chamber', 'rinse_mouth_after'],
+      ageRestrictedPediatricWarning: 'Must administer via pediatric mask spacer chamber.'
+    },
+    {
+      id: 'rx_lisinopril',
+      medicationName: 'Lisinopril 10mg Tablets',
+      dosage: '1 tablet Daily (Morning)',
+      prescribedForId: 'mem_josh',
+      providerId: 'prov_family',
+      preferredPharmacyId: 'pharm_lv_cvs',
+      daysSupply: 90,
+      remainingDoses: 8, // 8 days left -> approaching warning threshold
+      dosesPerDay: 1,
+      scheduleConditions: ['take_morning', 'maintain_hydration']
+    }
+  ]
+};
+
+// Load or Seed LocalStorage
+function getStoredData() {
+  const raw = localStorage.getItem('family_rx_store');
+  if (!raw) {
+    localStorage.setItem('family_rx_store', JSON.stringify(SEED_DATA));
+    return SEED_DATA;
+  }
+  try { return JSON.parse(raw); } catch(e) { return SEED_DATA; }
+}
+function saveStoredData(data) {
+  localStorage.setItem('family_rx_store', JSON.stringify(data));
+}
+
+// -------------------------------------------------------------------------
+// EXPERT ENGINE CORE
+// -------------------------------------------------------------------------
+class RxExpertEngine {
+  constructor(data) {
+    this.members = new Map(data.members.map(m => [m.id, m]));
+    this.providers = new Map(data.providers.map(p => [p.id, p]));
+    this.pharmacies = new Map(data.pharmacies.map(ph => [ph.id, ph]));
+    this.prescriptions = new Map(data.prescriptions.map(rx => [rx.id, rx]));
+  }
+
+  evaluateSystem(currentMilitaryTime = '11:00') {
+    const actions = [];
+    const allRxs = Array.from(this.prescriptions.values());
+
+    for (const rx of allRxs) {
+      const member = this.members.get(rx.prescribedForId);
+      const pharmacy = this.pharmacies.get(rx.preferredPharmacyId);
+      const provider = this.providers.get(rx.providerId);
+      const dosesPerDay = rx.dosesPerDay > 0 ? rx.dosesPerDay : 1;
+      const daysRemaining = rx.remainingDoses / dosesPerDay;
+
+      // RULE 1: Refill Threshold & Operational Window Check (5-day warning, 2-day critical)
+      if (daysRemaining <= 5 && pharmacy && provider) {
+        const isOpen = currentMilitaryTime >= pharmacy.hours.open && currentMilitaryTime <= pharmacy.hours.close;
+        const isLunch = pharmacy.lunchBreak && 
+          (currentMilitaryTime >= pharmacy.lunchBreak.start && currentMilitaryTime <= pharmacy.lunchBreak.end);
+
+        let operationalStatus = '';
+        if (!isOpen) {
+          operationalStatus = `PHARMACY CLOSED (Opens at ${pharmacy.hours.open})`;
+        } else if (isLunch) {
+          operationalStatus = `CLOSED FOR LUNCH (Reopens at ${pharmacy.lunchBreak?.end})`;
+        } else {
+          operationalStatus = `Open until ${pharmacy.hours.close} (Drive-Thru: ${pharmacy.driveThru ? 'Available' : 'No'})`;
+        }
+
+        actions.push({
+          urgency: daysRemaining <= 2 ? 'CRITICAL' : 'WARN',
+          category: 'REFILL',
+          title: `Refill Needed: ${rx.medicationName} (${member?.name || 'Unknown'}) - ${daysRemaining.toFixed(1)} Days Left`,
+          assignedTo: member?.name || 'Unknown',
+          operationalWindow: operationalStatus,
+          prescriptionId: rx.id,
+          actionScript: `Call ${pharmacy.name} at ${pharmacy.phone}. Request refill for ${member?.name}. If 0 refills left, message ${provider.name} via portal: ${provider.portalUrl || provider.phone}.`
+        });
+      }
+
+      // RULE 2: Pediatric Safety Gate
+      if (member?.group === 'pediatric' && rx.ageRestrictedPediatricWarning) {
+        actions.push({
+          urgency: 'CRITICAL',
+          category: 'ADMINISTRATION',
+          title: `Pediatric Safety Check: ${rx.medicationName} (${member.name})`,
+          assignedTo: member.name,
+          operationalWindow: 'Immediate Before Dispensing',
+          prescriptionId: rx.id,
+          actionScript: `Review pediatric warning: ${rx.ageRestrictedPediatricWarning}. Verify weight-based dosing and syringe calibration before administering.`
+        });
+      }
+
+      // RULE 3: Cross-Medication Conflict Matrix
+      if (rx.conflictMedicationIds && rx.conflictMedicationIds.length > 0) {
+        const familyRxIds = allRxs
+          .filter(other => other.prescribedForId === rx.prescribedForId && other.id !== rx.id)
+          .map(other => other.id);
+
+        for (const conflictId of rx.conflictMedicationIds) {
+          if (familyRxIds.includes(conflictId)) {
+            const conflictRx = this.prescriptions.get(conflictId);
+            actions.push({
+              urgency: 'CRITICAL',
+              category: 'CONFLICT',
+              title: `Interaction Alert: ${rx.medicationName} + ${conflictRx?.medicationName}`,
+              assignedTo: member?.name || 'Unknown',
+              operationalWindow: 'DO NOT DISPENSE TOGETHER',
+              prescriptionId: rx.id,
+              actionScript: `Potential contraindication detected between ${rx.medicationName} and ${conflictRx?.medicationName}. Separate doses according to clinical protocol or consult ${provider?.name}.`
+            });
+          }
+        }
+      }
+
+      // RULE 4: Special Storage / Cold Chain
+      if (rx.scheduleConditions && rx.scheduleConditions.includes('keep_refrigerated')) {
+        actions.push({
+          urgency: 'INFO',
+          category: 'ADMINISTRATION',
+          title: `Cold Chain Storage: ${rx.medicationName}`,
+          assignedTo: member?.name || 'Unknown',
+          operationalWindow: 'Storage Compliance',
+          prescriptionId: rx.id,
+          actionScript: `Must remain refrigerated between 36°F and 46°F (2°C - 8°C). Do not freeze. Discard if left at room temperature past manufacturer stability window.`
+        });
+      }
+    }
+
+    return actions;
+  }
+
+  getExceptionPlaybook(rxId, issue) {
+    const rx = this.prescriptions.get(rxId);
+    const provider = rx ? this.providers.get(rx.providerId) : null;
+    const pharmacy = rx ? this.pharmacies.get(rx.preferredPharmacyId) : null;
+    const member = rx ? this.members.get(rx.prescribedForId) : null;
+
+    if (!rx || !provider || !pharmacy) return 'Medication profile incomplete.';
+
+    switch (issue) {
+      case 'OUT_OF_STOCK':
+        return `
+[STOCKOUT ESCALATION PROTOCOL: ${rx.medicationName} ${rx.dosage}]
+1. Call ${pharmacy.name} (${pharmacy.phone}): Ask if another branch within 15 miles has ${rx.medicationName} ${rx.dosage} in stock.
+2. If another branch has stock: Request immediate electronic script transfer.
+3. If backordered system-wide: Call ${provider.name} (${provider.phone}, closed ${provider.lunchBreak.start}-${provider.lunchBreak.end}).
+   SCRIPT: "${member?.name}'s prescription for ${rx.medicationName} ${rx.dosage} is out of stock until further notice. Can the provider authorize an alternative therapeutic equivalent or different tablet strength?"
+        `.trim();
+
+      case 'DELAYED_RENEWAL':
+        return `
+[LATE RENEWAL / 0 REFILLS PROTOCOL: ${rx.medicationName}]
+1. Submit urgent renewal via Portal: ${provider.portalUrl || 'Contact clinic'}.
+2. Call ${pharmacy.name} (${pharmacy.phone}): Request an "Emergency 3-Day Bridge Supply" while provider renewal is pending.
+3. If controlled/unbridgeable: Call clinic (${provider.phone}) at 08:30 (avoid lunch window ${provider.lunchBreak.start}-${provider.lunchBreak.end}).
+   SCRIPT: "This is for ${member?.name}. We are on the final dose of ${rx.medicationName}. Urgent renewal request submitted on portal, requesting urgent provider sign-off today."
+        `.trim();
+
+      case 'MISSED_DOSE':
+        return `
+[MISSED DOSE PROTOCOL: ${rx.medicationName}]
+1. If within 2 hours of standard time: Administer immediately with conditions: ${(rx.scheduleConditions || []).join(', ')}.
+2. If closer to next scheduled dose: Skip dose; NEVER double dose.
+3. Log incident in field notes with timestamp.
+        `.trim();
+
+      default:
+        return 'Standard operational protocol active.';
+    }
+  }
+}
+
+// -------------------------------------------------------------------------
+// UI RENDERING & INTERACTION
+// -------------------------------------------------------------------------
+let currentActiveRxId = null;
+let currentPlaybookIssue = 'OUT_OF_STOCK';
+
+function toggleTheme() {
+  document.body.classList.toggle('theme-broadsheet');
+  const isBroadsheet = document.body.classList.contains('theme-broadsheet');
+  localStorage.setItem('rx_theme', isBroadsheet ? 'broadsheet' : 'slate');
+}
+if (localStorage.getItem('rx_theme') === 'broadsheet') {
+  document.body.classList.add('theme-broadsheet');
+}
+
+function setTimeNow() {
+  const d = new Date();
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  document.getElementById('sim-time').value = `${hh}:${mm}`;
+  runEvaluation();
+}
+function setLunchTime() {
+  document.getElementById('sim-time').value = '13:45';
+  runEvaluation();
+}
+function setMorningTime() {
+  document.getElementById('sim-time').value = '10:00';
+  runEvaluation();
+}
+
+function runEvaluation() {
+  const data = getStoredData();
+  const engine = new RxExpertEngine(data);
+  const timeVal = document.getElementById('sim-time').value || '11:00';
+
+  document.getElementById('simulated-time-display').innerText = `Simulated Window: ${timeVal}`;
+  const actions = engine.evaluateSystem(timeVal);
+
+  renderAlertBanner(actions);
+  renderRunSheet(data);
+  renderRefillLedger(actions, data);
+  renderPrescriptions(data, engine);
+  renderContacts(data);
+}
+
+function renderAlertBanner(actions) {
+  const banner = document.getElementById('alert-banner-container');
+  const criticals = actions.filter(a => a.urgency === 'CRITICAL');
+  const warns = actions.filter(a => a.urgency === 'WARN');
+
+  if (criticals.length > 0) {
+    banner.innerHTML = `
+      <div class="alert-banner">
+        <strong>🚨 CRITICAL ACTION REQUIRED (${criticals.length} Active Alerts):</strong>
+        <ul style="margin:4px 0 0 18px; font-size:13px;">
+          ${criticals.map(c => `<li><strong>${c.title}</strong> — ${c.operationalWindow} <br><small>${c.actionScript}</small></li>`).join('')}
+        </ul>
+      </div>
+    `;
+  } else if (warns.length > 0) {
+    banner.innerHTML = `
+      <div class="alert-banner warn">
+        <strong>⚠️ UPCOMING REFILL ADVISORY (${warns.length} Approaching Threshold):</strong>
+        <ul style="margin:4px 0 0 18px; font-size:13px;">
+          ${warns.map(w => `<li><strong>${w.title}</strong> — ${w.operationalWindow}</li>`).join('')}
+        </ul>
+      </div>
+    `;
+  } else {
+    banner.innerHTML = `
+      <div class="alert-banner nominal">
+        <strong>✅ MEDICATION SYSTEM NOMINAL:</strong> All active prescriptions have > 5 days supply. Operating constraints nominal.
+      </div>
+    `;
+  }
+}
+
+function renderRunSheet(data) {
+  const container = document.getElementById('run-sheet-container');
+  container.innerHTML = data.members.map(m => {
+    const memberRxs = data.prescriptions.filter(rx => rx.prescribedForId === m.id);
+    if (memberRxs.length === 0) return '';
+
+    return `
+      <div style="border-bottom: 1px solid var(--border); padding: 8px 0;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline;">
+          <strong>👤 ${m.name}</strong>
+          <span class="badge ${m.group === 'pediatric' ? 'badge-warn' : 'badge-ok'}">${m.group.toUpperCase()}</span>
+        </div>
+        ${memberRxs.map(rx => `
+          <div style="margin: 6px 0; background:rgba(255,255,255,0.02); padding: 6px 10px; border-radius: 4px; border: 1px solid var(--border);">
+            <div style="display:flex; justify-content:space-between;">
+              <strong>${rx.medicationName}</strong>
+              <small style="color:var(--heading);">${rx.dosage}</small>
+            </div>
+            <div style="font-size:11px; color:#8b949e; margin-top:2px;">
+              Conditions: ${(rx.scheduleConditions || []).join(', ')} | Supply: ${rx.remainingDoses} doses left
+            </div>
+            <div style="margin-top:6px; display:flex; justify-content:flex-end;">
+              <button onclick="administerDose('${rx.id}')" style="background:var(--ok); font-size:11px; padding:3px 8px;">
+                ✓ Log Dose Dispensed
+              </button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }).join('') || '<p style="color:#8b949e;">No active family members registered.</p>';
+}
+
+function renderRefillLedger(actions, data) {
+  const container = document.getElementById('refill-ledger-container');
+  const refillActions = actions.filter(a => a.category === 'REFILL');
+
+  if (refillActions.length === 0) {
+    container.innerHTML = '<p style="color:#8b949e; font-size:13px;">No active refill actions triggered today.</p>';
+    return;
+  }
+
+  container.innerHTML = refillActions.map(act => `
+    <div style="border-bottom:1px solid var(--border); padding:8px 0;">
+      <div style="display:flex; justify-content:space-between; align-items:baseline;">
+        <strong style="color:var(--danger-text);">${act.title}</strong>
+        <span class="badge badge-${act.urgency.toLowerCase()}">${act.urgency}</span>
+      </div>
+      <div style="font-size:12px; margin: 4px 0; color:var(--heading);">
+        📍 <strong>Operating Window:</strong> ${act.operationalWindow}
+      </div>
+      <div style="background:rgba(0,0,0,0.25); border:1px solid var(--border); padding:6px 10px; border-radius:4px; font-size:11px; font-family:monospace;">
+        ${act.actionScript}
+      </div>
+      <div style="margin-top:6px; display:flex; justify-content:flex-end; gap:6px;">
+        <button onclick="openPlaybookModal('${act.prescriptionId}', 'OUT_OF_STOCK')" style="background:var(--danger); font-size:11px; padding:3px 8px;">
+          🚨 Stockout Protocol
+        </button>
+        <button onclick="openPlaybookModal('${act.prescriptionId}', 'DELAYED_RENEWAL')" style="background:var(--warn); font-size:11px; padding:3px 8px;">
+          ⏳ 0 Refills Escalation
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderPrescriptions(data, engine) {
+  const container = document.getElementById('prescriptions-grid');
+  container.innerHTML = data.prescriptions.map(rx => {
+    const member = data.members.find(m => m.id === rx.prescribedForId);
+    const pharmacy = data.pharmacies.find(ph => ph.id === rx.preferredPharmacyId);
+    const provider = data.providers.find(pr => pr.id === rx.providerId);
+    const dosesPerDay = rx.dosesPerDay > 0 ? rx.dosesPerDay : 1;
+    const daysRemaining = (rx.remainingDoses / dosesPerDay).toFixed(1);
+    const badgeColor = daysRemaining <= 2 ? 'danger' : (daysRemaining <= 5 ? 'warn' : 'ok');
+
+    return `
+      <div class="card" style="margin-bottom:0;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline;">
+          <h4 style="margin:0; color:var(--heading);">${rx.medicationName}</h4>
+          <span class="badge badge-${badgeColor}">${daysRemaining} Days Left</span>
+        </div>
+        <p style="font-size:12px; margin:4px 0;"><strong>Patient:</strong> ${member?.name || 'Unknown'} | <strong>Dosage:</strong> ${rx.dosage}</p>
+        <p style="font-size:12px; margin:4px 0;"><strong>Pharmacy:</strong> ${pharmacy?.name || 'Unknown'}</p>
+        <p style="font-size:12px; margin:4px 0;"><strong>Prescriber:</strong> ${provider?.name || 'Unknown'} (${provider?.phone || ''})</p>
+        
+        <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border); padding:6px 10px; border-radius:4px; font-size:11px; margin:8px 0;">
+          <strong>Inventory:</strong> ${rx.remainingDoses} doses remaining (${rx.dosesPerDay}/day) | ${rx.daysSupply}-day supply<br>
+          <strong>Conditions:</strong> ${(rx.scheduleConditions || []).join(', ')}
+          ${rx.ageRestrictedPediatricWarning ? `<br><strong style="color:var(--danger-text);">Pediatric Gate:</strong> ${rx.ageRestrictedPediatricWarning}` : ''}
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+          <button onclick="administerDose('${rx.id}')" style="background:var(--ok); font-size:11px; padding:4px 8px;">
+            Dispense Dose (-1)
+          </button>
+          <button onclick="openPlaybookModal('${rx.id}', 'OUT_OF_STOCK')" style="background:var(--accent); font-size:11px; padding:4px 8px;">
+            ⚠️ Triage Playbook
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderContacts(data) {
+  const phDiv = document.getElementById('pharmacies-list');
+  const prDiv = document.getElementById('providers-list');
+
+  phDiv.innerHTML = data.pharmacies.map(ph => `
+    <div style="border-bottom:1px solid var(--border); padding:6px 0; font-size:12px;">
+      <strong>${ph.name}</strong><br>
+      📞 ${ph.phone} | 🚗 Drive-Thru: ${ph.driveThru ? 'Yes' : 'No'}<br>
+      ⏰ Hours: ${ph.hours.open} - ${ph.hours.close} ${ph.lunchBreak ? `| 🥪 Lunch: ${ph.lunchBreak.start} - ${ph.lunchBreak.end}` : ''}
+    </div>
+  `).join('');
+
+  prDiv.innerHTML = data.providers.map(pr => `
+    <div style="border-bottom:1px solid var(--border); padding:6px 0; font-size:12px;">
+      <strong>${pr.name}</strong> (${pr.clinicName})<br>
+      📞 ${pr.phone} ${pr.portalUrl ? `| 💻 <a href="${pr.portalUrl}" target="_blank" style="color:var(--heading);">Portal</a>` : ''}<br>
+      ⏰ Clinic: ${pr.operatingHours.open} - ${pr.operatingHours.close} | 🥪 Lunch: ${pr.lunchBreak.start} - ${pr.lunchBreak.end}
+    </div>
+  `).join('');
+}
+
+function administerDose(rxId) {
+  const data = getStoredData();
+  const rx = data.prescriptions.find(p => p.id === rxId);
+  if (!rx) return;
+  if (rx.remainingDoses <= 0) return alert("Warning: Prescription is already at 0 remaining doses!");
+
+  rx.remainingDoses -= 1;
+  saveStoredData(data);
+  runEvaluation();
+}
+
+// -------------------------------------------------------------------------
+// PLAYBOOK MODAL & TRIAGE SCRIPTS
+// -------------------------------------------------------------------------
+function openPlaybookModal(rxId, issue = 'OUT_OF_STOCK') {
+  currentActiveRxId = rxId;
+  currentPlaybookIssue = issue;
+  document.getElementById('playbook-modal').classList.add('active');
+  switchPlaybookTab(issue);
+}
+function closePlaybookModal() {
+  document.getElementById('playbook-modal').classList.remove('active');
+}
+
+function switchPlaybookTab(issue) {
+  currentPlaybookIssue = issue;
+  const data = getStoredData();
+  const engine = new RxExpertEngine(data);
+
+  ['btn-tab-oos', 'btn-tab-renew', 'btn-tab-missed'].forEach(id => {
+    document.getElementById(id).style.background = 'var(--border)';
+  });
+  if (issue === 'OUT_OF_STOCK') document.getElementById('btn-tab-oos').style.background = 'var(--danger)';
+  if (issue === 'DELAYED_RENEWAL') document.getElementById('btn-tab-renew').style.background = 'var(--warn)';
+  if (issue === 'MISSED_DOSE') document.getElementById('btn-tab-missed').style.background = 'var(--accent)';
+
+  const content = engine.getExceptionPlaybook(currentActiveRxId, issue);
+  document.getElementById('playbook-content').innerText = content;
+}
+
+function savePlaybookNoteToScratchpad() {
+  const text = document.getElementById('playbook-content').innerText;
+  const note = {
+    id: "sp_" + Date.now(),
+    timestamp: new Date().toISOString(),
+    zone: "Home / Interior",
+    category: "MAINTENANCE",
+    note: "Rx Triage Action: " + text.slice(0, 180) + "...",
+    synced: false
+  };
+  const existing = JSON.parse(localStorage.getItem("bb_scratchpad_notes") || "[]");
+  existing.unshift(note);
+  localStorage.setItem("bb_scratchpad_notes", JSON.stringify(existing));
+  alert("Playbook action logged to Field Scratchpad Inbox!");
+}
+
+// Initial Run
+runEvaluation();
+</script>
+</body>
+</html>

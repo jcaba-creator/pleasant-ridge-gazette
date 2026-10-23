@@ -4,6 +4,14 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/rx",
+      "destination": "/family_rx_system.html"
+    },
+    {
+      "source": "/meds",
+      "destination": "/family_rx_system.html"
+    },
+    {
       "source": "/culinary",
       "destination": "/culinary_chef_system.html"
     },
