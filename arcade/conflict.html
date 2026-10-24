@@ -15,6 +15,7 @@
       --rose: #f43f5e;
       --emerald: #34d399;
       --purple: #c084fc;
+      --winter-ice: #a5f3fc;
       --text: #f8fafc;
       --text-muted: #94a3b8;
       --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
@@ -179,9 +180,9 @@
       border: none;
       color: var(--text-muted);
       font-family: var(--font-mono);
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
-      padding: 5px 8px;
+      padding: 5px 7px;
       border-radius: 5px;
       cursor: pointer;
       transition: all 0.15s ease;
@@ -194,6 +195,9 @@
     }
 
     .sim-clock-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
       font-family: var(--font-mono);
       font-size: 10px;
       font-weight: 700;
@@ -203,6 +207,10 @@
       border-radius: 6px;
       padding: 4px 7px;
       white-space: nowrap;
+    }
+
+    .season-tag {
+      font-size: 11px;
     }
 
     .cinema-btn {
@@ -666,6 +674,11 @@
       border-color: var(--cyan);
     }
 
+    .sheet-roster-card.gang {
+      border-color: rgba(244, 63, 94, 0.35);
+      background: rgba(244, 63, 94, 0.05);
+    }
+
     .diff-pill-group {
       display: flex;
       gap: 6px;
@@ -747,17 +760,22 @@
       </div>
     </div>
 
-    <!-- Center Sim Controls -->
+    <!-- Center Sim Controls with Warp Speed (1x, 2x, 5x, 10x, 25x) -->
     <div class="playback-capsule">
       <button id="btnPause" class="ctrl-btn" title="Pause / Play (Space)">❚❚</button>
       <button id="btnSpeed1" class="ctrl-btn active" title="1x Speed">1x</button>
       <button id="btnSpeed2" class="ctrl-btn" title="2x Speed">2x</button>
       <button id="btnSpeed5" class="ctrl-btn" title="5x Speed">5x</button>
+      <button id="btnSpeed10" class="ctrl-btn" title="10x Fast Speed">10x</button>
+      <button id="btnSpeed25" class="ctrl-btn" title="25x Warp Speed">25x</button>
     </div>
 
-    <!-- Right Controls -->
+    <!-- Right Controls: Sim Year & Season -->
     <div style="display: flex; align-items: center; gap: 6px;">
-      <div class="sim-clock-badge" id="simClock">Y1 • M1</div>
+      <div class="sim-clock-badge" id="simClock">
+        <span class="season-tag" id="seasonIcon">🌱</span>
+        <span id="simDateText">Y1 • Spring</span>
+      </div>
       <button id="btnResetConflict" class="cinema-btn" title="Generate New Conflict Map">🔄</button>
       <button id="btnCinemaToggle" class="cinema-btn" title="Cinema Mode (C)">🎬</button>
     </div>
@@ -794,7 +812,7 @@
   <!-- ================= 3. MASTER BOTTOM ACTION DECK ================= -->
   <div class="master-action-deck">
     
-    <!-- 3A. Selected Faction Command Card (Pops up when a faction or county is tapped) -->
+    <!-- 3A. Selected Faction Command Card (Pops up when a faction, gang, or county is tapped) -->
     <div id="selectionCommandCard">
       <div class="sel-card-header">
         <div class="sel-card-title-group">
@@ -877,7 +895,7 @@
   <script>
     /* ==========================================================================
        AGES OF CONSTANT CONFLICT: REGIONAL CONFLICT (300x300 HIGH-PERFORMANCE ENGINE)
-       Fixed 1:1 Pixel Precision • Sovereign Command • Objective Vectors • Typed Buffers
+       Seasons Cycle • Neutral Outlaw Gangs • Decisive Breakthroughs • Warp Speeds
        ========================================================================== */
 
     const W = 300;
@@ -889,7 +907,8 @@
       FOREST: 1,
       RIVER: 2,
       ROAD: 3,
-      BRIDGE: 4
+      BRIDGE: 4,
+      ICE: 5
     };
 
     // PRNG
@@ -912,19 +931,28 @@
       rangeInt(min, max) { return Math.floor(this.range(min, max + 1)); }
     }
 
-    // Regional County Seats & Factions
+    // Major County Seats
     const REGIONAL_COUNTIES = [
-      { id: 1, name: "Leavenworth Citadel", hex: "#2563eb", rgb: [37, 99, 235], baseAtk: 1.25, baseDef: 1.45, town: "Leavenworth" },
-      { id: 2, name: "Atchison River Barons", hex: "#dc2626", rgb: [220, 38, 38], baseAtk: 1.35, baseDef: 1.15, town: "Atchison" },
-      { id: 3, name: "Oskaloosa Coalition", hex: "#16a34a", rgb: [22, 163, 74], baseAtk: 1.15, baseDef: 1.30, town: "Oskaloosa" },
-      { id: 4, name: "Lansing Ironclad", hex: "#d97706", rgb: [217, 119, 6], baseAtk: 1.20, baseDef: 1.40, town: "Lansing" },
-      { id: 5, name: "Easton Rangers", hex: "#9333ea", rgb: [147, 51, 234], baseAtk: 1.40, baseDef: 1.10, town: "Easton" },
-      { id: 6, name: "Tonganoxie Guard", hex: "#0891b2", rgb: [8, 145, 178], baseAtk: 1.10, baseDef: 1.35, town: "Tonganoxie" }
+      { id: 1, name: "Leavenworth Citadel", hex: "#2563eb", rgb: [37, 99, 235], baseAtk: 1.30, baseDef: 1.45, town: "Leavenworth", isGang: false },
+      { id: 2, name: "Atchison River Barons", hex: "#dc2626", rgb: [220, 38, 38], baseAtk: 1.40, baseDef: 1.15, town: "Atchison", isGang: false },
+      { id: 3, name: "Oskaloosa Coalition", hex: "#16a34a", rgb: [22, 163, 74], baseAtk: 1.20, baseDef: 1.35, town: "Oskaloosa", isGang: false },
+      { id: 4, name: "Lansing Ironclad", hex: "#d97706", rgb: [217, 119, 6], baseAtk: 1.25, baseDef: 1.40, town: "Lansing", isGang: false },
+      { id: 5, name: "Easton Rangers", hex: "#9333ea", rgb: [147, 51, 234], baseAtk: 1.45, baseDef: 1.10, town: "Easton", isGang: false },
+      { id: 6, name: "Tonganoxie Guard", hex: "#0891b2", rgb: [8, 145, 178], baseAtk: 1.15, baseDef: 1.35, town: "Tonganoxie", isGang: false }
+    ];
+
+    // Neutral Outlaw Gangs holding crossroads and wilderness at start
+    const OUTLAW_GANGS = [
+      { id: 101, name: "Stranger Valley Rustlers", hex: "#e11d48", rgb: [225, 29, 72], baseAtk: 0.90, baseDef: 0.80, town: "Rustler Camp", isGang: true, x: 140, y: 175 },
+      { id: 102, name: "Timber Ridge Marauders", hex: "#7c2d12", rgb: [124, 45, 18], baseAtk: 0.95, baseDef: 0.85, town: "Marauder Den", isGang: true, x: 95, y: 70 },
+      { id: 103, name: "Salt Creek Bushwhackers", hex: "#475569", rgb: [71, 85, 105], baseAtk: 0.85, baseDef: 0.75, town: "Bushwhack Hold", isGang: true, x: 180, y: 105 },
+      { id: 104, name: "Delaware River Pirates", hex: "#0f766e", rgb: [15, 118, 110], baseAtk: 0.90, baseDef: 0.80, town: "Pirate Haven", isGang: true, x: 175, y: 245 }
     ];
 
     const state = {
       elevation: new Uint8Array(TOTAL_CELLS),
       terrain: new Uint8Array(TOTAL_CELLS),
+      baseTerrain: new Uint8Array(TOTAL_CELLS), // To restore post-winter ice melt
       owner: new Uint8Array(TOTAL_CELLS),
       frontline: new Uint8Array(TOTAL_CELLS),
       supply: new Uint8Array(TOTAL_CELLS),
@@ -935,13 +963,16 @@
       playerTreasury: 150,
       difficulty: 'veteran', // 'recruit', 'veteran', 'ironclad'
 
+      season: 'spring', // 'spring', 'summer', 'autumn', 'winter'
+      currentYear: 1,
+
       sparks: [],
 
       ticks: 0,
       speed: 1,
       isPaused: false,
 
-      // Camera State (Stored purely in 1:1 CSS screen coordinates)
+      // Camera State (1:1 unified screen space)
       camX: 0,
       camY: 0,
       zoom: 1.0,
@@ -993,11 +1024,14 @@
       state.selectedFactionId = null;
       state.playerFactionId = null;
       state.playerTreasury = 150;
+      state.season = 'spring';
+      state.currentYear = 1;
       setArmedTool(null);
       updatePlayerHUD();
 
       state.elevation.fill(0);
       state.terrain.fill(TERRAIN.FIELD);
+      state.baseTerrain.fill(TERRAIN.FIELD);
       state.owner.fill(0);
       state.frontline.fill(0);
       state.supply.fill(0);
@@ -1017,12 +1051,14 @@
 
           if (elev > 165 && rng.next() > 0.45) {
             state.terrain[idx] = TERRAIN.FOREST;
+            state.baseTerrain[idx] = TERRAIN.FOREST;
           }
         }
       }
 
       carveRivers();
       spawnCountySeats();
+      spawnOutlawGangs();
       buildHighwayNetwork();
       bakeStaticHillshade();
       renderDynamicTerritoryBuffer();
@@ -1030,7 +1066,7 @@
       updateRoster();
       closeSelectionCard();
 
-      showFlashNotice("NEW 300x300 WATERSHED THEATER DISPATCHED");
+      showFlashNotice("WATERSHED INITIALIZED: CLEAR OUTLAWS TO PACIFY REGION!");
     }
 
     function carveRivers() {
@@ -1043,6 +1079,7 @@
           if (cx >= 0 && cx < W) {
             const idx = y * W + cx;
             state.terrain[idx] = TERRAIN.RIVER;
+            state.baseTerrain[idx] = TERRAIN.RIVER;
             state.elevation[idx] = Math.max(8, state.elevation[idx] - 35);
           }
         }
@@ -1057,6 +1094,7 @@
           if (cx >= 0 && cx < W) {
             const idx = y * W + cx;
             state.terrain[idx] = TERRAIN.RIVER;
+            state.baseTerrain[idx] = TERRAIN.RIVER;
             state.elevation[idx] = Math.max(8, state.elevation[idx] - 25);
           }
         }
@@ -1080,16 +1118,16 @@
           ...meta,
           capitalX: pos.x,
           capitalY: pos.y,
-          troops: 280,
+          troops: 250,
           territory: 0,
           alive: true,
           supplyIndex: 100,
           offensiveBonus: 1.0,
-          spearheadTarget: null // County ID target
+          spearheadTarget: null
         };
         state.factions.set(meta.id, f);
 
-        const r = 16;
+        const r = 14;
         for (let dy = -r; dy <= r; dy++) {
           for (let dx = -r; dx <= r; dx++) {
             const dist = Math.hypot(dx, dy);
@@ -1109,8 +1147,42 @@
       });
     }
 
+    function spawnOutlawGangs() {
+      OUTLAW_GANGS.forEach(gang => {
+        const f = {
+          ...gang,
+          capitalX: gang.x,
+          capitalY: gang.y,
+          troops: 65, // Low initial troop count for satisfying early-game wins!
+          territory: 0,
+          alive: true,
+          supplyIndex: 70,
+          offensiveBonus: 0.9,
+          spearheadTarget: null
+        };
+        state.factions.set(gang.id, f);
+
+        const r = 9;
+        for (let dy = -r; dy <= r; dy++) {
+          for (let dx = -r; dx <= r; dx++) {
+            if (Math.hypot(dx, dy) <= r) {
+              const x = gang.x + dx;
+              const y = gang.y + dy;
+              if (x >= 0 && x < W && y >= 0 && y < H) {
+                const idx = y * W + x;
+                if (state.terrain[idx] !== TERRAIN.RIVER && state.owner[idx] === 0) {
+                  state.owner[idx] = f.id;
+                  f.territory++;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
     function buildHighwayNetwork() {
-      const seats = Array.from(state.factions.values());
+      const seats = Array.from(state.factions.values()).filter(f => !f.isGang);
       const connections = [
         [0, 1], // Leavenworth <-> Atchison (US-73 Corridor)
         [0, 3], // Leavenworth <-> Lansing (K-7 South)
@@ -1144,8 +1216,10 @@
           const idx = cy * W + cx;
           if (state.terrain[idx] === TERRAIN.RIVER) {
             state.terrain[idx] = TERRAIN.BRIDGE;
+            state.baseTerrain[idx] = TERRAIN.BRIDGE;
           } else {
             state.terrain[idx] = TERRAIN.ROAD;
+            state.baseTerrain[idx] = TERRAIN.ROAD;
           }
         }
 
@@ -1154,6 +1228,46 @@
         if (e2 > -dy) { err -= dy; cx += sx; }
         if (e2 < dx) { err += dx; cy += sy; }
       }
+    }
+
+    function updateSeasonCycle(month) {
+      let newSeason = 'spring';
+      if (month === 12 || month <= 2) newSeason = 'winter';
+      else if (month >= 3 && month <= 5) newSeason = 'spring';
+      else if (month >= 6 && month <= 8) newSeason = 'summer';
+      else newSeason = 'autumn';
+
+      if (newSeason !== state.season) {
+        state.season = newSeason;
+        handleSeasonTransition(newSeason);
+      }
+    }
+
+    function handleSeasonTransition(season) {
+      if (season === 'winter') {
+        // Freeze rivers into ice!
+        for (let i = 0; i < TOTAL_CELLS; i++) {
+          if (state.baseTerrain[i] === TERRAIN.RIVER) {
+            state.terrain[i] = TERRAIN.ICE;
+          }
+        }
+        showFlashNotice("❄️ WINTER HAS ARRIVED: WATERWAYS FROZEN OVER! INVASION ROUTES OPENED!");
+      } else {
+        // Thaw ice back to river
+        for (let i = 0; i < TOTAL_CELLS; i++) {
+          if (state.baseTerrain[i] === TERRAIN.RIVER) {
+            state.terrain[i] = TERRAIN.RIVER;
+          }
+        }
+        if (season === 'spring') {
+          showFlashNotice("🌱 SPRING THAW: FLOODS RETURN TO WATERWAYS");
+        } else if (season === 'summer') {
+          showFlashNotice("☀️ SUMMER HARVEST: COMBAT SPEEDS PEAK (+25% TROOP INCOME)");
+        } else {
+          showFlashNotice("🍂 AUTUMN: STOCKPILE SUPPLIES BEFORE WINTER");
+        }
+      }
+      bakeStaticHillshade();
     }
 
     function bakeStaticHillshade() {
@@ -1167,6 +1281,8 @@
       const nlx = lx / lLen;
       const nly = ly / lLen;
       const nlz = lz / lLen;
+
+      const isWinter = state.season === 'winter';
 
       for (let y = 0; y < H; y++) {
         for (let x = 0; x < W; x++) {
@@ -1190,7 +1306,13 @@
 
           const t = state.terrain[idx];
 
-          if (t === TERRAIN.RIVER) {
+          if (t === TERRAIN.ICE) {
+            // Frozen cyan-white ice
+            data[pIdx]     = Math.floor(165 * shade);
+            data[pIdx + 1] = Math.floor(220 * shade);
+            data[pIdx + 2] = Math.floor(245 * shade);
+            data[pIdx + 3] = 255;
+          } else if (t === TERRAIN.RIVER) {
             data[pIdx]     = 14;
             data[pIdx + 1] = 75;
             data[pIdx + 2] = 125;
@@ -1206,14 +1328,28 @@
             data[pIdx + 2] = 205;
             data[pIdx + 3] = 255;
           } else if (t === TERRAIN.FOREST) {
-            data[pIdx]     = Math.floor(18 * shade);
-            data[pIdx + 1] = Math.floor(58 * shade);
-            data[pIdx + 2] = Math.floor(28 * shade);
+            if (isWinter) {
+              data[pIdx]     = Math.floor(70 * shade);
+              data[pIdx + 1] = Math.floor(90 * shade);
+              data[pIdx + 2] = Math.floor(85 * shade);
+            } else {
+              data[pIdx]     = Math.floor(18 * shade);
+              data[pIdx + 1] = Math.floor(58 * shade);
+              data[pIdx + 2] = Math.floor(28 * shade);
+            }
             data[pIdx + 3] = 255;
           } else {
-            data[pIdx]     = Math.floor(40 * shade);
-            data[pIdx + 1] = Math.floor(52 * shade);
-            data[pIdx + 2] = Math.floor(38 * shade);
+            // Field
+            if (isWinter) {
+              // Snow covered fields
+              data[pIdx]     = Math.floor(140 * shade);
+              data[pIdx + 1] = Math.floor(155 * shade);
+              data[pIdx + 2] = Math.floor(165 * shade);
+            } else {
+              data[pIdx]     = Math.floor(40 * shade);
+              data[pIdx + 1] = Math.floor(52 * shade);
+              data[pIdx + 2] = Math.floor(38 * shade);
+            }
             data[pIdx + 3] = 255;
           }
         }
@@ -1269,13 +1405,19 @@
       dynamicCtx.putImageData(territoryImageData, 0, 0);
     }
 
-    // --- 7. CELLULAR COMBAT & OBJECTIVE SIMULATION ---
+    // --- 7. FAST DECISIVE COMBAT & SEASONS SIMULATION ---
     function stepSimulation() {
       state.ticks++;
 
       const year = Math.floor(state.ticks / 120) + 1;
       const month = (Math.floor(state.ticks / 10) % 12) + 1;
-      document.getElementById('simClock').innerText = `Y${year} • M${month}`;
+      state.currentYear = year;
+
+      updateSeasonCycle(month);
+
+      const seasonIcons = { spring: '🌱 Spring', summer: '☀️ Summer', autumn: '🍂 Autumn', winter: '❄️ Winter' };
+      document.getElementById('seasonIcon').innerText = seasonIcons[state.season].split(' ')[0];
+      document.getElementById('simDateText').innerText = `Y${year} • ${seasonIcons[state.season].split(' ')[1]}`;
 
       // Treasury & reinforcements
       if (state.ticks % 15 === 0) {
@@ -1284,13 +1426,15 @@
           const supMult = f.supplyIndex / 100.0;
           let recruitGain = Math.floor((f.territory / 140) * supMult) + 2;
 
+          // Summer boosts recruitment
+          if (state.season === 'summer') recruitGain = Math.floor(recruitGain * 1.3);
+
           // Difficulty Adjustments
           if (state.playerFactionId === f.id) {
             if (state.difficulty === 'recruit') recruitGain = Math.floor(recruitGain * 1.5);
             state.playerTreasury = Math.min(999, state.playerTreasury + Math.floor(recruitGain * 1.5) + 3);
             updatePlayerHUD();
           } else if (state.difficulty === 'ironclad') {
-            // Aggressive AI on ironclad
             recruitGain = Math.floor(recruitGain * 1.35);
           }
 
@@ -1302,8 +1446,8 @@
         });
       }
 
-      // Frontline combat resolution
-      resolveFrontlineExpansion();
+      // Decisive Frontline Breakthrough Sweeps
+      resolveFrontlineBreakthroughs();
 
       // Periodic Supply Lines & Pocket Starvation Check
       if (state.ticks % 6 === 0) {
@@ -1313,14 +1457,15 @@
         updateSelectedCardStats();
       }
 
-      if (state.ticks % 30 === 0) {
+      if (state.ticks % 25 === 0) {
         updateAllMinimaps();
       }
     }
 
-    function resolveFrontlineExpansion() {
+    function resolveFrontlineBreakthroughs() {
       const dirs = [[0, -1], [0, 1], [-1, 0], [1, 0]];
-      const sweeps = 260 + Math.floor(state.speed * 40);
+      // Fast pacing: more sweeps per tick ensures games resolve decisively!
+      const sweeps = 350 + Math.floor(state.speed * 60);
 
       for (let s = 0; s < sweeps; s++) {
         const x = rng.rangeInt(1, W - 2);
@@ -1331,7 +1476,7 @@
 
         const atkId = state.owner[idx];
         const attacker = state.factions.get(atkId);
-        if (!attacker || !attacker.alive || attacker.troops <= 5) continue;
+        if (!attacker || !attacker.alive || attacker.troops <= 4) continue;
 
         // Choose attack direction: if attacker has an objective target, prioritize moving towards target!
         let dir = dirs[rng.rangeInt(0, 3)];
@@ -1356,28 +1501,29 @@
         if (defId === atkId) continue;
 
         const targetTerrain = state.terrain[targetIdx];
+        // In winter, frozen ice CAN be crossed! In other seasons, river blocks
         if (targetTerrain === TERRAIN.RIVER) continue;
 
         let roadBonus = 1.0;
-        if (targetTerrain === TERRAIN.ROAD || targetTerrain === TERRAIN.BRIDGE) {
-          roadBonus = 3.0; // 3x speed conduit
+        if (targetTerrain === TERRAIN.ROAD || targetTerrain === TERRAIN.BRIDGE || targetTerrain === TERRAIN.ICE) {
+          roadBonus = 3.2; // Fast conduit along roads, bridges, and winter frozen ice!
         }
 
         const elevDelta = (state.elevation[targetIdx] - state.elevation[idx]);
         const slopePenalty = elevDelta > 0 ? (elevDelta / 255.0) * 0.75 : 0;
 
         let bridgePenalty = 0;
-        if (targetTerrain === TERRAIN.BRIDGE) bridgePenalty = 0.35;
+        if (targetTerrain === TERRAIN.BRIDGE) bridgePenalty = 0.25;
 
         let supplyFactor = (state.supply[idx] / 100.0);
 
-        // Spearhead Target Momentum Bonus (+50% offensive thrust towards designated target)
+        // Spearhead Target Momentum Bonus (+60% offensive thrust)
         let objectiveBonus = 1.0;
         if (attacker.spearheadTarget === defId) {
-          objectiveBonus = 1.6;
+          objectiveBonus = 1.7;
         }
 
-        let forceAtk = (attacker.baseAtk * attacker.offensiveBonus * objectiveBonus * roadBonus * supplyFactor * rng.range(0.85, 1.35)) - slopePenalty - bridgePenalty;
+        let forceAtk = (attacker.baseAtk * attacker.offensiveBonus * objectiveBonus * roadBonus * supplyFactor * rng.range(0.85, 1.4)) - slopePenalty - bridgePenalty;
 
         if (defId === 0) {
           // Unclaimed territory paint
@@ -1397,28 +1543,51 @@
           if (state.difficulty === 'ironclad') defElevBonus *= 1.4;
 
           const defForestBonus = targetTerrain === TERRAIN.FOREST ? 0.35 : 0;
-          const forceDef = defender.baseDef * (1.0 + defElevBonus + defForestBonus) * rng.range(0.8, 1.25);
+          // Defender loses morale if unsupplied or low troops
+          const moraleFactor = (defender.troops < 50 ? 0.65 : 1.0) * (defender.supplyIndex / 100.0);
 
-          if (rng.next() > 0.6) {
+          const forceDef = defender.baseDef * (1.0 + defElevBonus + defForestBonus) * moraleFactor * rng.range(0.75, 1.25);
+
+          if (rng.next() > 0.65) {
             spawnSparks(nx, ny, attacker.rgb);
           }
 
           if (forceAtk > forceDef) {
-            defender.territory = Math.max(0, defender.territory - 1);
-            defender.troops = Math.max(0, defender.troops - 2);
-            attacker.troops = Math.max(0, attacker.troops - 1);
+            // DECISIVE BREAKTHROUGH: Flip target + 2 adjacent cells to punch through stalemates!
+            captureCell(targetIdx, nx, ny, atkId, defId, attacker, defender);
 
-            state.owner[targetIdx] = atkId;
-            attacker.territory++;
-
-            // County Seat captured!
-            if (nx === defender.capitalX && ny === defender.capitalY) {
-              annexCountySeat(defender.id, attacker.id);
+            // Punch through into 2 adjacent cells if force was overwhelmingly superior
+            if (forceAtk > forceDef * 1.35) {
+              for (const [adx, ady] of dirs) {
+                const ax = nx + adx;
+                const ay = ny + ady;
+                if (ax >= 1 && ax < W - 1 && ay >= 1 && ay < H - 1) {
+                  const aIdx = ay * W + ax;
+                  if (state.owner[aIdx] === defId && state.terrain[aIdx] !== TERRAIN.RIVER) {
+                    captureCell(aIdx, ax, ay, atkId, defId, attacker, defender);
+                    break;
+                  }
+                }
+              }
             }
           } else {
             attacker.troops = Math.max(0, attacker.troops - 2);
           }
         }
+      }
+    }
+
+    function captureCell(cIdx, cx, cy, atkId, defId, attacker, defender) {
+      defender.territory = Math.max(0, defender.territory - 1);
+      defender.troops = Math.max(0, defender.troops - 2);
+      attacker.troops = Math.max(0, attacker.troops - 1);
+
+      state.owner[cIdx] = atkId;
+      attacker.territory++;
+
+      // Check if county seat or gang camp was captured!
+      if (cx === defender.capitalX && cy === defender.capitalY) {
+        annexCountySeat(defender.id, attacker.id);
       }
     }
 
@@ -1428,8 +1597,21 @@
       if (!loser || !victor) return;
 
       loser.alive = false;
-      showFlashNotice(`COUNTY SEAT FALLEN: ${loser.name.toUpperCase()} ANNEXED!`);
 
+      // Gang Defeated Victory Event!
+      if (loser.isGang) {
+        showFlashNotice(`🏆 OUTLAWS CLEARED: ${loser.name.toUpperCase()} ELIMINATED!`);
+        if (victorId === state.playerFactionId) {
+          state.playerTreasury += 100;
+          victor.troops += 80;
+          showFlashNotice(`💰 BOUNTY CLAIMED: +100 SUPPLIES & +80 RECRUITS!`);
+          updatePlayerHUD();
+        }
+      } else {
+        showFlashNotice(`⭐ CITADEL FALLEN: ${loser.name.toUpperCase()} ANNEXED!`);
+      }
+
+      // Absorb all remaining cells of loser
       for (let i = 0; i < TOTAL_CELLS; i++) {
         if (state.owner[i] === loserId) {
           state.owner[i] = victorId;
@@ -1443,9 +1625,9 @@
         showFlashNotice("YOUR CITADEL WAS ANNEXED! Switched to Spectator.");
         state.playerFactionId = null;
         updatePlayerHUD();
-      } else if (victorId === state.playerFactionId) {
-        showFlashNotice(`VICTORY! YOU ANNEXED ${loser.town.toUpperCase()}! (+200 🪙)`);
-        state.playerTreasury += 200;
+      } else if (victorId === state.playerFactionId && !loser.isGang) {
+        showFlashNotice(`🎖️ GRAND VICTORY! YOU ANNEXED ${loser.town.toUpperCase()}! (+250 🪙)`);
+        state.playerTreasury += 250;
         updatePlayerHUD();
       }
     }
@@ -1501,7 +1683,7 @@
               if (visited[nIdx] === 0 && state.owner[nIdx] === f.id) {
                 visited[nIdx] = 1;
                 let supLoss = 1;
-                if (state.terrain[nIdx] === TERRAIN.ROAD || state.terrain[nIdx] === TERRAIN.BRIDGE) {
+                if (state.terrain[nIdx] === TERRAIN.ROAD || state.terrain[nIdx] === TERRAIN.BRIDGE || state.terrain[nIdx] === TERRAIN.ICE) {
                   supLoss = 0.2;
                 }
                 const nSup = Math.max(0, curr.sup - supLoss);
@@ -1515,10 +1697,11 @@
         f.supplyIndex = Math.min(100, Math.floor((head / Math.max(1, f.territory)) * 100));
       });
 
-      // Pocket Starvation
+      // Pocket Starvation: doubled in winter!
+      const starveChance = state.season === 'winter' ? 0.70 : 0.85;
       for (let i = 0; i < TOTAL_CELLS; i++) {
         if (state.owner[i] > 0 && state.supply[i] === 0) {
-          if (rng.next() > 0.85) {
+          if (rng.next() > starveChance) {
             const victim = state.factions.get(state.owner[i]);
             if (victim) victim.territory = Math.max(0, victim.territory - 1);
             state.owner[i] = 0;
@@ -1601,7 +1784,7 @@
         ctx.moveTo(x2 - crossR - 4 / state.zoom, y2);
         ctx.lineTo(x2 + crossR + 4 / state.zoom, y2);
         ctx.moveTo(x2, y2 - crossR - 4 / state.zoom);
-        ctx.lineTo(x2, y2 + crossR + 4 / state.zoom);
+        ctx.lineTo(x2 + crossR + 4 / state.zoom);
         ctx.stroke();
         ctx.restore();
       });
@@ -1621,7 +1804,7 @@
       }
       ctx.globalAlpha = 1.0;
 
-      // County Seat Pins
+      // County Seat & Outlaw Gang Pins
       state.factions.forEach(f => {
         if (!f.alive) return;
         const cx = f.capitalX * tileW + tileW / 2;
@@ -1638,12 +1821,12 @@
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillStyle = '#ffffff';
-        ctx.fillText('⭐', cx, cy - (7 / state.zoom));
+        ctx.fillText(f.isGang ? '☠️' : '⭐', cx, cy - (7 / state.zoom));
 
         ctx.font = `bold ${Math.max(9, 10 / state.zoom)}px ui-monospace, monospace`;
         ctx.shadowColor = '#000';
         ctx.shadowBlur = 4;
-        ctx.fillStyle = f.id === state.playerFactionId ? '#fbbf24' : '#f8fafc';
+        ctx.fillStyle = f.id === state.playerFactionId ? '#fbbf24' : (f.isGang ? '#f87171' : '#f8fafc');
         ctx.fillText(f.town, cx, cy + (9 / state.zoom));
         ctx.shadowBlur = 0;
       });
@@ -1687,11 +1870,18 @@
       dot.style.background = f.hex;
       dot.style.color = f.hex;
 
-      document.getElementById('selName').innerText = f.name;
+      document.getElementById('selName').innerText = f.isGang ? `[OUTLAW GANG] ${f.name}` : f.name;
       updateSelectedCardStats();
 
+      const cmdBtn = document.getElementById('btnCommandSelected');
       const cmdText = document.getElementById('cmdBtnText');
-      cmdText.innerText = f.id === state.playerFactionId ? "Relinquish (God)" : "Take Command";
+
+      if (f.isGang) {
+        cmdBtn.style.display = 'none'; // Cannot play as outlaws
+      } else {
+        cmdBtn.style.display = 'inline-flex';
+        cmdText.innerText = f.id === state.playerFactionId ? "Relinquish (God)" : "Take Command";
+      }
 
       const card = document.getElementById('selectionCommandCard');
       card.classList.add('show');
@@ -1749,7 +1939,7 @@
     document.getElementById('btnTargetObjective').addEventListener('click', () => {
       if (!state.selectedFactionId) return;
       const f = state.factions.get(state.selectedFactionId);
-      setArmedTool('target', `🎯 DESIGNATE OBJECTIVE: Tap rival county for ${f.town.toUpperCase()}`);
+      setArmedTool('target', `🎯 DESIGNATE OBJECTIVE: Tap rival town or gang for ${f.town.toUpperCase()}`);
       closeSelectionCard();
     });
 
@@ -1826,13 +2016,12 @@
           setArmedTool('trench', '🛡️ TRENCH REDOUBT: Tap sector to elevate ridge');
         }
       } else if (act === 'spearhead') {
-        // Target Objective
         const actorId = state.playerFactionId || state.selectedFactionId;
         if (!actorId) {
-          setArmedTool('target', '🎯 OBJECTIVE: Tap rival town to direct frontline surge');
+          setArmedTool('target', '🎯 OBJECTIVE: Tap rival town or gang to direct frontline surge');
         } else {
           const f = state.factions.get(actorId);
-          setArmedTool('target', `🎯 OBJECTIVE: Tap rival town for ${f.town.toUpperCase()}`);
+          setArmedTool('target', `🎯 OBJECTIVE: Tap rival town or gang for ${f.town.toUpperCase()}`);
         }
       } else if (act === 'draft') {
         setArmedTool(null);
@@ -1842,7 +2031,7 @@
           f.troops += 150;
           showFlashNotice(`+150 MILITIA DEPLOYED TO ${f.town.toUpperCase()}`);
         } else {
-          state.factions.forEach(f => { if (f.alive) f.troops += 100; });
+          state.factions.forEach(f => { if (f.alive && !f.isGang) f.troops += 100; });
           showFlashNotice("STATEWIDE MOBILIZATION: +100 TROOPS TO ALL GARRISONS");
         }
         updateRoster();
@@ -1876,9 +2065,9 @@
     });
 
     function triggerRegionalRevolt() {
-      const deadFactions = Array.from(state.factions.values()).filter(f => !f.alive);
-      if (deadFactions.length > 0) {
-        const reb = deadFactions[rng.rangeInt(0, deadFactions.length - 1)];
+      const deadCitadels = Array.from(state.factions.values()).filter(f => !f.alive && !f.isGang);
+      if (deadCitadels.length > 0) {
+        const reb = deadCitadels[rng.rangeInt(0, deadCitadels.length - 1)];
         reb.alive = true;
         reb.troops = 300;
         reb.baseAtk = 1.45;
@@ -1905,7 +2094,7 @@
         // Mutiny in largest faction
         let largest = null;
         state.factions.forEach(f => {
-          if (f.alive && (!largest || f.territory > largest.territory)) largest = f;
+          if (f.alive && !f.isGang && (!largest || f.territory > largest.territory)) largest = f;
         });
         if (largest) {
           largest.troops = Math.max(20, Math.floor(largest.troops * 0.5));
@@ -1937,7 +2126,7 @@
         </div>
 
         <div style="font-family: var(--font-mono); font-size: 11px; color: var(--cyan); margin-top: 10px; font-weight: 800;">
-          REGIONAL FACTIONS ROSTER:
+          FACTIONS & OUTLAWS ROSTER:
         </div>
         <div id="drawerRosterList" style="display: flex; flex-direction: column; gap: 8px;"></div>
         
@@ -1952,7 +2141,6 @@
         </div>
       `;
 
-      // Bind Difficulty Toggles
       sheetContent.querySelectorAll('.diff-pill').forEach(pill => {
         pill.addEventListener('click', () => {
           state.difficulty = pill.dataset.diff;
@@ -1996,16 +2184,16 @@
         const pct = ((f.territory / TOTAL_CELLS) * 100).toFixed(1);
         const isSel = f.id === state.selectedFactionId;
         const isPlayer = f.id === state.playerFactionId;
+        const tag = f.isGang ? '<span style="color: var(--rose); font-size: 9px; font-weight: 800;">[OUTLAW GANG]</span>' : (isPlayer ? '<span style="color: var(--amber); font-size: 9px; font-weight: 800;">[YOU]</span>' : '');
         return `
-          <div data-id="${f.id}" class="sheet-roster-card ${isSel ? 'active' : ''}">
+          <div data-id="${f.id}" class="sheet-roster-card ${f.isGang ? 'gang' : ''} ${isSel ? 'active' : ''}">
             <div style="display: flex; align-items: center; gap: 8px;">
               <span style="color: #64748b; font-family: var(--font-mono); font-size: 11px; width: 14px;">#${idx + 1}</span>
               <div style="width: 12px; height: 12px; border-radius: 50%; background: ${f.hex};"></div>
               <div>
                 <div style="font-weight: 700; color: #fff; font-size: 12px;">${f.town}</div>
-                <div style="color: #94a3b8; font-size: 10px; font-family: var(--font-mono);">Supply: ${f.supplyIndex}%</div>
+                <div style="color: #94a3b8; font-size: 10px; font-family: var(--font-mono);">${tag} Supply: ${f.supplyIndex}%</div>
               </div>
-              ${isPlayer ? '<span style="color: var(--amber); font-size: 9px; font-weight: 800; font-family: var(--font-mono);">[YOU]</span>' : ''}
             </div>
             <div style="display: flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: 11px;">
               <span style="color: var(--cyan); font-weight: 800;">${pct}%</span>
@@ -2080,10 +2268,13 @@
 
     document.getElementById('btnPause').addEventListener('click', togglePlayPause);
 
+    // Speed Controls: 1x, 2x, 5x, 10x, 25x Warp Speed
     const spdMap = [
       { id: 'btnSpeed1', v: 1 },
       { id: 'btnSpeed2', v: 2 },
-      { id: 'btnSpeed5', v: 5 }
+      { id: 'btnSpeed5', v: 5 },
+      { id: 'btnSpeed10', v: 10 },
+      { id: 'btnSpeed25', v: 25 }
     ];
     spdMap.forEach(s => {
       document.getElementById(s.id).addEventListener('click', () => {
@@ -2107,7 +2298,6 @@
       const screenCenterX = mainCanvas.width / 2;
       const screenCenterY = mainCanvas.height / 2;
 
-      // Unproject world coordinates from canvas zoom & pan
       const worldX = (mouseX - screenCenterX) / state.zoom + screenCenterX - state.camX;
       const worldY = (mouseY - screenCenterY) / state.zoom + screenCenterY - state.camY;
 
@@ -2120,7 +2310,6 @@
       return null;
     }
 
-    // Helper: Find closest county seat to tap (14 grid cells snapping tolerance for touchscreens)
     function findNearestCountySeat(tx, ty, tolerance = 14) {
       let nearest = null;
       let minDist = tolerance;
@@ -2212,26 +2401,24 @@
       const tile = getTileFromEvent(clientX, clientY);
       if (!tile) return;
 
-      // Check nearest county seat within touch tolerance
       const nearestSeat = findNearestCountySeat(tile.x, tile.y, 14);
 
       // 1. Armed Tool Actions
       if (state.activeTool) {
         if (state.activeTool === 'target') {
-          // Setting spearhead objective
           const targetFaction = nearestSeat ? nearestSeat.id : state.owner[tile.idx];
           const actorId = state.playerFactionId || state.selectedFactionId;
           if (actorId && targetFaction && targetFaction !== actorId && state.factions.has(targetFaction)) {
             const actor = state.factions.get(actorId);
             const target = state.factions.get(targetFaction);
             actor.spearheadTarget = target.id;
-            actor.offensiveBonus = 2.2;
+            actor.offensiveBonus = 2.4;
             showFlashNotice(`🎯 OBJECTIVE DESIGNATED: ${actor.town.toUpperCase()} ➔ ${target.town.toUpperCase()}`);
             setArmedTool(null);
             updatePlayerHUD();
             return;
           } else {
-            showFlashNotice("TAP A RIVAL COUNTY SEAT TO TARGET");
+            showFlashNotice("TAP A RIVAL TOWN OR OUTLAW GANG TO TARGET");
             return;
           }
         }
@@ -2240,7 +2427,7 @@
         return;
       }
 
-      // 2. Default: Inspect clicked county seat or sector
+      // 2. Default: Inspect clicked county seat, gang, or sector
       if (nearestSeat) {
         selectFaction(nearestSeat.id);
       } else {
@@ -2274,8 +2461,9 @@
         showFlashNotice("💥 SECTOR DECIMATED BY HEAVY ARTILLERY");
         bakeStaticHillshade();
       } else if (state.activeTool === 'bridge') {
-        if (state.terrain[idx] === TERRAIN.RIVER) {
+        if (state.terrain[idx] === TERRAIN.RIVER || state.terrain[idx] === TERRAIN.ICE) {
           state.terrain[idx] = TERRAIN.BRIDGE;
+          state.baseTerrain[idx] = TERRAIN.BRIDGE;
           showFlashNotice("🪵 PONTOON BRIDGE SPANNED");
           bakeStaticHillshade();
         } else {
@@ -2294,7 +2482,6 @@
 
     // --- 15. RESPONSIVE RESIZE (1:1 Unified Coordinates) ---
     function resizeCanvas() {
-      // 1:1 Unified coordinate system: matching CSS pixels directly eliminates DPR touch offsets!
       mainCanvas.width = window.innerWidth;
       mainCanvas.height = window.innerHeight;
       mainCanvas.style.width = window.innerWidth + 'px';
@@ -2310,7 +2497,7 @@
     let lastSimTime = 0;
     function loop(now) {
       if (!state.isPaused) {
-        const interval = 1000 / (16 * state.speed);
+        const interval = 1000 / (18 * state.speed);
         if (now - lastSimTime >= interval) {
           stepSimulation();
           lastSimTime = now;
