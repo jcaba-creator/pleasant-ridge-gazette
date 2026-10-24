@@ -1,0 +1,1993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Ages of Constant Conflict: Regional Conflict</title>
+  <style>
+    :root {
+      --bg-dark: #070a12;
+      --panel-bg: rgba(13, 19, 33, 0.88);
+      --panel-border: rgba(45, 62, 95, 0.7);
+      --accent-cyan: #38bdf8;
+      --accent-gold: #fbbf24;
+      --accent-red: #f43f5e;
+      --accent-green: #34d399;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); }
+    ::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.4); border-radius: 2px; }
+
+    /* Glass Panels */
+    .glass-card {
+      background: var(--panel-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--panel-border);
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Header Bar */
+    header {
+      height: 50px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--panel-border);
+      background: rgba(10, 14, 26, 0.95);
+      z-index: 30;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pulse-dot {
+      width: 10px;
+      height: 10px;
+      background: var(--accent-cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--accent-cyan);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .brand-title {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #ffffff;
+    }
+
+    .date-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--accent-cyan);
+    }
+
+    /* Controls Bar */
+    .playback-dock {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(15, 23, 42, 0.9);
+      padding: 3px 6px;
+      border-radius: 8px;
+      border: 1px solid var(--panel-border);
+    }
+
+    .ctrl-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .ctrl-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+    }
+
+    .ctrl-btn.active {
+      background: var(--accent-cyan);
+      color: #050b14;
+      font-weight: 900;
+    }
+
+    .nav-btn {
+      background: rgba(30, 41, 59, 0.9);
+      border: 1px solid var(--panel-border);
+      color: #e2e8f0;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn:hover {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--accent-cyan);
+      color: #ffffff;
+    }
+
+    /* Viewport Workspace */
+    #viewportContainer {
+      position: relative;
+      flex: 1;
+      width: 100%;
+      height: calc(100vh - 50px);
+      overflow: hidden;
+      background: #03060c;
+    }
+
+    /* Stacked Canvases */
+    #mainCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+      image-rendering: pixelated;
+    }
+
+    #mainCanvas:active {
+      cursor: grabbing;
+    }
+
+    /* Floating UI Sidebars */
+    .hud-left {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      bottom: 12px;
+      width: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .hud-right {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      bottom: 12px;
+      width: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .interactive-card {
+      pointer-events: auto;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--panel-border);
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+    }
+
+    .panel-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    /* Faction Roster */
+    .roster-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      overflow-y: auto;
+      max-height: 240px;
+      padding-right: 4px;
+    }
+
+    .roster-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 10px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(45, 62, 95, 0.4);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+
+    .roster-item:hover {
+      background: rgba(30, 41, 59, 0.8);
+      border-color: rgba(56, 189, 248, 0.4);
+      transform: translateX(2px);
+    }
+
+    .roster-item.active {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+    }
+
+    .roster-item.player {
+      border-left: 3px solid var(--accent-gold);
+    }
+
+    .faction-color-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      flex-shrink: 0;
+    }
+
+    /* Tactical Inspector */
+    .inspector-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .stat-box {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(45, 62, 95, 0.4);
+      border-radius: 6px;
+      padding: 6px 10px;
+    }
+
+    .stat-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .stat-value {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    /* Intervention Buttons Dock */
+    .actions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .act-btn {
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid var(--panel-border);
+      border-radius: 6px;
+      padding: 8px 6px;
+      color: #ffffff;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      transition: all 0.15s ease;
+    }
+
+    .act-btn:hover {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--accent-cyan);
+    }
+
+    .act-btn.active {
+      background: var(--accent-cyan);
+      color: #050b14;
+      border-color: #ffffff;
+    }
+
+    .act-btn-sub {
+      font-size: 8px;
+      color: var(--text-muted);
+    }
+    .act-btn.active .act-btn-sub {
+      color: #0b192c;
+    }
+
+    /* Minimap & Chronicle */
+    .minimap-box {
+      width: 100%;
+      aspect-ratio: 1;
+      background: #050811;
+      border: 1px solid var(--panel-border);
+      border-radius: 6px;
+      position: relative;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+
+    #minimapCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    #minimapViewportRect {
+      position: absolute;
+      border: 1.5px solid var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.15);
+      pointer-events: none;
+    }
+
+    .chronicle-feed {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding-right: 4px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+    }
+
+    .feed-entry {
+      background: rgba(15, 23, 42, 0.5);
+      padding: 5px 8px;
+      border-radius: 4px;
+      border-left: 2px solid var(--panel-border);
+      color: #cbd5e1;
+      line-height: 1.35;
+    }
+
+    .feed-entry.combat { border-left-color: var(--accent-red); }
+    .feed-entry.fall { border-left-color: var(--accent-gold); font-weight: 800; color: #fef08a; }
+    .feed-entry.supply { border-left-color: var(--accent-cyan); }
+
+    /* Bottom Floating Bar */
+    .bottom-dock {
+      position: absolute;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      z-index: 25;
+      pointer-events: auto;
+    }
+
+    .dock-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    /* Modal Styling */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-overlay.hidden { display: none; }
+
+    .modal-card {
+      width: 100%;
+      max-width: 440px;
+      padding: 24px;
+    }
+
+    /* Notifications Banner */
+    #noticeBanner {
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      opacity: 0;
+      padding: 7px 18px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 800;
+      border-radius: 30px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--accent-cyan);
+      color: var(--accent-cyan);
+      box-shadow: 0 4px 20px rgba(56, 189, 248, 0.3);
+      pointer-events: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 40;
+    }
+
+    #noticeBanner.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================= TOP COMMAND BAR ================= -->
+  <header>
+    <div class="brand-section">
+      <a href="index.html" class="nav-btn" title="Back to 449 Field Arcade">
+        <span>‹</span> <span>Arcade</span>
+      </a>
+      <div class="pulse-dot"></div>
+      <div class="brand-title">Ages of Constant Conflict <span style="color: var(--accent-cyan); font-weight: 400;">// Regional Conflict</span></div>
+      <div class="date-badge" id="hudSimDate">Day 1 &bull; 06:00</div>
+    </div>
+
+    <!-- Center Playback Toggles -->
+    <div class="playback-dock">
+      <button id="btnPause" class="ctrl-btn" title="Pause / Resume (Space)">❚❚</button>
+      <button id="btnSpeed1" class="ctrl-btn active">1x</button>
+      <button id="btnSpeed2" class="ctrl-btn">2x</button>
+      <button id="btnSpeed5" class="ctrl-btn">5x</button>
+      <button id="btnSpeed10" class="ctrl-btn">10x</button>
+    </div>
+
+    <!-- Right Utility Dock -->
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <div id="playerModeBadge" class="badge" style="background: rgba(168, 85, 247, 0.15); color: #c084fc; border-color: rgba(168, 85, 247, 0.4);">
+        SPECTATOR (GOD)
+      </div>
+      <button id="btnNewWorld" class="nav-btn">New Conflict</button>
+    </div>
+  </header>
+
+  <!-- ================= MAIN WORKSPACE ================= -->
+  <main id="viewportContainer">
+    <!-- Main Interactive Canvas -->
+    <canvas id="mainCanvas"></canvas>
+
+    <!-- FLOATING HUD: LEFT SIDEBAR -->
+    <div class="hud-left">
+      
+      <!-- Faction Inspector / Command Deck -->
+      <div class="glass-card interactive-card" id="cardInspector" style="max-height: 48%;">
+        <div class="panel-header">
+          <div class="panel-title">
+            <div id="inspColorDot" class="faction-color-dot" style="background: #38bdf8;"></div>
+            <span id="inspName">Regional Overview</span>
+          </div>
+          <span id="inspStance" class="badge">TACTICAL</span>
+        </div>
+
+        <div id="inspBody" class="inspector-grid">
+          <div class="stat-box">
+            <div class="stat-label">Territory</div>
+            <div id="inspTerritory" class="stat-value">--</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Frontline</div>
+            <div id="inspFrontline" class="stat-value">--</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Mobilized Troops</div>
+            <div id="inspTroops" class="stat-value">--</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Supply Status</div>
+            <div id="inspSupply" class="stat-value">--</div>
+          </div>
+        </div>
+
+        <!-- Role Toggle & Actions -->
+        <div style="display: flex; gap: 6px; margin-top: auto;">
+          <button id="btnTakeCommand" class="nav-btn" style="flex: 1; justify-content: center; background: var(--accent-cyan); color: #040914; font-weight: 800; border: none;">
+            Take Command
+          </button>
+          <button id="btnRelinquish" class="nav-btn" style="flex: 1; justify-content: center; background: rgba(168, 85, 247, 0.3); border-color: #c084fc; display: none;">
+            Spectate (God)
+          </button>
+        </div>
+      </div>
+
+      <!-- Factions Roster / Leaderboard -->
+      <div class="glass-card interactive-card" style="flex: 1; min-height: 0;">
+        <div class="panel-header">
+          <div class="panel-title">Active Combatants</div>
+          <span class="badge" id="lblFactionCount">6 Factions</span>
+        </div>
+        <div class="roster-list" id="factionRosterList">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FLOATING HUD: RIGHT SIDEBAR -->
+    <div class="hud-right">
+      
+      <!-- Minimap Radar -->
+      <div class="glass-card interactive-card">
+        <div class="panel-header" style="margin-bottom: 6px;">
+          <div class="panel-title">Topographic Radar</div>
+          <span class="badge">300x300 &bull; 90k</span>
+        </div>
+        <div class="minimap-box" id="minimapBox">
+          <canvas id="minimapCanvas" width="300" height="300"></canvas>
+          <div id="minimapViewportRect"></div>
+        </div>
+      </div>
+
+      <!-- God Powers / Operational Interventions -->
+      <div class="glass-card interactive-card">
+        <div class="panel-header">
+          <div class="panel-title" id="interventionsTitle">Operational Interventions</div>
+          <span class="badge" id="interventionStatus">READY</span>
+        </div>
+        <div class="actions-grid">
+          <button class="act-btn" data-tool="bombard">
+            <span>💥 Artillery Strike</span>
+            <span class="act-btn-sub">Decimate sector</span>
+          </button>
+          <button class="act-btn" data-tool="bridge">
+            <span>🪵 Engineer Bridge</span>
+            <span class="act-btn-sub">Span river tile</span>
+          </button>
+          <button class="act-btn" data-tool="supply">
+            <span>📦 Airdrop Supply</span>
+            <span class="act-btn-sub">+100 Sector supply</span>
+          </button>
+          <button class="act-btn" data-tool="fortify">
+            <span>🛡️ Dig Trenchline</span>
+            <span class="act-btn-sub">+Slope defense</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Chronicle Feed -->
+      <div class="glass-card interactive-card" style="flex: 1; min-height: 0;">
+        <div class="panel-header">
+          <div class="panel-title">Conflict Chronicle</div>
+          <button id="btnClearLog" class="ctrl-btn" style="padding: 2px 6px; font-size: 9px;">CLEAR</button>
+        </div>
+        <div class="chronicle-feed" id="chronicleFeed">
+          <!-- Log entries injected here -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FLOATING BOTTOM DOCK: CAMERA & LAYERS -->
+    <div class="glass-card bottom-dock">
+      <span class="dock-tag">VIEWPORT:</span>
+      <button id="btnZoomIn" class="ctrl-btn">+</button>
+      <button id="btnZoomReset" class="ctrl-btn">100%</button>
+      <button id="btnZoomOut" class="ctrl-btn">-</button>
+      <div style="width: 1px; height: 16px; background: var(--panel-border); margin: 0 4px;"></div>
+      <button id="btnToggleShade" class="ctrl-btn active">Hillshade: ON</button>
+      <button id="btnToggleBorders" class="ctrl-btn active">Grid: ON</button>
+      <button id="btnToggleParticles" class="ctrl-btn active">Sparks: ON</button>
+    </div>
+
+    <!-- Floating HUD Notification -->
+    <div id="noticeBanner">MISSION INITIALIZED</div>
+  </main>
+
+  <!-- ================= NEW CONFLICT MODAL ================= -->
+  <div id="modalNewConflict" class="modal-overlay hidden">
+    <div class="glass-card modal-card">
+      <div class="panel-header" style="margin-bottom: 14px;">
+        <div class="panel-title" style="font-size: 13px;">Generate Regional Theater</div>
+        <button id="btnCloseModal" class="ctrl-btn" style="font-size: 16px;">&times;</button>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 12px; font-family: var(--font-mono); font-size: 11px;">
+        <div>
+          <label style="display: block; color: var(--text-muted); margin-bottom: 4px;">Terrain Topography Preset</label>
+          <select id="selPreset" style="width: 100%; background: #0b1220; border: 1px solid var(--panel-border); color: #fff; padding: 7px; border-radius: 6px; outline: none;">
+            <option value="river_corridor">Stranger River Valley (Meandering Rivers &amp; Ridges)</option>
+            <option value="highland_pass">Easton Highlands (Plateaus &amp; Mountain Defiles)</option>
+            <option value="island_archipelago">Riverine Delta (Ferry Crossings &amp; Islands)</option>
+            <option value="rolling_farmland">Leavenworth Plains (Open Grid &amp; Highway Hubs)</option>
+          </select>
+        </div>
+        <div>
+          <label style="display: block; color: var(--text-muted); margin-bottom: 4px;">Combatant Factions (<span id="lblCountVal">6</span>)</label>
+          <input type="range" id="rngFactionCount" min="3" max="8" value="6" style="width: 100%; accent-color: var(--accent-cyan);">
+        </div>
+        <div>
+          <label style="display: block; color: var(--text-muted); margin-bottom: 4px;">Theater Seed</label>
+          <input type="text" id="inpSeed" placeholder="Leave blank for random seed" style="width: 100%; background: #0b1220; border: 1px solid var(--panel-border); color: #fff; padding: 7px; border-radius: 6px; outline: none;">
+        </div>
+        <button id="btnGenerateSubmit" class="nav-btn" style="margin-top: 6px; justify-content: center; background: var(--accent-cyan); color: #050b14; font-weight: 800; border: none; padding: 10px;">
+          Deploy Regional Theater
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SIMULATION ENGINE SCRIPT ================= -->
+  <script>
+    /**
+     * AGES OF CONSTANT CONFLICT: REGIONAL CONFLICT
+     * 
+     * Core Architecture:
+     * - Fixed 300x300 Grid (90,000 Cells)
+     * - Typed Array Buffers: elevation, terrain, owner, frontline, supply
+     * - 3-Tier Layered Canvas Rendering:
+     *     1. Static Baked Topography / Hillshade (Pre-rendered offscreen)
+     *     2. Dynamic Territorial Paint Buffer (ImageData putImageData @ 60% opacity)
+     *     3. Vector Top Layer (Supply capitals, active combat sparks, indicators)
+     * - Independent 15 Hz Simulation Ticker vs 60 FPS Render Loop
+     */
+
+    // --- PSEUDORANDOM GENERATOR ---
+    class PRNG {
+      constructor(seed = Math.random() * 1000000) {
+        this.seed = typeof seed === 'string' ? this.hash(seed) : (seed || 123456);
+      }
+      hash(str) {
+        let h = 2166136261 >>> 0;
+        for (let i = 0; i < str.length; i++) {
+          h = Math.imul(h ^ str.charCodeAt(i), 16777619);
+        }
+        return h >>> 0;
+      }
+      next() {
+        this.seed = (Math.imul(1103515245, this.seed) + 12345) >>> 0;
+        return (this.seed & 0x7fffffff) / 2147483648;
+      }
+      range(min, max) { return min + this.next() * (max - min); }
+      rangeInt(min, max) { return Math.floor(this.range(min, max + 1)); }
+    }
+
+    // --- 2D GRADIENT PERLIN NOISE ---
+    class PerlinNoise {
+      constructor(prng) {
+        this.p = new Uint8Array(512);
+        const perm = new Uint8Array(256);
+        for (let i = 0; i < 256; i++) perm[i] = i;
+        for (let i = 255; i > 0; i--) {
+          const j = Math.floor(prng.next() * (i + 1));
+          [perm[i], perm[j]] = [perm[j], perm[i]];
+        }
+        for (let i = 0; i < 512; i++) this.p[i] = perm[i & 255];
+      }
+      fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+      lerp(t, a, b) { return a + t * (b - a); }
+      grad(hash, x, y) {
+        const h = hash & 7;
+        const u = h < 4 ? x : y;
+        const v = h < 4 ? y : x;
+        return ((h & 1) ? -u : u) + ((h & 2) ? -2.0 * v : 2.0 * v);
+      }
+      noise2D(x, y) {
+        const X = Math.floor(x) & 255;
+        const Y = Math.floor(y) & 255;
+        const xf = x - Math.floor(x);
+        const yf = y - Math.floor(y);
+        const u = this.fade(xf);
+        const v = this.fade(yf);
+
+        const aa = this.p[this.p[X] + Y];
+        const ab = this.p[this.p[X] + Y + 1];
+        const ba = this.p[this.p[X + 1] + Y];
+        const bb = this.p[this.p[X + 1] + Y + 1];
+
+        const x1 = this.lerp(u, this.grad(aa, xf, yf), this.grad(ba, xf - 1, yf));
+        const x2 = this.lerp(u, this.grad(ab, xf, yf - 1), this.grad(bb, xf - 1, yf - 1));
+        return (this.lerp(v, x1, x2) + 1) * 0.5;
+      }
+      octaves(x, y, oct = 4, persistence = 0.5) {
+        let total = 0, freq = 1, amp = 1, maxAmp = 0;
+        for (let i = 0; i < oct; i++) {
+          total += this.noise2D(x * freq, y * freq) * amp;
+          maxAmp += amp;
+          amp *= persistence;
+          freq *= 2;
+        }
+        return total / maxAmp;
+      }
+    }
+
+    // --- ENGINE CONSTANTS & TYPED ARRAYS ---
+    const GRID_W = 300;
+    const GRID_H = 300;
+    const TOTAL_CELLS = GRID_W * GRID_H; // 90,000 cells
+
+    const TERRAIN_TYPE = {
+      FIELD: 0,
+      FOREST: 1,
+      RIVER: 2,
+      ROAD: 3,
+      BRIDGE: 4
+    };
+
+    // Regional County Factions Palette
+    const FACTION_DEFINITIONS = [
+      { id: 1, name: "Leavenworth Citadel", hex: "#2563eb", rgb: [37, 99, 235], doctrine: "Fortress Defense", baseAtk: 1.15, baseDef: 1.45 },
+      { id: 2, name: "Easton Rangers", hex: "#16a34a", rgb: [22, 163, 74], doctrine: "Highland Guerrilla", baseAtk: 1.35, baseDef: 1.10 },
+      { id: 3, name: "Atchison River Barons", hex: "#0891b2", rgb: [8, 145, 178], doctrine: "Riverine Mastery", baseAtk: 1.25, baseDef: 1.20 },
+      { id: 4, name: "Lansing Ironclad", hex: "#dc2626", rgb: [220, 38, 38], doctrine: "Shock Mobilization", baseAtk: 1.50, baseDef: 0.95 },
+      { id: 5, name: "Stranger Creek Cavalry", hex: "#d97706", rgb: [217, 119, 6], doctrine: "Corridor Infiltration", baseAtk: 1.40, baseDef: 1.05 },
+      { id: 6, name: "Kickapoo Ridge Coalition", hex: "#9333ea", rgb: [147, 51, 234], doctrine: "Highland Artillery", baseAtk: 1.20, baseDef: 1.35 },
+      { id: 7, name: "Millwood Union", hex: "#4f46e5", rgb: [79, 70, 229], doctrine: "Road Blitzkrieg", baseAtk: 1.30, baseDef: 1.15 },
+      { id: 8, name: "Pleasant Ridge Guard", hex: "#059669", rgb: [5, 150, 105], doctrine: "Autonomous Militia", baseAtk: 1.25, baseDef: 1.30 }
+    ];
+
+    // --- GAME ENGINE STATE ---
+    const engine = {
+      // 1. Data Buffers
+      elevation: new Uint8Array(TOTAL_CELLS), // 0-255 height
+      terrain: new Uint8Array(TOTAL_CELLS),   // 0=field, 1=forest, 2=creek, 3=road, 4=bridge
+      owner: new Uint8Array(TOTAL_CELLS),     // 0=neutral, 1..N = faction ID
+      frontline: new Uint8Array(TOTAL_CELLS), // 0=interior, 1=combat border
+      supply: new Uint8Array(TOTAL_CELLS),    // 0-100 supply diffusion
+
+      // Factions Map
+      factions: new Map(),
+      selectedFactionId: null,
+      playerFactionId: null, // null = God/Spectator mode
+
+      // Combat Sparks & Particles
+      sparks: [], // [{x, y, vx, vy, life, maxLife, color}]
+
+      // Simulation Time & Ticking
+      ticks: 0,
+      day: 1,
+      hour: 6,
+      minute: 0,
+      simSpeed: 1, // 0: pause, 1, 2, 5, 10
+      isPaused: false,
+
+      // Viewport Camera
+      camX: 0,
+      camY: 0,
+      zoom: 1.0,
+      isDragging: false,
+      dragStartX: 0,
+      dragStartY: 0,
+
+      // Toggles
+      showHillshade: true,
+      showGrid: true,
+      showParticles: true,
+      activeTool: null, // 'bombard', 'bridge', 'supply', 'fortify'
+
+      // Seed
+      seed: "CONFLICT-2026",
+      preset: "river_corridor"
+    };
+
+    // --- CANVASES & RENDER BUFFERS ---
+    const mainCanvas = document.getElementById('mainCanvas');
+    const mainCtx = mainCanvas.getContext('2d', { alpha: false });
+
+    // Layer 1: Static Offscreen Canvas (Hillshade + Terrain + Roads)
+    const staticCanvas = document.createElement('canvas');
+    staticCanvas.width = GRID_W;
+    staticCanvas.height = GRID_H;
+    const staticCtx = staticCanvas.getContext('2d', { alpha: false });
+
+    // Layer 2: Dynamic Offscreen Paint Buffer (ImageData putImageData @ 60% opacity)
+    const dynamicCanvas = document.createElement('canvas');
+    dynamicCanvas.width = GRID_W;
+    dynamicCanvas.height = GRID_H;
+    const dynamicCtx = dynamicCanvas.getContext('2d', { willReadFrequently: true });
+    const territoryImageData = dynamicCtx.createImageData(GRID_W, GRID_H);
+
+    // Layer 3: Minimap Canvas
+    const minimapCanvas = document.getElementById('minimapCanvas');
+    const minimapCtx = minimapCanvas.getContext('2d');
+    const minimapViewportRect = document.getElementById('minimapViewportRect');
+
+    let rng = new PRNG(engine.seed);
+
+    // --- PROCEDURAL GENERATION & HILLSHADE BAKING ---
+    function generateWorld(preset = "river_corridor", factionCount = 6, customSeed = null) {
+      engine.seed = customSeed || ("CONFLICT-" + Math.floor(Math.random() * 999999));
+      engine.preset = preset;
+      rng = new PRNG(engine.seed);
+
+      engine.ticks = 0;
+      engine.day = 1;
+      engine.hour = 6;
+      engine.minute = 0;
+      engine.sparks = [];
+      engine.factions.clear();
+      engine.selectedFactionId = null;
+      engine.playerFactionId = null;
+      engine.activeTool = null;
+
+      // Reset buffers
+      engine.elevation.fill(0);
+      engine.terrain.fill(TERRAIN_TYPE.FIELD);
+      engine.owner.fill(0);
+      engine.frontline.fill(0);
+      engine.supply.fill(0);
+
+      const perlin = new PerlinNoise(rng);
+      const roadNodes = [];
+
+      // 1. Generate Topography & Elevation
+      for (let y = 0; y < GRID_H; y++) {
+        for (let x = 0; x < GRID_W; x++) {
+          const idx = y * GRID_W + x;
+          const nx = x / GRID_W - 0.5;
+          const ny = y / GRID_H - 0.5;
+
+          let rawElev = 0;
+          if (preset === "river_corridor") {
+            // Meandering central valley with flanking ridges
+            const ridgeNoise = perlin.octaves(x * 0.015, y * 0.015, 5, 0.5);
+            const valleyDip = Math.abs(nx + Math.sin(ny * 5) * 0.15) * 1.6;
+            rawElev = ridgeNoise * 0.7 + valleyDip * 0.35;
+          } else if (preset === "highland_pass") {
+            // Mountainous highlands with steep defiles
+            rawElev = perlin.octaves(x * 0.022, y * 0.022, 6, 0.55);
+            rawElev = Math.pow(rawElev, 1.3);
+          } else if (preset === "island_archipelago") {
+            // Delta islands
+            const centerDist = Math.hypot(nx, ny) * 1.5;
+            rawElev = perlin.octaves(x * 0.03, y * 0.03, 4, 0.6) - centerDist * 0.4;
+          } else {
+            // Rolling farmland
+            rawElev = perlin.octaves(x * 0.012, y * 0.012, 4, 0.45);
+          }
+
+          const hVal = Math.min(255, Math.max(0, Math.floor(rawElev * 255)));
+          engine.elevation[idx] = hVal;
+
+          // 2. Classify Basic Biomes (Forest vs Field)
+          const vegetationNoise = perlin.noise2D(x * 0.04 + 10, y * 0.04 + 10);
+          if (vegetationNoise > 0.62 && hVal > 45) {
+            engine.terrain[idx] = TERRAIN_TYPE.FOREST;
+          } else {
+            engine.terrain[idx] = TERRAIN_TYPE.FIELD;
+          }
+        }
+      }
+
+      // 3. Carve Meandering River & Creeks
+      carveRivers(preset, perlin);
+
+      // 4. Place Regional County Seats (Capitals)
+      spawnFactions(factionCount);
+
+      // 5. Build Road Network Connecting Capitals
+      buildRoadNetwork();
+
+      // 6. Bake Layer 1: Static Topography & Hillshade
+      bakeStaticCanvas();
+
+      // Initial Buffers Sync
+      updateFrontlinesAndSupply();
+      renderDynamicTerritoryBuffer();
+      updateMinimap();
+      updateInspector();
+      updateRosterUI();
+
+      addChronicleLog(`Conflict Theater initialized [Seed: ${engine.seed}]. ${engine.factions.size} regional powers mobilized.`);
+      showNotice("REGIONAL THEATER DEPLOYED");
+    }
+
+    // Carve realistic river valleys
+    function carveRivers(preset, perlin) {
+      const riverCount = preset === "river_corridor" ? 2 : 1;
+      for (let r = 0; r < riverCount; r++) {
+        let rx = r === 0 ? GRID_W * 0.45 : GRID_W * 0.55;
+        let ry = 0;
+
+        while (ry < GRID_H) {
+          const curve = (perlin.noise2D(ry * 0.02, r * 10) - 0.5) * 4;
+          rx += curve;
+          rx = Math.max(4, Math.min(GRID_W - 5, rx));
+
+          const baseIdx = Math.floor(ry) * GRID_W + Math.floor(rx);
+
+          // River width 2-3 cells
+          for (let dy = -1; dy <= 1; dy++) {
+            for (let dx = -1; dx <= 1; dx++) {
+              const tx = Math.floor(rx) + dx;
+              const ty = Math.floor(ry) + dy;
+              if (tx >= 0 && tx < GRID_W && ty >= 0 && ty < GRID_H) {
+                const idx = ty * GRID_W + tx;
+                engine.terrain[idx] = TERRAIN_TYPE.RIVER;
+                engine.elevation[idx] = Math.max(10, engine.elevation[idx] - 30); // carve riverbed
+              }
+            }
+          }
+          ry += 0.85;
+        }
+      }
+    }
+
+    // Spawn Regional Factions in well-spaced county seats
+    function spawnFactions(count) {
+      const selectedDefs = FACTION_DEFINITIONS.slice(0, count);
+      const usedLocations = [];
+
+      selectedDefs.forEach(def => {
+        let bestX = 0, bestY = 0, maxDist = -1;
+
+        // Try 40 random candidate positions to find optimal strategic dispersion
+        for (let a = 0; a < 40; a++) {
+          const cx = rng.rangeInt(35, GRID_W - 36);
+          const cy = rng.rangeInt(35, GRID_H - 36);
+          const idx = cy * GRID_W + cx;
+
+          // Avoid water
+          if (engine.terrain[idx] === TERRAIN_TYPE.RIVER) continue;
+
+          let minDist = 999999;
+          for (const loc of usedLocations) {
+            const d = Math.hypot(cx - loc.x, cy - loc.y);
+            if (d < minDist) minDist = d;
+          }
+
+          if (usedLocations.length === 0 || minDist > maxDist) {
+            maxDist = minDist;
+            bestX = cx;
+            bestY = cy;
+          }
+        }
+
+        usedLocations.push({ x: bestX, y: bestY });
+
+        const faction = {
+          id: def.id,
+          name: def.name,
+          hex: def.hex,
+          rgb: def.rgb,
+          doctrine: def.doctrine,
+          baseAtk: def.baseAtk,
+          baseDef: def.baseDef,
+          capitalX: bestX,
+          capitalY: bestY,
+          territoryCount: 0,
+          frontlineCount: 0,
+          troops: 150 + rng.rangeInt(0, 50),
+          supplyScore: 100,
+          alive: true
+        };
+
+        engine.factions.set(def.id, faction);
+
+        // Seed 9x9 starting enclave
+        const radius = 6;
+        for (let dy = -radius; dy <= radius; dy++) {
+          for (let dx = -radius; dx <= radius; dx++) {
+            const tx = bestX + dx;
+            const ty = bestY + dy;
+            if (tx >= 0 && tx < GRID_W && ty >= 0 && ty < GRID_H) {
+              if (Math.hypot(dx, dy) <= radius) {
+                const tidx = ty * GRID_W + tx;
+                if (engine.terrain[tidx] !== TERRAIN_TYPE.RIVER) {
+                  engine.owner[tidx] = def.id;
+                  faction.territoryCount++;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Build Highways & River Bridges between county seats
+    function buildRoadNetwork() {
+      const caps = Array.from(engine.factions.values()).map(f => ({ x: f.capitalX, y: f.capitalY }));
+
+      // Connect each capital to its nearest 2 neighbors via Bresenham highway
+      caps.forEach((c1, i) => {
+        const sorted = caps
+          .filter((_, j) => i !== j)
+          .sort((a, b) => Math.hypot(c1.x - a.x, c1.y - a.y) - Math.hypot(c1.x - b.x, c1.y - b.y))
+          .slice(0, 2);
+
+        sorted.forEach(c2 => {
+          layRoadLine(c1.x, c1.y, c2.x, c2.y);
+        });
+      });
+    }
+
+    function layRoadLine(x0, y0, x1, y1) {
+      let dx = Math.abs(x1 - x0);
+      let dy = Math.abs(y1 - y0);
+      let sx = (x0 < x1) ? 1 : -1;
+      let sy = (y0 < y1) ? 1 : -1;
+      let err = dx - dy;
+
+      while (true) {
+        if (x0 >= 0 && x0 < GRID_W && y0 >= 0 && y0 < GRID_H) {
+          const idx = y0 * GRID_W + x0;
+          if (engine.terrain[idx] === TERRAIN_TYPE.RIVER) {
+            engine.terrain[idx] = TERRAIN_TYPE.BRIDGE; // Engineered crossing!
+          } else {
+            engine.terrain[idx] = TERRAIN_TYPE.ROAD;
+          }
+        }
+
+        if (x0 === x1 && y0 === y1) break;
+        let e2 = 2 * err;
+        if (e2 > -dy) { err -= dy; x0 += sx; }
+        if (e2 < dx) { err += dx; y0 += sy; }
+      }
+    }
+
+    // --- LAYER 1: STATIC HILLSHADE & TOPOGRAPHY BAKING ---
+    function bakeStaticCanvas() {
+      const imgData = staticCtx.createImageData(GRID_W, GRID_H);
+      const data = imgData.data;
+
+      // Sun illumination vector (from North-West: dx = -1, dy = -1, dz = 1.2)
+      const sunX = -0.7071;
+      const sunY = -0.7071;
+      const sunZ = 1.0;
+      const sunLen = Math.hypot(sunX, sunY, sunZ);
+      const lx = sunX / sunLen;
+      const ly = sunY / sunLen;
+      const lz = sunZ / sunLen;
+
+      for (let y = 0; y < GRID_H; y++) {
+        for (let x = 0; x < GRID_W; x++) {
+          const idx = y * GRID_W + x;
+          const px = idx * 4;
+
+          // Slope gradients
+          const left = engine.elevation[y * GRID_W + Math.max(0, x - 1)];
+          const right = engine.elevation[y * GRID_W + Math.min(GRID_W - 1, x + 1)];
+          const up = engine.elevation[Math.max(0, y - 1) * GRID_W + x];
+          const down = engine.elevation[Math.min(GRID_H - 1, y + 1) * GRID_W + x];
+
+          const dzdx = (right - left) / 2.0;
+          const dzdy = (down - up) / 2.0;
+
+          // Surface normal (-dzdx, -dzdy, 1)
+          const nx = -dzdx;
+          const ny = -dzdy;
+          const nz = 40.0; // scale factor
+          const nLen = Math.hypot(nx, ny, nz);
+
+          // Dot product (Lambertian illumination)
+          const dot = (nx * lx + ny * ly + nz * lz) / nLen;
+          const hillshade = Math.max(0.2, Math.min(1.4, dot));
+
+          const tType = engine.terrain[idx];
+
+          // Base Biome Palette
+          let r = 24, g = 38, b = 28; // Field / Grassland default
+
+          if (tType === TERRAIN_TYPE.FOREST) {
+            r = 14; g = 28; b = 18;
+          } else if (tType === TERRAIN_TYPE.RIVER) {
+            r = 15; g = 50; b = 85;
+          } else if (tType === TERRAIN_TYPE.ROAD) {
+            r = 65; g = 62; b = 58;
+          } else if (tType === TERRAIN_TYPE.BRIDGE) {
+            r = 130; g = 85; b = 45;
+          }
+
+          // Apply hillshade multiplier
+          if (tType !== TERRAIN_TYPE.RIVER && tType !== TERRAIN_TYPE.BRIDGE) {
+            r = Math.min(255, Math.floor(r * hillshade));
+            g = Math.min(255, Math.floor(g * hillshade));
+            b = Math.min(255, Math.floor(b * hillshade));
+          }
+
+          // Faint county cartographic survey grid (every 30 cells)
+          if (engine.showGrid && (x % 30 === 0 || y % 30 === 0)) {
+            r = Math.min(255, r + 20);
+            g = Math.min(255, g + 20);
+            b = Math.min(255, b + 25);
+          }
+
+          data[px] = r;
+          data[px + 1] = g;
+          data[px + 2] = b;
+          data[px + 3] = 255;
+        }
+      }
+
+      staticCtx.putImageData(imgData, 0, 0);
+    }
+
+    // --- LAYER 2: DYNAMIC TERRITORIAL PAINT BUFFER ---
+    function renderDynamicTerritoryBuffer() {
+      const data = territoryImageData.data;
+
+      for (let i = 0; i < TOTAL_CELLS; i++) {
+        const ownerId = engine.owner[i];
+        const isFrontline = engine.frontline[i];
+        const px = i * 4;
+
+        if (ownerId > 0 && engine.factions.has(ownerId)) {
+          const f = engine.factions.get(ownerId);
+          const [fr, fg, fb] = f.rgb;
+
+          if (isFrontline === 1) {
+            // Frontline cell with glowing edge
+            data[px] = Math.min(255, fr + 90);
+            data[px + 1] = Math.min(255, fg + 90);
+            data[px + 2] = Math.min(255, fb + 90);
+            data[px + 3] = 240; // higher alpha on borders
+          } else {
+            // Interior sovereign territory
+            data[px] = fr;
+            data[px + 1] = fg;
+            data[px + 2] = fb;
+            data[px + 3] = 160; // 60% opacity territorial wash
+          }
+        } else {
+          // Unclaimed neutral wilderness (fully transparent)
+          data[px + 3] = 0;
+        }
+      }
+
+      dynamicCtx.putImageData(territoryImageData, 0, 0);
+    }
+
+    // --- SIMULATION TICK LOOP (INDEPENDENT AT ~15 HZ) ---
+    function stepSimulation() {
+      engine.ticks++;
+
+      // Advance clock
+      engine.minute += 20;
+      if (engine.minute >= 60) {
+        engine.minute = 0;
+        engine.hour++;
+        if (engine.hour >= 24) {
+          engine.hour = 0;
+          engine.day++;
+        }
+      }
+      document.getElementById('hudSimDate').innerText = `Day ${engine.day} • ${String(engine.hour).padStart(2, '0')}:${String(engine.minute).padStart(2, '0')}`;
+
+      // 1. County Seat Mobilization & Income
+      engine.factions.forEach(f => {
+        if (!f.alive) return;
+        // Mobilization scales with territory & doctrine
+        const income = Math.max(1, Math.floor(f.territoryCount * 0.08 + 2));
+        f.troops += income;
+
+        // Frontline attrition if supplies drop
+        if (f.supplyScore < 40) {
+          f.troops = Math.max(10, f.troops - 2);
+        }
+      });
+
+      // 2. Frontline Combat & Territorial Expansion
+      resolveCombatAndExpansion();
+
+      // 3. Re-calculate Frontlines, Supply Diffusion, and Buffers
+      updateFrontlinesAndSupply();
+
+      // 4. Update HUD and Roster
+      if (engine.ticks % 2 === 0) {
+        renderDynamicTerritoryBuffer();
+        updateMinimap();
+      }
+      if (engine.ticks % 6 === 0) {
+        updateRosterUI();
+        updateInspector();
+      }
+    }
+
+    // Frontline expansion algorithm with road bonus, slope penalties, and river chokepoints
+    function resolveCombatAndExpansion() {
+      const dirs = [[0, -1], [0, 1], [-1, 0], [1, 0]];
+      const sampleLimit = 3200; // Stochastic cell sampling for maximum 60fps performance
+
+      for (let s = 0; s < sampleLimit; s++) {
+        const x = rng.rangeInt(0, GRID_W - 1);
+        const y = rng.rangeInt(0, GRID_H - 1);
+        const idx = y * GRID_W + x;
+
+        // Only frontline cells execute attacks
+        if (engine.frontline[idx] !== 1) continue;
+
+        const attackerId = engine.owner[idx];
+        if (attackerId === 0) continue;
+        const attacker = engine.factions.get(attackerId);
+        if (!attacker || !attacker.alive || attacker.troops < 5) continue;
+
+        // Pick random neighbor to challenge
+        const d = dirs[rng.rangeInt(0, 3)];
+        const nx = x + d[0];
+        const ny = y + d[1];
+        if (nx < 0 || nx >= GRID_W || ny < 0 || ny >= GRID_H) continue;
+
+        const targetIdx = ny * GRID_W + nx;
+        const targetOwnerId = engine.owner[targetIdx];
+        const targetTerrain = engine.terrain[targetIdx];
+
+        // Cannot traverse raw river without bridge
+        if (targetTerrain === TERRAIN_TYPE.RIVER) continue;
+
+        // Effective force calculation
+        const elevSource = engine.elevation[idx];
+        const elevTarget = engine.elevation[targetIdx];
+        const elevDelta = elevTarget - elevSource; // uphill > 0
+        const slopePenalty = elevDelta > 0 ? (elevDelta / 255.0) * 1.8 : 0;
+
+        const isRoadOrBridge = (targetTerrain === TERRAIN_TYPE.ROAD || targetTerrain === TERRAIN_TYPE.BRIDGE);
+        const roadBonus = isRoadOrBridge ? 1.45 : 1.0;
+        const forestCover = targetTerrain === TERRAIN_TYPE.FOREST ? 0.35 : 0;
+        const supplyRatio = (engine.supply[idx] / 100.0);
+
+        // CASE A: Peaceful Annexation of Neutral Ground
+        if (targetOwnerId === 0) {
+          const moveThreshold = 0.28 / roadBonus;
+          if (rng.next() > moveThreshold && attacker.troops > 2) {
+            attacker.troops -= 1;
+            engine.owner[targetIdx] = attackerId;
+            attacker.territoryCount++;
+          }
+        }
+        // CASE B: Active Frontline Combat Against Rival County
+        else if (targetOwnerId !== attackerId) {
+          const defender = engine.factions.get(targetOwnerId);
+          if (!defender || !defender.alive) continue;
+
+          const defSupplyRatio = (engine.supply[targetIdx] / 100.0);
+
+          const atkStrength = (attacker.baseAtk * roadBonus * supplyRatio * (attacker.troops / Math.max(10, attacker.territoryCount))) * (0.8 + rng.next() * 0.4);
+          const defStrength = (defender.baseDef * (1 + slopePenalty + forestCover) * defSupplyRatio * (defender.troops / Math.max(10, defender.territoryCount))) * (0.8 + rng.next() * 0.4);
+
+          // Spawn combat sparks!
+          if (engine.showParticles && rng.next() < 0.25) {
+            spawnCombatSparks(nx, ny, attacker.rgb);
+          }
+
+          if (atkStrength > defStrength) {
+            // Sector Breach!
+            defender.territoryCount = Math.max(0, defender.territoryCount - 1);
+            defender.troops = Math.max(0, defender.troops - 2);
+            attacker.troops = Math.max(0, attacker.troops - 1);
+
+            engine.owner[targetIdx] = attackerId;
+            attacker.territoryCount++;
+
+            // County Seat Annexation Check
+            if (nx === defender.capitalX && ny === defender.capitalY) {
+              capitulateCounty(defender.id, attacker.id);
+            }
+          } else {
+            // Assault repelled
+            attacker.troops = Math.max(0, attacker.troops - 2);
+          }
+        }
+      }
+    }
+
+    // Capital Fall & Annexation
+    function capitulateCounty(victimId, conquerorId) {
+      const victim = engine.factions.get(victimId);
+      const conqueror = engine.factions.get(conquerorId);
+      if (!victim || !conqueror) return;
+
+      victim.alive = false;
+      addChronicleLog(`🚩 [CAPITULATION]: ${conqueror.name} seized the county seat of ${victim.name}! Remnants absorbed.`, "fall");
+      showNotice(`COUNTY SEAT FELL: ${victim.name.toUpperCase()}`);
+
+      // Transfer all lingering territory
+      for (let i = 0; i < TOTAL_CELLS; i++) {
+        if (engine.owner[i] === victimId) {
+          engine.owner[i] = conquerorId;
+          conqueror.territoryCount++;
+        }
+      }
+      victim.territoryCount = 0;
+
+      if (victimId === engine.playerFactionId) {
+        showNotice("YOUR COUNTY WAS DEFEATED! Reverted to Spectator.");
+        setPlayerCountry(null);
+      }
+    }
+
+    // Frontline identification and Cellular Supply Diffusion
+    function updateFrontlinesAndSupply() {
+      const dirs = [[0, -1], [0, 1], [-1, 0], [1, 0]];
+      engine.frontline.fill(0);
+      engine.supply.fill(0);
+
+      // 1. Detect Frontlines
+      for (let y = 0; y < GRID_H; y++) {
+        for (let x = 0; x < GRID_W; x++) {
+          const idx = y * GRID_W + x;
+          const o = engine.owner[idx];
+          if (o === 0) continue;
+
+          for (const [dx, dy] of dirs) {
+            const nx = x + dx;
+            const ny = y + dy;
+            if (nx >= 0 && nx < GRID_W && ny >= 0 && ny < GRID_H) {
+              const nOwner = engine.owner[ny * GRID_W + nx];
+              if (nOwner !== o) {
+                engine.frontline[idx] = 1;
+                break;
+              }
+            }
+          }
+        }
+      }
+
+      // 2. Supply Diffusion from County Seats (BFS along owned territory & roads)
+      engine.factions.forEach(f => {
+        if (!f.alive) return;
+        const capIdx = f.capitalY * GRID_W + f.capitalX;
+        engine.supply[capIdx] = 100;
+
+        // Priority queue / BFS buffer
+        const queue = [{ x: f.capitalX, y: f.capitalY, sup: 100 }];
+        const visited = new Uint8Array(TOTAL_CELLS);
+        visited[capIdx] = 1;
+
+        let head = 0;
+        let totalFrontlineCount = 0;
+
+        while (head < queue.length && head < 8000) {
+          const curr = queue[head++];
+          const cIdx = curr.y * GRID_W + curr.x;
+
+          if (engine.frontline[cIdx] === 1) {
+            totalFrontlineCount++;
+          }
+
+          if (curr.sup <= 10) continue;
+
+          for (const [dx, dy] of dirs) {
+            const nx = curr.x + dx;
+            const ny = curr.y + dy;
+            if (nx >= 0 && nx < GRID_W && ny >= 0 && ny < GRID_H) {
+              const nidx = ny * GRID_W + nx;
+              if (visited[nidx] === 0 && engine.owner[nidx] === f.id) {
+                visited[nidx] = 1;
+                const isRoad = (engine.terrain[nidx] === TERRAIN_TYPE.ROAD || engine.terrain[nidx] === TERRAIN_TYPE.BRIDGE);
+                const drop = isRoad ? 1 : 4; // roads conduct supply 4x farther!
+                const newSup = Math.max(0, curr.sup - drop);
+                engine.supply[nidx] = newSup;
+                queue.push({ x: nx, y: ny, sup: newSup });
+              }
+            }
+          }
+        }
+
+        f.frontlineCount = totalFrontlineCount;
+        f.supplyScore = Math.min(100, Math.floor(queue.length > 0 ? (queue.reduce((acc, q) => acc + q.sup, 0) / queue.length) : 50));
+      });
+    }
+
+    // --- LAYER 3: VECTOR RENDERING & COMBAT SPARKS ---
+    function spawnCombatSparks(x, y, rgb) {
+      for (let i = 0; i < 3; i++) {
+        engine.sparks.push({
+          x: x + 0.5,
+          y: y + 0.5,
+          vx: (rng.next() - 0.5) * 1.5,
+          vy: (rng.next() - 0.5) * 1.5,
+          life: 0,
+          maxLife: 15 + rng.rangeInt(0, 15),
+          color: rng.next() > 0.5 ? '#fef08a' : `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`
+        });
+      }
+      if (engine.sparks.length > 400) engine.sparks.splice(0, 100);
+    }
+
+    function renderScene() {
+      // Clear Main Canvas
+      mainCtx.fillStyle = '#070a12';
+      mainCtx.fillRect(0, 0, mainCanvas.width, mainCanvas.height);
+
+      mainCtx.save();
+
+      // Transform camera
+      mainCtx.translate(mainCanvas.width / 2, mainCanvas.height / 2);
+      mainCtx.scale(engine.zoom, engine.zoom);
+      mainCtx.translate(-mainCanvas.width / 2 + engine.camX, -mainCanvas.height / 2 + engine.camY);
+
+      mainCtx.imageSmoothingEnabled = false;
+
+      // 1. DRAW LAYER 1: Static Topography & Hillshade in 1 Draw Call
+      if (engine.showHillshade) {
+        mainCtx.drawImage(staticCanvas, 0, 0, mainCanvas.width, mainCanvas.height);
+      }
+
+      // 2. DRAW LAYER 2: Dynamic Territorial Buffer (Overlay @ 60% opacity)
+      mainCtx.globalAlpha = 0.65;
+      mainCtx.drawImage(dynamicCanvas, 0, 0, mainCanvas.width, mainCanvas.height);
+      mainCtx.globalAlpha = 1.0;
+
+      // 3. DRAW LAYER 3: Vector Overlay (County Seats, Flags, Combat Sparks)
+      drawVectorOverlays(mainCtx);
+
+      mainCtx.restore();
+    }
+
+    function drawVectorOverlays(ctx) {
+      const tileW = mainCanvas.width / GRID_W;
+      const tileH = mainCanvas.height / GRID_H;
+
+      // Draw Combat Sparks
+      if (engine.showParticles) {
+        for (let i = engine.sparks.length - 1; i >= 0; i--) {
+          const p = engine.sparks[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.life++;
+
+          const alpha = 1 - (p.life / p.maxLife);
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = Math.max(0, alpha);
+          ctx.fillRect(p.x * tileW, p.y * tileH, 2.5 / engine.zoom, 2.5 / engine.zoom);
+
+          if (p.life >= p.maxLife) {
+            engine.sparks.splice(i, 1);
+          }
+        }
+        ctx.globalAlpha = 1.0;
+      }
+
+      // Draw County Seats (Capitals)
+      engine.factions.forEach(f => {
+        if (!f.alive) return;
+        const cx = f.capitalX * tileW + tileW / 2;
+        const cy = f.capitalY * tileH + tileH / 2;
+
+        // Supply Halo Pulse
+        const haloRadius = Math.max(8, 14 / engine.zoom);
+        ctx.beginPath();
+        ctx.arc(cx, cy, haloRadius, 0, Math.PI * 2);
+        ctx.strokeStyle = f.hex;
+        ctx.lineWidth = 1.5 / engine.zoom;
+        ctx.stroke();
+
+        // Capital Seat Star / Badge
+        ctx.font = `${Math.max(12, 14 / engine.zoom)}px monospace`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText('⭐', cx, cy - (8 / engine.zoom));
+
+        // Name Banner
+        ctx.font = `bold ${Math.max(9, 10 / engine.zoom)}px ui-monospace, monospace`;
+        ctx.shadowColor = '#000000';
+        ctx.shadowBlur = 4;
+        ctx.fillStyle = f.id === engine.playerFactionId ? '#fbbf24' : '#ffffff';
+        ctx.fillText(f.name, cx, cy + (10 / engine.zoom));
+        ctx.shadowBlur = 0;
+      });
+
+      // Highlight selected faction's capital
+      if (engine.selectedFactionId && engine.factions.has(engine.selectedFactionId)) {
+        const sel = engine.factions.get(engine.selectedFactionId);
+        const scx = sel.capitalX * tileW + tileW / 2;
+        const scy = sel.capitalY * tileH + tileH / 2;
+
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2 / engine.zoom;
+        ctx.strokeRect(scx - 12 / engine.zoom, scy - 12 / engine.zoom, 24 / engine.zoom, 24 / engine.zoom);
+      }
+    }
+
+    // --- MINIMAP RADAR PIPELINE ---
+    function updateMinimap() {
+      minimapCtx.drawImage(staticCanvas, 0, 0);
+      minimapCtx.globalAlpha = 0.65;
+      minimapCtx.drawImage(dynamicCanvas, 0, 0);
+      minimapCtx.globalAlpha = 1.0;
+
+      // Viewport Rect calculation
+      const visRatioW = 1 / engine.zoom;
+      const visRatioH = 1 / engine.zoom;
+      const leftRatio = (-(engine.camX / mainCanvas.width) * engine.zoom + (1 - visRatioW) / 2);
+      const topRatio = (-(engine.camY / mainCanvas.height) * engine.zoom + (1 - visRatioH) / 2);
+
+      minimapViewportRect.style.width = `${Math.min(100, Math.max(8, visRatioW * 100))}%`;
+      minimapViewportRect.style.height = `${Math.min(100, Math.max(8, visRatioH * 100))}%`;
+      minimapViewportRect.style.left = `${Math.min(92, Math.max(0, leftRatio * 100))}%`;
+      minimapViewportRect.style.top = `${Math.min(92, Math.max(0, topRatio * 100))}%`;
+    }
+
+    // --- HUD & INTERACTION UI ---
+    function updateRosterUI() {
+      const rosterList = document.getElementById('factionRosterList');
+      const list = Array.from(engine.factions.values()).filter(f => f.alive);
+      list.sort((a, b) => b.territoryCount - a.territoryCount);
+
+      document.getElementById('lblFactionCount').innerText = `${list.length} Combatants`;
+
+      let html = '';
+      list.forEach((f, idx) => {
+        const isSel = f.id === engine.selectedFactionId;
+        const isPlayer = f.id === engine.playerFactionId;
+        const pct = ((f.territoryCount / TOTAL_CELLS) * 100).toFixed(1);
+
+        html += `
+          <div data-id="${f.id}" class="roster-item ${isSel ? 'active' : ''} ${isPlayer ? 'player' : ''}">
+            <div style="display: flex; align-items: center; gap: 8px; overflow: hidden;">
+              <span style="color: #64748b; width: 14px;">${idx + 1}</span>
+              <div class="faction-color-dot" style="background: ${f.hex};"></div>
+              <span style="font-weight: 700; color: #f8fafc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px;">
+                ${f.name}
+              </span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px; font-size: 10px; color: #94a3b8;">
+              <span style="color: var(--accent-cyan); font-weight: 800;">${pct}%</span>
+              <span>🪖${f.troops}</span>
+            </div>
+          </div>
+        `;
+      });
+
+      rosterList.innerHTML = html;
+
+      rosterList.querySelectorAll('.roster-item').forEach(el => {
+        el.addEventListener('click', () => {
+          const id = parseInt(el.dataset.id);
+          selectFaction(id);
+        });
+      });
+    }
+
+    function updateInspector() {
+      const inspColorDot = document.getElementById('inspColorDot');
+      const inspName = document.getElementById('inspName');
+      const inspStance = document.getElementById('inspStance');
+      const inspTerritory = document.getElementById('inspTerritory');
+      const inspFrontline = document.getElementById('inspFrontline');
+      const inspTroops = document.getElementById('inspTroops');
+      const inspSupply = document.getElementById('inspSupply');
+      const btnTake = document.getElementById('btnTakeCommand');
+      const btnRel = document.getElementById('btnRelinquish');
+
+      if (!engine.selectedFactionId || !engine.factions.has(engine.selectedFactionId)) {
+        inspColorDot.style.background = '#38bdf8';
+        inspName.innerText = "Theater Overview";
+        inspStance.innerText = "ALL COMBATANTS";
+        inspTerritory.innerText = `${TOTAL_CELLS} cells`;
+        inspFrontline.innerText = "Active";
+        inspTroops.innerText = Array.from(engine.factions.values()).reduce((a, f) => a + f.troops, 0);
+        inspSupply.innerText = "Nominal";
+        btnTake.style.display = "none";
+        btnRel.style.display = "none";
+        return;
+      }
+
+      const f = engine.factions.get(engine.selectedFactionId);
+      inspColorDot.style.background = f.hex;
+      inspName.innerText = f.name;
+      inspStance.innerText = f.doctrine.toUpperCase();
+
+      const pct = ((f.territoryCount / TOTAL_CELLS) * 100).toFixed(1);
+      inspTerritory.innerText = `${f.territoryCount} (${pct}%)`;
+      inspFrontline.innerText = `${f.frontlineCount} sectors`;
+      inspTroops.innerText = `${f.troops}`;
+      inspSupply.innerText = `${f.supplyScore}% index`;
+
+      if (f.id === engine.playerFactionId) {
+        btnTake.style.display = "none";
+        btnRel.style.display = "flex";
+      } else {
+        btnTake.style.display = "flex";
+        btnRel.style.display = "none";
+      }
+    }
+
+    function selectFaction(factionId) {
+      engine.selectedFactionId = factionId;
+      updateInspector();
+      updateRosterUI();
+
+      if (factionId && engine.factions.has(factionId)) {
+        const f = engine.factions.get(factionId);
+        panToCell(f.capitalX, f.capitalY);
+      }
+    }
+
+    function setPlayerCountry(factionId) {
+      engine.playerFactionId = factionId;
+      const badge = document.getElementById('playerModeBadge');
+      const title = document.getElementById('interventionsTitle');
+
+      if (factionId && engine.factions.has(factionId)) {
+        const f = engine.factions.get(factionId);
+        badge.innerText = `RULER: ${f.name.toUpperCase()}`;
+        badge.style.background = 'rgba(56, 189, 248, 0.2)';
+        badge.style.color = '#38bdf8';
+        badge.style.borderColor = 'rgba(56, 189, 248, 0.5)';
+        title.innerText = `${f.name.toUpperCase()} COMMAND`;
+        showNotice(`ASSUMED COMMAND OF ${f.name.toUpperCase()}`);
+      } else {
+        badge.innerText = "SPECTATOR (GOD)";
+        badge.style.background = 'rgba(168, 85, 247, 0.15)';
+        badge.style.color = '#c084fc';
+        badge.style.borderColor = 'rgba(168, 85, 247, 0.4)';
+        title.innerText = "OPERATIONAL INTERVENTIONS";
+        showNotice("RETURNED TO SPECTATOR MODE");
+      }
+      updateInspector();
+      updateRosterUI();
+    }
+
+    function panToCell(x, y) {
+      const tileW = mainCanvas.width / GRID_W;
+      const tileH = mainCanvas.height / GRID_H;
+      engine.camX = (mainCanvas.width / 2) - (x * tileW);
+      engine.camY = (mainCanvas.height / 2) - (y * tileH);
+      updateMinimap();
+    }
+
+    function addChronicleLog(text, type = "normal") {
+      const feed = document.getElementById('chronicleFeed');
+      const entry = document.createElement('div');
+      entry.className = `feed-entry ${type}`;
+      entry.innerHTML = `<span style="color: var(--text-muted); margin-right: 4px;">[D${engine.day} ${String(engine.hour).padStart(2, '0')}:${String(engine.minute).padStart(2, '0')}]</span> ${text}`;
+      feed.prepend(entry);
+
+      if (feed.children.length > 50) feed.removeChild(feed.lastChild);
+    }
+
+    function showNotice(msg) {
+      const el = document.getElementById('noticeBanner');
+      el.innerText = msg;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 2600);
+    }
+
+    // --- OPERATIONAL INTERVENTIONS (GOD POWERS) ---
+    function applyTool(tx, ty) {
+      const idx = ty * GRID_W + tx;
+
+      if (engine.activeTool === 'bombard') {
+        // Obliterate 7x7 radius
+        const r = 4;
+        for (let dy = -r; dy <= r; dy++) {
+          for (let dx = -r; dx <= r; dx++) {
+            const x = tx + dx;
+            const y = ty + dy;
+            if (x >= 0 && x < GRID_W && y >= 0 && y < GRID_H) {
+              const i = y * GRID_W + x;
+              const o = engine.owner[i];
+              if (o > 0 && engine.factions.has(o)) {
+                engine.factions.get(o).territoryCount--;
+              }
+              engine.owner[i] = 0;
+              engine.frontline[i] = 0;
+              spawnCombatSparks(x, y, [255, 100, 50]);
+            }
+          }
+        }
+        addChronicleLog(`💥 [ARTILLERY]: Heavy barrage pulverized Sector (${tx}, ${ty})!`, "combat");
+        showNotice("SECTOR BOMBARDED");
+        bakeStaticCanvas();
+      } else if (engine.activeTool === 'bridge') {
+        // Lay bridge across river cell
+        if (engine.terrain[idx] === TERRAIN_TYPE.RIVER) {
+          engine.terrain[idx] = TERRAIN_TYPE.BRIDGE;
+          addChronicleLog(`🪵 [ENGINEERING]: Tactical pontoon bridge deployed at (${tx}, ${ty}).`, "supply");
+          showNotice("BRIDGE CONSTRUCTED");
+          bakeStaticCanvas();
+        } else {
+          showNotice("TARGET MUST BE RIVER CELL");
+        }
+      } else if (engine.activeTool === 'supply') {
+        // Boost supply
+        engine.supply[idx] = 100;
+        addChronicleLog(`📦 [AIRDROP]: Critical ammunition and rations dropped into Sector (${tx}, ${ty}).`, "supply");
+        showNotice("SUPPLY AIRDROP DEPLOYED");
+      } else if (engine.activeTool === 'fortify') {
+        // Raise elevation to create high defensive barrier
+        engine.elevation[idx] = Math.min(255, engine.elevation[idx] + 60);
+        addChronicleLog(`🛡️ [REDOUBT]: Earthen trenchline and breastworks fortified at (${tx}, ${ty}).`, "combat");
+        showNotice("TRENCHLINE CONSTRUCTED");
+        bakeStaticCanvas();
+      }
+
+      engine.activeTool = null;
+      document.querySelectorAll('.act-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('interventionStatus').innerText = "READY";
+      renderDynamicTerritoryBuffer();
+      updateMinimap();
+    }
+
+    // --- MOUSE, DRAG & TOUCH INTERACTIONS ---
+    function getCellCoordinates(clientX, clientY) {
+      const rect = mainCanvas.getBoundingClientRect();
+      const mouseX = clientX - rect.left;
+      const mouseY = clientY - rect.top;
+
+      const screenCenterX = mainCanvas.width / 2;
+      const screenCenterY = mainCanvas.height / 2;
+
+      const worldX = (mouseX - screenCenterX) / engine.zoom + screenCenterX - engine.camX;
+      const worldY = (mouseY - screenCenterY) / engine.zoom + screenCenterY - engine.camY;
+
+      const tx = Math.floor((worldX / mainCanvas.width) * GRID_W);
+      const ty = Math.floor((worldY / mainCanvas.height) * GRID_H);
+
+      if (tx >= 0 && tx < GRID_W && ty >= 0 && ty < GRID_H) {
+        return { x: tx, y: ty, idx: ty * GRID_W + tx };
+      }
+      return null;
+    }
+
+    mainCanvas.addEventListener('mousedown', e => {
+      if (e.button === 0) {
+        engine.isDragging = true;
+        engine.dragStartX = e.clientX - engine.camX;
+        engine.dragStartY = e.clientY - engine.camY;
+      }
+    });
+
+    window.addEventListener('mousemove', e => {
+      if (engine.isDragging) {
+        engine.camX = e.clientX - engine.dragStartX;
+        engine.camY = e.clientY - engine.dragStartY;
+        updateMinimap();
+      }
+    });
+
+    window.addEventListener('mouseup', e => {
+      if (engine.isDragging) {
+        engine.isDragging = false;
+        const dist = Math.hypot(e.clientX - (engine.dragStartX + engine.camX), e.clientY - (engine.dragStartY + engine.camY));
+        if (dist < 5) {
+          handleCanvasClick(e.clientX, e.clientY);
+        }
+      }
+    });
+
+    mainCanvas.addEventListener('wheel', e => {
+      e.preventDefault();
+      const factor = e.deltaY < 0 ? 1.15 : 0.85;
+      engine.zoom = Math.min(6.0, Math.max(0.65, engine.zoom * factor));
+      updateMinimap();
+    }, { passive: false });
+
+    function handleCanvasClick(clientX, clientY) {
+      const cell = getCellCoordinates(clientX, clientY);
+      if (!cell) return;
+
+      if (engine.activeTool) {
+        applyTool(cell.x, cell.y);
+        return;
+      }
+
+      const o = engine.owner[cell.idx];
+      selectFaction(o);
+    }
+
+    // Minimap click navigation
+    minimapCanvas.addEventListener('click', e => {
+      const rect = minimapCanvas.getBoundingClientRect();
+      const mx = (e.clientX - rect.left) / rect.width;
+      const my = (e.clientY - rect.top) / rect.height;
+
+      panToCell(Math.floor(mx * GRID_W), Math.floor(my * GRID_H));
+    });
+
+    // --- BUTTON EVENT BINDINGS ---
+    document.getElementById('btnPause').addEventListener('click', () => {
+      engine.isPaused = !engine.isPaused;
+      document.getElementById('btnPause').innerText = engine.isPaused ? '▶' : '❚❚';
+    });
+
+    const speedButtons = [
+      { id: 'btnSpeed1', spd: 1 },
+      { id: 'btnSpeed2', spd: 2 },
+      { id: 'btnSpeed5', spd: 5 },
+      { id: 'btnSpeed10', spd: 10 }
+    ];
+
+    speedButtons.forEach(s => {
+      document.getElementById(s.id).addEventListener('click', () => {
+        engine.simSpeed = s.spd;
+        engine.isPaused = false;
+        document.getElementById('btnPause').innerText = '❚❚';
+        speedButtons.forEach(o => {
+          document.getElementById(o.id).classList.toggle('active', o.spd === s.spd);
+        });
+      });
+    });
+
+    // Zoom Buttons
+    document.getElementById('btnZoomIn').addEventListener('click', () => {
+      engine.zoom = Math.min(6.0, engine.zoom * 1.25);
+      updateMinimap();
+    });
+    document.getElementById('btnZoomOut').addEventListener('click', () => {
+      engine.zoom = Math.max(0.65, engine.zoom * 0.8);
+      updateMinimap();
+    });
+    document.getElementById('btnZoomReset').addEventListener('click', () => {
+      engine.zoom = 1.0;
+      engine.camX = 0;
+      engine.camY = 0;
+      updateMinimap();
+    });
+
+    // Layer Toggles
+    document.getElementById('btnToggleShade').addEventListener('click', e => {
+      engine.showHillshade = !engine.showHillshade;
+      e.target.classList.toggle('active', engine.showHillshade);
+    });
+    document.getElementById('btnToggleBorders').addEventListener('click', e => {
+      engine.showGrid = !engine.showGrid;
+      e.target.classList.toggle('active', engine.showGrid);
+      bakeStaticCanvas();
+    });
+    document.getElementById('btnToggleParticles').addEventListener('click', e => {
+      engine.showParticles = !engine.showParticles;
+      e.target.classList.toggle('active', engine.showParticles);
+    });
+
+    // Inspector Command Buttons
+    document.getElementById('btnTakeCommand').addEventListener('click', () => {
+      if (engine.selectedFactionId) setPlayerCountry(engine.selectedFactionId);
+    });
+    document.getElementById('btnRelinquish').addEventListener('click', () => {
+      setPlayerCountry(null);
+    });
+
+    // Interventions Tools Binding
+    document.querySelectorAll('.act-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tool = btn.dataset.tool;
+        if (engine.activeTool === tool) {
+          engine.activeTool = null;
+          btn.classList.remove('active');
+          document.getElementById('interventionStatus').innerText = "READY";
+        } else {
+          engine.activeTool = tool;
+          document.querySelectorAll('.act-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          document.getElementById('interventionStatus').innerText = "SELECT TARGET CELL";
+          showNotice(`ARMED: ${tool.toUpperCase()} - CLICK MAP TO DEPLOY`);
+        }
+      });
+    });
+
+    document.getElementById('btnClearLog').addEventListener('click', () => {
+      document.getElementById('chronicleFeed').innerHTML = '';
+    });
+
+    // Modal Handlers
+    const modal = document.getElementById('modalNewConflict');
+    document.getElementById('btnNewWorld').addEventListener('click', () => modal.classList.remove('hidden'));
+    document.getElementById('btnCloseModal').addEventListener('click', () => modal.classList.add('hidden'));
+
+    document.getElementById('rngFactionCount').addEventListener('input', e => {
+      document.getElementById('lblCountVal').innerText = e.target.value;
+    });
+
+    document.getElementById('btnGenerateSubmit').addEventListener('click', () => {
+      const preset = document.getElementById('selPreset').value;
+      const count = parseInt(document.getElementById('rngFactionCount').value);
+      const seed = document.getElementById('inpSeed').value.trim() || null;
+
+      modal.classList.add('hidden');
+      generateWorld(preset, count, seed);
+    });
+
+    function resizeCanvas() {
+      mainCanvas.width = mainCanvas.clientWidth;
+      mainCanvas.height = mainCanvas.clientHeight;
+    }
+
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      renderScene();
+    });
+
+    // --- MAIN DUAL ENGINE LOOP ---
+    // 1. Simulation Ticker at 15 Hz
+    let lastSimTick = performance.now();
+
+    function simLoop(now) {
+      if (!engine.isPaused && engine.simSpeed > 0) {
+        const targetInterval = 280 / engine.simSpeed; // 15-20 Hz adjusted by speed multiplier
+        if (now - lastSimTick >= targetInterval) {
+          stepSimulation();
+          lastSimTick = now;
+        }
+      }
+    }
+
+    // 2. Render Animation Loop at 60 FPS
+    function animLoop(now) {
+      simLoop(now);
+      renderScene();
+      requestAnimationFrame(animLoop);
+    }
+
+    // Initial Launch
+    window.onload = function() {
+      resizeCanvas();
+      generateWorld("river_corridor", 6, "WARGAME-EASTON");
+      requestAnimationFrame(animLoop);
+    };
+  </script>
+</body>
+</html>

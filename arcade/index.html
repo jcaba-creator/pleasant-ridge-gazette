@@ -399,6 +399,32 @@
     .btn-conquest:hover {
       background: #0369a1;
     }
+    .plate-constant-conflict {
+      background-color: #03060c;
+      background-image: radial-gradient(#38bdf8 0.85px, transparent 0.85px);
+      background-size: 12px 12px;
+    }
+    .plate-stamp-constant-conflict {
+      border: 2px solid #38bdf8;
+      padding: 8px 18px;
+      background: #0b1220;
+      color: #38bdf8;
+      font-family: var(--font-serif);
+      font-size: 24px;
+      font-weight: 800;
+      box-shadow: 3px 3px 0px #000;
+      user-select: none;
+      letter-spacing: 1px;
+    }
+    .btn-constant-conflict {
+      background: #0f172a;
+      color: #38bdf8;
+      border: 2px solid #38bdf8;
+    }
+    .btn-constant-conflict:hover {
+      background: #1e293b;
+      color: #ffffff;
+    }
 
 
     /* Footer Covenant */
@@ -591,6 +617,26 @@
           </div>
           <a href="breaker_vault.html" onclick="if(window.GazetteTelemetry)window.GazetteTelemetry.track('game_launch',{game:'breaker_vault'});" class="btn-action btn-vault">
             Enter Vault &rarr;
+          </a>
+        </div>
+      </article>
+
+      <!-- Card 10: Ages of Constant Conflict: Regional Conflict -->
+      <article class="flashcard">
+        <div class="card-header-strip">
+          <span class="card-plate-no">Plate X &bull; Topographic Wargame (300x300)</span>
+          <span class="card-category" style="color: #38bdf8; border-color: #38bdf8;">90k Cells &bull; Hillshade Engine</span>
+        </div>
+        <div class="card-plate plate-constant-conflict">
+          <div class="plate-stamp plate-stamp-constant-conflict">⚔️ CONFLICT (300x300)</div>
+        </div>
+        <div class="card-body">
+          <div class="card-info">
+            <h2 class="card-title">Ages of Constant Conflict: Regional Conflict</h2>
+            <p class="card-desc">High-performance 90,000-cell topographic military simulation. 3-canvas rendering pipeline with baked hillshade, cellular supply line diffusion, elevation slope penalties, river chokepoints, and frontline combat sparks.</p>
+          </div>
+          <a href="ages_of_constant_conflict.html" onclick="if(window.GazetteTelemetry)window.GazetteTelemetry.track('game_launch',{game:'constant_conflict'});" class="btn-action btn-constant-conflict">
+            Deploy Tactical Grid (300x300) &rarr;
           </a>
         </div>
       </article>
