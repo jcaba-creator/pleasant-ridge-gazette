@@ -2082,8 +2082,13 @@
         updateRoster();
         updateSelectedCardStats();
       } else if (act === 'revolt') {
-        setArmedTool(null);
-        triggerRegionalRevolt();
+        if (state.activeTool === 'revolt') {
+          // Double-clicked revolt button: auto-trigger at largest empire!
+          setArmedTool(null);
+          autoTriggerLargestRevolt();
+        } else {
+          setArmedTool('revolt', '⚡ INCITE REBELLION: Tap any faction or territory on map to spark revolt!');
+        }
       } else if (act === 'intel') {
         setArmedTool(null);
         openIntelDrawer();
@@ -2109,47 +2114,149 @@
       setArmedTool(null);
     });
 
-    function triggerRegionalRevolt() {
+    let nextRebelId = 200;
+    const REBEL_FACTION_ROSTER = [
+      { hex: "#f43f5e", rgb: [244, 63, 94], name: "Crimson Partisans", town: "Fort Liberty" },
+      { hex: "#e11d48", rgb: [225, 29, 72], name: "Red Guard Insurgency", town: "Redoubt Zero" },
+      { hex: "#8b5cf6", rgb: [139, 92, 246], name: "Free Watershed Militia", town: "Union Hold" },
+      { hex: "#ec4899", rgb: [236, 72, 153], name: "Iron Rebel Brigade", town: "Iron Bastion" }
+    ];
+
+    function autoTriggerLargestRevolt() {
+      // Find largest living faction
+      let largest = null;
+      state.factions.forEach(f => {
+        if (f.alive && !f.isGang && (!largest || f.territory > largest.territory)) largest = f;
+      });
+
+      if (largest) {
+        // Spawn slightly offset from their capital to trigger immediate civil war
+        const sx = Math.max(15, Math.min(W - 15, largest.capitalX + rng.rangeInt(-25, 25)));
+        const sy = Math.max(15, Math.min(H - 15, largest.capitalY + rng.rangeInt(-25, 25)));
+        spawnRebellionAt(sx, sy);
+      } else {
+        spawnRebellionAt(150, 150);
+      }
+    }
+
+    function spawnRebellionAt(x, y) {
+      // Ensure target is on land
+      let rx = Math.max(15, Math.min(W - 15, x));
+      let ry = Math.max(15, Math.min(H - 15, y));
+      if (state.terrain[ry * W + rx] === TERRAIN.RIVER) {
+        for (let r = 1; r <= 10; r++) {
+          if (state.terrain[ry * W + Math.min(W - 1, rx + r)] !== TERRAIN.RIVER) { rx += r; break; }
+          if (state.terrain[ry * W + Math.max(0, rx - r)] !== TERRAIN.RIVER) { rx -= r; break; }
+        }
+      }
+
+      const victimId = state.owner[ry * W + rx];
+      const victim = state.factions.get(victimId);
+
+      // Priority 1: If any historic county seat has fallen, liberate them in a massive counter-revolt!
       const deadCitadels = Array.from(state.factions.values()).filter(f => !f.alive && !f.isGang);
       if (deadCitadels.length > 0) {
-        const reb = deadCitadels[rng.rangeInt(0, deadCitadels.length - 1)];
-        reb.alive = true;
-        reb.troops = 300;
-        reb.baseAtk = 1.45;
-        reb.offensiveBonus = 2.5;
+        const lib = deadCitadels[rng.rangeInt(0, deadCitadels.length - 1)];
+        lib.alive = true;
+        lib.troops = 420; // Heavy liberation army
+        lib.baseAtk = 1.60;
+        lib.offensiveBonus = 3.0;
 
-        const r = 18;
-        for (let dy = -r; dy <= r; dy++) {
-          for (let dx = -r; dx <= r; dx++) {
-            if (Math.hypot(dx, dy) <= r) {
-              const x = reb.capitalX + dx;
-              const y = reb.capitalY + dy;
-              if (x >= 0 && x < W && y >= 0 && y < H) {
-                const idx = y * W + x;
-                const old = state.owner[idx];
-                if (old > 0 && state.factions.has(old)) state.factions.get(old).territory--;
-                state.owner[idx] = reb.id;
-                reb.territory++;
+        rx = lib.capitalX;
+        ry = lib.capitalY;
+
+        // Liberate a 24-cell homeland radius!
+        const rad = 24;
+        for (let dy = -rad; dy <= rad; dy++) {
+          for (let dx = -rad; dx <= rad; dx++) {
+            if (Math.hypot(dx, dy) <= rad) {
+              const cx = rx + dx;
+              const cy = ry + dy;
+              if (cx >= 0 && cx < W && cy >= 0 && cy < H) {
+                const idx = cy * W + cx;
+                if (state.terrain[idx] !== TERRAIN.RIVER) {
+                  const oldO = state.owner[idx];
+                  if (oldO > 0 && state.factions.has(oldO)) state.factions.get(oldO).territory--;
+                  state.owner[idx] = lib.id;
+                  lib.territory++;
+                }
               }
             }
           }
         }
-        showFlashNotice(`⚡ REVOLT: ${reb.town.toUpperCase()} CITIZENS LIBERATED!`);
-      } else {
-        // Mutiny in largest faction
-        let largest = null;
-        state.factions.forEach(f => {
-          if (f.alive && !f.isGang && (!largest || f.territory > largest.territory)) largest = f;
-        });
-        if (largest) {
-          largest.troops = Math.max(20, Math.floor(largest.troops * 0.5));
-          showFlashNotice(`⚡ MUTINY: HALF OF ${largest.name.toUpperCase()} MUTINIED!`);
+
+        // Fiery liberation sparks
+        for (let i = 0; i < 45; i++) {
+          spawnSparks(rx + rng.range(-12, 12), ry + rng.range(-12, 12), [255, 60, 60]);
+        }
+
+        showFlashNotice(`⚡ LIBERATION: ${lib.name.toUpperCase()} RE-ARMED AND FREE!`);
+        updateFrontlinesAndPocketing();
+        renderDynamicTerritoryBuffer();
+        updateRoster();
+        updateAllMinimaps();
+        panTo(rx, ry);
+        return;
+      }
+
+      // Priority 2: Create a brand new vibrant Rebel Faction!
+      const rebelMeta = REBEL_FACTION_ROSTER[(nextRebelId - 200) % REBEL_FACTION_ROSTER.length];
+      const rebId = nextRebelId++;
+
+      const rebelFaction = {
+        id: rebId,
+        name: rebelMeta.name,
+        hex: rebelMeta.hex,
+        rgb: rebelMeta.rgb,
+        baseAtk: 1.65,
+        baseDef: 1.35,
+        town: rebelMeta.town,
+        isGang: false,
+        capitalX: rx,
+        capitalY: ry,
+        troops: 400,
+        territory: 0,
+        alive: true,
+        supplyIndex: 100,
+        offensiveBonus: 3.2,
+        spearheadTarget: victimId || null
+      };
+
+      state.factions.set(rebId, rebelFaction);
+
+      // Carve out a prominent 22-cell radius territory on the map
+      const rad = 22;
+      for (let dy = -rad; dy <= rad; dy++) {
+        for (let dx = -rad; dx <= rad; dx++) {
+          if (Math.hypot(dx, dy) <= rad) {
+            const cx = rx + dx;
+            const cy = ry + dy;
+            if (cx >= 0 && cx < W && cy >= 0 && cy < H) {
+              const idx = cy * W + cx;
+              if (state.terrain[idx] !== TERRAIN.RIVER) {
+                const oldO = state.owner[idx];
+                if (oldO > 0 && state.factions.has(oldO)) state.factions.get(oldO).territory--;
+                state.owner[idx] = rebId;
+                rebelFaction.territory++;
+              }
+            }
+          }
         }
       }
+
+      // Fiery sparks detonation
+      for (let i = 0; i < 45; i++) {
+        spawnSparks(rx + rng.range(-12, 12), ry + rng.range(-12, 12), [255, 80, 80]);
+      }
+
+      const victimName = victim ? `IN ${victim.town.toUpperCase()}` : "";
+      showFlashNotice(`⚡ REVOLT: ${rebelFaction.name.toUpperCase()} ROSE ${victimName}!`);
 
       updateFrontlinesAndPocketing();
       renderDynamicTerritoryBuffer();
       updateRoster();
+      updateAllMinimaps();
+      panTo(rx, ry);
     }
 
     // --- 12. BOTTOM SHEET (INTEL & RADAR) ---
@@ -2450,6 +2557,11 @@
 
       // 1. Armed Tool Actions
       if (state.activeTool) {
+        if (state.activeTool === 'revolt') {
+          spawnRebellionAt(tile.x, tile.y);
+          setArmedTool(null);
+          return;
+        }
         if (state.activeTool === 'target') {
           const targetFaction = nearestSeat ? nearestSeat.id : state.owner[tile.idx];
           const actorId = state.playerFactionId || state.selectedFactionId;
