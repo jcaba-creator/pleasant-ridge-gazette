@@ -1,0 +1,1974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Ages of Conquest - Grand Sandbox Simulator</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            command: {
+              950: '#06080e',
+              900: '#0b0f19',
+              800: '#111827',
+              700: '#1f293d',
+              border: '#2a364f',
+              accent: '#38bdf8',
+              danger: '#f43f5e',
+              warning: '#fbbf24',
+              success: '#34d399'
+            }
+          },
+          fontFamily: {
+            mono: ['JetBrains Mono', 'Menlo', 'Monaco', 'Courier New', 'monospace'],
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: #0b0f19; }
+    ::-webkit-scrollbar-thumb { background: #2a364f; border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: #38bdf8; }
+    
+    body {
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      overflow: hidden;
+      background-color: #06080e;
+    }
+    
+    .glass-panel {
+      background: rgba(11, 15, 25, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(42, 54, 79, 0.8);
+    }
+    
+    .tactical-border {
+      border: 1px solid rgba(56, 189, 248, 0.25);
+    }
+
+    .pulse-glow {
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+    }
+    
+    /* Crosshair cursor when in God Mode brushes */
+    .brush-cursor { cursor: crosshair; }
+  </style>
+</head>
+<body class="w-screen h-screen font-sans text-gray-200 antialiased flex flex-col">
+
+  <!-- ================= TOP COMMAND BAR ================= -->
+  <header class="h-12 w-full glass-panel border-b border-command-border flex items-center justify-between px-3 z-30 select-none">
+    <div class="flex items-center space-x-3">
+      <div class="flex items-center space-x-2">
+        <a href="index.html" class="mr-1 text-xs px-2 py-1 rounded bg-command-800 hover:bg-command-700 text-command-accent font-mono border border-command-border transition flex items-center space-x-1" title="Return to 449 Field Arcade">
+          <span>‹</span> <span>Hub</span>
+        </a>
+        <span class="inline-block w-3 h-3 rounded-full bg-command-accent animate-pulse"></span>
+        <h1 class="font-bold text-sm tracking-widest text-white uppercase font-mono">AGES OF CONQUEST</h1>
+      </div>
+      <span class="text-xs px-2 py-0.5 rounded bg-command-700/60 text-command-accent font-mono border border-command-border" id="simDate">Year 1 • Month 1</span>
+    </div>
+
+    <!-- Center Playback Toggles -->
+    <div class="flex items-center space-x-1 bg-command-900/90 p-1 rounded-lg border border-command-border">
+      <button id="btnPause" class="px-2.5 py-1 text-xs font-mono rounded hover:bg-command-700 text-gray-300 transition" title="Pause / Resume (Space)">❚❚</button>
+      <button id="btnSpeed1" class="px-2.5 py-1 text-xs font-mono rounded bg-command-accent text-command-950 font-bold transition">1x</button>
+      <button id="btnSpeed2" class="px-2.5 py-1 text-xs font-mono rounded hover:bg-command-700 text-gray-300 transition">2x</button>
+      <button id="btnSpeed5" class="px-2.5 py-1 text-xs font-mono rounded hover:bg-command-700 text-gray-300 transition">5x</button>
+      <button id="btnSpeed10" class="px-2.5 py-1 text-xs font-mono rounded hover:bg-command-700 text-gray-300 transition">10x</button>
+    </div>
+
+    <!-- Right Quick Controls -->
+    <div class="flex items-center space-x-2">
+      <!-- Mode Badge -->
+      <div id="modeIndicator" class="text-xs px-2.5 py-1 rounded-full font-mono font-bold tracking-wider bg-purple-900/50 text-purple-300 border border-purple-500/40">
+        SPECTATOR (GOD)
+      </div>
+
+      <button id="btnNewWorld" class="px-3 py-1 bg-command-700 hover:bg-command-600 text-xs rounded border border-command-border font-mono transition">New World</button>
+      <button id="btnSaveLoad" class="px-3 py-1 bg-command-700 hover:bg-command-600 text-xs rounded border border-command-border font-mono transition">Save / Load</button>
+    </div>
+  </header>
+
+  <!-- ================= MAIN WORKSPACE ================= -->
+  <main class="relative flex-1 w-full h-[calc(100vh-3rem)] overflow-hidden">
+    <!-- Viewport Canvas -->
+    <canvas id="gameCanvas" class="absolute inset-0 w-full h-full block bg-command-950"></canvas>
+
+    <!-- FLOATING HUD: LEFT SIDEBAR (LEADERBOARD / NATION INSPECTOR) -->
+    <div class="absolute left-3 top-3 bottom-3 w-80 flex flex-col space-y-3 pointer-events-none z-20">
+      
+      <!-- Top Inspector / Player Panel -->
+      <div class="glass-panel rounded-xl p-3 shadow-2xl pointer-events-auto flex flex-col max-h-[55%] transition-all" id="panelNationInspector">
+        <div class="flex items-center justify-between pb-2 border-b border-command-border">
+          <div class="flex items-center space-x-2">
+            <div id="inspFlag" class="w-5 h-5 rounded shadow-sm border border-white/20"></div>
+            <h2 id="inspName" class="font-bold text-sm text-white truncate max-w-[130px]">World Overview</h2>
+          </div>
+          <span id="inspArchetype" class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-command-800 text-command-accent border border-command-border">SANDBOX</span>
+        </div>
+
+        <div id="inspContent" class="py-2 space-y-2 overflow-y-auto text-xs font-mono">
+          <!-- Populated by JavaScript -->
+          <div class="text-gray-400 text-center py-4">Click any territory to inspect a country, or pick one to command.</div>
+        </div>
+
+        <!-- Action Bar inside Inspector -->
+        <div id="inspActions" class="pt-2 border-t border-command-border grid grid-cols-2 gap-1.5">
+          <button id="btnControlNation" class="w-full py-1.5 px-2 bg-command-accent hover:bg-sky-300 text-command-950 font-bold text-xs rounded transition flex items-center justify-center space-x-1">
+            <span>Play As Nation</span>
+          </button>
+          <button id="btnRelinquishControl" class="w-full py-1.5 px-2 bg-purple-600/80 hover:bg-purple-500 text-white font-bold text-xs rounded transition flex items-center justify-center space-x-1 hidden">
+            <span>Spectate (God)</span>
+          </button>
+          <button id="btnDiplomacyAction" class="w-full py-1.5 px-2 bg-command-700 hover:bg-command-600 text-white text-xs rounded border border-command-border transition">
+            Diplomacy
+          </button>
+        </div>
+      </div>
+
+      <!-- Bottom Leaderboard -->
+      <div class="glass-panel rounded-xl p-3 shadow-2xl pointer-events-auto flex-1 flex flex-col min-h-0">
+        <div class="flex items-center justify-between pb-1.5 border-b border-command-border">
+          <span class="text-xs font-mono font-bold text-gray-300 tracking-wider">GLOBAL POWERS</span>
+          <div class="flex space-x-1 text-[10px] font-mono">
+            <button id="btnSortLand" class="text-command-accent font-bold">LAND</button>
+            <span class="text-gray-600">|</span>
+            <button id="btnSortArmy" class="text-gray-400 hover:text-white">ARMY</button>
+            <span class="text-gray-600">|</span>
+            <button id="btnSortGold" class="text-gray-400 hover:text-white">GDP</button>
+          </div>
+        </div>
+        <div id="leaderboardList" class="flex-1 overflow-y-auto space-y-1.5 pt-2 text-xs font-mono pr-1">
+          <!-- Nation rankings loaded here -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FLOATING HUD: RIGHT SIDEBAR (CHRONICLE / MINIMAP / GOD TOOLS) -->
+    <div class="absolute right-3 top-3 bottom-3 w-80 flex flex-col space-y-3 pointer-events-none z-20">
+      
+      <!-- Minimap Card -->
+      <div class="glass-panel rounded-xl p-2.5 shadow-2xl pointer-events-auto flex flex-col items-center">
+        <div class="w-full flex justify-between items-center pb-1 text-[11px] font-mono text-gray-400">
+          <span>SATELLITE RECON</span>
+          <span id="canvasStats">120x80 • 9.6k</span>
+        </div>
+        <div class="relative w-full aspect-[3/2] bg-command-950 rounded border border-command-border overflow-hidden cursor-crosshair" id="minimapContainer">
+          <canvas id="minimapCanvas" class="w-full h-full block"></canvas>
+          <div id="minimapViewport" class="absolute border border-command-accent bg-command-accent/20 pointer-events-none"></div>
+        </div>
+      </div>
+
+      <!-- God Tools / Player Action Dock -->
+      <div class="glass-panel rounded-xl p-3 shadow-2xl pointer-events-auto flex flex-col">
+        <div class="flex items-center justify-between pb-2 border-b border-command-border">
+          <span class="text-xs font-mono font-bold text-gray-300 tracking-wider" id="dockTitle">GOD POWERS</span>
+          <span class="text-[10px] text-gray-400 font-mono" id="dockSub">Select an intervention</span>
+        </div>
+
+        <!-- God Mode Tools -->
+        <div id="godToolsGrid" class="grid grid-cols-2 gap-2 pt-2.5">
+          <button data-tool="nuke" class="god-tool-btn p-2 bg-command-800/80 hover:bg-rose-950/60 hover:border-rose-500/60 border border-command-border rounded text-xs font-mono text-left transition flex items-center space-x-2">
+            <span class="text-base">☢️</span>
+            <div>
+              <div class="font-bold text-rose-400">Atomic Strike</div>
+              <div class="text-[9px] text-gray-400">Decimate territory</div>
+            </div>
+          </button>
+          <button data-tool="revolt" class="god-tool-btn p-2 bg-command-800/80 hover:bg-amber-950/60 hover:border-amber-500/60 border border-command-border rounded text-xs font-mono text-left transition flex items-center space-x-2">
+            <span class="text-base">🚩</span>
+            <div>
+              <div class="font-bold text-amber-400">Force Revolt</div>
+              <div class="text-[9px] text-gray-400">Spawn rebel state</div>
+            </div>
+          </button>
+          <button data-tool="gold" class="god-tool-btn p-2 bg-command-800/80 hover:bg-yellow-950/60 hover:border-yellow-500/60 border border-command-border rounded text-xs font-mono text-left transition flex items-center space-x-2">
+            <span class="text-base">💰</span>
+            <div>
+              <div class="font-bold text-yellow-400">Subsidize</div>
+              <div class="text-[9px] text-gray-400">+500 Treasury</div>
+            </div>
+          </button>
+          <button data-tool="forcepeace" class="god-tool-btn p-2 bg-command-800/80 hover:bg-emerald-950/60 hover:border-emerald-500/60 border border-command-border rounded text-xs font-mono text-left transition flex items-center space-x-2">
+            <span class="text-base">🕊️</span>
+            <div>
+              <div class="font-bold text-emerald-400">Ceasefire</div>
+              <div class="text-[9px] text-gray-400">Force global peace</div>
+            </div>
+          </button>
+        </div>
+
+        <!-- Player Direct Control Command Panel -->
+        <div id="playerCommandDock" class="hidden space-y-2 pt-2.5">
+          <div class="grid grid-cols-2 gap-2">
+            <button id="btnPlayerDraft" class="p-2 bg-command-800 hover:bg-command-700 border border-command-border rounded text-xs font-mono text-left">
+              <span class="font-bold text-command-accent">🪖 Mobilize (+50)</span>
+              <div class="text-[10px] text-gray-400">Cost: 30 Gold</div>
+            </button>
+            <button id="btnPlayerFortify" class="p-2 bg-command-800 hover:bg-command-700 border border-command-border rounded text-xs font-mono text-left">
+              <span class="font-bold text-yellow-300">🛡️ Fortify (+Def)</span>
+              <div class="text-[10px] text-gray-400">Cost: 50 Gold</div>
+            </button>
+            <button id="btnPlayerPropaganda" class="p-2 bg-command-800 hover:bg-command-700 border border-command-border rounded text-xs font-mono text-left">
+              <span class="font-bold text-emerald-300">📢 Stability (+15)</span>
+              <div class="text-[10px] text-gray-400">Cost: 40 Gold</div>
+            </button>
+            <button id="btnPlayerCovertRevolt" class="p-2 bg-command-800 hover:bg-command-700 border border-command-border rounded text-xs font-mono text-left">
+              <span class="font-bold text-rose-300">🗡️ Instigate Revolt</span>
+              <div class="text-[10px] text-gray-400">Cost: 75 Gold</div>
+            </button>
+          </div>
+          <div class="p-2 rounded bg-command-900/90 border border-command-border text-[11px] font-mono text-gray-300 flex items-center justify-between">
+            <span>Frontline Objective:</span>
+            <span id="playerWarTarget" class="text-rose-400 font-bold">Unassigned</span>
+          </div>
+          <p class="text-[10px] text-gray-400 italic">Click any bordering foreign nation to declare war or redirect frontline assault pressure.</p>
+        </div>
+      </div>
+
+      <!-- Live Event Chronicle Feed -->
+      <div class="glass-panel rounded-xl p-3 shadow-2xl pointer-events-auto flex-1 flex flex-col min-h-0">
+        <div class="flex items-center justify-between pb-1.5 border-b border-command-border">
+          <span class="text-xs font-mono font-bold text-gray-300 tracking-wider">CHRONICLE FEED</span>
+          <button id="btnClearLog" class="text-[10px] text-gray-500 hover:text-gray-300 font-mono">CLEAR</button>
+        </div>
+        <div id="eventLogList" class="flex-1 overflow-y-auto space-y-1.5 pt-2 text-[11px] font-mono pr-1">
+          <!-- Events injected here -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FLOATING ZOOM / CAMERA CONTROLS -->
+    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center space-x-1.5 glass-panel px-3 py-1.5 rounded-full z-20 pointer-events-auto shadow-xl">
+      <button id="btnZoomIn" class="w-7 h-7 flex items-center justify-center text-sm font-bold bg-command-800 hover:bg-command-700 rounded-full text-white transition">+</button>
+      <button id="btnZoomReset" class="px-2.5 py-1 text-xs font-mono bg-command-800 hover:bg-command-700 rounded text-gray-300 transition">Reset View</button>
+      <button id="btnZoomOut" class="w-7 h-7 flex items-center justify-center text-sm font-bold bg-command-800 hover:bg-command-700 rounded-full text-white transition">-</button>
+      <div class="h-4 w-px bg-command-border mx-1"></div>
+      <button id="btnToggleBorders" class="px-2 py-1 text-[11px] font-mono bg-command-800 hover:bg-command-700 rounded text-command-accent transition">Borders: ON</button>
+      <button id="btnToggleNames" class="px-2 py-1 text-[11px] font-mono bg-command-800 hover:bg-command-700 rounded text-command-accent transition">Names: ON</button>
+    </div>
+
+    <!-- Notification / Flash Overlay Banner -->
+    <div id="hudNotice" class="absolute top-4 left-1/2 -translate-x-1/2 px-4 py-2 glass-panel border border-command-accent/60 text-command-accent text-xs font-mono font-bold rounded-lg pointer-events-none transition-all duration-300 opacity-0 -translate-y-2 z-40 shadow-2xl">
+      NOTIFICATION
+    </div>
+  </main>
+
+  <!-- ================= MODALS & DIALOGS ================= -->
+
+  <!-- NEW WORLD CONFIG MODAL -->
+  <div id="modalNewWorld" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="glass-panel w-full max-w-md rounded-2xl p-6 border border-command-border shadow-2xl space-y-4">
+      <div class="flex justify-between items-center border-b border-command-border pb-3">
+        <h3 class="text-base font-bold text-white font-mono uppercase tracking-wider">Generate New Simulation</h3>
+        <button id="btnCloseNewWorld" class="text-gray-400 hover:text-white text-lg font-bold">&times;</button>
+      </div>
+
+      <div class="space-y-3 text-xs font-mono">
+        <div>
+          <label class="block text-gray-300 mb-1">Landmass Generator Preset</label>
+          <select id="presetSelect" class="w-full bg-command-900 border border-command-border rounded p-2 text-white focus:outline-none focus:border-command-accent">
+            <option value="continents">Two Continents</option>
+            <option value="pangaea">Pangaea (Supercontinent)</option>
+            <option value="archipelago">Archipelago (Island Clusters)</option>
+            <option value="mediterranean">Inland Sea</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-gray-300 mb-1">Grid Width</label>
+            <input type="number" id="inpWidth" value="120" min="60" max="200" step="10" class="w-full bg-command-900 border border-command-border rounded p-2 text-white">
+          </div>
+          <div>
+            <label class="block text-gray-300 mb-1">Grid Height</label>
+            <input type="number" id="inpHeight" value="80" min="40" max="150" step="10" class="w-full bg-command-900 border border-command-border rounded p-2 text-white">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-gray-300 mb-1">Initial Nations Count (<span id="lblNationCount">14</span>)</label>
+          <input type="range" id="inpNationCount" min="4" max="24" value="14" class="w-full accent-command-accent">
+        </div>
+
+        <div>
+          <label class="block text-gray-300 mb-1">Custom World Seed</label>
+          <input type="text" id="inpSeed" placeholder="Leave empty for random seed" class="w-full bg-command-900 border border-command-border rounded p-2 text-white">
+        </div>
+      </div>
+
+      <div class="pt-2 flex justify-end space-x-2">
+        <button id="btnConfirmGenerate" class="w-full py-2 bg-command-accent hover:bg-sky-400 text-command-950 font-bold rounded font-mono text-xs transition">
+          BUILD & RUN SIMULATION
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIPLOMACY MODAL -->
+  <div id="modalDiplomacy" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="glass-panel w-full max-w-lg rounded-2xl p-6 border border-command-border shadow-2xl space-y-4">
+      <div class="flex justify-between items-center border-b border-command-border pb-3">
+        <h3 class="text-base font-bold text-white font-mono uppercase tracking-wider" id="diploModalTitle">Diplomatic Envoy</h3>
+        <button id="btnCloseDiplo" class="text-gray-400 hover:text-white text-lg font-bold">&times;</button>
+      </div>
+
+      <div id="diploModalContent" class="space-y-3 text-xs font-mono">
+        <!-- Injected via code -->
+      </div>
+    </div>
+  </div>
+
+  <!-- SAVE / LOAD MODAL -->
+  <div id="modalSaveLoad" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="glass-panel w-full max-w-md rounded-2xl p-6 border border-command-border shadow-2xl space-y-4">
+      <div class="flex justify-between items-center border-b border-command-border pb-3">
+        <h3 class="text-base font-bold text-white font-mono uppercase tracking-wider">Save & Load World State</h3>
+        <button id="btnCloseSaveLoad" class="text-gray-400 hover:text-white text-lg font-bold">&times;</button>
+      </div>
+
+      <div class="space-y-3 text-xs font-mono">
+        <button id="btnQuickSave" class="w-full py-2.5 bg-command-800 hover:bg-command-700 border border-command-border rounded text-white font-bold transition">
+          Quick Save (Local Storage)
+        </button>
+        <button id="btnQuickLoad" class="w-full py-2.5 bg-command-800 hover:bg-command-700 border border-command-border rounded text-white font-bold transition">
+          Quick Load Last Save
+        </button>
+        <div class="pt-2">
+          <label class="block text-gray-400 mb-1">State JSON Import / Export</label>
+          <textarea id="txtSaveJson" rows="4" class="w-full bg-command-900 border border-command-border rounded p-2 text-[10px] text-gray-300 font-mono focus:outline-none"></textarea>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <button id="btnExportJson" class="py-2 bg-command-700 hover:bg-command-600 rounded text-white">Export to JSON</button>
+          <button id="btnImportJson" class="py-2 bg-command-accent hover:bg-sky-400 rounded text-command-950 font-bold">Import State</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SIMULATION SCRIPT ENGINE ================= -->
+  <script>
+    /**
+     * AGES OF CONQUEST - ENGINE ARCHITECTURE
+     * Pure JavaScript Canvas Engine, procedural terrain generator,
+     * geopolitical simulation cycle, and interactive god/player system.
+     */
+
+    // --- MATH & PSEUDORANDOM HELPERS ---
+    class PRNG {
+      constructor(seed = Math.random() * 1000000) {
+        this.seed = typeof seed === 'string' ? this.hashString(seed) : seed;
+      }
+      hashString(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+          hash = Math.imul(31, hash) + str.charCodeAt(i) | 0;
+        }
+        return Math.abs(hash);
+      }
+      next() {
+        this.seed = (this.seed * 9301 + 49297) % 233280;
+        return this.seed / 233280;
+      }
+      range(min, max) {
+        return min + this.next() * (max - min);
+      }
+      rangeInt(min, max) {
+        return Math.floor(this.range(min, max + 1));
+      }
+    }
+
+    // 2D Perlin Noise Implementation (Self-Contained)
+    class PerlinNoise {
+      constructor(prng) {
+        this.p = new Uint8Array(512);
+        const permutation = new Uint8Array(256);
+        for (let i = 0; i < 256; i++) permutation[i] = i;
+        for (let i = 255; i > 0; i--) {
+          const j = Math.floor(prng.next() * (i + 1));
+          [permutation[i], permutation[j]] = [permutation[j], permutation[i]];
+        }
+        for (let i = 0; i < 512; i++) {
+          this.p[i] = permutation[i & 255];
+        }
+      }
+      fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+      lerp(t, a, b) { return a + t * (b - a); }
+      grad(hash, x, y) {
+        const h = hash & 7;
+        const u = h < 4 ? x : y;
+        const v = h < 4 ? y : x;
+        return ((h & 1) ? -u : u) + ((h & 2) ? -2.0 * v : 2.0 * v);
+      }
+      noise2D(x, y) {
+        const X = Math.floor(x) & 255;
+        const Y = Math.floor(y) & 255;
+        const xf = x - Math.floor(x);
+        const yf = y - Math.floor(y);
+        const u = this.fade(xf);
+        const v = this.fade(yf);
+
+        const aa = this.p[this.p[X] + Y];
+        const ab = this.p[this.p[X] + Y + 1];
+        const ba = this.p[this.p[X + 1] + Y];
+        const bb = this.p[this.p[X + 1] + Y + 1];
+
+        const x1 = this.lerp(u, this.grad(aa, xf, yf), this.grad(ba, xf - 1, yf));
+        const x2 = this.lerp(u, this.grad(ab, xf, yf - 1), this.grad(bb, xf - 1, yf - 1));
+        return (this.lerp(v, x1, x2) + 1) / 2; // Return 0 to 1
+      }
+      octaveNoise(x, y, octaves = 4, persistence = 0.5) {
+        let total = 0, frequency = 1, amplitude = 1, maxValue = 0;
+        for (let i = 0; i < octaves; i++) {
+          total += this.noise2D(x * frequency, y * frequency) * amplitude;
+          maxValue += amplitude;
+          amplitude *= persistence;
+          frequency *= 2;
+        }
+        return total / maxValue;
+      }
+    }
+
+    // --- TERRAIN DEFINITIONS ---
+    const TERRAIN = {
+      DEEP_OCEAN: 0,
+      SHALLOW_OCEAN: 1,
+      PLAINS: 2,
+      FOREST: 3,
+      MOUNTAIN: 4
+    };
+
+    const TERRAIN_COLORS = {
+      [TERRAIN.DEEP_OCEAN]: '#07162c',
+      [TERRAIN.SHALLOW_OCEAN]: '#0d2847',
+      [TERRAIN.PLAINS]: '#182b23',
+      [TERRAIN.FOREST]: '#102219',
+      [TERRAIN.MOUNTAIN]: '#2d3748'
+    };
+
+    // --- NATION ARCHETYPES & PRESETS ---
+    const ARCHETYPES = [
+      { name: 'Militarist', bonusArmy: 1.3, aggression: 0.85, defBonus: 1.1 },
+      { name: 'Expansionist', bonusArmy: 1.0, aggression: 0.95, defBonus: 0.9 },
+      { name: 'Diplomat', bonusArmy: 0.9, aggression: 0.25, defBonus: 1.2 },
+      { name: 'Mercantile', bonusArmy: 0.85, aggression: 0.35, defBonus: 1.0, gdpBonus: 1.4 },
+      { name: 'Isolationist', bonusArmy: 1.1, aggression: 0.15, defBonus: 1.4 }
+    ];
+
+    const NATION_NAMES = [
+      'Valyria', 'Northmark', 'Eldoria', 'Aethelgard', 'Novosibirsk', 
+      'Solaris', 'Ironclad', 'Verdantia', 'Oakhaven', 'Drakonia', 
+      'Corsaria', 'Kaldor', 'Zenthia', 'Moravia', 'Al-Barid',
+      'Thessaly', 'Silverpeak', 'Borealis', 'Caelum', 'Kragmor'
+    ];
+
+    const NATION_PALETTE = [
+      '#e11d48', '#2563eb', '#16a34a', '#ca8a04', '#9333ea', 
+      '#0891b2', '#ea580c', '#4f46e5', '#db2777', '#059669', 
+      '#d97706', '#7c3aed', '#0284c7', '#be123c', '#4d7c0f',
+      '#b45309', '#6d28d9', '#0f766e', '#be185d', '#1e40af'
+    ];
+
+    // --- CORE GAME STATE OBJECT ---
+    const state = {
+      width: 120,
+      height: 80,
+      seed: 'Ages-2026',
+      preset: 'continents',
+      terrain: [],      // 1D array of TERRAIN types: index = y * width + x
+      owners: [],       // 1D array of nation IDs (0 = unowned/water)
+      forts: [],        // 1D array of fortification levels (0 to 3)
+      nations: new Map(),
+      nextNationId: 1,
+      selectedNationId: null,
+      playerNationId: null, // null = spectator god mode
+      
+      // Simulation Timing
+      ticks: 0,
+      year: 1,
+      month: 1,
+      speed: 1,         // 0: pause, 1, 2, 5, 10
+      isPaused: false,
+
+      // Display options
+      showBorders: true,
+      showNames: true,
+      activeGodTool: null, // 'nuke', 'revolt', 'gold', 'forcepeace'
+
+      // Camera State
+      camX: 0,
+      camY: 0,
+      zoom: 1.0,
+      isDragging: false,
+      dragStartX: 0,
+      dragStartY: 0,
+
+      // Events feed
+      events: [],
+      sortBy: 'land' // land, army, gold
+    };
+
+    // --- CANVAS REFS ---
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d', { alpha: false });
+    const minimapCanvas = document.getElementById('minimapCanvas');
+    const minimapCtx = minimapCanvas.getContext('2d');
+    const minimapViewport = document.getElementById('minimapViewport');
+
+    // Offscreen Canvas for high-performance tile batching
+    let tileCanvas = document.createElement('canvas');
+    let tileCtx = tileCanvas.getContext('2d');
+
+    // --- SEEDABLE RANDOM INSTANCE ---
+    let rng = new PRNG(state.seed);
+
+    // --- INITIALIZATION & WORLD GENERATION ---
+    function initWorld(width = 120, height = 80, preset = 'continents', nationCount = 14, seed = null) {
+      state.width = width;
+      state.height = height;
+      state.preset = preset;
+      state.seed = seed || ('SEED-' + Math.floor(Math.random() * 999999));
+      rng = new PRNG(state.seed);
+
+      state.ticks = 0;
+      state.year = 1;
+      state.month = 1;
+      state.nations.clear();
+      state.nextNationId = 1;
+      state.selectedNationId = null;
+      state.playerNationId = null;
+      state.activeGodTool = null;
+      state.events = [];
+
+      updateModeBadge();
+
+      // Alloc arrays
+      const totalTiles = width * height;
+      state.terrain = new Uint8Array(totalTiles);
+      state.owners = new Uint16Array(totalTiles);
+      state.forts = new Uint8Array(totalTiles);
+
+      // Procedural heightmap
+      const perlin = new PerlinNoise(rng);
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const idx = y * width + x;
+          const nx = x / width - 0.5;
+          const ny = y / height - 0.5;
+
+          let elev = 0;
+          if (preset === 'pangaea') {
+            const distFromCenter = Math.sqrt(nx * nx + ny * ny) * 2.2;
+            elev = perlin.octaveNoise(x * 0.05, y * 0.05, 5, 0.5) - distFromCenter;
+          } else if (preset === 'continents') {
+            const continentalDist = Math.sin(nx * Math.PI * 2.2) * 0.35 + (0.5 - Math.abs(ny));
+            elev = perlin.octaveNoise(x * 0.045, y * 0.045, 5, 0.5) * 0.8 + continentalDist * 0.4 - 0.3;
+          } else if (preset === 'archipelago') {
+            elev = perlin.octaveNoise(x * 0.08, y * 0.08, 4, 0.6) - 0.25;
+          } else if (preset === 'mediterranean') {
+            const centerDist = Math.sqrt(nx * nx + ny * ny) * 2.5;
+            elev = perlin.octaveNoise(x * 0.05, y * 0.05, 4, 0.5) + (centerDist * 0.5) - 0.45;
+          }
+
+          // Classify Terrain
+          if (elev < -0.08) {
+            state.terrain[idx] = TERRAIN.DEEP_OCEAN;
+          } else if (elev < 0.05) {
+            state.terrain[idx] = TERRAIN.SHALLOW_OCEAN;
+          } else if (elev < 0.38) {
+            state.terrain[idx] = TERRAIN.PLAINS;
+          } else if (elev < 0.60) {
+            state.terrain[idx] = TERRAIN.FOREST;
+          } else {
+            state.terrain[idx] = TERRAIN.MOUNTAIN;
+          }
+        }
+      }
+
+      // Prepare offscreen buffer
+      tileCanvas.width = width;
+      tileCanvas.height = height;
+
+      // Spawn Initial Nations on land
+      spawnNations(nationCount);
+
+      // Reset camera
+      resetCamera();
+      renderTilesBuffer();
+      updateMinimap();
+      updateLeaderboard();
+      updateInspector();
+      addLog(`World created under Seed [${state.seed}]. ${state.nations.size} sovereign nations established.`);
+    }
+
+    function spawnNations(targetCount) {
+      const landIndices = [];
+      for (let i = 0; i < state.terrain.length; i++) {
+        if (state.terrain[i] >= TERRAIN.PLAINS) {
+          landIndices.push(i);
+        }
+      }
+
+      if (landIndices.length === 0) return;
+
+      const shuffledNames = [...NATION_NAMES].sort(() => rng.next() - 0.5);
+      const shuffledColors = [...NATION_PALETTE].sort(() => rng.next() - 0.5);
+
+      for (let i = 0; i < targetCount; i++) {
+        const id = state.nextNationId++;
+        const name = shuffledNames[i % shuffledNames.length] + (i >= shuffledNames.length ? ` ${Math.floor(i / shuffledNames.length) + 1}` : '');
+        const color = shuffledColors[i % shuffledColors.length];
+        const arch = ARCHETYPES[Math.floor(rng.next() * ARCHETYPES.length)];
+
+        // Pick spaced-out spawn location
+        let bestTile = -1;
+        let bestDist = -1;
+        for (let attempt = 0; attempt < 25; attempt++) {
+          const candidate = landIndices[Math.floor(rng.next() * landIndices.length)];
+          const cx = candidate % state.width;
+          const cy = Math.floor(candidate / state.width);
+
+          // Find distance to closest established nation capital
+          let minDist = 999999;
+          for (const nat of state.nations.values()) {
+            const d = Math.hypot(cx - nat.capitalX, cy - nat.capitalY);
+            if (d < minDist) minDist = d;
+          }
+
+          if (minDist > bestDist) {
+            bestDist = minDist;
+            bestTile = candidate;
+          }
+        }
+
+        const capX = bestTile % state.width;
+        const capY = Math.floor(bestTile / state.width);
+
+        const nation = {
+          id: id,
+          name: name,
+          color: color,
+          archetype: arch,
+          capitalX: capX,
+          capitalY: capY,
+          tilesCount: 0,
+          gold: 150 + Math.floor(rng.next() * 100),
+          troops: 100 + Math.floor(rng.next() * 50),
+          morale: 85,
+          stability: 90,
+          wars: new Set(),         // Nation IDs at war with
+          allies: new Set(),       // Nation IDs with defensive pacts
+          warTargetId: null,       // Focused invasion goal
+          isAlive: true
+        };
+
+        state.nations.set(id, nation);
+
+        // Seed 3x3 surrounding capital
+        for (let dy = -1; dy <= 1; dy++) {
+          for (let dx = -1; dx <= 1; dx++) {
+            const tx = capX + dx;
+            const ty = capY + dy;
+            if (tx >= 0 && tx < state.width && ty >= 0 && ty < state.height) {
+              const tidx = ty * state.width + tx;
+              if (state.terrain[tidx] >= TERRAIN.PLAINS && state.owners[tidx] === 0) {
+                state.owners[tidx] = id;
+                nation.tilesCount++;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // --- GAME LOGIC CYCLE (TICKS) ---
+    function stepSimulation() {
+      state.ticks++;
+      
+      // Update calendar
+      if (state.ticks % 4 === 0) {
+        state.month++;
+        if (state.month > 12) {
+          state.month = 1;
+          state.year++;
+        }
+        document.getElementById('simDate').innerText = `Year ${state.year} • Month ${state.month}`;
+      }
+
+      // Process each nation
+      const livingNations = Array.from(state.nations.values()).filter(n => n.isAlive && n.tilesCount > 0);
+
+      // 1. Economic & Military Influx
+      livingNations.forEach(n => {
+        // Income scales with land & archetype
+        const gdpMult = (n.archetype.gdpBonus || 1.0);
+        const income = Math.max(1, Math.floor((n.tilesCount * 0.35 + 4) * gdpMult));
+        n.gold += income;
+
+        // Recruitment & Population Manpower
+        const troopGrowth = Math.max(1, Math.floor(n.tilesCount * 0.15 + (n.morale / 35)));
+        n.troops += troopGrowth;
+
+        // Natural Morale & Stability equilibrium
+        if (n.wars.size > 0) {
+          // War exhaustion
+          n.stability = Math.max(10, n.stability - (0.05 * n.wars.size));
+          n.morale = Math.max(20, n.morale - (0.03 * n.wars.size));
+        } else {
+          n.stability = Math.min(100, n.stability + 0.15);
+          n.morale = Math.min(100, n.morale + 0.2);
+        }
+
+        // Civil War / Rebellion Check
+        if (n.stability < 25 && n.tilesCount > 25 && rng.next() < 0.03) {
+          triggerRevolt(n.id);
+        }
+      });
+
+      // 2. AI Diplomacy & War Declarations
+      livingNations.forEach(n => {
+        if (n.id === state.playerNationId) return; // Player directs own foreign policy
+
+        // Chance to resolve wars via peace agreement
+        if (n.wars.size > 0 && (n.morale < 40 || n.stability < 35 || rng.next() < 0.04)) {
+          for (const enemyId of [...n.wars]) {
+            const enemy = state.nations.get(enemyId);
+            if (enemy && (enemy.morale < 45 || rng.next() < 0.15)) {
+              signPeace(n.id, enemyId);
+              break;
+            }
+          }
+        }
+
+        // Form Alliances
+        if (n.allies.size < 2 && rng.next() < 0.01) {
+          const potentialAllies = livingNations.filter(other => 
+            other.id !== n.id && 
+            !n.wars.has(other.id) && 
+            !n.allies.has(other.id) && 
+            other.allies.size < 2
+          );
+          if (potentialAllies.length > 0) {
+            const ally = potentialAllies[Math.floor(rng.next() * potentialAllies.length)];
+            formAlliance(n.id, ally.id);
+          }
+        }
+
+        // Declare New Wars based on border neighbors
+        const aggressionChance = (n.archetype.aggression || 0.5) * 0.015;
+        if (n.wars.size === 0 && rng.next() < aggressionChance) {
+          const neighbors = findBorderingNations(n.id);
+          const validTargets = neighbors.filter(targetId => !n.allies.has(targetId));
+          if (validTargets.length > 0) {
+            const targetId = validTargets[Math.floor(rng.next() * validTargets.length)];
+            declareWar(n.id, targetId);
+          }
+        }
+      });
+
+      // 3. Frontline Skirmishes & Expansion
+      simulateCombatAndExpansion();
+
+      // Refresh HUD
+      if (state.ticks % 2 === 0) {
+        renderTilesBuffer();
+        updateMinimap();
+      }
+      if (state.ticks % 5 === 0) {
+        updateLeaderboard();
+        updateInspector();
+      }
+    }
+
+    function findBorderingNations(nationId) {
+      const neighborIds = new Set();
+      const w = state.width;
+      const h = state.height;
+
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+          const idx = y * w + x;
+          if (state.owners[idx] !== nationId) continue;
+
+          // Check 4 neighbors
+          const dirs = [[0, -1], [0, 1], [-1, 0], [1, 0]];
+          for (const [dx, dy] of dirs) {
+            const nx = x + dx;
+            const ny = y + dy;
+            if (nx >= 0 && nx < w && ny >= 0 && ny < h) {
+              const nidx = ny * w + nx;
+              const nOwner = state.owners[nidx];
+              if (nOwner !== 0 && nOwner !== nationId) {
+                neighborIds.add(nOwner);
+              }
+            }
+          }
+        }
+      }
+      return Array.from(neighborIds);
+    }
+
+    function simulateCombatAndExpansion() {
+      const w = state.width;
+      const h = state.height;
+      const dirs = [[0, -1], [0, 1], [-1, 0], [1, 0]];
+
+      // Sample border tiles for expansion or attack
+      const samplesPerTick = Math.min(2500, Math.floor(w * h * 0.25));
+
+      for (let s = 0; s < samplesPerTick; s++) {
+        const x = Math.floor(rng.next() * w);
+        const y = Math.floor(rng.next() * h);
+        const idx = y * w + x;
+        const ownerId = state.owners[idx];
+
+        if (ownerId === 0) continue;
+        const nation = state.nations.get(ownerId);
+        if (!nation || !nation.isAlive || nation.troops < 5) continue;
+
+        // Pick a random adjacent tile
+        const dir = dirs[Math.floor(rng.next() * dirs.length)];
+        const tx = x + dir[0];
+        const ty = y + dir[1];
+        if (tx < 0 || tx >= w || ty < 0 || ty >= h) continue;
+
+        const targetIdx = ty * w + tx;
+        const targetTerrain = state.terrain[targetIdx];
+        if (targetTerrain < TERRAIN.PLAINS) continue; // Cannot occupy deep/shallow water without boats
+
+        const targetOwnerId = state.owners[targetIdx];
+
+        // CASE 1: Peaceful Expansion into unclaimed wilderness
+        if (targetOwnerId === 0) {
+          const expansionCost = targetTerrain === TERRAIN.MOUNTAIN ? 8 : (targetTerrain === TERRAIN.FOREST ? 4 : 2);
+          if (nation.troops >= expansionCost && rng.next() < 0.45) {
+            nation.troops -= expansionCost;
+            state.owners[targetIdx] = nation.id;
+            nation.tilesCount++;
+          }
+        }
+        // CASE 2: Frontline Combat against hostile nation
+        else if (targetOwnerId !== ownerId) {
+          const isAtWar = nation.wars.has(targetOwnerId);
+          // Prioritize active player target or active wars
+          if (isAtWar) {
+            const defender = state.nations.get(targetOwnerId);
+            if (!defender) continue;
+
+            const fortLevel = state.forts[targetIdx];
+            const terrainDef = targetTerrain === TERRAIN.MOUNTAIN ? 1.5 : (targetTerrain === TERRAIN.FOREST ? 1.2 : 1.0);
+            const defStrength = (defender.troops / Math.max(1, defender.tilesCount)) * terrainDef * (1 + fortLevel * 0.4) * (defender.archetype.defBonus || 1);
+            const atkStrength = (nation.troops / Math.max(1, nation.tilesCount)) * (nation.archetype.bonusArmy || 1);
+
+            // Roll battle
+            if (atkStrength > defStrength * (0.8 + rng.next() * 0.5)) {
+              // Attacker wins tile
+              defender.tilesCount = Math.max(0, defender.tilesCount - 1);
+              defender.troops = Math.max(0, defender.troops - Math.floor(defStrength * 1.5 + 2));
+              nation.troops = Math.max(0, nation.troops - Math.floor(defStrength * 0.8 + 1));
+              
+              state.owners[targetIdx] = nation.id;
+              state.forts[targetIdx] = 0; // Destroyed in siege
+              nation.tilesCount++;
+
+              // Capital conquered check
+              if (tx === defender.capitalX && ty === defender.capitalY) {
+                capitulateNation(defender.id, nation.id);
+              }
+            } else {
+              // Defender repelled attack
+              nation.troops = Math.max(0, nation.troops - 4);
+              defender.troops = Math.max(0, defender.troops - 2);
+            }
+          }
+        }
+      }
+    }
+
+    // --- DIPLOMATIC & EVENT FUNCTIONS ---
+    function declareWar(attackerId, defenderId) {
+      const atk = state.nations.get(attackerId);
+      const def = state.nations.get(defenderId);
+      if (!atk || !def || atk.wars.has(defenderId)) return;
+
+      atk.wars.add(defenderId);
+      def.wars.add(attackerId);
+      atk.allies.delete(defenderId);
+      def.allies.delete(attackerId);
+
+      addLog(`⚔️ [WAR]: ${atk.name} declared war on ${def.name}!`);
+
+      // Call allies into defensive pact
+      def.allies.forEach(allyId => {
+        const ally = state.nations.get(allyId);
+        if (ally && ally.isAlive && !ally.wars.has(attackerId)) {
+          ally.wars.add(attackerId);
+          atk.wars.add(allyId);
+          addLog(`🛡️ [ALLIANCE]: ${ally.name} joined ${def.name}'s defense against ${atk.name}!`);
+        }
+      });
+    }
+
+    function signPeace(n1Id, n2Id) {
+      const n1 = state.nations.get(n1Id);
+      const n2 = state.nations.get(n2Id);
+      if (!n1 || !n2) return;
+
+      n1.wars.delete(n2Id);
+      n2.wars.delete(n1Id);
+      if (n1.warTargetId === n2Id) n1.warTargetId = null;
+      if (n2.warTargetId === n1Id) n2.warTargetId = null;
+
+      addLog(`🕊️ [PEACE]: ${n1.name} and ${n2.name} signed a ceasefire treaty.`);
+    }
+
+    function formAlliance(n1Id, n2Id) {
+      const n1 = state.nations.get(n1Id);
+      const n2 = state.nations.get(n2Id);
+      if (!n1 || !n2 || n1.wars.has(n2Id)) return;
+
+      n1.allies.add(n2Id);
+      n2.allies.add(n1Id);
+      addLog(`🤝 [PACT]: ${n1.name} and ${n2.name} forged a mutual defense alliance.`);
+    }
+
+    function capitulateNation(loserId, victorId) {
+      const loser = state.nations.get(loserId);
+      const victor = state.nations.get(victorId);
+      if (!loser || !victor) return;
+
+      loser.isAlive = false;
+      addLog(`👑 [FALL OF EMPIRE]: The capital of ${loser.name} has fallen! Annexed by ${victor.name}.`);
+
+      // Transfer remaining tiles to victor
+      for (let i = 0; i < state.owners.length; i++) {
+        if (state.owners[i] === loserId) {
+          state.owners[i] = victorId;
+          victor.tilesCount++;
+        }
+      }
+      loser.tilesCount = 0;
+      loser.wars.clear();
+      loser.allies.clear();
+      victor.gold += loser.gold;
+
+      if (loserId === state.playerNationId) {
+        showHudNotice('YOUR NATION WAS DEFEATED! Returned to Spectator Mode.');
+        setPlayerCountry(null);
+      }
+    }
+
+    function triggerRevolt(nationId) {
+      const parent = state.nations.get(nationId);
+      if (!parent || parent.tilesCount < 20) return;
+
+      // Find an outlying territory tile far from capital
+      let bestTile = -1;
+      let maxDist = -1;
+      const w = state.width;
+
+      for (let i = 0; i < state.owners.length; i++) {
+        if (state.owners[i] === nationId) {
+          const tx = i % w;
+          const ty = Math.floor(i / w);
+          const d = Math.hypot(tx - parent.capitalX, ty - parent.capitalY);
+          if (d > maxDist) {
+            maxDist = d;
+            bestTile = i;
+          }
+        }
+      }
+
+      if (bestTile === -1) return;
+
+      const rebelId = state.nextNationId++;
+      const rebelName = `${parent.name} Rebels`;
+      const rebelColor = '#f59e0b';
+      const rebel = {
+        id: rebelId,
+        name: rebelName,
+        color: rebelColor,
+        archetype: ARCHETYPES[0], // Militarist
+        capitalX: bestTile % w,
+        capitalY: Math.floor(bestTile / w),
+        tilesCount: 0,
+        gold: 80,
+        troops: Math.floor(parent.troops * 0.45),
+        morale: 95,
+        stability: 80,
+        wars: new Set([parent.id]),
+        allies: new Set(),
+        warTargetId: parent.id,
+        isAlive: true
+      };
+
+      parent.troops = Math.max(10, Math.floor(parent.troops * 0.55));
+      parent.stability = 50;
+      parent.wars.add(rebelId);
+
+      state.nations.set(rebelId, rebel);
+
+      // Convert local cluster to rebel territory
+      const rx = rebel.capitalX;
+      const ry = rebel.capitalY;
+      for (let dy = -3; dy <= 3; dy++) {
+        for (let dx = -3; dx <= 3; dx++) {
+          const tx = rx + dx;
+          const ty = ry + dy;
+          if (tx >= 0 && tx < w && ty >= 0 && ty < state.height) {
+            const idx = ty * w + tx;
+            if (state.owners[idx] === parent.id) {
+              state.owners[idx] = rebelId;
+              parent.tilesCount--;
+              rebel.tilesCount++;
+            }
+          }
+        }
+      }
+
+      addLog(`🚩 [REBELLION]: Civil war erupted in ${parent.name}! ${rebelName} proclaimed independence.`);
+    }
+
+    // --- RENDERING & OFFSCREEN BUFFER PIPELINE ---
+    function renderTilesBuffer() {
+      const imgData = tileCtx.createImageData(state.width, state.height);
+      const data = imgData.data;
+
+      for (let i = 0; i < state.terrain.length; i++) {
+        const ownerId = state.owners[i];
+        const tType = state.terrain[i];
+        const fort = state.forts[i];
+        const px = i * 4;
+
+        if (ownerId > 0 && state.nations.has(ownerId)) {
+          const nat = state.nations.get(ownerId);
+          // Parse Hex Color
+          const hex = nat.color;
+          const r = parseInt(hex.slice(1, 3), 16);
+          const g = parseInt(hex.slice(3, 5), 16);
+          const b = parseInt(hex.slice(5, 7), 16);
+
+          if (fort > 0) {
+            // Fortified glow
+            data[px] = Math.min(255, r + 40);
+            data[px + 1] = Math.min(255, g + 40);
+            data[px + 2] = Math.min(255, b + 60);
+          } else {
+            data[px] = r;
+            data[px + 1] = g;
+            data[px + 2] = b;
+          }
+          data[px + 3] = 255;
+        } else {
+          // Terrain Colors
+          if (tType === TERRAIN.DEEP_OCEAN) {
+            data[px] = 7; data[px + 1] = 22; data[px + 2] = 44;
+          } else if (tType === TERRAIN.SHALLOW_OCEAN) {
+            data[px] = 13; data[px + 1] = 40; data[px + 2] = 71;
+          } else if (tType === TERRAIN.PLAINS) {
+            data[px] = 24; data[px + 1] = 43; data[px + 2] = 35;
+          } else if (tType === TERRAIN.FOREST) {
+            data[px] = 16; data[px + 1] = 34; data[px + 2] = 25;
+          } else {
+            // Mountain
+            data[px] = 60; data[px + 1] = 72; data[px + 2] = 88;
+          }
+          data[px + 3] = 255;
+        }
+      }
+
+      tileCtx.putImageData(imgData, 0, 0);
+    }
+
+    function renderScene() {
+      // Clear Screen
+      ctx.fillStyle = '#06080e';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.save();
+      // Apply Camera Transform
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.scale(state.zoom, state.zoom);
+      ctx.translate(-canvas.width / 2 + state.camX, -canvas.height / 2 + state.camY);
+
+      // Disable bilinear interpolation for crisp territorial voxel aesthetic
+      ctx.imageSmoothingEnabled = false;
+
+      // Draw map tile buffer stretched across canvas coordinate scale
+      const mapPixelWidth = canvas.width;
+      const mapPixelHeight = canvas.height;
+      ctx.drawImage(tileCanvas, 0, 0, mapPixelWidth, mapPixelHeight);
+
+      // Draw Grid / Borders if enabled
+      if (state.showBorders) {
+        drawBorders(ctx, mapPixelWidth, mapPixelHeight);
+      }
+
+      // Draw Nation Names and Capitals
+      if (state.showNames) {
+        drawNationLabels(ctx, mapPixelWidth, mapPixelHeight);
+      }
+
+      // Draw Selection Highlight
+      if (state.selectedNationId && state.nations.has(state.selectedNationId)) {
+        const sel = state.nations.get(state.selectedNationId);
+        const tileW = mapPixelWidth / state.width;
+        const tileH = mapPixelHeight / state.height;
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2 / state.zoom;
+        ctx.strokeRect(sel.capitalX * tileW - 2, sel.capitalY * tileH - 2, tileW + 4, tileH + 4);
+      }
+
+      ctx.restore();
+    }
+
+    function drawBorders(targetContext, renderW, renderH) {
+      const tileW = renderW / state.width;
+      const tileH = renderH / state.height;
+
+      targetContext.strokeStyle = 'rgba(0, 0, 0, 0.45)';
+      targetContext.lineWidth = 1;
+
+      // Vertical & horizontal border detection
+      for (let y = 0; y < state.height; y++) {
+        for (let x = 0; x < state.width; x++) {
+          const idx = y * state.width + x;
+          const owner = state.owners[idx];
+
+          if (x < state.width - 1 && owner !== state.owners[idx + 1]) {
+            targetContext.beginPath();
+            targetContext.moveTo((x + 1) * tileW, y * tileH);
+            targetContext.lineTo((x + 1) * tileW, (y + 1) * tileH);
+            targetContext.stroke();
+          }
+          if (y < state.height - 1 && owner !== state.owners[idx + state.width]) {
+            targetContext.beginPath();
+            targetContext.moveTo(x * tileW, (y + 1) * tileH);
+            targetContext.lineTo((x + 1) * tileW, (y + 1) * tileH);
+            targetContext.stroke();
+          }
+        }
+      }
+    }
+
+    function drawNationLabels(targetContext, renderW, renderH) {
+      const tileW = renderW / state.width;
+      const tileH = renderH / state.height;
+
+      targetContext.textAlign = 'center';
+      targetContext.textBaseline = 'middle';
+
+      state.nations.forEach(n => {
+        if (!n.isAlive || n.tilesCount < 3) return;
+
+        const cx = n.capitalX * tileW + tileW / 2;
+        const cy = n.capitalY * tileH + tileH / 2;
+
+        // Draw Capital Crown Icon
+        targetContext.font = `${Math.max(10, 12 / state.zoom)}px monospace`;
+        targetContext.fillStyle = '#ffffff';
+        targetContext.fillText('👑', cx, cy - 8);
+
+        // Nation Name
+        targetContext.font = `bold ${Math.max(10, 11 / state.zoom)}px 'JetBrains Mono', monospace`;
+        targetContext.shadowColor = '#000000';
+        targetContext.shadowBlur = 4;
+        targetContext.fillStyle = n.id === state.playerNationId ? '#38bdf8' : '#f8fafc';
+        targetContext.fillText(n.name, cx, cy + 6);
+        targetContext.shadowBlur = 0;
+      });
+    }
+
+    // --- MINIMAP PIPELINE ---
+    function updateMinimap() {
+      minimapCanvas.width = state.width;
+      minimapCanvas.height = state.height;
+      minimapCtx.drawImage(tileCanvas, 0, 0);
+
+      // Update interactive viewport rect
+      const visibleRatioW = 1 / state.zoom;
+      const visibleRatioH = 1 / state.zoom;
+      const leftRatio = (-(state.camX / canvas.width) * state.zoom + (1 - visibleRatioW) / 2);
+      const topRatio = (-(state.camY / canvas.height) * state.zoom + (1 - visibleRatioH) / 2);
+
+      minimapViewport.style.width = `${Math.min(100, Math.max(5, visibleRatioW * 100))}%`;
+      minimapViewport.style.height = `${Math.min(100, Math.max(5, visibleRatioH * 100))}%`;
+      minimapViewport.style.left = `${Math.min(95, Math.max(0, leftRatio * 100))}%`;
+      minimapViewport.style.top = `${Math.min(95, Math.max(0, topRatio * 100))}%`;
+    }
+
+    // --- HUD & UI SYNCHRONIZATION ---
+    function updateLeaderboard() {
+      const listEl = document.getElementById('leaderboardList');
+      const living = Array.from(state.nations.values()).filter(n => n.isAlive && n.tilesCount > 0);
+
+      if (state.sortBy === 'land') {
+        living.sort((a, b) => b.tilesCount - a.tilesCount);
+      } else if (state.sortBy === 'army') {
+        living.sort((a, b) => b.troops - a.troops);
+      } else {
+        living.sort((a, b) => b.gold - a.gold);
+      }
+
+      const totalLand = state.width * state.height;
+      let html = '';
+
+      living.slice(0, 10).forEach((n, idx) => {
+        const landPct = ((n.tilesCount / totalLand) * 100).toFixed(1);
+        const isPlayer = n.id === state.playerNationId;
+        const isSelected = n.id === state.selectedNationId;
+
+        html += `
+          <div data-id="${n.id}" class="leader-item flex items-center justify-between p-1.5 rounded cursor-pointer transition ${
+            isSelected ? 'bg-command-700 border border-command-accent/50' : 'bg-command-900/60 hover:bg-command-800'
+          } ${isPlayer ? 'border-l-2 border-l-command-accent' : ''}">
+            <div class="flex items-center space-x-2 truncate">
+              <span class="text-gray-500 w-3">${idx + 1}</span>
+              <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${n.color}"></span>
+              <span class="text-gray-200 font-bold truncate max-w-[95px]">${n.name}</span>
+            </div>
+            <div class="flex items-center space-x-2 text-[10px] text-gray-400">
+              <span class="text-command-accent">${landPct}%</span>
+              <span>🪖${n.troops}</span>
+            </div>
+          </div>
+        `;
+      });
+
+      listEl.innerHTML = html;
+
+      // Bind click on leaderboard item
+      listEl.querySelectorAll('.leader-item').forEach(el => {
+        el.addEventListener('click', () => {
+          const id = parseInt(el.dataset.id);
+          selectNation(id);
+        });
+      });
+    }
+
+    function updateInspector() {
+      const inspFlag = document.getElementById('inspFlag');
+      const inspName = document.getElementById('inspName');
+      const inspArchetype = document.getElementById('inspArchetype');
+      const inspContent = document.getElementById('inspContent');
+      const btnControl = document.getElementById('btnControlNation');
+      const btnRelinquish = document.getElementById('btnRelinquishControl');
+      const btnDiplo = document.getElementById('btnDiplomacyAction');
+
+      if (!state.selectedNationId || !state.nations.has(state.selectedNationId)) {
+        inspFlag.style.backgroundColor = '#38bdf8';
+        inspName.innerText = 'World Overview';
+        inspArchetype.innerText = 'SPECTATOR';
+        const activeCount = Array.from(state.nations.values()).filter(n => n.isAlive).length;
+        inspContent.innerHTML = `
+          <div class="space-y-1.5 text-gray-300">
+            <div class="flex justify-between"><span>Active Nations:</span> <span class="text-white">${activeCount}</span></div>
+            <div class="flex justify-between"><span>Total Grid:</span> <span class="text-white">${state.width} x ${state.height}</span></div>
+            <div class="flex justify-between"><span>Current Year:</span> <span class="text-command-accent">${state.year}</span></div>
+          </div>
+        `;
+        btnControl.classList.add('hidden');
+        btnRelinquish.classList.add('hidden');
+        btnDiplo.classList.add('hidden');
+        return;
+      }
+
+      const n = state.nations.get(state.selectedNationId);
+      inspFlag.style.backgroundColor = n.color;
+      inspName.innerText = n.name;
+      inspArchetype.innerText = n.archetype.name.toUpperCase();
+
+      const isPlayer = n.id === state.playerNationId;
+      if (isPlayer) {
+        btnControl.classList.add('hidden');
+        btnRelinquish.classList.remove('hidden');
+      } else {
+        btnControl.classList.remove('hidden');
+        btnRelinquish.classList.add('hidden');
+      }
+      btnDiplo.classList.remove('hidden');
+
+      const alliesNames = Array.from(n.allies).map(id => state.nations.get(id)?.name).filter(Boolean).join(', ') || 'None';
+      const enemiesNames = Array.from(n.wars).map(id => state.nations.get(id)?.name).filter(Boolean).join(', ') || 'None (Peace)';
+
+      inspContent.innerHTML = `
+        <div class="grid grid-cols-2 gap-2 pb-1">
+          <div class="bg-command-900/80 p-1.5 rounded border border-command-border">
+            <span class="text-gray-400 block text-[10px]">TERRITORY</span>
+            <span class="text-white font-bold text-sm">${n.tilesCount} tiles</span>
+          </div>
+          <div class="bg-command-900/80 p-1.5 rounded border border-command-border">
+            <span class="text-gray-400 block text-[10px]">MANPOWER</span>
+            <span class="text-white font-bold text-sm">${n.troops}</span>
+          </div>
+          <div class="bg-command-900/80 p-1.5 rounded border border-command-border">
+            <span class="text-gray-400 block text-[10px]">TREASURY</span>
+            <span class="text-yellow-400 font-bold text-sm">${n.gold} 🪙</span>
+          </div>
+          <div class="bg-command-900/80 p-1.5 rounded border border-command-border">
+            <span class="text-gray-400 block text-[10px]">STABILITY</span>
+            <span class="text-emerald-400 font-bold text-sm">${Math.round(n.stability)}%</span>
+          </div>
+        </div>
+        <div class="text-[10px] space-y-1 text-gray-400 border-t border-command-border pt-1.5">
+          <div><span class="text-gray-500">Allies:</span> <span class="text-emerald-300">${alliesNames}</span></div>
+          <div><span class="text-gray-500">Wars:</span> <span class="text-rose-400">${enemiesNames}</span></div>
+        </div>
+      `;
+    }
+
+    function selectNation(nationId) {
+      state.selectedNationId = nationId;
+      updateInspector();
+      updateLeaderboard();
+      
+      // Pan camera smoothly to capital
+      if (nationId && state.nations.has(nationId)) {
+        const n = state.nations.get(nationId);
+        const mapW = canvas.width;
+        const mapH = canvas.height;
+        const targetX = (canvas.width / 2) - (n.capitalX * (mapW / state.width));
+        const targetY = (canvas.height / 2) - (n.capitalY * (mapH / state.height));
+        state.camX = targetX;
+        state.camY = targetY;
+        updateMinimap();
+      }
+    }
+
+    function setPlayerCountry(nationId) {
+      state.playerNationId = nationId;
+      updateModeBadge();
+      updateInspector();
+
+      const godDock = document.getElementById('godToolsGrid');
+      const playerDock = document.getElementById('playerCommandDock');
+      const dockTitle = document.getElementById('dockTitle');
+      const dockSub = document.getElementById('dockSub');
+
+      if (nationId) {
+        const pNat = state.nations.get(nationId);
+        dockTitle.innerText = `${pNat.name.toUpperCase()} COMMAND`;
+        dockSub.innerText = 'Active ruler commands';
+        godDock.classList.add('hidden');
+        playerDock.classList.remove('hidden');
+        showHudNotice(`Assumption of Power: You now command ${pNat.name}!`);
+      } else {
+        dockTitle.innerText = 'GOD POWERS';
+        dockSub.innerText = 'Select an intervention';
+        godDock.classList.remove('hidden');
+        playerDock.classList.add('hidden');
+        showHudNotice('Switched to Omnipotent Spectator / God Mode.');
+      }
+    }
+
+    function updateModeBadge() {
+      const badge = document.getElementById('modeIndicator');
+      if (state.playerNationId && state.nations.has(state.playerNationId)) {
+        const p = state.nations.get(state.playerNationId);
+        badge.innerText = `RULER: ${p.name.toUpperCase()}`;
+        badge.className = 'text-xs px-2.5 py-1 rounded-full font-mono font-bold tracking-wider bg-sky-900/50 text-sky-300 border border-sky-500/40';
+      } else {
+        badge.innerText = 'SPECTATOR (GOD)';
+        badge.className = 'text-xs px-2.5 py-1 rounded-full font-mono font-bold tracking-wider bg-purple-900/50 text-purple-300 border border-purple-500/40';
+      }
+    }
+
+    function addLog(text) {
+      state.events.unshift({ year: state.year, month: state.month, text });
+      if (state.events.length > 50) state.events.pop();
+
+      const logContainer = document.getElementById('eventLogList');
+      const eventEl = document.createElement('div');
+      eventEl.className = 'p-1.5 rounded bg-command-900/70 border-l border-command-border text-gray-300';
+      eventEl.innerHTML = `<span class="text-gray-500 mr-1">[Y${state.year}]</span> ${text}`;
+      logContainer.prepend(eventEl);
+    }
+
+    function showHudNotice(msg) {
+      const el = document.getElementById('hudNotice');
+      el.innerText = msg;
+      el.classList.remove('opacity-0', '-translate-y-2');
+      setTimeout(() => {
+        el.classList.add('opacity-0', '-translate-y-2');
+      }, 2400);
+    }
+
+    // --- GOD TOOLS INTERVENTION LOGIC ---
+    function applyGodTool(tileX, tileY) {
+      const idx = tileY * state.width + tileX;
+      const ownerId = state.owners[idx];
+
+      if (state.activeGodTool === 'nuke') {
+        // Obliterate 5x5 zone
+        for (let dy = -2; dy <= 2; dy++) {
+          for (let dx = -2; dx <= 2; dx++) {
+            const tx = tileX + dx;
+            const ty = tileY + dy;
+            if (tx >= 0 && tx < state.width && ty >= 0 && ty < state.height) {
+              const tidx = ty * state.width + tx;
+              const oId = state.owners[tidx];
+              if (oId > 0 && state.nations.has(oId)) {
+                state.nations.get(oId).tilesCount--;
+              }
+              state.owners[tidx] = 0;
+              state.forts[tidx] = 0;
+              state.terrain[tidx] = TERRAIN.MOUNTAIN; // Wasteland
+            }
+          }
+        }
+        addLog(`☢️ [DIVINE STRIKE]: A nuclear detonation scorched territory at (${tileX}, ${tileY})!`);
+        showHudNotice('Atomic Strike deployed.');
+        renderTilesBuffer();
+      } else if (state.activeGodTool === 'revolt') {
+        if (ownerId > 0) {
+          triggerRevolt(ownerId);
+        }
+      } else if (state.activeGodTool === 'gold') {
+        if (ownerId > 0 && state.nations.has(ownerId)) {
+          const nat = state.nations.get(ownerId);
+          nat.gold += 500;
+          showHudNotice(`Injected 500 Gold into ${nat.name}.`);
+          updateInspector();
+        }
+      }
+    }
+
+    // --- VIEWPORT, ZOOM, & CAMERA CONTROLS ---
+    function resetCamera() {
+      state.camX = 0;
+      state.camY = 0;
+      state.zoom = 1.0;
+      updateMinimap();
+    }
+
+    function resizeCanvas() {
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
+      document.getElementById('canvasStats').innerText = `${state.width}x${state.height} • ${state.width * state.height / 1000}k`;
+    }
+
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      renderScene();
+    });
+
+    // --- MOUSE & TOUCH EVENT LISTENERS ---
+    function getTileFromScreen(clientX, clientY) {
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = clientX - rect.left;
+      const mouseY = clientY - rect.top;
+
+      // Reverse transform
+      const screenCenterX = canvas.width / 2;
+      const screenCenterY = canvas.height / 2;
+
+      const worldX = (mouseX - screenCenterX) / state.zoom + screenCenterX - state.camX;
+      const worldY = (mouseY - screenCenterY) / state.zoom + screenCenterY - state.camY;
+
+      const tileX = Math.floor((worldX / canvas.width) * state.width);
+      const tileY = Math.floor((worldY / canvas.height) * state.height);
+
+      if (tileX >= 0 && tileX < state.width && tileY >= 0 && tileY < state.height) {
+        return { x: tileX, y: tileY, idx: tileY * state.width + tileX };
+      }
+      return null;
+    }
+
+    canvas.addEventListener('mousedown', (e) => {
+      if (e.button === 0) { // Left click
+        state.isDragging = true;
+        state.dragStartX = e.clientX - state.camX;
+        state.dragStartY = e.clientY - state.camY;
+      }
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (state.isDragging) {
+        state.camX = e.clientX - state.dragStartX;
+        state.camY = e.clientY - state.dragStartY;
+        updateMinimap();
+      }
+    });
+
+    window.addEventListener('mouseup', (e) => {
+      if (state.isDragging) {
+        state.isDragging = false;
+        
+        // If minimal movement, register as click
+        const moveDist = Math.hypot(e.clientX - (state.dragStartX + state.camX), e.clientY - (state.dragStartY + state.camY));
+        if (moveDist < 5) {
+          handleCanvasClick(e.clientX, e.clientY);
+        }
+      }
+    });
+
+    canvas.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const zoomFactor = e.deltaY < 0 ? 1.15 : 0.85;
+      const newZoom = Math.min(5.0, Math.max(0.7, state.zoom * zoomFactor));
+      state.zoom = newZoom;
+      updateMinimap();
+    }, { passive: false });
+
+    function handleCanvasClick(clientX, clientY) {
+      const tile = getTileFromScreen(clientX, clientY);
+      if (!tile) return;
+
+      // Handle active god tool
+      if (state.activeGodTool) {
+        applyGodTool(tile.x, tile.y);
+        state.activeGodTool = null;
+        canvas.classList.remove('brush-cursor');
+        return;
+      }
+
+      const clickedOwnerId = state.owners[tile.idx];
+
+      // If in Player Country Mode and clicking another nation's territory:
+      if (state.playerNationId && clickedOwnerId !== 0 && clickedOwnerId !== state.playerNationId) {
+        const playerNat = state.nations.get(state.playerNationId);
+        const targetNat = state.nations.get(clickedOwnerId);
+
+        if (!playerNat.wars.has(clickedOwnerId)) {
+          // Declare war on target
+          declareWar(playerNat.id, targetNat.id);
+          playerNat.warTargetId = clickedOwnerId;
+          document.getElementById('playerWarTarget').innerText = targetNat.name;
+          showHudNotice(`WAR DECLARED ON ${targetNat.name}! Frontlines advancing.`);
+        } else {
+          // Focus war target
+          playerNat.warTargetId = clickedOwnerId;
+          document.getElementById('playerWarTarget').innerText = targetNat.name;
+          showHudNotice(`Frontline focus switched to ${targetNat.name}.`);
+        }
+      }
+
+      // Default: inspect selected territory
+      selectNation(clickedOwnerId);
+    }
+
+    // --- BUTTON EVENT BINDINGS ---
+    document.getElementById('btnPause').addEventListener('click', () => {
+      state.isPaused = !state.isPaused;
+      document.getElementById('btnPause').innerText = state.isPaused ? '▶' : '❚❚';
+      document.getElementById('btnPause').classList.toggle('bg-command-warning', state.isPaused);
+      document.getElementById('btnPause').classList.toggle('text-command-950', state.isPaused);
+    });
+
+    const speedButtons = [
+      { id: 'btnSpeed1', speed: 1 },
+      { id: 'btnSpeed2', speed: 2 },
+      { id: 'btnSpeed5', speed: 5 },
+      { id: 'btnSpeed10', speed: 10 }
+    ];
+
+    speedButtons.forEach(b => {
+      document.getElementById(b.id).addEventListener('click', () => {
+        state.speed = b.speed;
+        state.isPaused = false;
+        document.getElementById('btnPause').innerText = '❚❚';
+        speedButtons.forEach(o => {
+          const el = document.getElementById(o.id);
+          if (o.speed === b.speed) {
+            el.className = 'px-2.5 py-1 text-xs font-mono rounded bg-command-accent text-command-950 font-bold transition';
+          } else {
+            el.className = 'px-2.5 py-1 text-xs font-mono rounded hover:bg-command-700 text-gray-300 transition';
+          }
+        });
+      });
+    });
+
+    // Zoom Buttons
+    document.getElementById('btnZoomIn').addEventListener('click', () => {
+      state.zoom = Math.min(5.0, state.zoom * 1.25);
+      updateMinimap();
+    });
+    document.getElementById('btnZoomOut').addEventListener('click', () => {
+      state.zoom = Math.max(0.7, state.zoom * 0.8);
+      updateMinimap();
+    });
+    document.getElementById('btnZoomReset').addEventListener('click', resetCamera);
+
+    // Toggles
+    document.getElementById('btnToggleBorders').addEventListener('click', (e) => {
+      state.showBorders = !state.showBorders;
+      e.target.innerText = `Borders: ${state.showBorders ? 'ON' : 'OFF'}`;
+      e.target.classList.toggle('text-command-accent', state.showBorders);
+    });
+    document.getElementById('btnToggleNames').addEventListener('click', (e) => {
+      state.showNames = !state.showNames;
+      e.target.innerText = `Names: ${state.showNames ? 'ON' : 'OFF'}`;
+      e.target.classList.toggle('text-command-accent', state.showNames);
+    });
+
+    // Clear logs
+    document.getElementById('btnClearLog').addEventListener('click', () => {
+      state.events = [];
+      document.getElementById('eventLogList').innerHTML = '';
+    });
+
+    // Sorting Leaderboards
+    document.getElementById('btnSortLand').addEventListener('click', () => { state.sortBy = 'land'; updateLeaderboard(); });
+    document.getElementById('btnSortArmy').addEventListener('click', () => { state.sortBy = 'army'; updateLeaderboard(); });
+    document.getElementById('btnSortGold').addEventListener('click', () => { state.sortBy = 'gold'; updateLeaderboard(); });
+
+    // Mode Transitions
+    document.getElementById('btnControlNation').addEventListener('click', () => {
+      if (state.selectedNationId) {
+        setPlayerCountry(state.selectedNationId);
+      }
+    });
+
+    document.getElementById('btnRelinquishControl').addEventListener('click', () => {
+      setPlayerCountry(null);
+    });
+
+    // God Tool activation
+    document.querySelectorAll('.god-tool-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tool = btn.dataset.tool;
+        if (tool === 'forcepeace') {
+          // Force global peace immediately
+          state.nations.forEach(n => {
+            n.wars.clear();
+            n.warTargetId = null;
+          });
+          addLog('🕊️ [DIVINE WILL]: A global armistice was enacted. All wars ended.');
+          showHudNotice('Global peace established.');
+          updateInspector();
+          return;
+        }
+
+        state.activeGodTool = tool;
+        canvas.classList.add('brush-cursor');
+        showHudNotice(`Selected ${tool.toUpperCase()} power: Click target territory on map.`);
+      });
+    });
+
+    // Player Commands
+    document.getElementById('btnPlayerDraft').addEventListener('click', () => {
+      if (!state.playerNationId) return;
+      const p = state.nations.get(state.playerNationId);
+      if (p.gold >= 30) {
+        p.gold -= 30;
+        p.troops += 50;
+        showHudNotice('Drafted 50 new troops.');
+        updateInspector();
+      } else {
+        showHudNotice('Insufficient Treasury to recruit troops!');
+      }
+    });
+
+    document.getElementById('btnPlayerFortify').addEventListener('click', () => {
+      if (!state.playerNationId) return;
+      const p = state.nations.get(state.playerNationId);
+      if (p.gold >= 50) {
+        p.gold -= 50;
+        // Fortify capital and perimeter
+        for (let dy = -1; dy <= 1; dy++) {
+          for (let dx = -1; dx <= 1; dx++) {
+            const tx = p.capitalX + dx;
+            const ty = p.capitalY + dy;
+            if (tx >= 0 && tx < state.width && ty >= 0 && ty < state.height) {
+              const idx = ty * state.width + tx;
+              if (state.owners[idx] === p.id) {
+                state.forts[idx] = Math.min(3, state.forts[idx] + 1);
+              }
+            }
+          }
+        }
+        showHudNotice('Capital defenses fortified (+Fort lvl).');
+        updateInspector();
+        renderTilesBuffer();
+      } else {
+        showHudNotice('Insufficient Treasury to build fortifications!');
+      }
+    });
+
+    document.getElementById('btnPlayerPropaganda').addEventListener('click', () => {
+      if (!state.playerNationId) return;
+      const p = state.nations.get(state.playerNationId);
+      if (p.gold >= 40) {
+        p.gold -= 40;
+        p.stability = Math.min(100, p.stability + 15);
+        p.morale = Math.min(100, p.morale + 10);
+        showHudNotice('Stability & Morale boosted via State Campaign.');
+        updateInspector();
+      }
+    });
+
+    document.getElementById('btnPlayerCovertRevolt').addEventListener('click', () => {
+      if (!state.playerNationId) return;
+      const p = state.nations.get(state.playerNationId);
+      if (p.gold >= 75) {
+        const rivals = Array.from(p.wars);
+        if (rivals.length > 0) {
+          p.gold -= 75;
+          const target = rivals[0];
+          triggerRevolt(target);
+          showHudNotice('Funded underground rebellion in rival territory!');
+        } else {
+          showHudNotice('Must be at war with a nation to trigger a revolt!');
+        }
+      } else {
+        showHudNotice('Insufficient funds for covert insurrection!');
+      }
+    });
+
+    // Diplomacy Modal Handler
+    document.getElementById('btnDiplomacyAction').addEventListener('click', () => {
+      if (!state.selectedNationId || !state.nations.has(state.selectedNationId)) return;
+      const target = state.nations.get(state.selectedNationId);
+      const isPlayer = state.playerNationId && state.selectedNationId === state.playerNationId;
+
+      document.getElementById('diploModalTitle').innerText = `${target.name} Diplomatic Relations`;
+      const modal = document.getElementById('modalDiplomacy');
+      const content = document.getElementById('diploModalContent');
+
+      let html = '';
+      if (!state.playerNationId) {
+        html = `
+          <p class="text-gray-300">You are currently in God Mode. You can directly command treaties for this sovereign state:</p>
+          <div class="grid grid-cols-2 gap-2 pt-2">
+            <button id="btnDiploForcePeace" class="p-2 bg-command-800 hover:bg-command-700 rounded text-emerald-400">Pardon All Wars</button>
+            <button id="btnDiploDisbandAllies" class="p-2 bg-command-800 hover:bg-command-700 rounded text-rose-400">Dissolve All Alliances</button>
+          </div>
+        `;
+      } else if (isPlayer) {
+        html = `<p class="text-gray-400">You are inspecting your own realm. Select a foreign realm on the map to negotiate with them.</p>`;
+      } else {
+        const player = state.nations.get(state.playerNationId);
+        const isAtWar = player.wars.has(target.id);
+        const isAllied = player.allies.has(target.id);
+
+        html = `
+          <div class="p-3 bg-command-900 rounded border border-command-border">
+            <div class="flex justify-between pb-1"><span>Current Standing:</span> <span class="font-bold ${isAtWar ? 'text-rose-400' : (isAllied ? 'text-emerald-400' : 'text-gray-300')}">${isAtWar ? 'Hostile (At War)' : (isAllied ? 'Allied (Defense Pact)' : 'Neutral')}</span></div>
+            <div class="flex justify-between"><span>Ruler Archetype:</span> <span class="text-white">${target.archetype.name}</span></div>
+          </div>
+          <div class="space-y-2 pt-2">
+            ${isAtWar ? `
+              <button id="btnDiploSuePeace" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded font-bold">Sue for White Peace</button>
+            ` : `
+              <button id="btnDiploDeclareWar" class="w-full py-2 bg-rose-600 hover:bg-rose-500 text-white rounded font-bold">Declare Formal War</button>
+              ${!isAllied ? `<button id="btnDiploAlliance" class="w-full py-2 bg-command-700 hover:bg-command-600 text-white rounded">Propose Defensive Alliance</button>` : ''}
+            `}
+          </div>
+        `;
+      }
+
+      content.innerHTML = html;
+      modal.classList.remove('hidden');
+
+      // Bind modal triggers
+      const suePeace = document.getElementById('btnDiploSuePeace');
+      if (suePeace) {
+        suePeace.onclick = () => {
+          signPeace(state.playerNationId, target.id);
+          modal.classList.add('hidden');
+          updateInspector();
+        };
+      }
+      const decWar = document.getElementById('btnDiploDeclareWar');
+      if (decWar) {
+        decWar.onclick = () => {
+          declareWar(state.playerNationId, target.id);
+          modal.classList.add('hidden');
+          updateInspector();
+        };
+      }
+      const makeAlly = document.getElementById('btnDiploAlliance');
+      if (makeAlly) {
+        makeAlly.onclick = () => {
+          formAlliance(state.playerNationId, target.id);
+          modal.classList.add('hidden');
+          updateInspector();
+        };
+      }
+      const forcePeace = document.getElementById('btnDiploForcePeace');
+      if (forcePeace) {
+        forcePeace.onclick = () => {
+          target.wars.clear();
+          addLog(`🕊️ [DIVINE INTERVENTION]: ${target.name}'s conflicts were erased.`);
+          modal.classList.add('hidden');
+          updateInspector();
+        };
+      }
+      const disbandAllies = document.getElementById('btnDiploDisbandAllies');
+      if (disbandAllies) {
+        disbandAllies.onclick = () => {
+          target.allies.clear();
+          modal.classList.add('hidden');
+          updateInspector();
+        };
+      }
+    });
+
+    document.getElementById('btnCloseDiplo').addEventListener('click', () => {
+      document.getElementById('modalDiplomacy').classList.add('hidden');
+    });
+
+    // New World Modal Handlers
+    document.getElementById('btnNewWorld').addEventListener('click', () => {
+      document.getElementById('modalNewWorld').classList.remove('hidden');
+    });
+    document.getElementById('btnCloseNewWorld').addEventListener('click', () => {
+      document.getElementById('modalNewWorld').classList.add('hidden');
+    });
+    document.getElementById('inpNationCount').addEventListener('input', (e) => {
+      document.getElementById('lblNationCount').innerText = e.target.value;
+    });
+    document.getElementById('btnConfirmGenerate').addEventListener('click', () => {
+      const w = parseInt(document.getElementById('inpWidth').value) || 120;
+      const h = parseInt(document.getElementById('inpHeight').value) || 80;
+      const count = parseInt(document.getElementById('inpNationCount').value) || 14;
+      const preset = document.getElementById('presetSelect').value;
+      const seed = document.getElementById('inpSeed').value.trim() || null;
+
+      document.getElementById('modalNewWorld').classList.add('hidden');
+      initWorld(w, h, preset, count, seed);
+      resizeCanvas();
+    });
+
+    // Save & Load Handlers
+    document.getElementById('btnSaveLoad').addEventListener('click', () => {
+      document.getElementById('modalSaveLoad').classList.remove('hidden');
+    });
+    document.getElementById('btnCloseSaveLoad').addEventListener('click', () => {
+      document.getElementById('modalSaveLoad').classList.add('hidden');
+    });
+
+    document.getElementById('btnQuickSave').addEventListener('click', () => {
+      const serialized = serializeState();
+      try {
+        localStorage.setItem('AgesOfConquest_Save', serialized);
+        showHudNotice('World state saved to LocalStorage.');
+      } catch (e) {
+        showHudNotice('LocalStorage quota exceeded. Use JSON export.');
+      }
+    });
+
+    document.getElementById('btnQuickLoad').addEventListener('click', () => {
+      const saved = localStorage.getItem('AgesOfConquest_Save');
+      if (saved) {
+        deserializeState(saved);
+        document.getElementById('modalSaveLoad').classList.add('hidden');
+        showHudNotice('World state restored successfully.');
+      } else {
+        showHudNotice('No quick save file found in storage!');
+      }
+    });
+
+    document.getElementById('btnExportJson').addEventListener('click', () => {
+      const json = serializeState();
+      document.getElementById('txtSaveJson').value = json;
+    });
+
+    document.getElementById('btnImportJson').addEventListener('click', () => {
+      const raw = document.getElementById('txtSaveJson').value.trim();
+      if (raw) {
+        deserializeState(raw);
+        document.getElementById('modalSaveLoad').classList.add('hidden');
+        showHudNotice('State imported from JSON successfully.');
+      }
+    });
+
+    function serializeState() {
+      const exportObj = {
+        width: state.width,
+        height: state.height,
+        ticks: state.ticks,
+        year: state.year,
+        month: state.month,
+        terrain: Array.from(state.terrain),
+        owners: Array.from(state.owners),
+        forts: Array.from(state.forts),
+        nations: Array.from(state.nations.entries()).map(([id, n]) => ({
+          ...n,
+          wars: Array.from(n.wars),
+          allies: Array.from(n.allies)
+        })),
+        playerNationId: state.playerNationId,
+        nextNationId: state.nextNationId
+      };
+      return JSON.stringify(exportObj);
+    }
+
+    function deserializeState(jsonStr) {
+      try {
+        const data = JSON.parse(jsonStr);
+        state.width = data.width;
+        state.height = data.height;
+        state.ticks = data.ticks;
+        state.year = data.year;
+        state.month = data.month;
+        state.terrain = new Uint8Array(data.terrain);
+        state.owners = new Uint16Array(data.owners);
+        state.forts = new Uint8Array(data.forts);
+        state.nextNationId = data.nextNationId;
+        state.playerNationId = data.playerNationId;
+
+        state.nations.clear();
+        data.nations.forEach(n => {
+          n.wars = new Set(n.wars);
+          n.allies = new Set(n.allies);
+          state.nations.set(n.id, n);
+        });
+
+        tileCanvas.width = state.width;
+        tileCanvas.height = state.height;
+
+        renderTilesBuffer();
+        updateMinimap();
+        updateLeaderboard();
+        updateInspector();
+        updateModeBadge();
+        resetCamera();
+      } catch (err) {
+        showHudNotice('Error importing state: Invalid JSON structure.');
+      }
+    }
+
+    // --- MAIN GAME ANIMATION LOOP ---
+    let lastTickTime = performance.now();
+
+    function gameLoop(now) {
+      requestAnimationFrame(gameLoop);
+
+      // Simulation ticks based on selected speed
+      if (!state.isPaused && state.speed > 0) {
+        const interval = 350 / state.speed;
+        if (now - lastTickTime >= interval) {
+          stepSimulation();
+          lastTickTime = now;
+        }
+      }
+
+      // Render Scene at 60 FPS
+      renderScene();
+    }
+
+    // Initialize simulation on window load
+    window.onload = function () {
+      resizeCanvas();
+      initWorld(120, 80, 'continents', 14);
+      requestAnimationFrame(gameLoop);
+    };
+  </script>
+</body>
+</html>

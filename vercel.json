@@ -1,194 +1,204 @@
 {
-  "version": 2,
-  "cleanUrls": false,
-  "trailingSlash": false,
+  "trailingSlash": true,
   "rewrites": [
     {
-      "source": "/hub",
-      "destination": "/hub.html"
+      "source": "/treasury/",
+      "destination": "/bank.html"
     },
     {
-      "source": "/os",
-      "destination": "/hub.html"
+      "source": "/treasury",
+      "destination": "/bank.html"
     },
     {
-      "source": "/rx",
-      "destination": "/family_rx_system.html"
+      "source": "/arcade/bank/",
+      "destination": "/arcade/bank.html"
     },
     {
-      "source": "/meds",
-      "destination": "/family_rx_system.html"
+      "source": "/arcade/bank",
+      "destination": "/arcade/bank.html"
     },
     {
-      "source": "/culinary",
-      "destination": "/culinary_chef_system.html"
+      "source": "/bank/",
+      "destination": "/bank.html"
     },
     {
-      "source": "/chef",
-      "destination": "/culinary_chef_system.html"
+      "source": "/bank",
+      "destination": "/bank.html"
     },
     {
-      "source": "/master",
-      "destination": "/household_master_system.html"
+      "source": "/black_sky",
+      "destination": "/arcade/black_sky.html"
     },
     {
-      "source": "/household",
-      "destination": "/household_master_system.html"
+      "source": "/black_sky/",
+      "destination": "/arcade/black_sky.html"
     },
     {
-      "source": "/fleet",
-      "destination": "/fleet_system.html"
+      "source": "/black_sky.html",
+      "destination": "/arcade/black_sky.html"
     },
     {
-      "source": "/fleet.html",
-      "destination": "/fleet_system.html"
+      "source": "/black_sky.html/",
+      "destination": "/arcade/black_sky.html"
     },
     {
-      "source": "/field-ops",
-      "destination": "/Symbolic_Entity_Navigator.html"
+      "source": "/arcade/black_sky",
+      "destination": "/arcade/black_sky.html"
     },
     {
-      "source": "/ledger",
-      "destination": "/Symbolic_Entity_Navigator.html"
+      "source": "/arcade/black_sky/",
+      "destination": "/arcade/black_sky.html"
     },
     {
-      "source": "/symbolic",
-      "destination": "/Symbolic_Entity_Navigator.html"
+      "source": "/emp",
+      "destination": "/arcade/black_sky.html"
     },
     {
-      "source": "/navigator.html",
-      "destination": "/Symbolic_Entity_Navigator.html"
+      "source": "/emp/",
+      "destination": "/arcade/black_sky.html"
     },
     {
-      "source": "/navigator",
-      "destination": "/Symbolic_Entity_Navigator.html"
+      "source": "/emp_dashboard",
+      "destination": "/arcade/emp_dashboard.html"
     },
     {
-      "source": "/c2",
-      "destination": "/c2.html"
+      "source": "/emp_dashboard/",
+      "destination": "/arcade/emp_dashboard.html"
     },
     {
-      "source": "/wargame",
-      "destination": "/c2.html"
+      "source": "/arcade/emp_dashboard",
+      "destination": "/arcade/emp_dashboard.html"
     },
     {
-      "source": "/c2.html",
-      "destination": "/c2.html"
+      "source": "/arcade/emp_dashboard/",
+      "destination": "/arcade/emp_dashboard.html"
     },
     {
-      "source": "/flow",
-      "destination": "/family_flow.html"
+      "source": "/phase1_dashboard",
+      "destination": "/arcade/phase1_dashboard.html"
     },
     {
-      "source": "/family-flow",
-      "destination": "/family_flow.html"
+      "source": "/phase1_dashboard/",
+      "destination": "/arcade/phase1_dashboard.html"
     },
     {
-      "source": "/family_flow",
-      "destination": "/family_flow.html"
+      "source": "/arcade/phase1_dashboard",
+      "destination": "/arcade/phase1_dashboard.html"
     },
     {
-      "source": "/family_flow.html",
-      "destination": "/family_flow.html"
+      "source": "/arcade/phase1_dashboard/",
+      "destination": "/arcade/phase1_dashboard.html"
     },
     {
-      "source": "/simulator",
-      "destination": "/family_flow.html"
+      "source": "/conflict",
+      "destination": "/arcade/ages_of_constant_conflict.html"
     },
     {
-      "source": "/449_decision_tool.html",
-      "destination": "/449_decision_tool.html"
+      "source": "/conflict/",
+      "destination": "/arcade/ages_of_constant_conflict.html"
     },
     {
-      "source": "/449_decision_tool",
-      "destination": "/449_decision_tool.html"
+      "source": "/conflict.html",
+      "destination": "/arcade/ages_of_constant_conflict.html"
     },
     {
-      "source": "/449-decision-tool",
-      "destination": "/449_decision_tool.html"
+      "source": "/conflict.html/",
+      "destination": "/arcade/ages_of_constant_conflict.html"
     },
     {
-      "source": "/arcade",
-      "destination": "/arcade/index.html"
+      "source": "/arcade/conflict",
+      "destination": "/arcade/ages_of_constant_conflict.html"
     },
     {
-      "source": "/arcade/",
-      "destination": "/arcade/index.html"
+      "source": "/arcade/conflict/",
+      "destination": "/arcade/ages_of_constant_conflict.html"
     },
     {
-      "source": "/ops",
-      "destination": "/ops/index.html"
+      "source": "/conquest",
+      "destination": "/arcade/ages_of_conquest.html"
     },
     {
-      "source": "/ops/",
-      "destination": "/ops/index.html"
+      "source": "/conquest/",
+      "destination": "/arcade/ages_of_conquest.html"
     },
     {
-      "source": "/sparkle.html",
-      "destination": "/arcade/sparkle.html"
+      "source": "/conquest.html",
+      "destination": "/arcade/ages_of_conquest.html"
+    },
+    {
+      "source": "/conquest.html/",
+      "destination": "/arcade/ages_of_conquest.html"
+    },
+    {
+      "source": "/arcade/conquest",
+      "destination": "/arcade/ages_of_conquest.html"
+    },
+    {
+      "source": "/arcade/conquest/",
+      "destination": "/arcade/ages_of_conquest.html"
     },
     {
       "source": "/sparkle",
       "destination": "/arcade/sparkle.html"
     },
     {
-      "source": "/unicorn.html",
-      "destination": "/arcade/unicorn.html"
+      "source": "/sparkle/",
+      "destination": "/arcade/sparkle.html"
     },
     {
       "source": "/unicorn",
       "destination": "/arcade/unicorn.html"
     },
     {
-      "source": "/pokeguess.html",
-      "destination": "/arcade/pokeguess.html"
+      "source": "/unicorn/",
+      "destination": "/arcade/unicorn.html"
     },
     {
       "source": "/pokeguess",
       "destination": "/arcade/pokeguess.html"
     },
     {
-      "source": "/starfall.html",
-      "destination": "/arcade/starfall.html"
+      "source": "/pokeguess/",
+      "destination": "/arcade/pokeguess.html"
     },
     {
       "source": "/starfall",
       "destination": "/arcade/starfall.html"
     },
     {
-      "source": "/phonics.html",
-      "destination": "/arcade/phonics.html"
+      "source": "/starfall/",
+      "destination": "/arcade/starfall.html"
     },
     {
       "source": "/phonics",
       "destination": "/arcade/phonics.html"
     },
     {
-      "source": "/homestead.html",
-      "destination": "/arcade/homestead.html"
+      "source": "/phonics/",
+      "destination": "/arcade/phonics.html"
     },
     {
       "source": "/homestead",
       "destination": "/arcade/homestead.html"
     },
     {
-      "source": "/breaker_vault.html",
+      "source": "/homestead/",
+      "destination": "/arcade/homestead.html"
+    },
+    {
+      "source": "/breaker",
       "destination": "/arcade/breaker_vault.html"
     },
     {
-      "source": "/breaker_vault",
+      "source": "/breaker/",
       "destination": "/arcade/breaker_vault.html"
     },
     {
-      "source": "/breaker-vault",
-      "destination": "/arcade/breaker_vault.html"
+      "source": "/k9",
+      "destination": "/arcade/project-k9-volt.html"
     },
     {
-      "source": "/escape",
-      "destination": "/arcade/breaker_vault.html"
-    },
-    {
-      "source": "/project-k9-volt.html",
+      "source": "/k9/",
       "destination": "/arcade/project-k9-volt.html"
     },
     {
@@ -196,66 +206,16 @@
       "destination": "/arcade/project-k9-volt.html"
     },
     {
-      "source": "/k9-volt",
+      "source": "/project-k9-volt/",
       "destination": "/arcade/project-k9-volt.html"
     },
     {
-      "source": "/k9",
-      "destination": "/arcade/project-k9-volt.html"
+      "source": "/telemetry.js",
+      "destination": "/arcade/telemetry.js"
     },
     {
-      "source": "/corgi",
-      "destination": "/arcade/project-k9-volt.html"
-    },
-    {
-      "source": "/groceries",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/market-basket",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/procurement",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/school",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/usd449",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/dispatch",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/schools",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/outings",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/recon",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/weekend",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/dates",
-      "destination": "/index.html"
-    }
-  ],
-  "crons": [
-    {
-      "path": "/api/pathogen-radar",
-      "schedule": "0 20 * * *"
+      "source": "/telemetry.js/",
+      "destination": "/arcade/telemetry.js"
     }
   ]
 }

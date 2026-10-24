@@ -565,3 +565,207 @@ Next steps:
   vercel inspect pleasant-ridge-gazette-lwpanh62o-billow-and-breeze.vercel.app --logs --scope billow-and-breeze
 - Create a new deployment from the same source:
   vercel redeploy pleasant-ridge-gazette-lwpanh62o-billow-and-breeze.vercel.app --scope billow-and-breeze
+warning: in the working copy of 'telemetry/sweep_execution.log', LF will be replaced by CRLF the next time Git touches it
+[main ffc0aaf] Automated corridor sweep and sync
+ 14 files changed, 240 insertions(+), 153 deletions(-)
+To https://github.com/jcaba-creator/pleasant-ridge-gazette.git
+   49ee83d..ffc0aaf  main -> main
+[Fri 10/23/2026  5:01:03.69] Sweep completed and published to Vercel and GitHub Pages. 
+[Fri 10/23/2026 15:00:02.50] Redirecting sweep to clean civic edition... 
+========================================================
+  REFRESHING CIVIC PRICE FEEDS 
+'DEPLOYING' is not recognized as an internal or external command,
+operable program or batch file.
+  1. Military/Gov Mirror: https://jcaba-creator.github.io/pleasant-ridge-gazette/
+  2. Civilian Mobile:    https://pleasant-ridge-gazette-public.vercel.app
+========================================================
+
+[1/3] Scraping latest corridor fuel and grocery benchmarks...
+[15:00:03] Connecting to live corridor feed...
+  * Sunoco                   : $3.83 (live)
+  * Murphy USA (Walmart)     : $3.84 (live)
+  * AAFES Express            : $3.87 (live)
+  * QuikTrip                 : $3.87 (live)
+  * Dillons Fuel Center      : $3.87 (live)
+  * 7-Eleven                 : $3.87 (live)
+  * Casey's General Store    : $3.87 (live)
+  * Casey's                  : $3.87 (live)
+  * BP / Amoco               : $3.87 (live)
+  * Cenex                    : $3.87 (live)
+  * Fav Trip                 : $3.89 (est)
+  * Hilltop Market / 66      : $3.91 (est)
+  * Sam's Club Fuel          : $3.93 (live)
+  * Shell                    : $3.99 (est)
+
+[SUCCESS] Corridor feed generated! Cheapest: Sunoco at $3.83/gal (Saves $2.40 per 15-gal tank).
+====================================================================
+  THE PLEASANT RIDGE GAZETTE — AUTOMATED GROCERY PROCUREMENT SWEEP
+====================================================================
+
+[1/3] Pulling Fort Leavenworth Commissary (Store 5878)...
+  + ground_beef: 80% Lean Ground Beef -> $4.00
+  + eggs_dozen: Cal-Maine Sunups Grade A Large White Eggs 12 ct tray -> $1.37
+  + whole_milk: Hiland Vitamin D Milk 1 gal jug -> $4.88
+  + russet_potatoes: Russet Potatoes 5 lb bag -> $1.50
+  + sandwich_bread: Freedom's Choice White Bread, 20 Oz -> $1.35
+
+[2/3] Pulling Dillons Leavenworth (Kroger Calypso)...
+  - ground_beef: Preserving verified shelf baseline
+  - eggs_dozen: Preserving verified shelf baseline
+  - whole_milk: Preserving verified shelf baseline
+  - russet_potatoes: Preserving verified shelf baseline
+  - sandwich_bread: Preserving verified shelf baseline
+
+[3/3] Pulling Price Chopper Leavenworth (Store #61 & Circular)...
+  Found 5 active circular ads for Leavenworth Store #61
+
+[*] Pulling ALDI Leavenworth (66048 Feed)...
+
+[*] Pulling Walmart Supercenter Leavenworth (66048 Feed)...
+[SAVED] G:\My Drive\pleasant-ridge-gazette-public\data\groceries.json
+[SAVED] G:\My Drive\pleasant-ridge-gazette-public\data\groceries.json
+[SAVED] G:\My Drive\pleasant-ridge-gazette-public\data\groceries.js
+[SAVED] G:\My Drive\pleasant-ridge-gazette-public\data\groceries.js
+
+[SUCCESS] Automated multi-store grocery sweep complete!
+====================================================================
+
+[2/3] Publishing to GitHub Pages...
+
+[3/3] Publishing to Vercel...
+
+========================================================
+[SUCCESS] Civic Gazette published with zero private dependencies!
+========================================================
+[Sat 10/24/2026  5:00:02.15] Redirecting sweep to clean civic edition... 
+========================================================
+  REFRESHING CIVIC PRICE FEEDS 
+'DEPLOYING' is not recognized as an internal or external command,
+operable program or batch file.
+  1. Military/Gov Mirror: https://jcaba-creator.github.io/pleasant-ridge-gazette/
+  2. Civilian Mobile:    https://pleasant-ridge-gazette-public.vercel.app
+========================================================
+
+[1/3] Scraping latest corridor fuel and grocery benchmarks...
+[05:00:02] Connecting to live corridor feed...
+  * Sunoco                   : $3.85 (est)
+  * Murphy USA (Walmart)     : $3.87 (est)
+  * AAFES Express            : $3.89 (est)
+  * QuikTrip                 : $3.89 (est)
+  * Dillons Fuel Center      : $3.89 (est)
+  * 7-Eleven                 : $3.89 (est)
+  * Casey's General Store    : $3.89 (est)
+  * Casey's                  : $3.89 (est)
+  * BP / Amoco               : $3.89 (est)
+  * Cenex                    : $3.89 (est)
+  * Fav Trip                 : $3.89 (est)
+  * Hilltop Market / 66      : $3.91 (est)
+  * Sam's Club Fuel          : $3.97 (est)
+  * Shell                    : $3.99 (est)
+
+[SUCCESS] Corridor feed generated! Cheapest: Sunoco at $3.85/gal (Saves $2.10 per 15-gal tank).
+====================================================================
+  THE PLEASANT RIDGE GAZETTE — AUTOMATED GROCERY PROCUREMENT SWEEP
+====================================================================
+
+[1/3] Pulling Fort Leavenworth Commissary (Store 5878)...
+  + ground_beef: 80% Lean Ground Beef -> $4.00
+  + eggs_dozen: Cal-Maine Sunups Grade A Large White Eggs 12 ct tray -> $1.37
+  + whole_milk: Hiland Vitamin D Milk 1 gal jug -> $4.88
+  + russet_potatoes: Russet Potatoes 5 lb bag -> $1.50
+  + sandwich_bread: Freedom's Choice White Bread, 20 Oz -> $1.35
+
+[2/3] Pulling Dillons Leavenworth (Kroger Calypso)...
+  - ground_beef: Preserving verified shelf baseline
+  + eggs_dozen: Kroger® Extra Large White Eggs -> $1.99
+  + whole_milk: Kroger® Vitamin D Whole Milk Gallon -> $2.99
+  - russet_potatoes: Preserving verified shelf baseline
+  - sandwich_bread: Preserving verified shelf baseline
+
+[3/3] Pulling Price Chopper Leavenworth (Store #61 & Circular)...
+  Found 5 active circular ads for Leavenworth Store #61
+
+[*] Pulling ALDI Leavenworth (66048 Feed)...
+
+[*] Pulling Walmart Supercenter Leavenworth (66048 Feed)...
+[SAVED] G:\My Drive\pleasant-ridge-gazette-public\data\groceries.json
+[SAVED] G:\My Drive\pleasant-ridge-gazette-public\data\groceries.json
+[SAVED] G:\My Drive\pleasant-ridge-gazette-public\data\groceries.js
+[SAVED] G:\My Drive\pleasant-ridge-gazette-public\data\groceries.js
+
+[SUCCESS] Automated multi-store grocery sweep complete!
+====================================================================
+
+[2/3] Publishing to GitHub Pages...
+
+[3/3] Publishing to Vercel...
+
+========================================================
+[SUCCESS] Civic Gazette published with zero private dependencies!
+========================================================
+[Sat 10/24/2026 15:00:02.32] Redirecting sweep to clean civic edition... 
+========================================================
+  REFRESHING CIVIC PRICE FEEDS 
+'DEPLOYING' is not recognized as an internal or external command,
+operable program or batch file.
+  1. Military/Gov Mirror: https://jcaba-creator.github.io/pleasant-ridge-gazette/
+  2. Civilian Mobile:    https://pleasant-ridge-gazette-public.vercel.app
+========================================================
+
+[1/3] Scraping latest corridor fuel and grocery benchmarks...
+[15:00:03] Connecting to live corridor feed...
+  * Sunoco                   : $3.83 (live)
+  * Murphy USA (Walmart)     : $3.84 (live)
+  * AAFES Express            : $3.87 (live)
+  * QuikTrip                 : $3.87 (live)
+  * Dillons Fuel Center      : $3.87 (live)
+  * 7-Eleven                 : $3.85 (live)
+  * Casey's General Store    : $3.87 (live)
+  * Casey's                  : $3.87 (live)
+  * BP / Amoco               : $3.87 (live)
+  * Cenex                    : $3.87 (live)
+  * Fav Trip                 : $3.89 (est)
+  * Hilltop Market / 66      : $3.86 (live)
+  * Sam's Club Fuel          : $3.93 (live)
+  * Shell                    : $3.99 (live)
+
+[SUCCESS] Corridor feed generated! Cheapest: Sunoco at $3.83/gal (Saves $2.40 per 15-gal tank).
+====================================================================
+  THE PLEASANT RIDGE GAZETTE — AUTOMATED GROCERY PROCUREMENT SWEEP
+====================================================================
+
+[1/3] Pulling Fort Leavenworth Commissary (Store 5878)...
+  + ground_beef: 80% Lean Ground Beef -> $4.00
+  + eggs_dozen: Cal-Maine Sunups Grade A Large White Eggs 12 ct tray -> $1.37
+  + whole_milk: Hiland Vitamin D Milk 1 gal jug -> $4.88
+  + russet_potatoes: Russet Potatoes 5 lb bag -> $1.50
+  + sandwich_bread: Freedom's Choice White Bread, 20 Oz -> $1.35
+
+[2/3] Pulling Dillons Leavenworth (Kroger Calypso)...
+  - ground_beef: Preserving verified shelf baseline
+  + eggs_dozen: Kroger® Extra Large White Eggs -> $1.99
+  + whole_milk: Kroger® Vitamin D Whole Milk Gallon -> $2.99
+  - russet_potatoes: Preserving verified shelf baseline
+  - sandwich_bread: Preserving verified shelf baseline
+
+[3/3] Pulling Price Chopper Leavenworth (Store #61 & Circular)...
+  Found 5 active circular ads for Leavenworth Store #61
+
+[*] Pulling ALDI Leavenworth (66048 Feed)...
+
+[*] Pulling Walmart Supercenter Leavenworth (66048 Feed)...
+[SAVED] G:\My Drive\pleasant-ridge-gazette-public\data\groceries.json
+[SAVED] G:\My Drive\pleasant-ridge-gazette-public\data\groceries.json
+[SAVED] G:\My Drive\pleasant-ridge-gazette-public\data\groceries.js
+[SAVED] G:\My Drive\pleasant-ridge-gazette-public\data\groceries.js
+
+[SUCCESS] Automated multi-store grocery sweep complete!
+====================================================================
+
+[2/3] Publishing to GitHub Pages...
+
+[3/3] Publishing to Vercel...
+
+========================================================
+[SUCCESS] Civic Gazette published with zero private dependencies!
+========================================================

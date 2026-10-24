@@ -1647,6 +1647,239 @@
       background: #333333;
     }
 
+    /* VENUE INTELLIGENCE: DAYS OPEN, OFFERINGS, MENU & SPECIALS */
+    .venue-days-open-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #d97706;
+      border-radius: 2px;
+      padding: 3px 8px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+    }
+
+    .venue-hours-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 12px;
+      color: var(--ink);
+      line-height: 1.4;
+      background: #fdfaf5;
+      border: 1px solid #e2d9cc;
+      border-radius: 2px;
+      padding: 6px 10px;
+    }
+
+    .venue-offerings-box {
+      margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .venue-section-label {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 10.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .venue-offerings-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    .venue-offering-tag {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      color: #1e293b;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 2px;
+    }
+
+    /* MENU BOARD */
+    .venue-menu-box {
+      background: #fcfbf9;
+      border: 1px solid #d8cfc4;
+      border-left: 3px solid #0f766e;
+      border-radius: 2px;
+      padding: 10px 12px;
+      margin-top: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .venue-menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      border-bottom: 1px dashed #cbd5e1;
+      padding-bottom: 5px;
+    }
+    .venue-menu-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #0f766e;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .venue-menu-updated {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 10px;
+      color: #64748b;
+      font-style: italic;
+    }
+    .venue-menu-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .venue-menu-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding-bottom: 5px;
+      border-bottom: 1px dotted #e2e8f0;
+    }
+    .venue-menu-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .venue-item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .venue-item-name {
+      font-family: 'Newsreader', serif;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .venue-item-badge {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 9.5px;
+      font-weight: 700;
+      background: #e0f2fe;
+      color: #0369a1;
+      border: 1px solid #bae6fd;
+      padding: 1px 5px;
+      border-radius: 2px;
+      margin-left: 6px;
+      text-transform: uppercase;
+    }
+    .venue-item-price {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 800;
+      color: #065f46;
+      white-space: nowrap;
+    }
+    .venue-item-desc {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      color: #475569;
+      line-height: 1.35;
+    }
+
+    /* SPECIAL EVENTS & DEALS CALLOUT */
+    .venue-specials-box {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-left: 3px solid #d97706;
+      border-radius: 2px;
+      padding: 10px 12px;
+      margin-top: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .venue-specials-header {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #b45309;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      border-bottom: 1px dashed #fde68a;
+      padding-bottom: 4px;
+    }
+    .venue-specials-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .venue-special-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding-bottom: 5px;
+      border-bottom: 1px dotted #fef3c7;
+    }
+    .venue-special-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .venue-special-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .venue-special-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      color: #78350f;
+    }
+    .venue-special-badge {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 9.5px;
+      font-weight: 800;
+      background: #fef08a;
+      color: #854d0e;
+      border: 1px solid #facc15;
+      padding: 1px 6px;
+      border-radius: 2px;
+      text-transform: uppercase;
+    }
+    .venue-special-schedule {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      color: #92400e;
+    }
+    .venue-special-desc {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      color: #713f12;
+      line-height: 1.35;
+    }
+
     /* 6. CORRIDOR INFRASTRUCTURE ATLAS (ANCHORS & STITCHES) */
     .nodes-section-wrapper {
       margin-top: 36px;
@@ -2658,22 +2891,27 @@
                 <span>All Sectors</span>
                 <span class="pill-count" id="secCountAll">12</span>
               </button>
+
               <button type="button" class="node-filter-pill" id="secBtnRidge" onclick="filterNodesBySector('Ridge-449')">
                 <span>🌾 The Ridge (Easton / 449)</span>
                 <span class="pill-count" id="secCountRidge">3</span>
               </button>
+
               <button type="button" class="node-filter-pill" id="secBtnPost" onclick="filterNodesBySector('Post-FtL')">
                 <span>🎖️ Fort Leavenworth (Post)</span>
                 <span class="pill-count" id="secCountPost">4</span>
               </button>
+
               <button type="button" class="node-filter-pill" id="secBtnRiver" onclick="filterNodesBySector('River-Downtown')">
                 <span>🌊 Downtown &amp; Riverfront</span>
                 <span class="pill-count" id="secCountRiver">3</span>
               </button>
+
               <button type="button" class="node-filter-pill" id="secBtnSouth" onclick="filterNodesBySector('South-Lansing')">
                 <span>🚜 South Corridor (Lansing)</span>
                 <span class="pill-count" id="secCountSouth">2</span>
               </button>
+
             </div>
 
             <!-- Role Filter -->
@@ -2683,14 +2921,17 @@
                 <span>All Roles</span>
                 <span class="pill-count" id="roleCountAll">12</span>
               </button>
+
               <button type="button" class="node-filter-pill" id="roleBtnAnchor" onclick="filterNodesByRole('Anchor')">
                 <span>⚓ Anchors (Core Hubs)</span>
                 <span class="pill-count" id="roleCountAnchor">6</span>
               </button>
+
               <button type="button" class="node-filter-pill" id="roleBtnStitch" onclick="filterNodesByRole('Stitch')">
                 <span>🧵 Stitches (Local Stops)</span>
                 <span class="pill-count" id="roleCountStitch">6</span>
               </button>
+
             </div>
           </div>
 
@@ -3670,6 +3911,9 @@
         const t = it.transitFromPres || {};
         const tg = it.timeGate || {};
         const loc = it.location || {};
+        const offerings = it.offerings || [];
+        const menuDetails = it.menu_details || null;
+        const specialEvents = it.special_events || [];
 
         const catLabels = {
           family_kids: '👨‍👩‍👧‍👦 Family & Kids',
@@ -3721,7 +3965,10 @@
                   <span class="cost-tier-pill ${costPillClass}">${escapeHtml(c.tier || 'Standard')}</span>
                 </div>
               </div>
-              <div class="recon-date-strip" style="margin-top: 8px;">
+              <div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 8px;">
+                <span class="venue-days-open-badge">🗓️ <strong>Days Open:</strong> ${escapeHtml(it.days_open || 'See Schedule Below')}</span>
+              </div>
+              <div class="recon-date-strip" style="margin-top: 6px;">
                 <span>📅</span>
                 <span>${escapeHtml(it.dateDisplay || 'Dates Active in Horizon')}</span>
               </div>
@@ -3743,7 +3990,7 @@
             <!-- 4. DETAILS MATRIX: Hours & Window + Cost Reality -->
             <div class="details-matrix-box">
               <div class="details-matrix-row">
-                <span class="details-row-label">Hours &amp; Window:</span>
+                <span class="details-row-label">⏰ Hours &amp; Operating Window:</span>
                 <span class="details-row-val">${escapeHtml(tg.hours || 'Standard Hours')}${tg.cutoffWarning ? ` — <strong class="cutoff-bold">⚠️ ${escapeHtml(tg.cutoffWarning)}</strong>` : ''}</span>
               </div>
               <div class="details-matrix-row">
@@ -3755,14 +4002,69 @@
               </div>
             </div>
 
-            <!-- 5. CARD FOOTER: Address with click-to-copy button + Source Link + External Link -->
+            <!-- 5. WHAT THEY OFFER -->
+            ${offerings && offerings.length > 0 ? `
+              <div class="venue-offerings-box">
+                <span class="venue-section-label">✨ What They Offer:</span>
+                <div class="venue-offerings-strip">
+                  ${offerings.map(o => `<span class="venue-offering-tag">${escapeHtml(o)}</span>`).join('')}
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- 6. MENU DETAILS (UPDATED PERIODICALLY) -->
+            ${menuDetails && menuDetails.items && menuDetails.items.length > 0 ? `
+              <div class="venue-menu-box">
+                <div class="venue-menu-header">
+                  <span class="venue-menu-title">📋 ${escapeHtml(menuDetails.season_label || 'Menu & Staples (Updated Periodically)')}</span>
+                  <span class="venue-menu-updated">Fresh Fall 2026</span>
+                </div>
+                <div class="venue-menu-grid">
+                  ${menuDetails.items.map(m => `
+                    <div class="venue-menu-item">
+                      <div class="venue-item-top">
+                        <div>
+                          <span class="venue-item-name">${escapeHtml(m.name)}</span>
+                          ${m.badge ? `<span class="venue-item-badge">${escapeHtml(m.badge)}</span>` : ''}
+                        </div>
+                        <span class="venue-item-price">${escapeHtml(m.price)}</span>
+                      </div>
+                      ${m.description ? `<div class="venue-item-desc">${escapeHtml(m.description)}</div>` : ''}
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- 7. UPCOMING SPECIAL EVENTS & DEALS -->
+            ${specialEvents && specialEvents.length > 0 ? `
+              <div class="venue-specials-box">
+                <div class="venue-specials-header">
+                  <span>⭐ Upcoming Special Events &amp; Deals:</span>
+                </div>
+                <div class="venue-specials-list">
+                  ${specialEvents.map(ev => `
+                    <div class="venue-special-item">
+                      <div class="venue-special-title-row">
+                        <span class="venue-special-title">${escapeHtml(ev.title)}</span>
+                        ${ev.badge ? `<span class="venue-special-badge">${escapeHtml(ev.badge)}</span>` : ''}
+                      </div>
+                      <div class="venue-special-schedule">🕒 ${escapeHtml(ev.schedule)}</div>
+                      <div class="venue-special-desc">${escapeHtml(ev.details || ev.description || '')}</div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- 8. CARD FOOTER: Address with click-to-copy button + Source Link + External Link -->
             <div class="recon-card-footer">
               ${loc.address ? `
                 <button type="button" class="copy-chip-btn" data-copy-text="${escapeAttr(loc.address)}" onclick="copyToClipboardFeedback(this, this.getAttribute('data-copy-text'))" title="Click to copy address">
                   <span class="copy-icon">📋</span>
                   <span>${escapeHtml(loc.address)}</span>
                   <span class="copy-btn-tag">Copy Address</span>
-                </button>
+  
               ` : ''}
 
               <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
@@ -3925,6 +4227,11 @@
         const roleBadgeClass = isAnchor ? 'badge-anchor' : 'badge-stitch';
         const roleIcon = isAnchor ? '⚓' : '🧵';
         const sectorName = getSectorDisplayName(node.sector);
+        const offerings = node.offerings || node.features || [];
+        const menuDetails = node.menu_details || null;
+        const specialEvents = node.special_events || [];
+        const daysOpenText = node.days_open || 'Open Weekly';
+        const mapsUrl = node.mapsUrl || (node.location ? `https://maps.google.com/?q=${encodeURIComponent(node.location)}` : '');
 
         return `
           <div class="node-card ${isAnchor ? 'role-anchor' : 'role-stitch'}">
@@ -3940,19 +4247,28 @@
               </div>
             </div>
 
-            <div class="node-location-row">
-              <span class="node-address-text">📍 ${escapeHtml(node.location)}</span>
-              <button type="button" class="node-copy-btn" onclick="copyToClipboardFeedback(this, '${escapeHtml(node.location)}')">
-                📋 Copy
-              </button>
+            <!-- DAYS OPEN & HOURS -->
+            <div style="display: flex; flex-direction: column; gap: 6px; margin: 4px 0;">
+              <div>
+                <span class="venue-days-open-badge">🗓️ <strong>Days Open:</strong> ${escapeHtml(daysOpenText)}</span>
+              </div>
+              ${node.hours_note ? `
+                <div class="venue-hours-row">
+                  <span>⏰</span> <span><strong>Hours:</strong> ${escapeHtml(node.hours_note)}</span>
+                </div>
+              ` : ''}
             </div>
 
-            ${node.hours_note ? `
-              <div class="node-hours">
-                <span>⏰</span>
-                <span><strong>Hours:</strong> ${escapeHtml(node.hours_note)}</span>
+            <!-- LOCATION ROW -->
+            <div class="node-location-row" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+              <span class="node-address-text" style="font-size: 12px; font-weight: 600; color: #1e293b;">📍 ${escapeHtml(node.location)}</span>
+              <div style="display: flex; gap: 6px;">
+                <button type="button" class="node-copy-btn" onclick="copyToClipboardFeedback(this, '${escapeAttr(node.location)}')">
+                  📋 Copy
+                </button>
+                ${mapsUrl ? `<a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" class="node-copy-btn" style="text-decoration: none; color: inherit;">🗺️ Maps ↗</a>` : ''}
               </div>
-            ` : ''}
+            </div>
 
             ${node.family_note ? `
               <div class="node-family-note">
@@ -3960,24 +4276,71 @@
               </div>
             ` : ''}
 
-            ${node.features && Array.isArray(node.features) ? `
-              <div class="node-features" style="display: flex; flex-wrap: wrap; gap: 4px; margin: 8px 0;">
-                ${node.features.map(f => `<span class="feature-pill" style="background: #f1f5f9; border: 1px solid #cbd5e1; font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 2px; color: #1e293b;">${escapeHtml(f)}</span>`).join('')}
+            <!-- WHAT THEY OFFER -->
+            ${offerings && offerings.length > 0 ? `
+              <div class="venue-offerings-box">
+                <span class="venue-section-label">✨ What They Offer:</span>
+                <div class="venue-offerings-strip">
+                  ${offerings.map(f => `<span class="venue-offering-tag">${escapeHtml(f)}</span>`).join('')}
+                </div>
               </div>
             ` : ''}
 
-            ${node.weekly_events && Array.isArray(node.weekly_events) ? `
+            <!-- MENU DETAILS (UPDATED PERIODICALLY) -->
+            ${menuDetails && menuDetails.items && menuDetails.items.length > 0 ? `
+              <div class="venue-menu-box">
+                <div class="venue-menu-header">
+                  <span class="venue-menu-title">📋 ${escapeHtml(menuDetails.season_label || 'Menu & Staples (Updated Periodically)')}</span>
+                  <span class="venue-menu-updated">Active</span>
+                </div>
+                <div class="venue-menu-grid">
+                  ${menuDetails.items.map(m => `
+                    <div class="venue-menu-item">
+                      <div class="venue-item-top">
+                        <div>
+                          <span class="venue-item-name">${escapeHtml(m.name)}</span>
+                          ${m.badge ? `<span class="venue-item-badge">${escapeHtml(m.badge)}</span>` : ''}
+                        </div>
+                        <span class="venue-item-price">${escapeHtml(m.price)}</span>
+                      </div>
+                      ${m.description ? `<div class="venue-item-desc">${escapeHtml(m.description)}</div>` : ''}
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- UPCOMING SPECIAL EVENTS & DEALS -->
+            ${specialEvents && specialEvents.length > 0 ? `
+              <div class="venue-specials-box">
+                <div class="venue-specials-header">
+                  <span>⭐ Upcoming Special Events &amp; Deals:</span>
+                </div>
+                <div class="venue-specials-list">
+                  ${specialEvents.map(ev => `
+                    <div class="venue-special-item">
+                      <div class="venue-special-title-row">
+                        <span class="venue-special-title">${escapeHtml(ev.title)}</span>
+                        ${ev.badge ? `<span class="venue-special-badge">${escapeHtml(ev.badge)}</span>` : ''}
+                      </div>
+                      <div class="venue-special-schedule">🕒 ${escapeHtml(ev.schedule)}</div>
+                      <div class="venue-special-desc">${escapeHtml(ev.details || ev.description || '')}</div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            ` : (node.weekly_events && Array.isArray(node.weekly_events) ? `
               <div class="node-weekly-events" style="background: #f8fafc; border-left: 3px solid #2563eb; padding: 6px 10px; margin: 8px 0; font-size: 11px;">
                 <strong style="color: #1e3a8a;">🗓️ Weekly Specialty Events:</strong>
                 <ul style="margin: 4px 0 0 16px; padding: 0; color: #334155;">
                   ${node.weekly_events.map(ev => `<li>${escapeHtml(ev)}</li>`).join('')}
                 </ul>
               </div>
-            ` : ''}
+            ` : '')}
 
             <div class="node-card-footer">
               <span class="node-sector-tag">${escapeHtml(sectorName)}</span>
-              <a href="${item.source_url}" target="_blank" class="source-link">🔗 Source: ${item.source_label}</a>
+              ${node.source_url ? `<a href="${node.source_url}" target="_blank" rel="noopener noreferrer" class="source-link">🔗 Source: ${escapeHtml(node.source_label || 'Official Source')}</a>` : ''}
             </div>
           </div>
         `;

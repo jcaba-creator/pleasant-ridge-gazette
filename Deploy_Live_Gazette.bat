@@ -35,14 +35,14 @@ if not exist "%~dp0public\ops" mkdir "%~dp0public\ops"
 xcopy /Y /Q /E "%~dp0ops\*.*" "%~dp0public\ops\" >nul 2>&1
 
 echo.
-echo [3/4] Publishing to live web on Vercel...
-vercel deploy --prod --yes --scope billow-and-breeze "%~dp0."
+echo [3/4] [DISARMED] Cloud publishing disabled to protect private data.
+rem vercel deploy --prod --yes --scope billow-and-breeze "%~dp0."
 
 echo.
-echo [4/4] Publishing dual mirror to GitHub Pages (Government / Military Unblocked)...
-git add -A
-git commit -m "Auto-deploy corridor sweep and updates" >nul 2>&1
-git push origin main >nul 2>&1
+echo [4/4] [DISARMED] GitHub mirror disabled.
+rem git add -A
+rem git commit -m "Auto-deploy corridor sweep and updates" >nul 2>&1
+rem git push origin main >nul 2>&1
 
 echo.
 echo ========================================================

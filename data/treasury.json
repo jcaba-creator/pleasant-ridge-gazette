@@ -1,0 +1,46 @@
+﻿{
+  "system": "Household Treasury & Bounty OS",
+  "version": "1.0.0",
+  "bankerPinHash": "66bac5af2635c2a2ada6bba2d7fc7eeab9b372110708b48af7648a0171168eaa",
+  "operatives": {
+    "op_ldog": {
+      "id": "op_ldog",
+      "callSign": "L-Dog",
+      "rank": "Lead Ranger",
+      "color": "#38bdf8",
+      "avatar": "🐺",
+      "balance": 0.00
+    },
+    "op_rainbow4": {
+      "id": "op_rainbow4",
+      "callSign": "Rainbow-4",
+      "rank": "Tactical Scout",
+      "color": "#ec4899",
+      "avatar": "🌈",
+      "balance": 0.00
+    },
+    "op_peacemaker9": {
+      "id": "op_peacemaker9",
+      "callSign": "Peacemaker 9",
+      "rank": "Sentinel",
+      "color": "#a855f7",
+      "avatar": "⭐",
+      "balance": 0.00
+    }
+  },
+  "bounties": [
+    {
+      "id": "bounty_welcome_01",
+      "title": "Field Deployment & Radio Check",
+      "description": "Log into the Treasury terminal with your operative call-sign and test the alert buzzer.",
+      "amount": 1.00,
+      "targetOperative": "ALL",
+      "status": "OPEN",
+      "claimedBy": null,
+      "createdAt": "2026-10-24T12:00:00.000Z",
+      "completedAt": null
+    }
+  ],
+  "transactions": [],
+  "spendRequests": []
+}
