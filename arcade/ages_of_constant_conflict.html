@@ -1030,7 +1030,7 @@
       { id: 2, name: "Atchison River Barons", hex: "#dc2626", rgb: [220, 38, 38], baseAtk: 1.40, baseDef: 1.15, town: "Atchison", isGang: false, capitalX: 204, capitalY: 34 },
       { id: 3, name: "Oskaloosa Coalition", hex: "#16a34a", rgb: [22, 163, 74], baseAtk: 1.20, baseDef: 1.35, town: "Oskaloosa", isGang: false, capitalX: 38, capitalY: 142 },
       { id: 4, name: "Lansing Ironclad", hex: "#d97706", rgb: [217, 119, 6], baseAtk: 1.25, baseDef: 1.40, town: "Lansing", isGang: false, capitalX: 252, capitalY: 182 },
-      { id: 5, name: "Easton Rangers", hex: "#9333ea", rgb: [147, 51, 234], baseAtk: 1.45, baseDef: 1.10, town: "Easton", isGang: false, capitalX: 132, capitalY: 108 },
+      { id: 5, name: "Easton Rangers", hex: "#9333ea", rgb: [147, 51, 234], baseAtk: 1.40, baseDef: 1.50, town: "Easton", isGang: false, capitalX: 126, capitalY: 108 },
       { id: 6, name: "Tonganoxie Guard", hex: "#0891b2", rgb: [8, 145, 178], baseAtk: 1.15, baseDef: 1.35, town: "Tonganoxie", isGang: false, capitalX: 142, capitalY: 248 }
     ];
 
@@ -1258,11 +1258,16 @@
         const r = 15;
         for (let dy = -r; dy <= r; dy++) {
           for (let dx = -r; dx <= r; dx++) {
-            if (Math.hypot(dx, dy) <= r) {
+            const dist = Math.hypot(dx, dy);
+            if (dist <= r) {
               const x = meta.capitalX + dx;
               const y = meta.capitalY + dy;
               if (x >= 0 && x < W && y >= 0 && y < H) {
                 const idx = y * W + x;
+                if (meta.id === 5 && dist >= 8 && dist <= 14 && state.terrain[idx] !== TERRAIN.RIVER) {
+                  state.terrain[idx] = TERRAIN.FOREST; // Natural timber ridge defense for Easton
+                  state.baseTerrain[idx] = TERRAIN.FOREST;
+                }
                 if (state.terrain[idx] !== TERRAIN.RIVER) {
                   state.owner[idx] = f.id;
                   f.territory++;
@@ -1272,6 +1277,15 @@
           }
         }
       });
+
+      // Pre-span K-92 stone bridge across Stranger Creek near Easton
+      for (let bx = 126; bx <= 138; bx++) {
+        const bIdx = 108 * W + bx;
+        if (state.terrain[bIdx] === TERRAIN.RIVER) {
+          state.terrain[bIdx] = TERRAIN.BRIDGE;
+          state.baseTerrain[bIdx] = TERRAIN.BRIDGE;
+        }
+      }
     }
 
     function spawnOutlawGangs() {
@@ -1791,9 +1805,14 @@
 
           const defForestBonus = targetTerrain === TERRAIN.FOREST ? 0.35 : 0;
           const diseaseDefPenalty = state.epidemic[targetIdx] > 0 ? 0.65 : 1.0;
+          
+          // Capital Seat Last Stand: +40% defense within 16 tiles of capital
+          const distToCap = Math.hypot(nx - defender.capitalX, ny - defender.capitalY);
+          const capitalGarrisonBonus = distToCap <= 16 ? 1.40 : 1.0;
+
           const moraleFactor = (defender.troops < 50 ? 0.65 : 1.0) * (defender.supplyIndex / 100.0) * diseaseDefPenalty;
 
-          const forceDef = defender.baseDef * (1.0 + defElevBonus + defForestBonus) * moraleFactor * rng.range(0.75, 1.25);
+          const forceDef = defender.baseDef * (1.0 + defElevBonus + defForestBonus) * capitalGarrisonBonus * moraleFactor * rng.range(0.75, 1.25);
 
           if (rng.next() > 0.65) {
             spawnSparks(nx, ny, attacker.rgb);
@@ -2331,6 +2350,187 @@
       }
     }
 
+    // --- 10B. POSITIVE CREATIVE POWERS (BLESSINGS & ADVANTAGES) ---
+    // 1. BOUNTEOUS HARVEST: Logistic Growth Surplus (dN/dt = r*N*(1 - N/2K))
+    function triggerBounteousHarvest(cx, cy) {
+      const radius = 26;
+      let totalRecruits = 0;
+      const affectedFactions = new Set();
+
+      for (let dy = -radius; dy <= radius; dy++) {
+        for (let dx = -radius; dx <= radius; dx++) {
+          if (Math.hypot(dx, dy) <= radius) {
+            const tx = cx + dx;
+            const ty = cy + dy;
+            if (tx >= 0 && tx < W && ty >= 0 && ty < H) {
+              const idx = ty * W + tx;
+              state.famine[idx] = 0; // Completely purge famine
+              const o = state.owner[idx];
+              if (o > 0 && state.factions.has(o)) {
+                affectedFactions.add(o);
+                state.supply[idx] = 100;
+              }
+            }
+          }
+        }
+      }
+
+      affectedFactions.forEach(fid => {
+        const f = state.factions.get(fid);
+        f.troops += 160;
+        f.supplyIndex = 100;
+        totalRecruits += 160;
+        if (fid === state.playerFactionId) {
+          state.playerTreasury += 150;
+          updatePlayerHUD();
+        }
+      });
+
+      for (let i = 0; i < 40; i++) {
+        spawnSparks(cx + rng.range(-15, 15), cy + rng.range(-15, 15), [250, 204, 21]);
+      }
+
+      showFlashNotice("🌾 BOUNTEOUS HARVEST: ERADICATED FAMINE & GRANTED +" + (totalRecruits || 160) + " RECRUITS!");
+      renderDynamicTerritoryBuffer();
+      updateRoster();
+      updateMacroCard();
+    }
+
+    // 2. FIELD HOSPITAL & INOCULATION SANCTUARY (SIR Seroconversion)
+    function triggerHospitalCure(cx, cy) {
+      const radius = 28;
+      const affectedFactions = new Set();
+
+      for (let dy = -radius; dy <= radius; dy++) {
+        for (let dx = -radius; dx <= radius; dx++) {
+          if (Math.hypot(dx, dy) <= radius) {
+            const tx = cx + dx;
+            const ty = cy + dy;
+            if (tx >= 0 && tx < W && ty >= 0 && ty < H) {
+              const idx = ty * W + tx;
+              state.epidemic[idx] = 0;       // Purge disease
+              state.contamination[idx] = 0;  // Purge river toxin
+              const o = state.owner[idx];
+              if (o > 0 && state.factions.has(o)) affectedFactions.add(o);
+            }
+          }
+        }
+      }
+
+      affectedFactions.forEach(fid => {
+        const f = state.factions.get(fid);
+        f.troops += 90;
+        f.supplyIndex = 100;
+        if (fid === state.playerFactionId) {
+          state.playerTreasury += 100;
+          updatePlayerHUD();
+        }
+      });
+
+      for (let i = 0; i < 40; i++) {
+        spawnSparks(cx + rng.range(-14, 14), cy + rng.range(-14, 14), [56, 189, 248]);
+      }
+
+      showFlashNotice('🏥 INOCULATION SANCTUARY: PURGED EPIDEMICS & RESTORED MORALE!');
+      renderDynamicTerritoryBuffer();
+      updateRoster();
+      updateMacroCard();
+    }
+
+    // 3. INDUSTRIAL SUPPLY AIRDROP (Max-Flow Logistical Injection)
+    function triggerSupplyAirdrop(cx, cy) {
+      const tile = cy * W + cx;
+      const ownerId = state.owner[tile] || state.selectedFactionId || state.playerFactionId || 1;
+      const f = state.factions.get(ownerId);
+
+      if (f && f.alive) {
+        f.troops += 140;
+        f.supplyIndex = 100;
+        f.offensiveBonus = Math.max(f.offensiveBonus, 1.8);
+        if (ownerId === state.playerFactionId) {
+          state.playerTreasury += 200;
+          updatePlayerHUD();
+        }
+
+        for (let i = 0; i < TOTAL_CELLS; i++) {
+          if (state.owner[i] === f.id) {
+            state.supply[i] = 100;
+          }
+        }
+
+        for (let i = 0; i < 45; i++) {
+          spawnSparks(cx + rng.range(-10, 10), cy + rng.range(-10, 10), [251, 146, 60]);
+        }
+
+        showFlashNotice("📦 AIRDROP DELIVERED TO " + f.town.toUpperCase() + ": +140 VETERANS & 100% SUPPLY!");
+        updateRoster();
+        updateMacroCard();
+      } else {
+        showFlashNotice('📦 AIRDROP DROPPED IN UNCLAIMED WILDERNESS (+CACHE)');
+      }
+    }
+
+    // 4. HEROIC RALLY & ADRENALINE BLITZ (Lanchester Force Surge alpha -> 2.5*alpha)
+    function triggerHeroicRally(cx, cy) {
+      const tile = cy * W + cx;
+      const ownerId = state.owner[tile] || state.selectedFactionId || state.playerFactionId || 1;
+      const f = state.factions.get(ownerId);
+
+      if (f && f.alive) {
+        f.offensiveBonus = 3.2;
+        f.baseDef += 0.20;
+        f.troops += 120;
+        f.supplyIndex = 100;
+
+        for (let i = 0; i < 50; i++) {
+          spawnSparks(cx + rng.range(-15, 15), cy + rng.range(-15, 15), [239, 68, 68]);
+        }
+
+        showFlashNotice("⚡ HEROIC RALLY: " + f.name.toUpperCase() + " GRANTED +3.2x COMBAT SURGE!");
+        updateRoster();
+        updateMacroCard();
+      }
+    }
+
+    // 5. BASTION CITADEL & STONE REDOUBTS (Permanent Hardening)
+    function triggerBastionCitadel(cx, cy) {
+      const radius = 10;
+      for (let dy = -radius; dy <= radius; dy++) {
+        for (let dx = -radius; dx <= radius; dx++) {
+          if (Math.hypot(dx, dy) <= radius) {
+            const tx = cx + dx;
+            const ty = cy + dy;
+            if (tx >= 0 && tx < W && ty >= 0 && ty < H) {
+              const idx = ty * W + tx;
+              state.elevation[idx] = Math.min(255, state.elevation[idx] + 55);
+              if (state.terrain[idx] !== TERRAIN.RIVER && state.terrain[idx] !== TERRAIN.BRIDGE) {
+                if (Math.hypot(dx, dy) >= 6) {
+                  state.terrain[idx] = TERRAIN.FOREST;
+                  state.baseTerrain[idx] = TERRAIN.FOREST;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      const nearestSeat = findNearestCountySeat(cx, cy, 15);
+      if (nearestSeat) {
+        nearestSeat.baseDef += 0.30;
+        nearestSeat.troops += 100;
+        showFlashNotice("🛡️ BASTION CITADEL ERECTED AT " + nearestSeat.town.toUpperCase() + " (+0.30 DEFENSE)!");
+      } else {
+        showFlashNotice('🛡️ BASTION FORTRESS ELEVATED ON HIGH GROUND (+DEFENSE)');
+      }
+
+      for (let i = 0; i < 40; i++) {
+        spawnSparks(cx + rng.range(-12, 12), cy + rng.range(-12, 12), [168, 85, 247]);
+      }
+
+      bakeStaticHillshade();
+      renderScene();
+    }
+
     // --- 10. REAL MATHEMATICAL CREATIVE MODE POWERS ---
     function triggerEMP(tx, ty) {
       const radius = 24;
@@ -2685,6 +2885,39 @@
           CREATIVE MODE POWERS (REAL-WORLD MATHEMATICAL MODELS):
         </div>
         
+        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--emerald); font-weight: 800; letter-spacing: 0.5px; margin-bottom: 4px;">
+          🌿 BENEVOLENT POWERS (BLESS, HEAL & ACCELERATE):
+        </div>
+        <div class="creative-grid">
+          <button class="creative-power-btn" data-power="harvest" style="border-color: rgba(52, 211, 153, 0.45);">
+            <div class="power-title"><span style="color: #34d399;">🌾 Bounteous Harvest</span></div>
+            <div class="power-math-desc">K → 2K carrying capacity expansion. Purges famine & grants +160 recruits.</div>
+          </button>
+
+          <button class="creative-power-btn" data-power="hospital" style="border-color: rgba(56, 189, 248, 0.45);">
+            <div class="power-title"><span style="color: #38bdf8;">🏥 Inoculation Sanctuary</span></div>
+            <div class="power-math-desc">dI/dt = -γI seroconversion. Purges SIR disease & river toxins; heals troops.</div>
+          </button>
+
+          <button class="creative-power-btn" data-power="airdrop" style="border-color: rgba(251, 191, 36, 0.45);">
+            <div class="power-title"><span style="color: #fbbf24;">📦 Emergency Airdrop</span></div>
+            <div class="power-math-desc">Graph flow max-injection. Floods 100% supply across pockets & +140 veterans.</div>
+          </button>
+
+          <button class="creative-power-btn" data-power="rally" style="border-color: rgba(244, 63, 94, 0.45);">
+            <div class="power-title"><span style="color: #f43f5e;">⚡ Heroic Adrenaline Blitz</span></div>
+            <div class="power-math-desc">Lanchester force concentration: +3.2x attack surge & decisive break.</div>
+          </button>
+
+          <button class="creative-power-btn" data-power="citadel" style="border-color: rgba(192, 132, 252, 0.45);">
+            <div class="power-title"><span style="color: #c084fc;">🛡️ Bastion Citadel</span></div>
+            <div class="power-math-desc">Permanent structural fortification. +55 elevation, forest ring & +0.30 defense.</div>
+          </button>
+        </div>
+
+        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--rose); font-weight: 800; letter-spacing: 0.5px; margin-top: 12px; margin-bottom: 4px;">
+          ⚡ DISRUPTIVE & TACTICAL POWERS (SHOCK, PENALIZE & CRATER):
+        </div>
         <div class="creative-grid">
           <button class="creative-power-btn" data-power="emp">
             <div class="power-title"><span>⚡ High-Altitude EMP</span></div>
@@ -2782,7 +3015,17 @@
     document.getElementById('sheetHandle').addEventListener('click', closeSheet);
 
     function armCreativePower(power) {
-      if (power === 'emp') {
+      if (power === 'harvest') {
+        setArmedTool('harvest', '🌾 BOUNTEOUS HARVEST: Tap agricultural sector to eradicate famine & grant +160 recruits');
+      } else if (power === 'hospital') {
+        setArmedTool('hospital', '🏥 INOCULATION SANCTUARY: Tap sector to purge epidemics, cleanse toxins & heal morale');
+      } else if (power === 'airdrop') {
+        setArmedTool('airdrop', '📦 INDUSTRIAL AIRDROP: Tap faction territory to restore 100% supply & drop +140 veterans');
+      } else if (power === 'rally') {
+        setArmedTool('rally', '⚡ HEROIC RALLY: Tap faction to unleash +3.2x combat surge & break encirclement');
+      } else if (power === 'citadel') {
+        setArmedTool('citadel', '🛡️ BASTION CITADEL: Tap sector to erect stone redoubts, elevation & +0.30 base defense');
+      } else if (power === 'emp') {
         setArmedTool('emp', '⚡ EMP READY: Tap map to detonate electromagnetic blackout shockwave');
       } else if (power === 'famine') {
         setArmedTool('famine', '🌾 FAMINE READY: Tap agricultural sector to cause Malthusian crop failure');
@@ -3090,7 +3333,27 @@
 
       // Handle Creative Mode Mathematical Powers
       if (state.activeTool) {
-        if (state.activeTool === 'emp') {
+        if (state.activeTool === 'harvest') {
+          triggerBounteousHarvest(tile.x, tile.y);
+          setArmedTool(null);
+          return;
+        } else if (state.activeTool === 'hospital') {
+          triggerHospitalCure(tile.x, tile.y);
+          setArmedTool(null);
+          return;
+        } else if (state.activeTool === 'airdrop') {
+          triggerSupplyAirdrop(tile.x, tile.y);
+          setArmedTool(null);
+          return;
+        } else if (state.activeTool === 'rally') {
+          triggerHeroicRally(tile.x, tile.y);
+          setArmedTool(null);
+          return;
+        } else if (state.activeTool === 'citadel') {
+          triggerBastionCitadel(tile.x, tile.y);
+          setArmedTool(null);
+          return;
+        } else if (state.activeTool === 'emp') {
           triggerEMP(tile.x, tile.y);
           setArmedTool(null);
           return;
