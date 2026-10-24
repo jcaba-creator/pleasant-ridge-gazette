@@ -1,0 +1,21 @@
+{
+  "trailingSlash": true,
+  "rewrites": [
+    { "source": "/conflict", "destination": "/arcade/ages_of_constant_conflict.html" },
+    { "source": "/conflict.html", "destination": "/arcade/ages_of_constant_conflict.html" },
+    { "source": "/arcade/conflict", "destination": "/arcade/ages_of_constant_conflict.html" },
+    { "source": "/conquest", "destination": "/arcade/ages_of_conquest.html" },
+    { "source": "/conquest.html", "destination": "/arcade/ages_of_conquest.html" },
+    { "source": "/arcade/conquest", "destination": "/arcade/ages_of_conquest.html" },
+    { "source": "/sparkle", "destination": "/arcade/sparkle.html" },
+    { "source": "/unicorn", "destination": "/arcade/unicorn.html" },
+    { "source": "/pokeguess", "destination": "/arcade/pokeguess.html" },
+    { "source": "/starfall", "destination": "/arcade/starfall.html" },
+    { "source": "/phonics", "destination": "/arcade/phonics.html" },
+    { "source": "/homestead", "destination": "/arcade/homestead.html" },
+    { "source": "/breaker", "destination": "/arcade/breaker_vault.html" },
+    { "source": "/k9", "destination": "/arcade/project-k9-volt.html" },
+    { "source": "/project-k9-volt", "destination": "/arcade/project-k9-volt.html" },
+    { "source": "/telemetry.js", "destination": "/arcade/telemetry.js" }
+  ]
+}

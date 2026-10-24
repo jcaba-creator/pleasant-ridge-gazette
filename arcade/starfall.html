@@ -161,7 +161,7 @@
         mode = 'multiplication';
         targetNumber = [10, 12, 15, 16, 20, 24, 30][Math.floor(Math.random() * 7)];
       }
-      document.getElementById('target-display').textContent = `Target: ${targetNumber}`;
+      const targetEl = document.getElementById('target-val'); if (targetEl) targetEl.textContent = targetNumber;
       if (window.GazetteTelemetry) {
         window.GazetteTelemetry.track('starfall_sector_select', { sector: sec, mode: mode, target: targetNumber });
       }
