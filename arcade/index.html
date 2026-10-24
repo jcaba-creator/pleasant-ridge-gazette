@@ -422,6 +422,35 @@
       color: #38bdf8;
       border: 2px solid #38bdf8;
     }
+    
+    .plate-black-sky {
+      background-color: #0b0f19;
+      background-image: radial-gradient(#f59e0b 0.85px, transparent 0.85px);
+      background-size: 14px 14px;
+    }
+    .plate-stamp-black-sky {
+      border: 2px solid #f59e0b;
+      color: #f59e0b;
+      background: rgba(11, 15, 25, 0.9);
+      padding: 6px 14px;
+      font-weight: 900;
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      box-shadow: 3px 3px 0px #000;
+      user-select: none;
+    }
+    .btn-black-sky {
+      background: #0f172a;
+      color: #f59e0b;
+      border: 2px solid #f59e0b;
+    }
+    .btn-black-sky:hover {
+      background: #f59e0b;
+      color: #0b0f19;
+      font-weight: 800;
+    }
+
     .btn-constant-conflict:hover {
       background: #1e293b;
       color: #ffffff;
@@ -622,46 +651,6 @@
         </div>
       </article>
 
-      <!-- Card 10: Ages of Constant Conflict: Regional Conflict -->
-      <article class="flashcard">
-        <div class="card-header-strip">
-          <span class="card-plate-no">Plate X &bull; Topographic Wargame (300x300)</span>
-          <span class="card-category" style="color: #38bdf8; border-color: #38bdf8;">90k Cells &bull; Hillshade Engine</span>
-        </div>
-        <div class="card-plate plate-constant-conflict">
-          <div class="plate-stamp plate-stamp-constant-conflict">⚔️ CONFLICT (300x300)</div>
-        </div>
-        <div class="card-body">
-          <div class="card-info">
-            <h2 class="card-title">Ages of Constant Conflict: Regional Conflict</h2>
-            <p class="card-desc">High-performance 90,000-cell topographic military simulation. 3-canvas rendering pipeline with baked hillshade, cellular supply line diffusion, elevation slope penalties, river chokepoints, and frontline combat sparks.</p>
-          </div>
-          <a href="/arcade/ages_of_constant_conflict.html" onclick="if(window.GazetteTelemetry)window.GazetteTelemetry.track('game_launch',{game:'constant_conflict'});" class="btn-action btn-constant-conflict">
-            Deploy Tactical Grid (300x300) &rarr;
-          </a>
-        </div>
-      </article>
-
-      <!-- Card 9: Ages of Conquest (Grand Strategy & Geopolitical Sandbox) -->
-      <article class="flashcard">
-        <div class="card-header-strip">
-          <span class="card-plate-no">Plate IX &bull; Grand Sandbox Simulator</span>
-          <span class="card-category" style="color: #0284c7; border-color: #0284c7;">Strategy &amp; Diplomacy</span>
-        </div>
-        <div class="card-plate plate-conquest">
-          <div class="plate-stamp plate-stamp-conquest">⚔️ CONQUEST</div>
-        </div>
-        <div class="card-body">
-          <div class="card-info">
-            <h2 class="card-title">Ages of Conquest: Sandbox Simulator</h2>
-            <p class="card-desc">Procedural geopolitical wargame and world simulator. Command sovereign nations, forge strategic alliances, manage economies, or wield omnipotent God powers across dynamic continents.</p>
-          </div>
-          <a href="/arcade/ages_of_conquest.html" onclick="if(window.GazetteTelemetry)window.GazetteTelemetry.track('game_launch',{game:'ages_of_conquest'});" class="btn-action btn-conquest">
-            Launch Sandbox Simulation &rarr;
-          </a>
-        </div>
-      </article>
-
       <!-- Card 8: Project K9-Volt (16-Level Cyber-Corgi Platformer) -->
       <article class="flashcard">
         <div class="card-header-strip">
@@ -669,7 +658,7 @@
           <span class="card-category" style="color: #0284c7; border-color: #0284c7;">Mach-Bark Active</span>
         </div>
         <div class="card-plate plate-k9">
-          <div class="plate-stamp plate-stamp-k9">⚡ K9-VOLT</div>
+          <div class="plate-stamp plate-stamp-k9">&#9889; K9-VOLT</div>
         </div>
         <div class="card-body">
           <div class="card-info">
@@ -678,6 +667,50 @@
           </div>
           <a href="/arcade/project-k9-volt.html" onclick="if(window.GazetteTelemetry)window.GazetteTelemetry.track('game_launch',{game:'k9_volt'});" class="btn-action btn-k9">
             Launch Mission (16 Levels) &rarr;
+          </a>
+        </div>
+      </article>
+
+      <!-- Card 9: Ages of Constant Conflict: Regional Conflict (REVISED) -->
+      <article class="flashcard">
+        <div class="card-header-strip">
+          <span class="card-plate-no">Plate IX &bull; Topographic Wargame (300x300)</span>
+          <span class="card-category" style="color: #38bdf8; border-color: #38bdf8;">90k Cells &bull; Seasons &bull; Creative Mode</span>
+        </div>
+        <div class="card-plate plate-constant-conflict">
+          <div class="plate-stamp plate-stamp-constant-conflict">&#9876; CONFLICT (REVISED)</div>
+        </div>
+        <div class="card-body">
+          <div class="card-info">
+            <h2 class="card-title">Ages of Constant Conflict: Regional Conflict</h2>
+            <p class="card-desc">High-performance 90,000-cell topographic military simulation across the Leavenworth &amp; Stranger Creek watershed. Features 3-canvas rendering, 4 seasonal campaign cycles, rebalanced Easton Rangers survival, highway supply surges, and 9 Creative Mode tactical powers.</p>
+          </div>
+          <a href="/arcade/ages_of_constant_conflict.html" onclick="if(window.GazetteTelemetry)window.GazetteTelemetry.track('game_launch',{game:'constant_conflict'});" class="btn-action btn-constant-conflict">
+            Deploy Tactical Grid (300x300) &rarr;
+          </a>
+        </div>
+      </article>
+
+      <!-- Card 10: Black Sky: Leavenworth (Civil Defense & EMP Crisis Strategy) -->
+      <article class="flashcard">
+        <div class="card-header-strip">
+          <span class="card-plate-no">Plate X &bull; Civil Defense &amp; EMP Strategy</span>
+          <span class="card-category" style="color: #f59e0b; border-color: #f59e0b;">HEMP Co-Simulation &bull; 2 Phases</span>
+        </div>
+        <div class="card-plate plate-black-sky">
+          <div class="plate-stamp plate-stamp-black-sky">&#9889; BLACK SKY: LEAVENWORTH</div>
+        </div>
+        <div class="card-body">
+          <div class="card-info">
+            <h2 class="card-title">Black Sky: Leavenworth</h2>
+            <p class="card-desc">Two-phase civil defense &amp; critical infrastructure survival strategy game. Balance political friction and capital allocations in peacetime (Months -36 to 0), then maintain life support, caloric rationing, and thermal stability across USP Leavenworth during a 365-day nationwide grid collapse.</p>
+            <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; font-size: 11px;">
+              <a href="/arcade/phase1_dashboard.html" style="color: var(--muted); text-decoration: underline;">&bull; Peacetime Policy Sandbox</a>
+              <a href="/arcade/emp_dashboard.html" style="color: var(--muted); text-decoration: underline;">&bull; Post-Attack Telemetry Engine</a>
+            </div>
+          </div>
+          <a href="/arcade/black_sky.html" onclick="if(window.GazetteTelemetry)window.GazetteTelemetry.track('game_launch',{game:'black_sky'});" class="btn-action btn-black-sky">
+            Launch Operation Black Sky &rarr;
           </a>
         </div>
       </article>

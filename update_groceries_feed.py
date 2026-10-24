@@ -18,11 +18,13 @@ import urllib.parse
 from datetime import datetime, timezone
 from curl_cffi import requests
 
-GAZETTE_DIR = r"g:\My Drive\pleasant-ridge-gazette"
+from pathlib import Path
+
+GAZETTE_DIR = str(Path(__file__).resolve().parent)
 DATA_JSON_PATH = os.path.join(GAZETTE_DIR, "data", "groceries.json")
-PUBLIC_DATA_JSON_PATH = os.path.join(GAZETTE_DIR, "public", "data", "groceries.json")
 DATA_JS_PATH = os.path.join(GAZETTE_DIR, "data", "groceries.js")
-PUBLIC_DATA_JS_PATH = os.path.join(GAZETTE_DIR, "public", "data", "groceries.js")
+PUBLIC_DATA_JSON_PATH = DATA_JSON_PATH
+PUBLIC_DATA_JS_PATH = DATA_JS_PATH
 
 # -------------------------------------------------------------
 # 1. COMMISSARY INGESTION (NCR FRESHOP API - STORE 5878)
