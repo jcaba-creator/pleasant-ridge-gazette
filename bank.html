@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>449 Household Treasury & Bounty Board</title>
+  <style>
+    :root {
+      --bg: #070a12;
+      --card-bg: rgba(14, 21, 37, 0.92);
+      --card-border: rgba(56, 189, 248, 0.22);
+      --cyan: #38bdf8;
+      --emerald: #10b981;
+      --rose: #f43f5e;
+      --amber: #f59e0b;
+      --purple: #a855f7;
+      --pink: #ec4899;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 12px 60px 12px;
+      overflow-x: hidden;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+    }
+
+    /* Header Deck */
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 18px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      margin-bottom: 16px;
+      backdrop-filter: blur(12px);
+    }
+
+    .brand-title {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--cyan);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .banker-btn {
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .banker-btn.unlocked {
+      background: #f59e0b;
+      border-color: #f59e0b;
+      color: #000;
+    }
+
+    /* Operative Switcher Tabs */
+    .operative-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .op-tab {
+      background: rgba(14, 21, 37, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 12px 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .op-tab:active {
+      transform: scale(0.97);
+    }
+
+    .op-tab.active {
+      background: rgba(14, 21, 37, 0.95);
+      border-color: var(--active-color, var(--cyan));
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.25);
+    }
+
+    .op-avatar {
+      font-size: 26px;
+      line-height: 1;
+    }
+
+    .op-callsign {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .op-mini-balance {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--emerald);
+    }
+
+    /* Balance Hero Card */
+    .balance-card {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(14, 21, 37, 0.95) 100%);
+      border: 2px solid var(--emerald);
+      border-radius: 18px;
+      padding: 24px 20px;
+      text-align: center;
+      margin-bottom: 20px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .balance-label {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .balance-amount {
+      font-family: var(--font-mono);
+      font-size: clamp(40px, 8.5vw, 56px);
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1.1;
+      letter-spacing: -1px;
+      text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+    }
+
+    .balance-sub {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--emerald);
+      font-weight: 700;
+    }
+
+    /* Section Cards */
+    .card-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 16px;
+      backdrop-filter: blur(12px);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .panel-title {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .panel-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 2px 8px;
+      border-radius: 6px;
+      color: var(--text-muted);
+    }
+
+    /* Bounty List Items */
+    .bounty-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .bounty-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .bounty-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .bounty-name {
+      font-size: 14px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .bounty-payout {
+      font-family: var(--font-mono);
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--emerald);
+      white-space: nowrap;
+    }
+
+    .bounty-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .bounty-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4px;
+    }
+
+    .btn-action {
+      background: var(--cyan);
+      color: #030712;
+      border: none;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-action:active {
+      transform: scale(0.96);
+    }
+
+    .btn-action.claimed {
+      background: var(--amber);
+      color: #000;
+    }
+
+    .btn-action.done {
+      background: var(--emerald);
+      color: #000;
+    }
+
+    .btn-action.danger {
+      background: var(--rose);
+      color: #fff;
+    }
+
+    /* Ledger Ticker */
+    .ledger-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 12px;
+    }
+
+    .ledger-row:last-child {
+      border-bottom: none;
+    }
+
+    .ledger-memo {
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .ledger-meta {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      margin-top: 2px;
+    }
+
+    .ledger-amount {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 800;
+      text-align: right;
+    }
+
+    .ledger-amount.deposit {
+      color: var(--emerald);
+    }
+
+    .ledger-amount.debit {
+      color: var(--rose);
+    }
+
+    /* Banker Deck */
+    .banker-deck {
+      display: none;
+      border: 2px solid var(--amber);
+      background: rgba(24, 18, 9, 0.96);
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .banker-deck.active {
+      display: block;
+    }
+
+    .deck-badge {
+      background: var(--amber);
+      color: #000;
+      font-weight: 900;
+      font-size: 10px;
+      letter-spacing: 1px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      display: block;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-input, .form-select {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: #fff;
+      font-family: var(--font-sans);
+      font-size: 13px;
+    }
+
+    .form-input:focus, .form-select:focus {
+      outline: none;
+      border-color: var(--amber);
+    }
+
+    /* PIN Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 16px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .pin-modal {
+      background: var(--card-bg);
+      border: 2px solid var(--amber);
+      border-radius: 16px;
+      padding: 24px;
+      width: 100%;
+      max-width: 320px;
+      text-align: center;
+    }
+
+    .pin-input {
+      font-family: var(--font-mono);
+      font-size: 28px;
+      letter-spacing: 6px;
+      text-align: center;
+      width: 100%;
+      background: #000;
+      border: 2px solid var(--amber);
+      border-radius: 10px;
+      padding: 10px;
+      color: #fff;
+      margin: 16px 0;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--card-bg);
+      border: 1px solid var(--cyan);
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Header -->
+    <header class="header-bar">
+      <div>
+        <div class="brand-title">🏛️ Household Treasury</div>
+        <div class="brand-sub">449 Field Bounty &amp; Bank OS</div>
+      </div>
+      <button id="btnBankerToggle" class="banker-btn" onclick="toggleBanker()">
+        🔒 Banker Command
+      </button>
+    </header>
+
+    <!-- BANKER COMMAND DECK (Protected by PIN) -->
+    <section id="bankerDeck" class="banker-deck">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <span class="deck-badge">👑 Josh • Master Banker Deck</span>
+        <button onclick="lockBanker()" style="background: none; border: none; color: var(--rose); font-size: 11px; font-weight: 700; cursor: pointer;">
+          Lock Deck ✕
+        </button>
+      </div>
+
+      <!-- Action Tabs within Banker Deck -->
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 16px;">
+        <button onclick="setBankerTab('bounty')" id="btTabBounty" class="btn-action" style="background: var(--amber); color: #000; justify-content: center;">+ Bounty</button>
+        <button onclick="setBankerTab('debit')" id="btTabDebit" class="btn-action" style="background: rgba(255,255,255,0.08); color: #fff; justify-content: center;">Debit / Spend</button>
+        <button onclick="setBankerTab('inspect')" id="btTabInspect" class="btn-action" style="background: rgba(255,255,255,0.08); color: #fff; justify-content: center;">Inspections (<span id="pendingCount">0</span>)</button>
+      </div>
+
+      <!-- Pane 1: Create Bounty -->
+      <div id="paneBounty">
+        <div class="form-group">
+          <label class="form-label">Task Title</label>
+          <input type="text" id="bountyTitle" class="form-input" placeholder="e.g., Detail Truck Bed, Weed Garden Bed #2">
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <div class="form-group">
+            <label class="form-label">Payout Amount ($)</label>
+            <input type="number" id="bountyAmount" class="form-input" step="0.50" min="0.50" placeholder="5.00">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Assigned Operative</label>
+            <select id="bountyTarget" class="form-select">
+              <option value="ALL">Open to All Operatives</option>
+              <option value="op_ldog">L-Dog Only</option>
+              <option value="op_rainbow4">Rainbow-4 Only</option>
+              <option value="op_peacemaker9">Peacemaker 9 Only</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Inspection Acceptance Criteria</label>
+          <input type="text" id="bountyDesc" class="form-input" placeholder="e.g., Swept clean, hose out bedliner, tools in shed.">
+        </div>
+        <button onclick="dispatchBounty()" class="btn-action" style="width: 100%; background: var(--amber); color: #000; justify-content: center; padding: 10px; font-weight: 900;">
+          ⚡ Post On-Demand Bounty
+        </button>
+      </div>
+
+      <!-- Pane 2: Debit / Spend Authorizer -->
+      <div id="paneDebit" style="display: none;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <div class="form-group">
+            <label class="form-label">Operative</label>
+            <select id="debitOperative" class="form-select">
+              <option value="op_ldog">L-Dog</option>
+              <option value="op_rainbow4">Rainbow-4</option>
+              <option value="op_peacemaker9">Peacemaker 9</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Debit Amount ($)</label>
+            <input type="number" id="debitAmount" class="form-input" step="0.25" min="0.25" placeholder="3.50">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Purchase Description / Memo</label>
+          <input type="text" id="debitMemo" class="form-input" placeholder="e.g., Casey's Donut &amp; Soda, Cash withdrawal, LEGO budget">
+        </div>
+        <button onclick="authorizeDebit()" class="btn-action danger" style="width: 100%; justify-content: center; padding: 10px; font-weight: 900;">
+          💳 Deduct from Operative Account
+        </button>
+      </div>
+
+      <!-- Pane 3: Pending Inspections -->
+      <div id="paneInspect" style="display: none;">
+        <div id="inspectList">
+          <div style="font-size: 12px; color: var(--text-muted); text-align: center; padding: 12px;">No tasks currently pending inspection.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Operative Selector Strip -->
+    <div class="operative-tabs">
+      <div class="op-tab active" id="tab_op_ldog" onclick="selectOperative('op_ldog')" style="--active-color: #38bdf8;">
+        <div class="op-avatar">🐺</div>
+        <div class="op-callsign">L-Dog</div>
+        <div class="op-mini-balance" id="mini_op_ldog">$0.00</div>
+      </div>
+      <div class="op-tab" id="tab_op_rainbow4" onclick="selectOperative('op_rainbow4')" style="--active-color: #ec4899;">
+        <div class="op-avatar">🌈</div>
+        <div class="op-callsign">Rainbow-4</div>
+        <div class="op-mini-balance" id="mini_op_rainbow4">$0.00</div>
+      </div>
+      <div class="op-tab" id="tab_op_peacemaker9" onclick="selectOperative('op_peacemaker9')" style="--active-color: #a855f7;">
+        <div class="op-avatar">⭐</div>
+        <div class="op-callsign">Peacemaker 9</div>
+        <div class="op-mini-balance" id="mini_op_peacemaker9">$0.00</div>
+      </div>
+    </div>
+
+    <!-- Active Operative Balance Hero -->
+    <section class="balance-card">
+      <div class="balance-label" id="currentOpTitle">L-DOG • CURRENT BALANCE</div>
+      <div class="balance-amount" id="currentBalanceDisplay">$0.00</div>
+      <div class="balance-sub" id="currentOpRank">Verified Field Bank Funds</div>
+    </section>
+
+    <!-- Operative Active Tasks -->
+    <section class="card-panel" id="panelActiveTasks" style="display: none;">
+      <div class="panel-header">
+        <div class="panel-title">🎯 My Claimed Tasks</div>
+        <span class="panel-badge" id="activeTaskBadge">0 ACTIVE</span>
+      </div>
+      <div id="activeTasksList"></div>
+    </section>
+
+    <!-- On-Demand Bounty Board -->
+    <section class="card-panel">
+      <div class="panel-header">
+        <div class="panel-title">📋 On-Demand Bounty Board</div>
+        <span class="panel-badge" id="openBountiesCount">0 AVAILABLE</span>
+      </div>
+      <div id="bountyListContainer">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- Passbook Transaction Ledger -->
+    <section class="card-panel">
+      <div class="panel-header">
+        <div class="panel-title">📜 Operative Passbook Statement</div>
+        <button onclick="promptSpendRequest()" class="btn-action" style="font-size: 10px; padding: 4px 8px; background: rgba(255,255,255,0.08); color: #fff;">
+          🛍️ Request Spend
+        </button>
+      </div>
+      <div id="ledgerContainer">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+  </div>
+
+  <!-- PIN Entry Modal -->
+  <div id="pinModal" class="modal-overlay">
+    <div class="pin-modal">
+      <div style="font-size: 13px; font-weight: 800; color: var(--amber); text-transform: uppercase; letter-spacing: 1px;">
+        👑 Banker Security Gate
+      </div>
+      <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">
+        Enter Master Authorization PIN
+      </div>
+      <input type="password" id="inputPin" class="pin-input" maxlength="6" inputmode="numeric" placeholder="•••••">
+      <div style="display: flex; gap: 8px;">
+        <button onclick="closePinModal()" class="btn-action" style="flex: 1; justify-content: center; background: rgba(255,255,255,0.1); color: #fff;">Cancel</button>
+        <button onclick="submitPin()" class="btn-action" style="flex: 1; justify-content: center; background: var(--amber); color: #000; font-weight: 900;">Unlock</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">Notice message</div>
+
+  <script>
+    // --- WEB AUDIO SOUND SYNTHESIZER ---
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+    function getAudio() {
+      if (!audioCtx) audioCtx = new AudioCtx();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playSound(type) {
+      try {
+        const ctx = getAudio();
+        const now = ctx.currentTime;
+        if (type === 'payday') {
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+            gain.gain.setValueAtTime(0.2, now + idx * 0.08);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.3);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + idx * 0.08);
+            osc.stop(now + idx * 0.08 + 0.35);
+          });
+        } else if (type === 'click') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.frequency.setValueAtTime(800, now);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.05);
+        } else if (type === 'stamp') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(140, now);
+          osc.frequency.exponentialRampToValueAtTime(40, now + 0.15);
+          gain.gain.setValueAtTime(0.35, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.2);
+        }
+      } catch (e) {}
+    }
+
+    // --- APPLICATION STATE ---
+    let treasury = {
+      operatives: {
+        op_ldog: { id: "op_ldog", callSign: "L-Dog", rank: "Lead Ranger", avatar: "🐺", balance: 0.00 },
+        op_rainbow4: { id: "op_rainbow4", callSign: "Rainbow-4", rank: "Tactical Scout", avatar: "🌈", balance: 0.00 },
+        op_peacemaker9: { id: "op_peacemaker9", callSign: "Peacemaker 9", rank: "Sentinel", avatar: "⭐", balance: 0.00 }
+      },
+      bounties: [],
+      transactions: [],
+      spendRequests: []
+    };
+
+    let activeOpId = 'op_ldog';
+    let bankerPin = sessionStorage.getItem('treasury_banker_pin') || '';
+    let isBankerUnlocked = !!bankerPin;
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'toast show';
+      setTimeout(() => { t.className = 'toast'; }, 3500);
+    }
+
+    // --- OPERATIVE SELECTION ---
+    function selectOperative(id) {
+      activeOpId = id;
+      playSound('click');
+      document.querySelectorAll('.op-tab').forEach(t => t.classList.remove('active'));
+      const activeTab = document.getElementById('tab_' + id);
+      if (activeTab) activeTab.classList.add('active');
+      renderUI();
+    }
+
+    // --- BANKER COMMAND GATING ---
+    function toggleBanker() {
+      if (isBankerUnlocked) {
+        lockBanker();
+      } else {
+        document.getElementById('pinModal').classList.add('active');
+        document.getElementById('inputPin').value = '';
+        setTimeout(() => document.getElementById('inputPin').focus(), 100);
+      }
+    }
+
+    function closePinModal() {
+      document.getElementById('pinModal').classList.remove('active');
+    }
+
+    async function submitPin() {
+      const p = document.getElementById('inputPin').value.trim();
+      if (!p) return;
+      bankerPin = p;
+      sessionStorage.setItem('treasury_banker_pin', p);
+      closePinModal();
+      isBankerUnlocked = true;
+      playSound('stamp');
+      showToast('Banker Command Deck Unlocked.');
+      renderUI();
+    }
+
+    function lockBanker() {
+      isBankerUnlocked = false;
+      bankerPin = '';
+      sessionStorage.removeItem('treasury_banker_pin');
+      playSound('click');
+      showToast('Banker Deck Locked.');
+      renderUI();
+    }
+
+    function setBankerTab(tab) {
+      playSound('click');
+      document.getElementById('paneBounty').style.display = tab === 'bounty' ? 'block' : 'none';
+      document.getElementById('paneDebit').style.display = tab === 'debit' ? 'block' : 'none';
+      document.getElementById('paneInspect').style.display = tab === 'inspect' ? 'block' : 'none';
+
+      document.getElementById('btTabBounty').style.background = tab === 'bounty' ? 'var(--amber)' : 'rgba(255,255,255,0.08)';
+      document.getElementById('btTabBounty').style.color = tab === 'bounty' ? '#000' : '#fff';
+      document.getElementById('btTabDebit').style.background = tab === 'debit' ? 'var(--amber)' : 'rgba(255,255,255,0.08)';
+      document.getElementById('btTabDebit').style.color = tab === 'debit' ? '#000' : '#fff';
+      document.getElementById('btTabInspect').style.background = tab === 'inspect' ? 'var(--amber)' : 'rgba(255,255,255,0.08)';
+      document.getElementById('btTabInspect').style.color = tab === 'inspect' ? '#000' : '#fff';
+    }
+
+    // --- API CLIENT ---
+    async function apiRequest(action, payload = {}) {
+      try {
+        const res = await fetch('/api/bank/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Banker-Pin': bankerPin
+          },
+          body: JSON.stringify({ action, pin: bankerPin, ...payload })
+        });
+        const json = await res.json();
+        if (!json.ok) {
+          showToast('⚠️ ' + (json.error || 'Request failed'));
+          return null;
+        }
+        return json;
+      } catch (err) {
+        showToast('Offline mode / local simulation active.');
+        return null;
+      }
+    }
+
+    async function fetchTreasuryState() {
+      try {
+        const res = await fetch('/api/bank/');
+        if (res.ok) {
+          const json = await res.json();
+          if (json.ok && json.data) {
+            treasury = json.data;
+            renderUI();
+            return;
+          }
+        }
+      } catch (e) {}
+
+      const local = localStorage.getItem('local_household_treasury');
+      if (local) {
+        try { treasury = JSON.parse(local); } catch (e) {}
+      }
+      renderUI();
+    }
+
+    function saveLocalFallback() {
+      localStorage.setItem('local_household_treasury', JSON.stringify(treasury));
+    }
+
+    // --- BANKER ACTIONS ---
+    async function dispatchBounty() {
+      const title = document.getElementById('bountyTitle').value.trim();
+      const amount = parseFloat(document.getElementById('bountyAmount').value) || 0;
+      const targetOperative = document.getElementById('bountyTarget').value;
+      const description = document.getElementById('bountyDesc').value.trim();
+
+      if (!title || amount <= 0) {
+        showToast('⚠️ Title and payout amount required.');
+        return;
+      }
+
+      const res = await apiRequest('CREATE_BOUNTY', { title, amount, targetOperative, description });
+      if (res && res.bounty) {
+        playSound('stamp');
+        showToast('Bounty posted: $' + amount.toFixed(2));
+        document.getElementById('bountyTitle').value = '';
+        document.getElementById('bountyAmount').value = '';
+        document.getElementById('bountyDesc').value = '';
+        fetchTreasuryState();
+      } else {
+        const b = {
+          id: 'b_' + Date.now(),
+          title, amount, targetOperative, description,
+          status: 'OPEN', claimedBy: null, createdAt: new Date().toISOString()
+        };
+        treasury.bounties = treasury.bounties || [];
+        treasury.bounties.unshift(b);
+        saveLocalFallback();
+        playSound('stamp');
+        showToast('Local Bounty Posted: $' + amount.toFixed(2));
+        renderUI();
+      }
+    }
+
+    async function authorizeDebit() {
+      const operativeId = document.getElementById('debitOperative').value;
+      const amount = parseFloat(document.getElementById('debitAmount').value) || 0;
+      const memo = document.getElementById('debitMemo').value.trim() || 'Store Purchase';
+
+      if (amount <= 0) {
+        showToast('⚠️ Positive amount required.');
+        return;
+      }
+
+      const res = await apiRequest('PROCESS_DEBIT', { operativeId, amount, memo });
+      if (res && res.transaction) {
+        playSound('stamp');
+        showToast('Deducted $' + amount.toFixed(2) + ' from ' + treasury.operatives[operativeId].callSign);
+        document.getElementById('debitAmount').value = '';
+        document.getElementById('debitMemo').value = '';
+        fetchTreasuryState();
+      } else {
+        if ((treasury.operatives[operativeId].balance || 0) < amount) {
+          showToast('⚠️ Insufficient balance!');
+          return;
+        }
+        treasury.operatives[operativeId].balance -= amount;
+        treasury.transactions = treasury.transactions || [];
+        treasury.transactions.unshift({
+          id: 'tx_' + Date.now(),
+          operativeId,
+          type: 'DEBIT',
+          amount,
+          memo,
+          timestamp: new Date().toISOString()
+        });
+        saveLocalFallback();
+        playSound('stamp');
+        showToast('Local Debit processed.');
+        renderUI();
+      }
+    }
+
+    async function approveBountyPayout(bountyId) {
+      const res = await apiRequest('APPROVE_BOUNTY', { bountyId });
+      if (res && res.transaction) {
+        playSound('payday');
+        showToast('💰 Bounty Approved! ' + res.message);
+        fetchTreasuryState();
+      } else {
+        const b = (treasury.bounties || []).find(x => x.id === bountyId);
+        if (b && b.claimedBy) {
+          b.status = 'COMPLETED';
+          treasury.operatives[b.claimedBy].balance = (treasury.operatives[b.claimedBy].balance || 0) + b.amount;
+          treasury.transactions = treasury.transactions || [];
+          treasury.transactions.unshift({
+            id: 'tx_' + Date.now(),
+            operativeId: b.claimedBy,
+            type: 'DEPOSIT',
+            amount: b.amount,
+            memo: 'Bounty: ' + b.title,
+            timestamp: new Date().toISOString()
+          });
+          saveLocalFallback();
+          playSound('payday');
+          showToast('💰 Local Bounty Approved! +' + b.amount.toFixed(2));
+          renderUI();
+        }
+      }
+    }
+
+    // --- OPERATIVE ACTIONS ---
+    async function claimBounty(bountyId) {
+      playSound('click');
+      const res = await apiRequest('CLAIM_BOUNTY', { bountyId, operativeId: activeOpId });
+      if (res && res.bounty) {
+        showToast('🎯 Bounty claimed by ' + treasury.operatives[activeOpId].callSign);
+        fetchTreasuryState();
+      } else {
+        const b = (treasury.bounties || []).find(x => x.id === bountyId);
+        if (b) {
+          b.status = 'CLAIMED';
+          b.claimedBy = activeOpId;
+          saveLocalFallback();
+          showToast('🎯 Bounty claimed by ' + treasury.operatives[activeOpId].callSign);
+          renderUI();
+        }
+      }
+    }
+
+    async function submitForInspection(bountyId) {
+      playSound('click');
+      const res = await apiRequest('SUBMIT_INSPECTION', { bountyId, operativeId: activeOpId });
+      if (res) {
+        showToast('📬 Submitted for Banker inspection!');
+        fetchTreasuryState();
+      } else {
+        const b = (treasury.bounties || []).find(x => x.id === bountyId);
+        if (b) {
+          b.status = 'PENDING_INSPECTION';
+          saveLocalFallback();
+          showToast('📬 Submitted for Banker inspection!');
+          renderUI();
+        }
+      }
+    }
+
+    async function promptSpendRequest() {
+      const item = prompt('What would you like to spend your funds on? (e.g., Casey\'s Donut, Cash Out, LEGO set):');
+      if (!item) return;
+      const amtStr = prompt('How much does it cost? ($):');
+      const amount = parseFloat(amtStr) || 0;
+      if (amount <= 0) return;
+
+      const res = await apiRequest('REQUEST_SPEND', { operativeId: activeOpId, item, amount });
+      if (res) {
+        showToast('Spend request submitted to Banker!');
+      } else {
+        treasury.spendRequests = treasury.spendRequests || [];
+        treasury.spendRequests.unshift({
+          id: 'req_' + Date.now(),
+          operativeId: activeOpId,
+          item, amount,
+          status: 'PENDING',
+          requestedAt: new Date().toISOString()
+        });
+        saveLocalFallback();
+        showToast('Spend request saved locally!');
+      }
+    }
+
+    // --- RENDER FUNCTION ---
+    function renderUI() {
+      const bBtn = document.getElementById('btnBankerToggle');
+      const bDeck = document.getElementById('bankerDeck');
+      if (isBankerUnlocked) {
+        bBtn.classList.add('unlocked');
+        bBtn.innerHTML = '👑 Banker Deck (Unlocked)';
+        bDeck.classList.add('active');
+      } else {
+        bBtn.classList.remove('unlocked');
+        bBtn.innerHTML = '🔒 Banker Command';
+        bDeck.classList.remove('active');
+      }
+
+      for (const opId in treasury.operatives) {
+        const op = treasury.operatives[opId];
+        const el = document.getElementById('mini_' + opId);
+        if (el) el.textContent = '$' + (op.balance || 0).toFixed(2);
+      }
+
+      const currentOp = treasury.operatives[activeOpId] || treasury.operatives.op_ldog;
+      document.getElementById('currentOpTitle').textContent = `${currentOp.callSign.toUpperCase()} • CURRENT BALANCE`;
+      document.getElementById('currentBalanceDisplay').textContent = '$' + (currentOp.balance || 0).toFixed(2);
+      document.getElementById('currentOpRank').textContent = `Call Sign: ${currentOp.callSign} • Rank: ${currentOp.rank || 'Operative'}`;
+
+      const openBounties = (treasury.bounties || []).filter(b => b.status === 'OPEN' && (b.targetOperative === 'ALL' || b.targetOperative === activeOpId));
+      document.getElementById('openBountiesCount').textContent = `${openBounties.length} AVAILABLE`;
+
+      const bContainer = document.getElementById('bountyListContainer');
+      if (openBounties.length === 0) {
+        bContainer.innerHTML = '<div style="font-size: 12px; color: var(--text-muted); text-align: center; padding: 16px;">All bounties completed! Check back when the Banker dispatches new tasks.</div>';
+      } else {
+        bContainer.innerHTML = openBounties.map(b => `
+          <div class="bounty-item">
+            <div class="bounty-header">
+              <div class="bounty-name">${escapeHtml(b.title)}</div>
+              <div class="bounty-payout">+$${b.amount.toFixed(2)}</div>
+            </div>
+            ${b.description ? `<div class="bounty-desc">${escapeHtml(b.description)}</div>` : ''}
+            <div class="bounty-footer">
+              <span style="font-size: 10px; color: var(--text-muted); font-family: var(--font-mono);">
+                ${b.targetOperative === 'ALL' ? '⭐ Open to All' : '🔒 Assigned'}
+              </span>
+              <button onclick="claimBounty('${b.id}')" class="btn-action">
+                ✋ Claim Bounty
+              </button>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      const myActive = (treasury.bounties || []).filter(b => (b.status === 'CLAIMED' || b.status === 'PENDING_INSPECTION') && b.claimedBy === activeOpId);
+      const activePanel = document.getElementById('panelActiveTasks');
+      if (myActive.length > 0) {
+        activePanel.style.display = 'block';
+        document.getElementById('activeTaskBadge').textContent = `${myActive.length} IN PROGRESS`;
+        document.getElementById('activeTasksList').innerHTML = myActive.map(b => `
+          <div class="bounty-item" style="border-color: rgba(245, 158, 11, 0.4);">
+            <div class="bounty-header">
+              <div class="bounty-name">🎯 ${escapeHtml(b.title)}</div>
+              <div class="bounty-payout">+$${b.amount.toFixed(2)}</div>
+            </div>
+            ${b.description ? `<div class="bounty-desc">${escapeHtml(b.description)}</div>` : ''}
+            <div class="bounty-footer">
+              <span style="font-size: 11px; font-weight: 700; color: ${b.status === 'PENDING_INSPECTION' ? 'var(--cyan)' : 'var(--amber)'}; font-family: var(--font-mono);">
+                ${b.status === 'PENDING_INSPECTION' ? '⏳ Awaiting Inspection' : '⚙️ Work in Progress'}
+              </span>
+              ${b.status === 'CLAIMED' ? `
+                <button onclick="submitForInspection('${b.id}')" class="btn-action done">
+                  ✓ Mark Done &amp; Request Pay
+                </button>
+              ` : `
+                <span style="font-size: 11px; color: var(--text-muted);">Inspection pending</span>
+              `}
+            </div>
+          </div>
+        `).join('');
+      } else {
+        activePanel.style.display = 'none';
+      }
+
+      const pendingInspections = (treasury.bounties || []).filter(b => b.status === 'PENDING_INSPECTION');
+      document.getElementById('pendingCount').textContent = pendingInspections.length;
+      const inspectList = document.getElementById('inspectList');
+      if (pendingInspections.length === 0) {
+        inspectList.innerHTML = '<div style="font-size: 12px; color: var(--text-muted); text-align: center; padding: 12px;">No tasks currently pending inspection.</div>';
+      } else {
+        inspectList.innerHTML = pendingInspections.map(b => {
+          const op = treasury.operatives[b.claimedBy] || { callSign: 'Operative' };
+          return `
+            <div class="bounty-item" style="border-color: var(--amber); background: rgba(245, 158, 11, 0.08);">
+              <div class="bounty-header">
+                <div>
+                  <div class="bounty-name">${escapeHtml(b.title)}</div>
+                  <div style="font-size: 11px; color: var(--amber); font-weight: 700; margin-top: 2px;">
+                    Claimed by: ${op.avatar || ''} ${op.callSign}
+                  </div>
+                </div>
+                <div class="bounty-payout">+$${b.amount.toFixed(2)}</div>
+              </div>
+              <div class="bounty-footer" style="margin-top: 8px;">
+                <span style="font-size: 11px; color: var(--text-muted);">Ready for Josh inspection</span>
+                <button onclick="approveBountyPayout('${b.id}')" class="btn-action done" style="font-size: 12px; font-weight: 900; padding: 6px 14px;">
+                  💰 Approve &amp; Pay $${b.amount.toFixed(2)}
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      const opTxs = (treasury.transactions || []).filter(tx => tx.operativeId === activeOpId);
+      const lContainer = document.getElementById('ledgerContainer');
+      if (opTxs.length === 0) {
+        lContainer.innerHTML = '<div style="font-size: 12px; color: var(--text-muted); text-align: center; padding: 14px;">No transactions recorded yet. Complete a bounty to receive your first direct deposit!</div>';
+      } else {
+        lContainer.innerHTML = opTxs.slice(0, 15).map(tx => {
+          const isDeposit = tx.type === 'DEPOSIT';
+          const d = new Date(tx.timestamp || Date.now());
+          const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+          return `
+            <div class="ledger-row">
+              <div>
+                <div class="ledger-memo">${isDeposit ? '💰' : '🛍️'} ${escapeHtml(tx.memo || (isDeposit ? 'Deposit' : 'Debit'))}</div>
+                <div class="ledger-meta">${dateStr} • ${tx.category || 'Treasury'}</div>
+              </div>
+              <div class="ledger-amount ${isDeposit ? 'deposit' : 'debit'}">
+                ${isDeposit ? '+' : '-'}$${Math.abs(tx.amount || 0).toFixed(2)}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      fetchTreasuryState();
+      setInterval(fetchTreasuryState, 30000);
+    });
+  </script>
+</body>
+</html>
