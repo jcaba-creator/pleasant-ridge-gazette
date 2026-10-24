@@ -62,7 +62,7 @@
       box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
     }
     
-    /* Crosshair cursor when in God Mode brushes */
+    /* Crosshair cursor when in Creative Mode brushes */
     .brush-cursor { cursor: crosshair; }
   </style>
 </head>
@@ -94,7 +94,7 @@
     <div class="flex items-center space-x-2">
       <!-- Mode Badge -->
       <div id="modeIndicator" class="text-xs px-2.5 py-1 rounded-full font-mono font-bold tracking-wider bg-purple-900/50 text-purple-300 border border-purple-500/40">
-        SPECTATOR (GOD)
+        SPECTATOR (CREATIVE)
       </div>
 
       <button id="btnNewWorld" class="px-3 py-1 bg-command-700 hover:bg-command-600 text-xs rounded border border-command-border font-mono transition">New World</button>
@@ -176,11 +176,11 @@
       <!-- God Tools / Player Action Dock -->
       <div class="glass-panel rounded-xl p-3 shadow-2xl pointer-events-auto flex flex-col">
         <div class="flex items-center justify-between pb-2 border-b border-command-border">
-          <span class="text-xs font-mono font-bold text-gray-300 tracking-wider" id="dockTitle">GOD POWERS</span>
+          <span class="text-xs font-mono font-bold text-gray-300 tracking-wider" id="dockTitle">CREATIVE TOOLS</span>
           <span class="text-[10px] text-gray-400 font-mono" id="dockSub">Select an intervention</span>
         </div>
 
-        <!-- God Mode Tools -->
+        <!-- Creative Mode Tools -->
         <div id="godToolsGrid" class="grid grid-cols-2 gap-2 pt-2.5">
           <button data-tool="nuke" class="god-tool-btn p-2 bg-command-800/80 hover:bg-rose-950/60 hover:border-rose-500/60 border border-command-border rounded text-xs font-mono text-left transition flex items-center space-x-2">
             <span class="text-base">☢️</span>
@@ -496,7 +496,7 @@
       nations: new Map(),
       nextNationId: 1,
       selectedNationId: null,
-      playerNationId: null, // null = spectator god mode
+      playerNationId: null, // null = spectator creative mode
       
       // Simulation Timing
       ticks: 0,
@@ -1368,11 +1368,11 @@
         playerDock.classList.remove('hidden');
         showHudNotice(`Assumption of Power: You now command ${pNat.name}!`);
       } else {
-        dockTitle.innerText = 'GOD POWERS';
+        dockTitle.innerText = 'CREATIVE TOOLS';
         dockSub.innerText = 'Select an intervention';
         godDock.classList.remove('hidden');
         playerDock.classList.add('hidden');
-        showHudNotice('Switched to Omnipotent Spectator / God Mode.');
+        showHudNotice('Switched to Omnipotent Spectator / Creative Mode.');
       }
     }
 
@@ -1383,7 +1383,7 @@
         badge.innerText = `RULER: ${p.name.toUpperCase()}`;
         badge.className = 'text-xs px-2.5 py-1 rounded-full font-mono font-bold tracking-wider bg-sky-900/50 text-sky-300 border border-sky-500/40';
       } else {
-        badge.innerText = 'SPECTATOR (GOD)';
+        badge.innerText = 'SPECTATOR (CREATIVE)';
         badge.className = 'text-xs px-2.5 py-1 rounded-full font-mono font-bold tracking-wider bg-purple-900/50 text-purple-300 border border-purple-500/40';
       }
     }
@@ -1743,7 +1743,7 @@
       let html = '';
       if (!state.playerNationId) {
         html = `
-          <p class="text-gray-300">You are currently in God Mode. You can directly command treaties for this sovereign state:</p>
+          <p class="text-gray-300">You are currently in Creative Mode. You can directly command treaties for this sovereign state:</p>
           <div class="grid grid-cols-2 gap-2 pt-2">
             <button id="btnDiploForcePeace" class="p-2 bg-command-800 hover:bg-command-700 rounded text-emerald-400">Pardon All Wars</button>
             <button id="btnDiploDisbandAllies" class="p-2 bg-command-800 hover:bg-command-700 rounded text-rose-400">Dissolve All Alliances</button>

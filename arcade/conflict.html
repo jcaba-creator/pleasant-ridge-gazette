@@ -942,7 +942,7 @@
 
       factions: new Map(),
       selectedFactionId: null,
-      playerFactionId: null, // null = God Mode, 1..6 = Player Sovereign
+      playerFactionId: null, // null = Creative Mode, 1..6 = Player Sovereign
       playerTreasury: 150,
       difficulty: 'veteran', // 'recruit', 'veteran', 'ironclad'
 
@@ -1966,7 +1966,7 @@
       }
 
       const cmdText = document.getElementById('macroCommandText');
-      cmdText.innerText = f.id === state.playerFactionId ? "Relinquish (God)" : "Play Faction";
+      cmdText.innerText = f.id === state.playerFactionId ? "Spectate (Creative)" : "Play Faction";
 
       renderFactionRibbon();
     }
@@ -2127,7 +2127,7 @@
       const actorId = state.selectedFactionId || state.playerFactionId || 1;
       if (state.playerFactionId === actorId) {
         state.playerFactionId = null;
-        showFlashNotice("SPECTATOR (GOD) MODE ENGAGED");
+        showFlashNotice("CREATIVE (SPECTATOR) MODE ENGAGED");
       } else {
         state.playerFactionId = actorId;
         const f = state.factions.get(state.playerFactionId);
@@ -2197,7 +2197,7 @@
       if (!state.selectedFactionId) return;
       if (state.playerFactionId === state.selectedFactionId) {
         state.playerFactionId = null;
-        showFlashNotice("SPECTATOR (GOD) MODE ENGAGED");
+        showFlashNotice("CREATIVE (SPECTATOR) MODE ENGAGED");
       } else {
         state.playerFactionId = state.selectedFactionId;
         const f = state.factions.get(state.playerFactionId);
