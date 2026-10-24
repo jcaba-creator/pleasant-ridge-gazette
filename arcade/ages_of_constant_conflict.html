@@ -832,6 +832,9 @@
         <button class="cmd-act-btn primary" id="btnTargetObjective">
           <span>🎯</span> <span>Set Objective</span>
         </button>
+        <button class="cmd-act-btn" id="btnAutoBridgeSelected" title="Combat Engineers auto-span nearest river">
+          <span>🪵</span> <span>Auto-Bridge</span>
+        </button>
         <button class="cmd-act-btn" id="btnDraftSelected">
           <span>🪖</span> <span>Draft +120</span>
         </button>
@@ -1755,6 +1758,26 @@
       const tileW = mainCanvas.width / W;
       const tileH = mainCanvas.height / H;
 
+      // Highlight Rivers when Bridge tool is armed!
+      if (state.activeTool === 'bridge') {
+        ctx.save();
+        ctx.strokeStyle = '#fbbf24';
+        ctx.lineWidth = 1.5 / state.zoom;
+        ctx.setLineDash([4 / state.zoom, 4 / state.zoom]);
+        // Draw bridge crosshair glow along river centerlines
+        for (let y = 5; y < H; y += 8) {
+          for (let x = 5; x < W; x += 8) {
+            const idx = y * W + x;
+            if (state.terrain[idx] === TERRAIN.RIVER || state.terrain[idx] === TERRAIN.ICE) {
+              const rx = x * tileW + tileW / 2;
+              const ry = y * tileH + tileH / 2;
+              ctx.strokeRect(rx - 6 / state.zoom, ry - 6 / state.zoom, 12 / state.zoom, 12 / state.zoom);
+            }
+          }
+        }
+        ctx.restore();
+      }
+
       // Tactical Objective Vectors (Dashed attack lines from capitals to target towns)
       state.factions.forEach(f => {
         if (!f.alive || !f.spearheadTarget) return;
@@ -1965,6 +1988,28 @@
       updateRoster();
     });
 
+    // Auto-Bridge for Selected / Player Faction
+    const btnAutoBridge = document.getElementById('btnAutoBridgeSelected');
+    if (btnAutoBridge) {
+      btnAutoBridge.addEventListener('click', () => {
+        if (!state.selectedFactionId) return;
+        const f = state.factions.get(state.selectedFactionId);
+        // Find nearest river to this faction's frontlines or capital
+        let targetX = f.capitalX;
+        let targetY = f.capitalY;
+        if (f.spearheadTarget && state.factions.has(f.spearheadTarget)) {
+          const enemy = state.factions.get(f.spearheadTarget);
+          targetX = Math.floor((f.capitalX + enemy.capitalX) / 2);
+          targetY = Math.floor((f.capitalY + enemy.capitalY) / 2);
+        } else {
+          // Midpoint toward center of map
+          targetX = Math.floor((f.capitalX + 150) / 2);
+          targetY = Math.floor((f.capitalY + 150) / 2);
+        }
+        buildFullRiverSpan(targetX, targetY);
+      });
+    }
+
     // Fortify Base for Selected Faction
     document.getElementById('btnFortifySelected').addEventListener('click', () => {
       if (!state.selectedFactionId) return;
@@ -2007,7 +2052,7 @@
         if (state.activeTool === 'bridge') {
           setArmedTool(null);
         } else {
-          setArmedTool('bridge', '🪵 PONTOON BRIDGE: Tap river tile to span');
+          setArmedTool('bridge', '🪵 SMART BRIDGE BUILDER: Tap anywhere near water to span entire river | [Done]');
         }
       } else if (act === 'trench') {
         if (state.activeTool === 'trench') {
@@ -2440,6 +2485,144 @@
       }
     }
 
+    function buildFullRiverSpan(targetX, targetY) {
+      // 1. Auto-snap: Find nearest river or ice cell within 12 cells tolerance
+      let bestX = -1, bestY = -1, bestDist = 999;
+      for (let dy = -12; dy <= 12; dy++) {
+        for (let dx = -12; dx <= 12; dx++) {
+          const cx = targetX + dx;
+          const cy = targetY + dy;
+          if (cx >= 0 && cx < W && cy >= 0 && cy < H) {
+            const cIdx = cy * W + cx;
+            const t = state.terrain[cIdx];
+            if (t === TERRAIN.RIVER || t === TERRAIN.ICE) {
+              const d = Math.hypot(dx, dy);
+              if (d < bestDist) {
+                bestDist = d;
+                bestX = cx;
+                bestY = cy;
+              }
+            }
+          }
+        }
+      }
+
+      if (bestX === -1) {
+        showFlashNotice("NO RIVER NEARBY (TAP WITHIN 12 CELLS OF WATER)");
+        return false;
+      }
+
+      // 2. Measure channel thickness: Horizontal vs Vertical
+      let hSpan = 0;
+      for (let dx = -8; dx <= 8; dx++) {
+        const x = bestX + dx;
+        if (x >= 0 && x < W) {
+          const t = state.terrain[bestY * W + x];
+          if (t === TERRAIN.RIVER || t === TERRAIN.ICE) hSpan++;
+        }
+      }
+
+      let vSpan = 0;
+      for (let dy = -8; dy <= 8; dy++) {
+        const y = bestY + dy;
+        if (y >= 0 && y < H) {
+          const t = state.terrain[y * W + bestX];
+          if (t === TERRAIN.RIVER || t === TERRAIN.ICE) vSpan++;
+        }
+      }
+
+      let spannedCount = 0;
+      // Span perpendicular to stream flow (along shorter channel dimension)
+      if (hSpan <= vSpan) {
+        // Cross East-West from bank to bank
+        for (let dx = -8; dx <= 8; dx++) {
+          const x = bestX + dx;
+          if (x >= 0 && x < W) {
+            const idx = bestY * W + x;
+            const t = state.terrain[idx];
+            if (t === TERRAIN.RIVER || t === TERRAIN.ICE) {
+              state.terrain[idx] = TERRAIN.BRIDGE;
+              state.baseTerrain[idx] = TERRAIN.BRIDGE;
+              spannedCount++;
+              spawnSparks(x, bestY, [245, 158, 11]);
+            }
+          }
+        }
+        // Connect paved road ramps on the two shorelines
+        for (let r = 1; r <= 3; r++) {
+          const leftX = bestX - hSpan - r;
+          const rightX = bestX + hSpan + r;
+          if (leftX >= 0 && leftX < W && state.terrain[bestY * W + leftX] !== TERRAIN.RIVER) {
+            state.terrain[bestY * W + leftX] = TERRAIN.ROAD;
+            state.baseTerrain[bestY * W + leftX] = TERRAIN.ROAD;
+          }
+          if (rightX >= 0 && rightX < W && state.terrain[bestY * W + rightX] !== TERRAIN.RIVER) {
+            state.terrain[bestY * W + rightX] = TERRAIN.ROAD;
+            state.baseTerrain[bestY * W + rightX] = TERRAIN.ROAD;
+          }
+        }
+      } else {
+        // Cross North-South from bank to bank
+        for (let dy = -8; dy <= 8; dy++) {
+          const y = bestY + dy;
+          if (y >= 0 && y < H) {
+            const idx = y * W + bestX;
+            const t = state.terrain[idx];
+            if (t === TERRAIN.RIVER || t === TERRAIN.ICE) {
+              state.terrain[idx] = TERRAIN.BRIDGE;
+              state.baseTerrain[idx] = TERRAIN.BRIDGE;
+              spannedCount++;
+              spawnSparks(bestX, y, [245, 158, 11]);
+            }
+          }
+        }
+        // Connect paved road ramps on the two shorelines
+        for (let r = 1; r <= 3; r++) {
+          const topY = bestY - vSpan - r;
+          const botY = bestY + vSpan + r;
+          if (topY >= 0 && topY < H && state.terrain[topY * W + bestX] !== TERRAIN.RIVER) {
+            state.terrain[topY * W + bestX] = TERRAIN.ROAD;
+            state.baseTerrain[topY * W + bestX] = TERRAIN.ROAD;
+          }
+          if (botY >= 0 && botY < H && state.terrain[botY * W + bestX] !== TERRAIN.RIVER) {
+            state.terrain[botY * W + bestX] = TERRAIN.ROAD;
+            state.baseTerrain[botY * W + bestX] = TERRAIN.ROAD;
+          }
+        }
+      }
+
+      bakeStaticHillshade();
+      renderDynamicTerritoryBuffer();
+      updateAllMinimaps();
+      showFlashNotice(`🪵 FULL BRIDGE SPANNED (${spannedCount} TILES BANK-TO-BANK)`);
+      return true;
+    }
+
+    function autoBridgePlayerFrontline() {
+      if (!state.playerFactionId || !state.factions.has(state.playerFactionId)) {
+        showFlashNotice("TAKE COMMAND OF A COUNTY FIRST");
+        return;
+      }
+      const player = state.factions.get(state.playerFactionId);
+      // Find closest river or ice cell to player's spearhead or frontlines
+      let targetX = player.capitalX;
+      let targetY = player.capitalY;
+
+      if (player.spearheadTarget && state.factions.has(player.spearheadTarget)) {
+        const enemy = state.factions.get(player.spearheadTarget);
+        // Find midpoint towards enemy
+        targetX = Math.floor((player.capitalX + enemy.capitalX) / 2);
+        targetY = Math.floor((player.capitalY + enemy.capitalY) / 2);
+      }
+
+      const success = buildFullRiverSpan(targetX, targetY);
+      if (success) {
+        showFlashNotice(`🪵 COMBAT ENGINEERS SPANNED STRATEGIC RIVER CROSSING!`);
+      } else {
+        showFlashNotice("NO WATERWAY CURRENTLY BLOCKING THIS SECTOR");
+      }
+    }
+
     function applyArmedTool(tx, ty) {
       const idx = ty * W + tx;
 
@@ -2461,13 +2644,11 @@
         showFlashNotice("💥 SECTOR DECIMATED BY HEAVY ARTILLERY");
         bakeStaticHillshade();
       } else if (state.activeTool === 'bridge') {
-        if (state.terrain[idx] === TERRAIN.RIVER || state.terrain[idx] === TERRAIN.ICE) {
-          state.terrain[idx] = TERRAIN.BRIDGE;
-          state.baseTerrain[idx] = TERRAIN.BRIDGE;
-          showFlashNotice("🪵 PONTOON BRIDGE SPANNED");
-          bakeStaticHillshade();
-        } else {
-          showFlashNotice("CAN ONLY CONSTRUCT BRIDGE OVER WATER");
+        const built = buildFullRiverSpan(tx, ty);
+        if (built) {
+          // Keep bridge tool armed for multiple bridges!
+          document.getElementById('activeToolText').innerText = "🪵 PONTOON COMPLETE! Tap another river spot or [Cancel]";
+          return; // Don't disarm tool!
         }
       } else if (state.activeTool === 'trench') {
         state.elevation[idx] = Math.min(255, state.elevation[idx] + 70);
