@@ -48,7 +48,7 @@ window.GAZETTE_GROCERY_DATA = {
       "surchargeRate": 0.0,
       "isManual": false,
       "ingestionMode": "Playwright Web Scraper",
-      "lastUpdated": "2026-10-24T10:00:18Z"
+      "lastUpdated": "2026-10-24T20:00:20Z"
     },
     {
       "id": "price_chopper",
@@ -59,7 +59,7 @@ window.GAZETTE_GROCERY_DATA = {
       "surchargeRate": 0.0,
       "isManual": false,
       "ingestionMode": "Store #61 Native Circular API & Flipp Feed",
-      "lastUpdated": "2026-10-24T10:00:16Z"
+      "lastUpdated": "2026-10-24T20:00:19Z"
     },
     {
       "id": "dillons",
@@ -70,7 +70,7 @@ window.GAZETTE_GROCERY_DATA = {
       "surchargeRate": 0.0,
       "isManual": false,
       "ingestionMode": "Kroger Calypso SSR Engine (Real-Time Shelf JSON)",
-      "lastUpdated": "2026-10-24T10:00:13Z"
+      "lastUpdated": "2026-10-24T20:00:16Z"
     },
     {
       "id": "walmart",
@@ -81,7 +81,7 @@ window.GAZETTE_GROCERY_DATA = {
       "surchargeRate": 0.0,
       "isManual": false,
       "ingestionMode": "Playwright / Headless Scraper",
-      "lastUpdated": "2026-10-24T10:00:19Z"
+      "lastUpdated": "2026-10-24T20:00:22Z"
     },
     {
       "id": "commissary",
@@ -92,12 +92,12 @@ window.GAZETTE_GROCERY_DATA = {
       "surchargeRate": 0.05,
       "isManual": false,
       "ingestionMode": "DeCA Click2Go API (NCR Freshop native JSON)",
-      "lastUpdated": "2026-10-24T10:00:07Z"
+      "lastUpdated": "2026-10-24T20:00:07Z"
     }
   ],
   "currentBasket": {
     "weekId": "2026-W42",
-    "publishedAt": "2026-10-24T10:00:19Z",
+    "publishedAt": "2026-10-24T20:00:22Z",
     "gasPricePerGal": 2.72,
     "prices": {
       "aldi": {
@@ -137,11 +137,11 @@ window.GAZETTE_GROCERY_DATA = {
       }
     },
     "storeTimestamps": {
-      "commissary": "2026-10-24T10:00:07Z",
-      "dillons": "2026-10-24T10:00:13Z",
-      "price_chopper": "2026-10-24T10:00:16Z",
-      "aldi": "2026-10-24T10:00:18Z",
-      "walmart": "2026-10-24T10:00:19Z"
+      "commissary": "2026-10-24T20:00:07Z",
+      "dillons": "2026-10-24T20:00:16Z",
+      "price_chopper": "2026-10-24T20:00:19Z",
+      "aldi": "2026-10-24T20:00:20Z",
+      "walmart": "2026-10-24T20:00:22Z"
     }
   }
 };
