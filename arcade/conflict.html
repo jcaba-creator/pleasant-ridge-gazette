@@ -365,69 +365,106 @@
       transform: translateX(-50%) translateY(0);
     }
 
-    /* ================= 4. MASTER BOTTOM ACTION DECK ================= */
-    .master-action-deck {
+    /* ================= NOTION 2: MACRO COMMAND DECK ================= */
+    .macro-command-dock {
       position: fixed;
-      bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 6px);
       left: 50%;
       transform: translateX(-50%);
-      z-index: 70;
+      width: 96vw;
+      max-width: 660px;
+      z-index: 75;
       display: flex;
       flex-direction: column;
-      align-items: center;
       gap: 6px;
-      width: 96vw;
-      max-width: 640px;
       pointer-events: none;
       transition: transform 0.25s ease, opacity 0.25s ease;
     }
 
-    body.cinema-mode .master-action-deck {
-      transform: translateX(-50%) translateY(140px);
+    body.cinema-mode .macro-command-dock {
+      transform: translateX(-50%) translateY(160px);
       opacity: 0;
       pointer-events: none;
     }
 
-    /* 4A. Selected Faction / Sovereign Tactical Card */
-    #selectionCommandCard {
+    /* Faction Selector Ribbon */
+    .faction-ribbon {
       pointer-events: auto;
-      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      overflow-x: auto;
+      padding: 3px 2px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .faction-pill-btn {
+      background: rgba(9, 14, 28, 0.92);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      border-radius: 18px;
+      padding: 6px 11px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      backdrop-filter: blur(12px);
+      transition: all 0.15s ease;
+      touch-action: manipulation;
+    }
+
+    .faction-pill-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .faction-pill-btn.active {
+      border-color: var(--cyan);
+      color: #fff;
+      background: rgba(56, 189, 248, 0.22);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+    }
+
+    .pill-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Active Macro Command Card */
+    .macro-card {
+      pointer-events: auto;
       background: var(--card-bg);
-      border: 1px solid var(--cyan);
+      border: 1px solid var(--card-border-active);
       border-radius: 14px;
-      padding: 10px 14px;
+      padding: 10px 12px;
       backdrop-filter: blur(16px);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.75), 0 0 16px rgba(56, 189, 248, 0.2);
-      display: none;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 0 16px rgba(56, 189, 248, 0.2);
+      display: flex;
       flex-direction: column;
       gap: 8px;
-      animation: cardSlideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    @keyframes cardSlideUp {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    #selectionCommandCard.show {
-      display: flex;
-    }
-
-    .sel-card-header {
+    .macro-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
     }
 
-    .sel-card-title-group {
+    .macro-title-group {
       display: flex;
       align-items: center;
       gap: 8px;
       min-width: 0;
     }
 
-    .sel-badge-dot {
+    .macro-badge {
       width: 14px;
       height: 14px;
       border-radius: 50%;
@@ -435,7 +472,7 @@
       box-shadow: 0 0 8px currentColor;
     }
 
-    .sel-title-text {
+    .macro-title {
       font-weight: 800;
       font-size: 13px;
       color: #fff;
@@ -444,132 +481,90 @@
       text-overflow: ellipsis;
     }
 
-    .sel-status-text {
+    .macro-meta {
       font-family: var(--font-mono);
       font-size: 10px;
       color: var(--text-muted);
     }
 
-    .sel-card-close {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      font-size: 14px;
-      cursor: pointer;
-      padding: 2px 6px;
-      border-radius: 4px;
-    }
-
-    .sel-card-actions {
-      display: flex;
-      align-items: center;
+    .macro-actions-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
       gap: 6px;
-      overflow-x: auto;
-      padding-bottom: 2px;
-      -webkit-overflow-scrolling: touch;
     }
 
-    .cmd-act-btn {
-      flex: 1;
-      min-width: 95px;
-      height: 38px;
-      padding: 0 8px;
+    .macro-action-btn {
+      height: 42px;
       border-radius: 8px;
       border: 1px solid var(--card-border);
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.04);
       color: #fff;
       font-family: var(--font-mono);
       font-size: 10px;
       font-weight: 700;
       cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      white-space: nowrap;
-      transition: all 0.15s ease;
-      touch-action: manipulation;
-    }
-
-    .cmd-act-btn:hover, .cmd-act-btn:active {
-      background: rgba(56, 189, 248, 0.2);
-      border-color: var(--cyan);
-    }
-
-    .cmd-act-btn.primary {
-      background: var(--cyan);
-      color: #030712;
-      border-color: var(--cyan);
-      font-weight: 800;
-    }
-
-    .cmd-act-btn.gold {
-      background: var(--amber);
-      color: #030712;
-      border-color: var(--amber);
-      font-weight: 800;
-    }
-
-    /* 4B. Primary Tactile Action Bar (Permanently visible) */
-    .primary-action-bar {
-      pointer-events: auto;
-      width: 100%;
-      background: rgba(9, 14, 28, 0.94);
-      border: 1px solid var(--card-border);
-      border-radius: 28px;
-      padding: 4px 6px;
-      backdrop-filter: blur(16px);
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 4px;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .action-btn {
-      flex: 1;
-      min-width: 58px;
-      height: 44px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid transparent;
-      color: var(--text);
-      border-radius: 22px;
-      font-family: var(--font-mono);
-      font-size: 10px;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       gap: 2px;
-      white-space: nowrap;
+      padding: 2px;
       transition: all 0.15s ease;
       touch-action: manipulation;
     }
 
-    .action-btn span:first-child {
-      font-size: 15px;
+    .macro-action-btn span:first-child {
+      font-size: 14px;
       line-height: 1;
     }
 
-    .action-btn span:last-child {
+    .macro-action-btn span:last-child {
       font-size: 9px;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 95%;
     }
 
-    .action-btn:hover {
-      background: rgba(255, 255, 255, 0.08);
+    .macro-action-btn:hover, .macro-action-btn:active {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--cyan);
+    }
+
+    .macro-action-btn.attack {
+      border-color: rgba(244, 63, 94, 0.45);
+      background: rgba(244, 63, 94, 0.12);
+      color: #fca5a5;
+    }
+
+    .macro-action-btn.attack:hover {
+      background: rgba(244, 63, 94, 0.28);
+      border-color: var(--rose);
       color: #fff;
     }
 
-    .action-btn.active {
-      background: rgba(56, 189, 248, 0.22);
-      border-color: var(--cyan);
-      color: var(--cyan);
-      box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+    .macro-action-btn.bridge {
+      border-color: rgba(245, 158, 11, 0.45);
+      background: rgba(245, 158, 11, 0.12);
+      color: #fde68a;
+    }
+
+    .macro-action-btn.bridge:hover {
+      background: rgba(245, 158, 11, 0.28);
+      border-color: var(--amber);
+      color: #fff;
+    }
+
+    .macro-action-btn.command {
+      border-color: rgba(56, 189, 248, 0.5);
+      background: var(--cyan);
+      color: #030712;
+      font-weight: 800;
+    }
+
+    .macro-action-btn.command:hover {
+      background: #7dd3fc;
     }
 
     /* ================= 5. SLIDE-UP DRAWER (INTEL, RADAR & SETTINGS) ================= */
@@ -809,78 +804,62 @@
   <!-- Flash Notification Notice -->
   <div id="hudNotice">REGIONAL THEATER INITIALIZED</div>
 
-  <!-- ================= 3. MASTER BOTTOM ACTION DECK ================= -->
-  <div class="master-action-deck">
+  <!-- ================= NOTION 2: MACRO COMMAND DECK ================= -->
+  <div class="macro-command-dock">
     
-    <!-- 3A. Selected Faction Command Card (Pops up when a faction, gang, or county is tapped) -->
-    <div id="selectionCommandCard">
-      <div class="sel-card-header">
-        <div class="sel-card-title-group">
-          <div class="sel-badge-dot" id="selDot"></div>
+    <!-- Faction Fast-Switch Ribbon -->
+    <div class="faction-ribbon" id="factionRibbon"></div>
+
+    <!-- Active Macro Sovereign Command Card (Zero map-tapping needed) -->
+    <div class="macro-card" id="macroCard">
+      <div class="macro-header">
+        <div class="macro-title-group">
+          <div class="macro-badge" id="macroBadge"></div>
           <div>
-            <div class="sel-title-text" id="selName">Leavenworth Citadel</div>
-            <div class="sel-status-text" id="selStats">Territory: 16.4% • 🪖 240 Troops • Supply: 96%</div>
+            <div class="macro-title" id="macroTitle">Leavenworth Citadel</div>
+            <div class="macro-meta" id="macroMeta">Territory: 18.2% • 🪖 280 Troops • Supply: 98%</div>
           </div>
         </div>
-        <button class="sel-card-close" id="btnCloseSelectionCard">✕</button>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <div class="treasury-pill" id="macroObjectivePill">
+            <span>🎯</span> <span id="macroObjectiveName">OBJ: NONE</span>
+          </div>
+        </div>
       </div>
 
-      <div class="sel-card-actions">
-        <button class="cmd-act-btn gold" id="btnCommandSelected">
-          <span>👑</span> <span id="cmdBtnText">Take Command</span>
+      <!-- 6 Big Finger-Friendly Smart Actions -->
+      <div class="macro-actions-grid">
+        <button class="macro-action-btn attack" id="macroBtnAttack" title="Auto-Spearhead shortest highway route to nearest rival">
+          <span>⚔️</span>
+          <span>Attack Nearest</span>
         </button>
-        <button class="cmd-act-btn primary" id="btnTargetObjective">
-          <span>🎯</span> <span>Set Objective</span>
+
+        <button class="macro-action-btn bridge" id="macroBtnBridge" title="Auto-detect & span river channel blocking advance">
+          <span>🪵</span>
+          <span>Bridge Ahead</span>
         </button>
-        <button class="cmd-act-btn" id="btnAutoBridgeSelected" title="Combat Engineers auto-span nearest river">
-          <span>🪵</span> <span>Auto-Bridge</span>
+
+        <button class="macro-action-btn" id="macroBtnBarrage" title="Drop heavy artillery salvo on active combat frontline">
+          <span>💥</span>
+          <span>Barrage Front</span>
         </button>
-        <button class="cmd-act-btn" id="btnDraftSelected">
-          <span>🪖</span> <span>Draft +120</span>
+
+        <button class="macro-action-btn" id="macroBtnDraft" title="Draft +150 fresh militia recruits">
+          <span>🪖</span>
+          <span>Draft +150</span>
         </button>
-        <button class="cmd-act-btn" id="btnFortifySelected">
-          <span>🛡️</span> <span>Fortify Base</span>
+
+        <button class="macro-action-btn" id="macroBtnFortify" title="Construct heavy bastions & ridge redoubts">
+          <span>🛡️</span>
+          <span>Fortify Base</span>
+        </button>
+
+        <button class="macro-action-btn command" id="macroBtnCommand" title="Take direct sovereign command of this county">
+          <span>👑</span>
+          <span id="macroCommandText">Play Faction</span>
         </button>
       </div>
     </div>
-
-    <!-- 3B. Primary Tactile Action Bar (Permanently visible) -->
-    <nav class="primary-action-bar">
-      <button class="action-btn" data-action="strike" title="Tactical Artillery Strike">
-        <span>💥</span>
-        <span>Strike</span>
-      </button>
-
-      <button class="action-btn" data-action="spearhead" title="Set Spearhead Push or Regional Surge">
-        <span>🎯</span>
-        <span>Target</span>
-      </button>
-
-      <button class="action-btn" data-action="draft" title="Emergency Militia Draft">
-        <span>🪖</span>
-        <span>Draft</span>
-      </button>
-
-      <button class="action-btn" data-action="bridge" title="Build River Pontoon Bridge">
-        <span>🪵</span>
-        <span>Bridge</span>
-      </button>
-
-      <button class="action-btn" data-action="trench" title="Dig Ridge Fortifications">
-        <span>🛡️</span>
-        <span>Trench</span>
-      </button>
-
-      <button class="action-btn" data-action="revolt" title="Spark Uprising / Liberate County">
-        <span>⚡</span>
-        <span>Revolt</span>
-      </button>
-
-      <button class="action-btn" data-action="intel" title="Live War Intel, Radar & Difficulty">
-        <span>ℹ️</span>
-        <span>Intel</span>
-      </button>
-    </nav>
 
   </div>
 
@@ -935,21 +914,22 @@
     }
 
     // Major County Seats
+    // Historic Northeast Kansas Watershed (Real USGS Spatial Coordinates & Topography)
     const REGIONAL_COUNTIES = [
-      { id: 1, name: "Leavenworth Citadel", hex: "#2563eb", rgb: [37, 99, 235], baseAtk: 1.30, baseDef: 1.45, town: "Leavenworth", isGang: false },
-      { id: 2, name: "Atchison River Barons", hex: "#dc2626", rgb: [220, 38, 38], baseAtk: 1.40, baseDef: 1.15, town: "Atchison", isGang: false },
-      { id: 3, name: "Oskaloosa Coalition", hex: "#16a34a", rgb: [22, 163, 74], baseAtk: 1.20, baseDef: 1.35, town: "Oskaloosa", isGang: false },
-      { id: 4, name: "Lansing Ironclad", hex: "#d97706", rgb: [217, 119, 6], baseAtk: 1.25, baseDef: 1.40, town: "Lansing", isGang: false },
-      { id: 5, name: "Easton Rangers", hex: "#9333ea", rgb: [147, 51, 234], baseAtk: 1.45, baseDef: 1.10, town: "Easton", isGang: false },
-      { id: 6, name: "Tonganoxie Guard", hex: "#0891b2", rgb: [8, 145, 178], baseAtk: 1.15, baseDef: 1.35, town: "Tonganoxie", isGang: false }
+      { id: 1, name: "Leavenworth Citadel", hex: "#2563eb", rgb: [37, 99, 235], baseAtk: 1.30, baseDef: 1.45, town: "Leavenworth", isGang: false, capitalX: 258, capitalY: 136 },
+      { id: 2, name: "Atchison River Barons", hex: "#dc2626", rgb: [220, 38, 38], baseAtk: 1.40, baseDef: 1.15, town: "Atchison", isGang: false, capitalX: 204, capitalY: 34 },
+      { id: 3, name: "Oskaloosa Coalition", hex: "#16a34a", rgb: [22, 163, 74], baseAtk: 1.20, baseDef: 1.35, town: "Oskaloosa", isGang: false, capitalX: 38, capitalY: 142 },
+      { id: 4, name: "Lansing Ironclad", hex: "#d97706", rgb: [217, 119, 6], baseAtk: 1.25, baseDef: 1.40, town: "Lansing", isGang: false, capitalX: 252, capitalY: 182 },
+      { id: 5, name: "Easton Rangers", hex: "#9333ea", rgb: [147, 51, 234], baseAtk: 1.45, baseDef: 1.10, town: "Easton", isGang: false, capitalX: 132, capitalY: 108 },
+      { id: 6, name: "Tonganoxie Guard", hex: "#0891b2", rgb: [8, 145, 178], baseAtk: 1.15, baseDef: 1.35, town: "Tonganoxie", isGang: false, capitalX: 142, capitalY: 248 }
     ];
 
-    // Neutral Outlaw Gangs holding crossroads and wilderness at start
+    // Real Kansas Watershed Historic Settlements & Outlaw Gangs
     const OUTLAW_GANGS = [
-      { id: 101, name: "Stranger Valley Rustlers", hex: "#e11d48", rgb: [225, 29, 72], baseAtk: 0.90, baseDef: 0.80, town: "Rustler Camp", isGang: true, x: 140, y: 175 },
-      { id: 102, name: "Timber Ridge Marauders", hex: "#7c2d12", rgb: [124, 45, 18], baseAtk: 0.95, baseDef: 0.85, town: "Marauder Den", isGang: true, x: 95, y: 70 },
-      { id: 103, name: "Salt Creek Bushwhackers", hex: "#475569", rgb: [71, 85, 105], baseAtk: 0.85, baseDef: 0.75, town: "Bushwhack Hold", isGang: true, x: 180, y: 105 },
-      { id: 104, name: "Delaware River Pirates", hex: "#0f766e", rgb: [15, 118, 110], baseAtk: 0.90, baseDef: 0.80, town: "Pirate Haven", isGang: true, x: 175, y: 245 }
+      { id: 101, name: "Stranger Valley Rustlers", hex: "#e11d48", rgb: [225, 29, 72], baseAtk: 0.90, baseDef: 0.80, town: "Jarbalo", isGang: true, x: 138, y: 178 },
+      { id: 102, name: "Timber Ridge Marauders", hex: "#7c2d12", rgb: [124, 45, 18], baseAtk: 0.95, baseDef: 0.85, town: "Lowemont", isGang: true, x: 195, y: 95 },
+      { id: 103, name: "Kickapoo River Bushwhackers", hex: "#475569", rgb: [71, 85, 105], baseAtk: 0.85, baseDef: 0.75, town: "Kickapoo", isGang: true, x: 235, y: 78 },
+      { id: 104, name: "Delaware River Pirates", hex: "#0f766e", rgb: [15, 118, 110], baseAtk: 0.90, baseDef: 0.80, town: "Slough Haven", isGang: true, x: 42, y: 238 }
     ];
 
     const state = {
@@ -1067,24 +1047,84 @@
       renderDynamicTerritoryBuffer();
       updateAllMinimaps();
       updateRoster();
-      closeSelectionCard();
+      updateMacroCard(1);
 
       showFlashNotice("WATERSHED INITIALIZED: CLEAR OUTLAWS TO PACIFY REGION!");
     }
 
     function carveRivers() {
-      // Missouri River along eastern boundary
+      // 1. Historic Missouri River Meander (Curves west into Atchison, loops east near Kickapoo, cuts through Fort Leavenworth bluffs past Lansing)
       for (let y = 0; y < H; y++) {
-        const meander = Math.floor(Math.sin(y / 25.0) * 12 + Math.cos(y / 14.0) * 6);
-        const rx = Math.max(0, Math.min(W - 1, (W - 25) + meander));
+        let rx = 265;
+        if (y < 60) {
+          // Sharp western loop toward Atchison
+          const t = y / 60.0;
+          rx = Math.floor(235 - Math.sin(t * Math.PI) * 36);
+        } else if (y < 120) {
+          // Eastern bulge around Kickapoo/Iatan
+          const t = (y - 60) / 60.0;
+          rx = Math.floor(235 + Math.sin(t * Math.PI) * 45);
+        } else if (y < 200) {
+          // Flowing south along Fort Leavenworth & Lansing bluffs
+          const t = (y - 120) / 80.0;
+          rx = Math.floor(268 - t * 14 + Math.sin(y / 15.0) * 4);
+        } else {
+          // Exiting southeast towards Kansas City
+          const t = (y - 200) / 100.0;
+          rx = Math.floor(254 + t * 38);
+        }
+
+        // River width: 6 to 8 cells
         for (let ox = -3; ox <= 3; ox++) {
           const cx = rx + ox;
           if (cx >= 0 && cx < W) {
             const idx = y * W + cx;
             state.terrain[idx] = TERRAIN.RIVER;
             state.baseTerrain[idx] = TERRAIN.RIVER;
-            state.elevation[idx] = Math.max(8, state.elevation[idx] - 35);
+            state.elevation[idx] = Math.max(8, state.elevation[idx] - 38);
           }
+        }
+      }
+
+      // 2. Stranger Creek Spine (North to South through Potter, Easton, Jarbalo, and Tonganoxie into Kaw River)
+      for (let y = 0; y < H; y++) {
+        const meander = Math.floor(Math.sin(y / 16.0) * 8 + Math.cos(y / 7.0) * 4);
+        const rx = Math.max(0, Math.min(W - 1, 134 + meander));
+        for (let ox = -2; ox <= 2; ox++) {
+          const cx = rx + ox;
+          if (cx >= 0 && cx < W) {
+            const idx = y * W + cx;
+            state.terrain[idx] = TERRAIN.RIVER;
+            state.baseTerrain[idx] = TERRAIN.RIVER;
+            state.elevation[idx] = Math.max(8, state.elevation[idx] - 28);
+          }
+        }
+      }
+
+      // 3. Delaware River (West edge through Jefferson County near Oskaloosa)
+      for (let y = 0; y < H; y++) {
+        const rx = Math.max(0, Math.min(W - 1, 28 + Math.floor(Math.sin(y / 22.0) * 6)));
+        for (let ox = -1; ox <= 1; ox++) {
+          const cx = rx + ox;
+          if (cx >= 0 && cx < W) {
+            const idx = y * W + cx;
+            state.terrain[idx] = TERRAIN.RIVER;
+            state.baseTerrain[idx] = TERRAIN.RIVER;
+            state.elevation[idx] = Math.max(8, state.elevation[idx] - 22);
+          }
+        }
+      }
+
+      // 4. Salt Creek Tributary (Easton bluffs down into Missouri River north of Fort Leavenworth)
+      for (let x = 145; x <= 265; x++) {
+        const y = Math.floor(108 + ((x - 145) / 120.0) * 22 + Math.sin(x / 8.0) * 3);
+        if (y >= 0 && y < H) {
+          const idx = y * W + x;
+          state.terrain[idx] = TERRAIN.RIVER;
+          state.baseTerrain[idx] = TERRAIN.RIVER;
+        }
+      }
+    }
         }
       }
 
@@ -1105,29 +1145,36 @@
     }
 
     function spawnCountySeats() {
-      const positions = [
-        { x: 235, y: 155 }, // Leavenworth Citadel
-        { x: 220, y: 48 },  // Atchison River Barons
-        { x: 50,  y: 145 }, // Oskaloosa Coalition
-        { x: 230, y: 220 }, // Lansing Ironclad
-        { x: 125, y: 110 }, // Easton Rangers
-        { x: 110, y: 255 }  // Tonganoxie Guard
-      ];
-
-      REGIONAL_COUNTIES.forEach((meta, i) => {
-        const pos = positions[i];
-
+      REGIONAL_COUNTIES.forEach(meta => {
         const f = {
           ...meta,
-          capitalX: pos.x,
-          capitalY: pos.y,
-          troops: 250,
+          troops: 280,
           territory: 0,
           alive: true,
           supplyIndex: 100,
           offensiveBonus: 1.0,
           spearheadTarget: null
         };
+        state.factions.set(meta.id, f);
+
+        const r = 15;
+        for (let dy = -r; dy <= r; dy++) {
+          for (let dx = -r; dx <= r; dx++) {
+            if (Math.hypot(dx, dy) <= r) {
+              const x = meta.capitalX + dx;
+              const y = meta.capitalY + dy;
+              if (x >= 0 && x < W && y >= 0 && y < H) {
+                const idx = y * W + x;
+                if (state.terrain[idx] !== TERRAIN.RIVER) {
+                  state.owner[idx] = f.id;
+                  f.territory++;
+                }
+              }
+            }
+          }
+        }
+      });
+    };
         state.factions.set(meta.id, f);
 
         const r = 14;
@@ -1185,22 +1232,25 @@
     }
 
     function buildHighwayNetwork() {
-      const seats = Array.from(state.factions.values()).filter(f => !f.isGang);
-      const connections = [
-        [0, 1], // Leavenworth <-> Atchison (US-73 Corridor)
-        [0, 3], // Leavenworth <-> Lansing (K-7 South)
-        [0, 4], // Leavenworth <-> Easton (K-92 West)
-        [4, 2], // Easton <-> Oskaloosa (K-92 West Crossing)
-        [4, 5], // Easton <-> Tonganoxie (Stranger Valley Corridor)
-        [3, 5]  // Lansing <-> Tonganoxie (US-24/40 Connector)
-      ];
+      // Real Historic Kansas Arterials:
+      // K-92: Leavenworth (258, 136) -> Easton (132, 108) -> Oskaloosa (38, 142)
+      layPavedHighway(258, 136, 132, 108);
+      layPavedHighway(132, 108, 38, 142);
 
-      connections.forEach(([i1, i2]) => {
-        const s1 = seats[i1];
-        const s2 = seats[i2];
-        if (s1 && s2) {
-          layPavedHighway(s1.capitalX, s1.capitalY, s2.capitalX, s2.capitalY);
-        }
+      // US-73: Atchison (204, 34) -> Lowemont (195, 95) -> Leavenworth (258, 136)
+      layPavedHighway(204, 34, 195, 95);
+      layPavedHighway(195, 95, 258, 136);
+
+      // K-7: Leavenworth (258, 136) -> Lansing (252, 182)
+      layPavedHighway(258, 136, 252, 182);
+
+      // Stranger Valley Road: Easton (132, 108) -> Jarbalo (138, 178) -> Tonganoxie (142, 248)
+      layPavedHighway(132, 108, 138, 178);
+      layPavedHighway(138, 178, 142, 248);
+
+      // US-24/40 Victory Highway: Tonganoxie (142, 248) -> Lansing Connector (252, 182)
+      layPavedHighway(142, 248, 252, 182);
+    }
       });
     }
 
@@ -1865,6 +1915,228 @@
       }
     }
 
+    // --- NOTION 2: MACRO COMMAND DECK LOGIC (ZERO MAP-TAPPING REQUIRED) ---
+    function renderFactionRibbon() {
+      const ribbon = document.getElementById('factionRibbon');
+      if (!ribbon) return;
+
+      const livingCitadels = Array.from(state.factions.values()).filter(f => f.alive && !f.isGang);
+      const activeId = state.selectedFactionId || state.playerFactionId || 1;
+
+      ribbon.innerHTML = livingCitadels.map(f => {
+        const isSel = f.id === activeId;
+        const isPlayer = f.id === state.playerFactionId;
+        return `
+          <button class="faction-pill-btn ${isSel ? 'active' : ''}" data-id="${f.id}">
+            <div class="pill-dot" style="background: ${f.hex};"></div>
+            <span>${f.town}</span>
+            ${isPlayer ? '<span style="color: var(--amber); font-size: 8px;">👑</span>' : ''}
+          </button>
+        `;
+      }).join('');
+
+      ribbon.querySelectorAll('.faction-pill-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = parseInt(btn.dataset.id);
+          selectFaction(id);
+        });
+      });
+    }
+
+    function updateMacroCard(fId) {
+      const id = fId || state.selectedFactionId || state.playerFactionId || 1;
+      const f = state.factions.get(id);
+      if (!f || !f.alive) return;
+
+      state.selectedFactionId = id;
+
+      document.getElementById('macroBadge').style.background = f.hex;
+      document.getElementById('macroBadge').style.color = f.hex;
+      document.getElementById('macroTitle').innerText = f.name.toUpperCase();
+
+      const pct = ((f.territory / TOTAL_CELLS) * 100).toFixed(1);
+      document.getElementById('macroMeta').innerText = `Territory: ${pct}% • 🪖 ${f.troops} Troops • Supply: ${f.supplyIndex}%`;
+
+      const objPill = document.getElementById('macroObjectiveName');
+      if (f.spearheadTarget && state.factions.has(f.spearheadTarget)) {
+        const tgt = state.factions.get(f.spearheadTarget);
+        objPill.innerText = `OBJ: ${tgt.town.toUpperCase()}`;
+      } else {
+        objPill.innerText = "OBJ: NONE";
+      }
+
+      const cmdText = document.getElementById('macroCommandText');
+      cmdText.innerText = f.id === state.playerFactionId ? "Relinquish (God)" : "Play Faction";
+
+      renderFactionRibbon();
+    }
+
+    // Smart Action 1: Attack Nearest Rival along Highway
+    document.getElementById('macroBtnAttack').addEventListener('click', () => {
+      const actorId = state.selectedFactionId || state.playerFactionId || 1;
+      const f = state.factions.get(actorId);
+      if (!f || !f.alive) return;
+
+      // Find closest alive hostile county seat or gang camp
+      let closestTarget = null;
+      let minDistance = 9999;
+
+      state.factions.forEach(other => {
+        if (!other.alive || other.id === f.id) return;
+        const dist = Math.hypot(other.capitalX - f.capitalX, other.capitalY - f.capitalY);
+        if (dist < minDistance) {
+          minDistance = dist;
+          closestTarget = other;
+        }
+      });
+
+      if (closestTarget) {
+        f.spearheadTarget = closestTarget.id;
+        f.offensiveBonus = 2.4;
+        f.troops += 40;
+        spawnSparks(f.capitalX, f.capitalY, f.rgb);
+        showFlashNotice(`🎯 AUTO-SPEARHEAD: ${f.town.toUpperCase()} ➔ ${closestTarget.town.toUpperCase()}`);
+        updateMacroCard(f.id);
+        updatePlayerHUD();
+        panTo(f.capitalX, f.capitalY);
+      }
+    });
+
+    // Smart Action 2: Bridge River Ahead (Auto-spans blocking river)
+    document.getElementById('macroBtnBridge').addEventListener('click', () => {
+      const actorId = state.selectedFactionId || state.playerFactionId || 1;
+      const f = state.factions.get(actorId);
+      if (!f || !f.alive) return;
+
+      let targetX = f.capitalX;
+      let targetY = f.capitalY;
+
+      if (f.spearheadTarget && state.factions.has(f.spearheadTarget)) {
+        const enemy = state.factions.get(f.spearheadTarget);
+        targetX = Math.floor((f.capitalX * 0.4) + (enemy.capitalX * 0.6));
+        targetY = Math.floor((f.capitalY * 0.4) + (enemy.capitalY * 0.6));
+      } else {
+        // Look towards center of map
+        targetX = Math.floor((f.capitalX + 150) / 2);
+        targetY = Math.floor((f.capitalY + 150) / 2);
+      }
+
+      const spanned = buildFullRiverSpan(targetX, targetY);
+      if (spanned) {
+        showFlashNotice(`🪵 COMBAT ENGINEERS SPANNED PONTOON BRIDGE!`);
+      } else {
+        // Fallback: search anywhere within 25 cells of capital
+        buildFullRiverSpan(f.capitalX + 12, f.capitalY);
+      }
+    });
+
+    // Smart Action 3: Barrage Frontline with Artillery
+    document.getElementById('macroBtnBarrage').addEventListener('click', () => {
+      const actorId = state.selectedFactionId || state.playerFactionId || 1;
+      const f = state.factions.get(actorId);
+      if (!f || !f.alive) return;
+
+      // Find the most contested frontline cell owned by this faction
+      let frontlineCells = [];
+      for (let y = 0; y < H; y += 4) {
+        for (let x = 0; x < W; x += 4) {
+          const idx = y * W + x;
+          if (state.owner[idx] === f.id && state.frontline[idx] === 1) {
+            frontlineCells.push({ x, y });
+          }
+        }
+      }
+
+      if (frontlineCells.length > 0) {
+        const target = frontlineCells[rng.rangeInt(0, frontlineCells.length - 1)];
+        // Detonate 6x6 crater
+        const r = 6;
+        for (let dy = -r; dy <= r; dy++) {
+          for (let dx = -r; dx <= r; dx++) {
+            const bx = target.x + dx;
+            const by = target.y + dy;
+            if (bx >= 0 && bx < W && by >= 0 && by < H) {
+              const bIdx = by * W + bx;
+              if (state.owner[bIdx] !== f.id && state.owner[bIdx] > 0) {
+                const victim = state.factions.get(state.owner[bIdx]);
+                if (victim) victim.territory--;
+                state.owner[bIdx] = 0;
+              }
+            }
+          }
+        }
+        for (let i = 0; i < 30; i++) {
+          spawnSparks(target.x + rng.range(-6, 6), target.y + rng.range(-6, 6), [255, 120, 50]);
+        }
+        bakeStaticHillshade();
+        renderDynamicTerritoryBuffer();
+        showFlashNotice(`💥 HEAVY ARTILLERY SALVO BROKE ENEMY FRONTLINE!`);
+        panTo(target.x, target.y);
+      } else {
+        showFlashNotice("NO ACTIVE COMBAT FRONTLINE DETECTED");
+      }
+    });
+
+    // Smart Action 4: Draft +150 Militia
+    document.getElementById('macroBtnDraft').addEventListener('click', () => {
+      const actorId = state.selectedFactionId || state.playerFactionId || 1;
+      const f = state.factions.get(actorId);
+      if (!f || !f.alive) return;
+
+      if (state.playerFactionId === f.id && state.playerTreasury < 50) {
+        showFlashNotice("INSUFFICIENT SUPPLIES (NEED 50 🪙)");
+        return;
+      }
+      if (state.playerFactionId === f.id) {
+        state.playerTreasury -= 50;
+        updatePlayerHUD();
+      }
+
+      f.troops += 150;
+      spawnSparks(f.capitalX, f.capitalY, [255, 255, 120]);
+      showFlashNotice(`🪖 MILITIA CALLED UP: +150 TROOPS IN ${f.town.toUpperCase()}`);
+      updateMacroCard(f.id);
+      updateRoster();
+    });
+
+    // Smart Action 5: Fortify Base
+    document.getElementById('macroBtnFortify').addEventListener('click', () => {
+      const actorId = state.selectedFactionId || state.playerFactionId || 1;
+      const f = state.factions.get(actorId);
+      if (!f || !f.alive) return;
+
+      if (state.playerFactionId === f.id && state.playerTreasury < 60) {
+        showFlashNotice("INSUFFICIENT SUPPLIES (NEED 60 🪙)");
+        return;
+      }
+      if (state.playerFactionId === f.id) {
+        state.playerTreasury -= 60;
+        updatePlayerHUD();
+      }
+
+      f.baseDef += 0.35;
+      const capIdx = f.capitalY * W + f.capitalX;
+      state.elevation[capIdx] = Math.min(255, state.elevation[capIdx] + 45);
+      bakeStaticHillshade();
+      spawnSparks(f.capitalX, f.capitalY, [120, 200, 255]);
+      showFlashNotice(`🛡️ CITADEL BASTIONS FORTIFIED: ${f.town.toUpperCase()}`);
+    });
+
+    // Smart Action 6: Play / Take Command
+    document.getElementById('macroBtnCommand').addEventListener('click', () => {
+      const actorId = state.selectedFactionId || state.playerFactionId || 1;
+      if (state.playerFactionId === actorId) {
+        state.playerFactionId = null;
+        showFlashNotice("SPECTATOR (GOD) MODE ENGAGED");
+      } else {
+        state.playerFactionId = actorId;
+        const f = state.factions.get(state.playerFactionId);
+        showFlashNotice(`ASSUMED SOVEREIGN COMMAND: ${f.name.toUpperCase()}`);
+      }
+      updatePlayerHUD();
+      updateMacroCard(actorId);
+    });
+
     function updateAllMinimaps() {
       minimapCtx.drawImage(staticCanvas, 0, 0);
       minimapCtx.globalAlpha = 0.65;
@@ -1880,34 +2152,11 @@
 
     // --- 10. ACTION & SELECTION HANDLERS ---
     function selectFaction(id) {
-      if (!id || !state.factions.has(id)) {
-        state.selectedFactionId = null;
-        closeSelectionCard();
-        return;
-      }
-
+      if (!id || !state.factions.has(id)) return;
       state.selectedFactionId = id;
+      updateMacroCard(id);
       const f = state.factions.get(id);
-
-      const dot = document.getElementById('selDot');
-      dot.style.background = f.hex;
-      dot.style.color = f.hex;
-
-      document.getElementById('selName').innerText = f.isGang ? `[OUTLAW GANG] ${f.name}` : f.name;
-      updateSelectedCardStats();
-
-      const cmdBtn = document.getElementById('btnCommandSelected');
-      const cmdText = document.getElementById('cmdBtnText');
-
-      if (f.isGang) {
-        cmdBtn.style.display = 'none'; // Cannot play as outlaws
-      } else {
-        cmdBtn.style.display = 'inline-flex';
-        cmdText.innerText = f.id === state.playerFactionId ? "Relinquish (God)" : "Take Command";
-      }
-
-      const card = document.getElementById('selectionCommandCard');
-      card.classList.add('show');
+      if (f) panTo(f.capitalX, f.capitalY);
     }
 
     function updateSelectedCardStats() {
@@ -1963,7 +2212,7 @@
       if (!state.selectedFactionId) return;
       const f = state.factions.get(state.selectedFactionId);
       setArmedTool('target', `🎯 DESIGNATE OBJECTIVE: Tap rival town or gang for ${f.town.toUpperCase()}`);
-      closeSelectionCard();
+      updateMacroCard(1);
     });
 
     // Draft +120 Troops for Selected Faction
@@ -2398,7 +2647,7 @@
       const isCinema = force !== undefined ? force : !document.body.classList.contains('cinema-mode');
       document.body.classList.toggle('cinema-mode', isCinema);
       closeSheet();
-      closeSelectionCard();
+      updateMacroCard(1);
     }
 
     document.getElementById('btnCinemaToggle').addEventListener('click', () => toggleCinemaMode(true));
@@ -2592,7 +2841,7 @@
         if (ownerId > 0 && state.factions.has(ownerId)) {
           selectFaction(ownerId);
         } else {
-          closeSelectionCard();
+          updateMacroCard(1);
         }
       }
     }
