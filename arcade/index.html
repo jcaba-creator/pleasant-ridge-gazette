@@ -481,6 +481,31 @@
       color: var(--forest);
       text-decoration: underline;
     }
+      .plate-unravel {
+      background-color: #fefae0;
+      background-image: radial-gradient(#d4a373 0.85px, transparent 0.85px);
+      background-size: 12px 12px;
+    }
+    .plate-stamp-unravel {
+      border: 2px solid #111111;
+      color: #3e271a;
+      background: #ffffff;
+      padding: 6px 16px;
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: 1px;
+      box-shadow: 3px 3px 0px #111111;
+      user-select: none;
+    }
+    .btn-unravel {
+      background: #ff5964;
+      color: #ffffff;
+      border: 2px solid #111111;
+    }
+    .btn-unravel:hover {
+      background: #f72585;
+      color: #ffffff;
+    }
   </style>
   <script src="telemetry.js"></script>
 </head>
@@ -741,6 +766,25 @@
         </div>
       </article>
 
+          <!-- Card: Unravel It: Cozy Yarn Art Puzzle -->
+      <article class="flashcard">
+        <div class="card-header-strip">
+          <span class="card-plate-no">Plate XI &bull; Tactile Logic &amp; Spatial</span>
+          <span class="card-category" style="color: #ff5964; border-color: #ff5964;">8 Levels &bull; Cozy ASMR</span>
+        </div>
+        <div class="card-plate plate-unravel">
+          <div class="plate-stamp plate-stamp-unravel">🧶 UNRAVEL IT</div>
+        </div>
+        <div class="card-body">
+          <div class="card-info">
+            <h2 class="card-title">Unravel It! Cozy Yarn Art Puzzle</h2>
+            <p class="card-desc">Tactile mobile yarn puzzle. Unravel 8 handcrafted knitted textile art pieces (Heart, Strawberry, Avocado, Duckling, Sunflower, Donut, Owl, and Mandala) layer-by-layer, fill spinning spools, trigger Cozy Combos, and deploy tactical Scissors and Rainbow Wilds with turn-based cooldowns.</p>
+          </div>
+          <a href="unravel.html" onclick="if(window.GazetteTelemetry)window.GazetteTelemetry.track('game_launch',{game:'unravel'});" class="btn-action btn-unravel">
+            Play Unravel It Now &rarr;
+          </a>
+        </div>
+      </article>
     </main>
 
     <!-- Institutional Covenant -->
@@ -761,3 +805,4 @@
 
 </body>
 </html>
+
