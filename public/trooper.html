@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Trooper's Ranch Quest</title>
+  <style>
+    /* 100% Self-Contained Styles - Zero External CDNs or Fonts Required */
+    :root {
+      --bg-dark: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --item-bg: #0f172a;
+      --item-border: #1e293b;
+      --gold: #f59e0b;
+      --gold-light: #fbbf24;
+      --green: #10b981;
+      --green-dark: #059669;
+      --indigo: #6366f1;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Trebuchet MS", "Comic Sans MS", system-ui, sans-serif;
+      min-height: 100vh;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 580px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .btn-3d {
+      border: none;
+      cursor: pointer;
+      font-weight: 800;
+      transition: all 0.1s ease;
+      box-shadow: 0 5px 0 rgba(0, 0, 0, 0.4);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-3d:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.4);
+    }
+
+    .header-card {
+      background: linear-gradient(145deg, #1e293b, #111827);
+      border: 2px solid rgba(245, 158, 11, 0.45);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+
+    .hero-profile {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .avatar-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .avatar-badge {
+      width: 58px;
+      height: 58px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      border: 3px solid #fef08a;
+      border-radius: 18px;
+      font-size: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 14px rgba(245, 158, 11, 0.4);
+    }
+
+    .hero-title-group h1 {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      color: #fde047;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .streak-pill {
+      background: rgba(234, 88, 12, 0.25);
+      border: 1px solid #ea580c;
+      color: #fdba74;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 999px;
+      letter-spacing: 0.5px;
+    }
+
+    .hero-rank {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .action-icons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: #334155;
+      border: 1px solid #475569;
+      color: #fff;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .icon-btn:hover {
+      background: #475569;
+    }
+
+    .xp-section {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .xp-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 800;
+      color: #fde047;
+      letter-spacing: 0.5px;
+    }
+
+    .xp-bar-bg {
+      width: 100%;
+      height: 18px;
+      background: #090d16;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 2px solid #334155;
+      padding: 2px;
+    }
+
+    .xp-bar-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #f59e0b, #eab308, #facc15);
+      transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .stats-footer {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid #334155;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .stats-counts {
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--text-muted);
+    }
+    .stats-counts span {
+      color: #fff;
+      font-size: 14px;
+    }
+    .stats-counts .green-val {
+      color: #34d399;
+    }
+    .stats-counts .gold-val {
+      color: #facc15;
+    }
+
+    .loot-claim-btn {
+      background: linear-gradient(90deg, #f59e0b, #fbbf24);
+      color: #020617;
+      padding: 7px 14px;
+      border-radius: 12px;
+      font-size: 12px;
+      animation: chestPulse 1.2s infinite ease-in-out;
+    }
+    @keyframes chestPulse {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 6px #f59e0b); }
+      50% { transform: scale(1.06); filter: drop-shadow(0 0 16px #facc15); }
+    }
+
+    .quest-zone {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    }
+
+    .zone-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .zone-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .zone-tag {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .zone-am .zone-title { color: #818cf8; }
+    .zone-am .zone-tag { background: #312e81; color: #c7d2fe; border: 1px solid #4338ca; }
+
+    .zone-pasture .zone-title { color: #34d399; }
+    .zone-pasture .zone-tag { background: #064e3b; color: #a7f3d0; border: 1px solid #059669; }
+
+    .zone-critters .zone-title { color: #f59e0b; }
+    .zone-critters .zone-tag { background: #78350f; color: #fde68a; border: 1px solid #b45309; }
+
+    .zone-pm .zone-title { color: #c084fc; }
+    .zone-pm .zone-tag { background: #581c87; color: #e9d5ff; border: 1px solid #7e22ce; }
+
+    .chore-list {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .chore-item {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+    }
+    .chore-item.done {
+      opacity: 0.55;
+      background: rgba(6, 78, 59, 0.2);
+      border-color: rgba(5, 150, 105, 0.4);
+    }
+
+    .chore-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .chore-checkbox {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: #1e293b;
+      border: 2px solid #64748b;
+      cursor: pointer;
+      display: grid;
+      place-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+    }
+    .chore-checkbox:checked {
+      background: #10b981;
+      border-color: #059669;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
+    }
+    .chore-checkbox:checked::before {
+      content: "✓";
+      color: #ffffff;
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .chore-labels {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chore-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+    .chore-desc {
+      font-size: 11px;
+      font-weight: 500;
+      color: #94a3b8;
+      margin-top: 1px;
+    }
+
+    .chore-emoji {
+      font-size: 20px;
+      margin-left: 8px;
+    }
+
+    .page-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 6px 30px;
+      font-size: 12px;
+      color: #64748b;
+    }
+    .reset-link {
+      color: #94a3b8;
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-decoration: underline;
+      font-size: 12px;
+    }
+    .reset-link:hover {
+      color: #e2e8f0;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 999;
+    }
+    .modal-overlay.hidden {
+      display: none;
+    }
+
+    .modal-card {
+      background: #1e293b;
+      border: 2px solid #f59e0b;
+      border-radius: 22px;
+      width: 100%;
+      max-width: 380px;
+      padding: 24px;
+      text-align: center;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+      position: relative;
+    }
+
+    .modal-title {
+      color: #fde047;
+      font-size: 20px;
+      font-weight: 900;
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .modal-desc {
+      font-size: 12px;
+      color: #cbd5e1;
+      margin-bottom: 16px;
+    }
+
+    .prize-box {
+      background: #0f172a;
+      border: 2px dashed #f59e0b;
+      border-radius: 16px;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 800;
+      color: #fef08a;
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .claim-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      background: linear-gradient(90deg, #10b981, #059669);
+      color: white;
+      font-size: 14px;
+    }
+
+    .parent-modal-card {
+      background: #1e293b;
+      border: 2px solid #475569;
+      border-radius: 22px;
+      width: 100%;
+      max-width: 440px;
+      padding: 22px;
+      text-align: left;
+    }
+    .parent-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 10px;
+    }
+    .parent-modal-header h3 {
+      font-size: 16px;
+      font-weight: 800;
+      color: #f8fafc;
+    }
+    .close-btn {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .field-label {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: #cbd5e1;
+      margin-bottom: 4px;
+      display: block;
+    }
+    .field-textarea {
+      width: 100%;
+      height: 110px;
+      background: #0f172a;
+      border: 1px solid #475569;
+      border-radius: 12px;
+      padding: 10px;
+      color: #f8fafc;
+      font-family: inherit;
+      font-size: 12px;
+      resize: vertical;
+      margin-bottom: 12px;
+    }
+
+    .parent-modal-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #334155;
+      padding-top: 14px;
+      margin-top: 14px;
+    }
+
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1000;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="container">
+
+    <!-- Top Dashboard Header -->
+    <header class="header-card">
+      <div class="hero-profile">
+        <div class="avatar-wrapper">
+          <div class="avatar-badge" id="avatar-icon">🤠</div>
+          <div class="hero-title-group">
+            <h1>
+              <span id="hero-name-display">Trooper</span>
+              <span class="streak-pill" id="streak-badge">🔥 <span id="streak-count">1</span> DAY STREAK</span>
+            </h1>
+            <div class="hero-rank" id="rank-title">Level 1 • Barn Scout</div>
+          </div>
+        </div>
+
+        <div class="action-icons">
+          <button class="icon-btn" id="sound-btn" onclick="toggleSound()" title="Sound Effects">🔊</button>
+          <button class="icon-btn" onclick="openParentModal()" title="Parent Settings">⚙️</button>
+        </div>
+      </div>
+
+      <!-- XP Bar -->
+      <div class="xp-section">
+        <div class="xp-labels">
+          <span>TROOPER'S XP</span>
+          <span id="xp-text">0 / 100 XP</span>
+        </div>
+        <div class="xp-bar-bg">
+          <div class="xp-bar-fill" id="xp-bar"></div>
+        </div>
+      </div>
+
+      <!-- Stats Footer -->
+      <div class="stats-footer">
+        <div class="stats-counts">
+          <div>TASKS: <span class="green-val" id="completed-count">0/11</span></div>
+          <div>COINS: <span class="gold-val" id="coin-count">🪙 0</span></div>
+        </div>
+
+        <button id="chest-btn" onclick="claimLootChest()" class="btn-3d loot-claim-btn" style="display: none;">
+          🎁 UNLOCK LOOT!
+        </button>
+      </div>
+    </header>
+
+    <!-- QUEST SECTIONS -->
+
+    <!-- Zone 1: Morning Hero Launch -->
+    <section class="quest-zone zone-am">
+      <div class="zone-header">
+        <div class="zone-title">
+          <span>🌅</span> Morning Hero Launch
+        </div>
+        <div class="zone-tag">+25 XP Each</div>
+      </div>
+
+      <div class="chore-list">
+        <div class="chore-item" data-id="get_dressed" data-xp="25">
+          <label class="chore-left" for="c_dressed">
+            <input type="checkbox" id="c_dressed" class="chore-checkbox" onchange="handleChoreToggle(this, 'get_dressed')">
+            <div class="chore-labels">
+              <span class="chore-name">Armor Up (Get Dressed)</span>
+              <span class="chore-desc">Put on full clothes and socks for the day</span>
+            </div>
+          </label>
+          <span class="chore-emoji">👕</span>
+        </div>
+
+        <div class="chore-item" data-id="brush_teeth" data-xp="25">
+          <label class="chore-left" for="c_teeth">
+            <input type="checkbox" id="c_teeth" class="chore-checkbox" onchange="handleChoreToggle(this, 'brush_teeth')">
+            <div class="chore-labels">
+              <span class="chore-name">Sparkle Smile (Brush Teeth)</span>
+              <span class="chore-desc">2 full minutes of brushing shine</span>
+            </div>
+          </label>
+          <span class="chore-emoji">🪥</span>
+        </div>
+
+        <div class="chore-item" data-id="eat_breakfast" data-xp="25">
+          <label class="chore-left" for="c_breakfast">
+            <input type="checkbox" id="c_breakfast" class="chore-checkbox" onchange="handleChoreToggle(this, 'eat_breakfast')">
+            <div class="chore-labels">
+              <span class="chore-name">Power Fuel (Eat Breakfast)</span>
+              <span class="chore-desc">Finish morning meal and drink</span>
+            </div>
+          </label>
+          <span class="chore-emoji">🥞</span>
+        </div>
+
+        <div class="chore-item" data-id="get_backpack" data-xp="25">
+          <label class="chore-left" for="c_backpack">
+            <input type="checkbox" id="c_backpack" class="chore-checkbox" onchange="handleChoreToggle(this, 'get_backpack')">
+            <div class="chore-labels">
+              <span class="chore-name">Mission Satchel (Get Backpack)</span>
+              <span class="chore-desc">Packed, zipped, and placed at launchpad</span>
+            </div>
+          </label>
+          <span class="chore-emoji">🎒</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Zone 2: Pasture & Herd Patrol -->
+    <section class="quest-zone zone-pasture">
+      <div class="zone-header">
+        <div class="zone-title">
+          <span>🐴</span> Pasture & Herd Patrol
+        </div>
+        <div class="zone-tag">+50 XP Each</div>
+      </div>
+
+      <div class="chore-list">
+        <div class="chore-item" data-id="check_horse_water" data-xp="50">
+          <label class="chore-left" for="c_horse_water">
+            <input type="checkbox" id="c_horse_water" class="chore-checkbox" onchange="handleChoreToggle(this, 'check_horse_water')">
+            <div class="chore-labels">
+              <span class="chore-name">Check Horse Water Trough</span>
+              <span class="chore-desc">Verify water level is clean, full, and running</span>
+            </div>
+          </label>
+          <span class="chore-emoji">💧</span>
+        </div>
+
+        <div class="chore-item" data-id="horse_cow_care" data-xp="50">
+          <label class="chore-left" for="c_horse_cow">
+            <input type="checkbox" id="c_horse_cow" class="chore-checkbox" onchange="handleChoreToggle(this, 'horse_cow_care')">
+            <div class="chore-labels">
+              <span class="chore-name">Care for Horse & Cow</span>
+              <span class="chore-desc">Hay, feed check, gates secure, inspect stock</span>
+            </div>
+          </label>
+          <span class="chore-emoji">🐄</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Zone 3: House Critter Squad -->
+    <section class="quest-zone zone-critters">
+      <div class="zone-header">
+        <div class="zone-title">
+          <span>🐾</span> House Critter Squad
+        </div>
+        <div class="zone-tag">+35 XP Each</div>
+      </div>
+
+      <div class="chore-list">
+        <div class="chore-item" data-id="feed_dog" data-xp="35">
+          <label class="chore-left" for="c_dog">
+            <input type="checkbox" id="c_dog" class="chore-checkbox" onchange="handleChoreToggle(this, 'feed_dog')">
+            <div class="chore-labels">
+              <span class="chore-name">Hound Feast (Feed Dog)</span>
+              <span class="chore-desc">Scoop clean ration into dog bowl</span>
+            </div>
+          </label>
+          <span class="chore-emoji">🐕</span>
+        </div>
+
+        <div class="chore-item" data-id="feed_cat" data-xp="35">
+          <label class="chore-left" for="c_cat">
+            <input type="checkbox" id="c_cat" class="chore-checkbox" onchange="handleChoreToggle(this, 'feed_cat')">
+            <div class="chore-labels">
+              <span class="chore-name">Feline Chow (Feed Cat)</span>
+              <span class="chore-desc">Fill cat food bowl</span>
+            </div>
+          </label>
+          <span class="chore-emoji">🐈</span>
+        </div>
+
+        <div class="chore-item" data-id="water_cat" data-xp="35">
+          <label class="chore-left" for="c_water_cat">
+            <input type="checkbox" id="c_water_cat" class="chore-checkbox" onchange="handleChoreToggle(this, 'water_cat')">
+            <div class="chore-labels">
+              <span class="chore-name">Fresh Spring (Water Cat)</span>
+              <span class="chore-desc">Rinse and refresh clean kitty water</span>
+            </div>
+          </label>
+          <span class="chore-emoji">🥛</span>
+        </div>
+
+        <div class="chore-item" data-id="do_litter" data-xp="35">
+          <label class="chore-left" for="c_litter">
+            <input type="checkbox" id="c_litter" class="chore-checkbox" onchange="handleChoreToggle(this, 'do_litter')">
+            <div class="chore-labels">
+              <span class="chore-name">Sandbox Sifter (Do Litter)</span>
+              <span class="chore-desc">Scoop clean & dispose in bin</span>
+            </div>
+          </label>
+          <span class="chore-emoji">🧹</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Zone 4: Sunset Sanctuary & Reset -->
+    <section class="quest-zone zone-pm">
+      <div class="zone-header">
+        <div class="zone-title">
+          <span>🌙</span> Evening Sanctuary & Reset
+        </div>
+        <div class="zone-tag">+50 XP</div>
+      </div>
+
+      <div class="chore-list">
+        <div class="chore-item" data-id="chill_reset" data-xp="50">
+          <label class="chore-left" for="c_reset">
+            <input type="checkbox" id="c_reset" class="chore-checkbox" onchange="handleChoreToggle(this, 'chill_reset')">
+            <div class="chore-labels">
+              <span class="chore-name">Chill & Reset Beat for Tomorrow</span>
+              <span class="chore-desc">Shoes stowed, launchpad ready, evening unwind earned</span>
+            </div>
+          </label>
+          <span class="chore-emoji">🎧</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer Controls -->
+    <footer class="page-footer">
+      <span id="date-display">Today's Quest</span>
+      <button class="reset-link" onclick="confirmResetDay()">Reset Today's Checks</button>
+    </footer>
+
+  </div>
+
+  <!-- LOOT CHEST POPUP MODAL -->
+  <div id="loot-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div style="font-size: 52px; margin-bottom: 6px;">🎁</div>
+      <h3 class="modal-title">LOOT BOX UNLOCKED!</h3>
+      <p class="modal-desc">Trooper stayed on mission and earned a Homestead Reward!</p>
+
+      <div class="prize-box" id="reward-result"></div>
+
+      <button class="btn-3d claim-btn" onclick="closeLootModal()">CLAIM & CONTINUE!</button>
+    </div>
+  </div>
+
+  <!-- PARENT SETTINGS MODAL -->
+  <div id="parent-modal" class="modal-overlay hidden">
+    <div class="parent-modal-card">
+      <div class="parent-modal-header">
+        <h3>⚙️ Parent Command Desk</h3>
+        <button class="close-btn" onclick="closeParentModal()">✕</button>
+      </div>
+
+      <label class="field-label">Custom Reward Chest Drops (One per line)</label>
+      <textarea id="reward-pool-input" class="field-textarea"></textarea>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+        <div>
+          <label class="field-label">Hero's Name</label>
+          <input type="text" id="kid-name-input" style="width: 100%; background: #0f172a; border: 1px solid #475569; border-radius: 10px; padding: 8px; color: #fff; font-size: 13px;">
+        </div>
+        <div>
+          <label class="field-label">Bonus XP Reward</label>
+          <button onclick="addParentBonusXP(50)" class="btn-3d" style="width: 100%; background: #d97706; color: white; padding: 8px; border-radius: 10px; font-size: 12px;">
+            +50 Quick XP
+          </button>
+        </div>
+      </div>
+
+      <div class="parent-modal-actions">
+        <button onclick="resetFullHeroProfile()" style="background: none; border: none; color: #f87171; font-size: 11px; cursor: pointer; text-decoration: underline;">
+          Reset All Stats
+        </button>
+        <button onclick="saveParentSettings()" class="btn-3d" style="background: #10b981; color: white; padding: 8px 18px; border-radius: 10px; font-size: 13px;">
+          Save Settings
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const AudioEngine = {
+      ctx: null,
+      enabled: true,
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) {
+            this.ctx = new AudioContext();
+          }
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      },
+
+      playCoin() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(987.77, now);
+        osc.frequency.setValueAtTime(1318.51, now + 0.08);
+
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.35);
+      },
+
+      playFanfare() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, idx) => {
+          const now = this.ctx.currentTime + (idx * 0.09);
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(freq, now);
+
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(now);
+          osc.stop(now + 0.25);
+        });
+      },
+
+      playLevelUp() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const notes = [440, 554.37, 659.25, 880, 1108.73, 1318.51];
+        notes.forEach((freq, idx) => {
+          const now = this.ctx.currentTime + (idx * 0.08);
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now);
+
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(now);
+          osc.stop(now + 0.4);
+        });
+      },
+
+      playChestOpen() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(300, now);
+        osc.frequency.exponentialRampToValueAtTime(1200, now + 0.3);
+
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.5);
+      }
+    };
+
+    const RANKS = [
+      { level: 1, title: "Barn Scout", xpReq: 100, avatar: "🤠" },
+      { level: 2, title: "Trail Wrangler", xpReq: 250, avatar: "🐎" },
+      { level: 3, title: "Herd Guardian", xpReq: 500, avatar: "🛡️" },
+      { level: 4, title: "Homestead Ranger", xpReq: 850, avatar: "⭐" },
+      { level: 5, title: "Master of Beasts", xpReq: 1300, avatar: "🦅" },
+      { level: 6, title: "Ranch Legend", xpReq: 2000, avatar: "👑" }
+    ];
+
+    const DEFAULT_REWARDS = [
+      "🎮 20 Minutes Extra Screen / Gaming Time",
+      "🍕 Pick What We Have for Dinner Tonight!",
+      "🍦 Ice Cream / Sweet Treat Run",
+      "🌙 15 Minutes Stay Up Late Pass",
+      "🎟️ Free Pass: Skip Setting the Dinner Table Once",
+      "🚜 Ride-Along on Farm Tractor / Equipment Patrol",
+      "🪙 +50 BONUS XP Deposit in the Hero Bank!"
+    ];
+
+    let state = {
+      xp: 0,
+      coins: 0,
+      streak: 1,
+      lastActiveDate: new Date().toISOString().split('T')[0],
+      completedChores: {},
+      pendingChests: 0,
+      rewardsPool: [...DEFAULT_REWARDS],
+      kidName: "Trooper"
+    };
+
+    function loadState() {
+      const saved = localStorage.getItem('bb_trooper_ranch_quest_data');
+      if (saved) {
+        try {
+          state = Object.assign(state, JSON.parse(saved));
+        } catch (e) {
+          console.error("State parse error", e);
+        }
+      }
+
+      const today = new Date().toISOString().split('T')[0];
+      if (state.lastActiveDate !== today) {
+        const last = new Date(state.lastActiveDate);
+        const curr = new Date(today);
+        const diffDays = Math.round((curr - last) / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 1) {
+          state.streak += 1;
+        } else if (diffDays > 1) {
+          state.streak = 1;
+        }
+
+        state.completedChores = {};
+        state.lastActiveDate = today;
+        saveState();
+      }
+
+      document.getElementById('date-display').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+      renderUI();
+    }
+
+    function saveState() {
+      localStorage.setItem('bb_trooper_ranch_quest_data', JSON.stringify(state));
+    }
+
+    function getRankInfo(xp) {
+      for (let i = RANKS.length - 1; i >= 0; i--) {
+        if (xp >= (RANKS[i - 1]?.xpReq || 0)) {
+          const currentRank = RANKS[i];
+          const prevXp = RANKS[i - 1] ? RANKS[i - 1].xpReq : 0;
+          const nextXp = currentRank.xpReq;
+          return { currentRank, prevXp, nextXp };
+        }
+      }
+      return { currentRank: RANKS[0], prevXp: 0, nextXp: RANKS[0].xpReq };
+    }
+
+    function renderUI() {
+      let totalCompleted = 0;
+      const allCheckboxes = document.querySelectorAll('.chore-checkbox');
+      allCheckboxes.forEach(cb => {
+        const fullId = cb.closest('.chore-item').getAttribute('data-id');
+        const isDone = !!state.completedChores[fullId];
+        cb.checked = isDone;
+        const itemRow = cb.closest('.chore-item');
+        if (isDone) {
+          itemRow.classList.add('done');
+          totalCompleted++;
+        } else {
+          itemRow.classList.remove('done');
+        }
+      });
+
+      document.getElementById('completed-count').innerText = `${totalCompleted}/${allCheckboxes.length}`;
+      document.getElementById('coin-count').innerText = `🪙 ${state.coins}`;
+      document.getElementById('streak-count').innerText = state.streak;
+      document.getElementById('hero-name-display').innerText = state.kidName || "Trooper";
+
+      const { currentRank, prevXp, nextXp } = getRankInfo(state.xp);
+      document.getElementById('rank-title').innerText = `Level ${currentRank.level} • ${currentRank.title}`;
+      document.getElementById('avatar-icon').innerText = currentRank.avatar;
+
+      const xpIntoCurrentLevel = state.xp - prevXp;
+      const levelSpan = nextXp - prevXp;
+      const pct = Math.min(100, Math.max(0, (xpIntoCurrentLevel / levelSpan) * 100));
+
+      document.getElementById('xp-bar').style.width = `${pct}%`;
+      document.getElementById('xp-text').innerText = `${state.xp} / ${nextXp} XP`;
+
+      const chestBtn = document.getElementById('chest-btn');
+      if (state.pendingChests > 0) {
+        chestBtn.style.display = 'inline-flex';
+        chestBtn.innerHTML = `🎁 UNLOCK LOOT (${state.pendingChests})!`;
+      } else {
+        chestBtn.style.display = 'none';
+      }
+    }
+
+    function handleChoreToggle(checkbox, choreId) {
+      AudioEngine.init();
+      const choreItem = checkbox.closest('.chore-item');
+      const xpVal = parseInt(choreItem.getAttribute('data-xp') || '25', 10);
+
+      if (checkbox.checked) {
+        state.completedChores[choreId] = true;
+        const oldRank = getRankInfo(state.xp).currentRank.level;
+        state.xp += xpVal;
+        state.coins += 5;
+
+        const completedCount = Object.keys(state.completedChores).length;
+        if (completedCount % 3 === 0 || state.xp % 100 < xpVal) {
+          state.pendingChests += 1;
+        }
+
+        const newRank = getRankInfo(state.xp).currentRank.level;
+
+        if (newRank > oldRank) {
+          AudioEngine.playLevelUp();
+          triggerConfetti(true);
+        } else {
+          AudioEngine.playCoin();
+          triggerConfetti(false);
+        }
+
+        const total = document.querySelectorAll('.chore-checkbox').length;
+        if (completedCount === total) {
+          setTimeout(() => {
+            AudioEngine.playFanfare();
+            triggerConfetti(true);
+            state.pendingChests += 1;
+            renderUI();
+          }, 350);
+        }
+
+      } else {
+        delete state.completedChores[choreId];
+        state.xp = Math.max(0, state.xp - xpVal);
+        state.coins = Math.max(0, state.coins - 5);
+      }
+
+      saveState();
+      renderUI();
+    }
+
+    function claimLootChest() {
+      if (state.pendingChests <= 0) return;
+      AudioEngine.playChestOpen();
+
+      const pool = (state.rewardsPool && state.rewardsPool.length > 0) ? state.rewardsPool : DEFAULT_REWARDS;
+      const prize = pool[Math.floor(Math.random() * pool.length)];
+
+      document.getElementById('reward-result').innerText = prize;
+      document.getElementById('loot-modal').classList.remove('hidden');
+
+      state.pendingChests = Math.max(0, state.pendingChests - 1);
+      saveState();
+      renderUI();
+      triggerConfetti(false);
+    }
+
+    function closeLootModal() {
+      document.getElementById('loot-modal').classList.add('hidden');
+    }
+
+    function openParentModal() {
+      document.getElementById('reward-pool-input').value = (state.rewardsPool || DEFAULT_REWARDS).join('\n');
+      document.getElementById('kid-name-input').value = state.kidName || "Trooper";
+      document.getElementById('parent-modal').classList.remove('hidden');
+    }
+
+    function closeParentModal() {
+      document.getElementById('parent-modal').classList.add('hidden');
+    }
+
+    function saveParentSettings() {
+      const text = document.getElementById('reward-pool-input').value.trim();
+      const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      if (lines.length > 0) {
+        state.rewardsPool = lines;
+      }
+      state.kidName = document.getElementById('kid-name-input').value.trim() || "Trooper";
+      saveState();
+      closeParentModal();
+      renderUI();
+    }
+
+    function addParentBonusXP(amt) {
+      state.xp += amt;
+      state.coins += 10;
+      AudioEngine.playLevelUp();
+      triggerConfetti(false);
+      saveState();
+      renderUI();
+    }
+
+    function resetFullHeroProfile() {
+      if (confirm("Reset XP, Level, and All Hero Data?")) {
+        state.xp = 0;
+        state.coins = 0;
+        state.streak = 1;
+        state.completedChores = {};
+        state.pendingChests = 0;
+        saveState();
+        closeParentModal();
+        renderUI();
+      }
+    }
+
+    function confirmResetDay() {
+      if (confirm("Reset today's checked chores? (Your Level and XP will remain!)")) {
+        state.completedChores = {};
+        saveState();
+        renderUI();
+      }
+    }
+
+    function toggleSound() {
+      AudioEngine.enabled = !AudioEngine.enabled;
+      document.getElementById('sound-btn').innerText = AudioEngine.enabled ? '🔊' : '🔇';
+    }
+
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function triggerConfetti(isGrand = false) {
+      const count = isGrand ? 110 : 40;
+      const colors = ['#f59e0b', '#10b981', '#6366f1', '#ec4899', '#8b5cf6', '#fbbf24'];
+
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: canvas.width / 2 + (Math.random() - 0.5) * 160,
+          y: canvas.height * 0.4,
+          vx: (Math.random() - 0.5) * (isGrand ? 16 : 9),
+          vy: (Math.random() - 0.8) * (isGrand ? 20 : 12),
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 10,
+          life: 1,
+          decay: Math.random() * 0.02 + 0.015
+        });
+      }
+    }
+
+    function updateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.45;
+        p.rotation += p.rotSpeed;
+        p.life -= p.decay;
+
+        if (p.life <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        ctx.save();
+        ctx.globalAlpha = p.life;
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+        ctx.restore();
+      }
+      requestAnimationFrame(updateConfetti);
+    }
+    requestAnimationFrame(updateConfetti);
+
+    window.addEventListener('DOMContentLoaded', loadState);
+  </script>
+</body>
+</html>

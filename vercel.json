@@ -2,6 +2,14 @@
   "trailingSlash": true,
   "rewrites": [
     {
+      "source": "/trooper",
+      "destination": "/trooper.html"
+    },
+    {
+      "source": "/trooper/",
+      "destination": "/trooper.html"
+    },
+    {
       "source": "/bank/birthday",
       "destination": "/bank/birthday.html"
     },
@@ -272,6 +280,38 @@
     {
       "source": "/telemetry.js/",
       "destination": "/arcade/telemetry.js"
+    },
+    {
+      "source": "/449-decision-tool",
+      "destination": "/449_decision_tool.html"
+    },
+    {
+      "source": "/449-decision-tool/",
+      "destination": "/449_decision_tool.html"
+    },
+    {
+      "source": "/449_decision_tool",
+      "destination": "/449_decision_tool.html"
+    },
+    {
+      "source": "/449_decision_tool/",
+      "destination": "/449_decision_tool.html"
+    },
+    {
+      "source": "/decision-tool",
+      "destination": "/449_decision_tool.html"
+    },
+    {
+      "source": "/decision-tool/",
+      "destination": "/449_decision_tool.html"
+    },
+    {
+      "source": "/decision",
+      "destination": "/449_decision_tool.html"
+    },
+    {
+      "source": "/decision/",
+      "destination": "/449_decision_tool.html"
     }
   ]
 }
