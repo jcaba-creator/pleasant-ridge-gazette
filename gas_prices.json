@@ -1,8 +1,8 @@
 {
   "status": "success",
-  "last_updated_iso": "2026-10-23T05:00:05.584929",
-  "last_updated_human": "Friday, October 23, 2026 - 05:00 AM",
-  "date_header": "Friday, Oct 23, 2026",
+  "last_updated_iso": "2026-10-25T15:00:05.590236",
+  "last_updated_human": "Sunday, October 25, 2026 - 03:00 PM",
+  "date_header": "Sunday, Oct 25, 2026",
   "cheapest_station": {
     "name": "Sunoco",
     "loc": "501 Limit St (Leavenworth)",
@@ -16,7 +16,7 @@
       "loc": "501 Limit St (Leavenworth)",
       "address": "501 Limit St (Leavenworth)",
       "price": 3.83,
-      "updated": "2026-10-22T21:16:45.944Z",
+      "updated": "2026-10-24T13:03:10.324Z",
       "is_estimate": false
     },
     {
@@ -25,16 +25,25 @@
       "loc": "10th Ave / Eisenhower (Leavenworth)",
       "address": "1050 Eisenhower Road (Leavenworth)",
       "price": 3.84,
-      "updated": "2026-10-23T09:31:50.661Z",
+      "updated": "2026-10-25T19:01:00.637Z",
       "is_estimate": false
     },
     {
-      "id": "96594",
-      "name": "AAFES Express",
-      "loc": "Main Post (Ft. Leavenworth)",
-      "address": "335 Kansas Ave (Fort Leavenworth)",
-      "price": 3.87,
-      "updated": "2026-10-21T18:26:56.266Z",
+      "id": "204958",
+      "name": "7-Eleven",
+      "loc": "Metropolitan Ave (Leavenworth)",
+      "address": "609 Metropolitan Ave (Leavenworth)",
+      "price": 3.85,
+      "updated": "2026-10-24T22:49:19.626Z",
+      "is_estimate": false
+    },
+    {
+      "id": "143099",
+      "name": "Hilltop Market / 66",
+      "loc": "Easton-Tongie Loop (Easton)",
+      "address": "21315 Easton Rd (Easton)",
+      "price": 3.86,
+      "updated": "2026-10-24T17:08:43.140Z",
       "is_estimate": false
     },
     {
@@ -43,7 +52,7 @@
       "loc": "1205 N Main St (Lansing)",
       "address": "1205 N Main St (Lansing)",
       "price": 3.87,
-      "updated": "2026-10-22T14:19:12.751Z",
+      "updated": "2026-10-25T14:20:18.778Z",
       "is_estimate": false
     },
     {
@@ -52,16 +61,7 @@
       "loc": "Eisenhower Rd (Leavenworth)",
       "address": "720 Eisenhower Rd (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-22T02:25:33.111Z",
-      "is_estimate": false
-    },
-    {
-      "id": "204958",
-      "name": "7-Eleven",
-      "loc": "Metropolitan Ave (Leavenworth)",
-      "address": "609 Metropolitan Ave (Leavenworth)",
-      "price": 3.87,
-      "updated": "2026-10-22T04:10:26.136Z",
+      "updated": "2026-10-25T14:44:39.553Z",
       "is_estimate": false
     },
     {
@@ -70,7 +70,7 @@
       "loc": "2100 S 4th St (Leavenworth)",
       "address": "2100 S 4th St (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-23T08:48:00.796Z",
+      "updated": "2026-10-25T18:45:40.868Z",
       "is_estimate": false
     },
     {
@@ -79,7 +79,7 @@
       "loc": "2004 Spruce St (Leavenworth)",
       "address": "2004 Spruce St (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-23T08:46:35.034Z",
+      "updated": "2026-10-25T19:46:07.926Z",
       "is_estimate": false
     },
     {
@@ -88,7 +88,7 @@
       "loc": "601 S Main St (Lansing)",
       "address": "601 S Main St (Lansing)",
       "price": 3.87,
-      "updated": "2026-10-22T16:46:49.412Z",
+      "updated": "2026-10-23T21:42:23.452Z",
       "is_estimate": false
     },
     {
@@ -97,8 +97,17 @@
       "loc": "109 4H Rd (Lansing)",
       "address": "109 4H Rd (Lansing)",
       "price": 3.87,
-      "updated": "2026-10-22T16:46:55.089Z",
+      "updated": "2026-10-24T16:40:14.396Z",
       "is_estimate": false
+    },
+    {
+      "id": "96594",
+      "name": "AAFES Express",
+      "loc": "Main Post (Ft. Leavenworth)",
+      "address": "335 Kansas Ave (Fort Leavenworth)",
+      "price": 3.89,
+      "updated": null,
+      "is_estimate": true
     },
     {
       "id": "103082",
@@ -110,21 +119,12 @@
       "is_estimate": true
     },
     {
-      "id": "143099",
-      "name": "Hilltop Market / 66",
-      "loc": "Easton-Tongie Loop (Easton)",
-      "address": "21315 Easton Rd (Easton)",
-      "price": 3.91,
-      "updated": null,
-      "is_estimate": true
-    },
-    {
       "id": "155402",
       "name": "Sam's Club Fuel",
       "loc": "Parallel Pkwy Corridor",
       "address": "10580 Parallel Pkwy (Kansas City)",
       "price": 3.93,
-      "updated": "2026-10-23T01:03:43.591Z",
+      "updated": "2026-10-25T03:12:44.247Z",
       "is_estimate": false
     },
     {
@@ -133,8 +133,8 @@
       "loc": "Spruce St (Leavenworth)",
       "address": "788 Spruce St (Leavenworth)",
       "price": 3.99,
-      "updated": null,
-      "is_estimate": true
+      "updated": "2026-10-24T06:09:34.623Z",
+      "is_estimate": false
     }
   ]
 }
