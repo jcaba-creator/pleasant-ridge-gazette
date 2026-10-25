@@ -2,6 +2,30 @@
   "trailingSlash": true,
   "rewrites": [
     {
+      "source": "/bank/birthday",
+      "destination": "/bank/birthday.html"
+    },
+    {
+      "source": "/bank/birthday/",
+      "destination": "/bank/birthday.html"
+    },
+    {
+      "source": "/bank/falcon",
+      "destination": "/bank/birthday.html"
+    },
+    {
+      "source": "/bank/falcon/",
+      "destination": "/bank/birthday.html"
+    },
+    {
+      "source": "/bank/jump",
+      "destination": "/bank/birthday.html"
+    },
+    {
+      "source": "/bank/jump/",
+      "destination": "/bank/birthday.html"
+    },
+    {
       "source": "/bank/cadence",
       "destination": "/bank/cadence.html"
     },
