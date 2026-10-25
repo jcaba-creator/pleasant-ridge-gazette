@@ -2,6 +2,38 @@
   "trailingSlash": true,
   "rewrites": [
     {
+      "source": "/bank/cadence",
+      "destination": "/bank/cadence.html"
+    },
+    {
+      "source": "/bank/cadence/",
+      "destination": "/bank/cadence.html"
+    },
+    {
+      "source": "/bank/rhythm",
+      "destination": "/bank/cadence.html"
+    },
+    {
+      "source": "/bank/rhythm/",
+      "destination": "/bank/cadence.html"
+    },
+    {
+      "destination": "/arcade/unravel.html",
+      "source": "/unravel"
+    },
+    {
+      "destination": "/arcade/unravel.html",
+      "source": "/unravel/"
+    },
+    {
+      "destination": "/arcade/unravel.html",
+      "source": "/arcade/unravel"
+    },
+    {
+      "destination": "/arcade/unravel.html",
+      "source": "/arcade/unravel/"
+    },
+    {
       "source": "/treasury/",
       "destination": "/bank.html"
     },

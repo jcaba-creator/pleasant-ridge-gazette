@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Cadence · Weekly Rhythm & Adhesion Companion</title>
+  
+  <!-- Prevent search engine indexing -->
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Canvas Confetti & Lucide Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f5f7fa',
+              100: '#ebeff5',
+              200: '#d7dfec',
+              500: '#475569',
+              600: '#334155',
+              800: '#1e293b',
+              900: '#0f172a',
+            },
+            sage: {
+              50: '#f4f7f4',
+              100: '#e5ede5',
+              200: '#ceddce',
+              500: '#588157',
+              600: '#3a5a40',
+              700: '#344e41',
+            },
+            lavender: {
+              50: '#f8f7fc',
+              100: '#f0ecf9',
+              200: '#dfd7f2',
+              500: '#8e7cc3',
+              600: '#7558b2',
+              700: '#5e4399',
+            },
+            terracotta: {
+              50: '#fdf7f4',
+              100: '#faeee8',
+              200: '#f4ddd2',
+              500: '#d97757',
+              600: '#c15a38',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: #faf9f6;
+      color: #1e293b;
+    }
+    .shadow-xs { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04); }
+    .shadow-sm { box-shadow: 0 2px 8px -1px rgba(0, 0, 0, 0.05), 0 1px 3px -1px rgba(0, 0, 0, 0.03); }
+    .shadow-xl { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.07), 0 8px 10px -6px rgba(0, 0, 0, 0.04); }
+    .tab-btn { position: relative; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+    .tab-btn.active-tab { font-weight: 600; }
+    .preset-btn, .pair-card { transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+    .preset-btn:hover, .pair-card:hover { transform: translateY(-1px); }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    input:focus, select:focus, textarea:focus { outline: none; }
+  </style>
+</head>
+<body class="bg-stone-50 text-slate-800 font-sans min-h-screen flex flex-col antialiased selection:bg-sage-100 selection:text-sage-700">
+
+  <!-- Top Header Navigation -->
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-stone-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-sage-500 to-lavender-500 flex items-center justify-center text-white shadow-sm">
+          <i data-lucide="flower-2" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold tracking-tight text-slate-900 flex items-center gap-2">
+            Cadence
+            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-sage-50 text-sage-600 border border-sage-200">Private Companion</span>
+          </h1>
+          <p class="text-xs text-slate-500">Weekly Waveform & Adhesion Companion</p>
+        </div>
+      </div>
+
+      <!-- Live Gamification / Reward Pill -->
+      <div class="flex items-center gap-2 sm:gap-4">
+        <!-- Streak badge -->
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold shadow-xs">
+          <i data-lucide="flame" class="w-4 h-4 text-amber-500 fill-amber-500"></i>
+          <span id="streak-counter">3 Week Streak</span>
+        </div>
+
+        <!-- Petals / Rewards counter -->
+        <button onclick="switchTab('rewards')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-lavender-50 border border-lavender-200 text-lavender-700 text-xs font-semibold shadow-xs hover:bg-lavender-100 transition-colors">
+          <i data-lucide="sparkles" class="w-4 h-4 text-lavender-500"></i>
+          <span id="petals-counter">320 Petals</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-1 sm:space-x-4 border-t border-stone-100">
+      <button onclick="switchTab('zepbound')" id="tab-btn-zepbound" class="tab-btn active-tab py-3 px-3 text-sm font-medium flex items-center gap-2 border-b-2 border-lavender-600 text-lavender-700">
+        <i data-lucide="activity" class="w-4 h-4"></i>
+        <span>Zepbound Waveform</span>
+      </button>
+      <button onclick="switchTab('patch')" id="tab-btn-patch" class="tab-btn py-3 px-3 text-sm font-medium flex items-center gap-2 border-b-2 border-transparent text-slate-500 hover:text-slate-800">
+        <i data-lucide="shield-check" class="w-4 h-4"></i>
+        <span>Patch Anchor & Bath Guard</span>
+      </button>
+      <button onclick="switchTab('rewards')" id="tab-btn-rewards" class="tab-btn py-3 px-3 text-sm font-medium flex items-center gap-2 border-b-2 border-transparent text-slate-500 hover:text-slate-800">
+        <i data-lucide="gift" class="w-4 h-4"></i>
+        <span>Rewards & Milestones</span>
+      </button>
+      <button onclick="switchTab('history')" id="tab-btn-history" class="tab-btn py-3 px-3 text-sm font-medium flex items-center gap-2 border-b-2 border-transparent text-slate-500 hover:text-slate-800">
+        <i data-lucide="history" class="w-4 h-4"></i>
+        <span>Log History</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- TAB 1: ZEPBOUND WAVEFORM & DELIBERATE SHIFT -->
+    <div id="tab-zepbound" class="tab-content space-y-6">
+      
+      <!-- Current Status Banner -->
+      <div class="bg-white rounded-3xl p-6 shadow-sm border border-stone-200/80">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-stone-100 pb-5">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-lavender-100 text-lavender-700 flex items-center justify-center shrink-0">
+              <i data-lucide="syringe" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="text-lg font-bold text-slate-900">Active Zepbound Wave</h2>
+                <span id="zep-dosage-badge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-lavender-50 text-lavender-700 border border-lavender-200">5.0 mg</span>
+              </div>
+              <p id="zep-last-taken-meta" class="text-xs text-slate-500 mt-0.5">Taken: Thursday Oct 23 @ 8:30 PM (Left Abdomen)</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <button onclick="openLogZepModal()" class="px-4 py-2.5 rounded-xl bg-lavender-600 hover:bg-lavender-700 text-white font-medium text-sm flex items-center gap-2 shadow-xs transition-all active:scale-95">
+              <i data-lucide="plus-circle" class="w-4 h-4"></i>
+              Log New Injection
+            </button>
+          </div>
+        </div>
+
+        <!-- Real-time Pharmacokinetic Waveform Bar -->
+        <div class="mt-6 space-y-3">
+          <div class="flex items-center justify-between text-xs font-medium text-slate-500">
+            <span class="flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-lavender-500"></span>
+              Current Position: <strong id="zep-hours-elapsed" class="text-slate-800">Hour 42 of 168</strong>
+            </span>
+            <span id="zep-current-phase-label" class="px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200 text-xs font-semibold">
+              Phase 1: Peak Impact (Fatigue/Satiety Wave)
+            </span>
+          </div>
+
+          <!-- Waveform Visual Progress Bar -->
+          <div class="relative w-full h-7 bg-stone-100 rounded-xl overflow-hidden p-1 flex gap-1">
+            <!-- Phase 1: Hours 0-44 (Blast Radius) -->
+            <div class="relative h-full rounded-lg bg-lavender-200/90 text-[10px] text-lavender-800 font-semibold flex items-center justify-center transition-all duration-500" style="width: 26%;">
+              <span class="truncate px-1">Phase 1: Peak Blast (0-44h)</span>
+            </div>
+            <!-- Phase 2: Hours 44-120 (Sweet Spot) -->
+            <div class="relative h-full rounded-lg bg-sage-200/90 text-[10px] text-sage-800 font-semibold flex items-center justify-center transition-all duration-500" style="width: 45%;">
+              <span class="truncate px-1">Phase 2: Stable Rhythm (44-120h)</span>
+            </div>
+            <!-- Phase 3: Hours 120-168 (Trough) -->
+            <div class="relative h-full rounded-lg bg-amber-200/90 text-[10px] text-amber-800 font-semibold flex items-center justify-center transition-all duration-500" style="width: 29%;">
+              <span class="truncate px-1">Phase 3: Trough (120-168h)</span>
+            </div>
+            <!-- Pin Marker -->
+            <div id="zep-waveform-pin" class="absolute top-0 bottom-0 w-1 bg-slate-900 shadow-md rounded-full transition-all duration-500" style="left: 25%;">
+              <div class="w-2.5 h-2.5 -top-1 -left-[3px] absolute bg-slate-900 rounded-full"></div>
+            </div>
+          </div>
+
+          <!-- Insight Box -->
+          <div id="zep-phase-insight" class="bg-stone-50 rounded-2xl p-4 border border-stone-200 text-xs text-slate-600 flex items-start gap-3 mt-2">
+            <i data-lucide="info" class="w-4 h-4 text-lavender-600 shrink-0 mt-0.5"></i>
+            <div>
+              <strong class="text-slate-800">Current Physiological Window:</strong>
+              <p class="mt-0.5">Tirzepatide plasma concentration is near peak level ($T_{\max}$). Mild fatigue, early fullness, or digestive slowness is completely normal today. Prioritize hydration and calm evening rest. Monday work is outside the blast zone.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- The Deliberate Shift Engine (Interactive Simulator) -->
+      <div class="bg-white rounded-3xl p-6 shadow-sm border border-stone-200/80 space-y-6">
+        <div class="flex items-center justify-between border-b border-stone-100 pb-4">
+          <div>
+            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="sliders-horizontal" class="w-4 h-4 text-lavender-600"></i>
+              The Deliberate Shift Simulator
+            </h3>
+            <p class="text-xs text-slate-500 mt-0.5">Test shifting your next shot left or right by a few days to avoid surprises with work, sleep, and weekends.</p>
+          </div>
+          <span class="text-xs font-semibold px-2.5 py-1 bg-stone-100 text-slate-700 rounded-lg">Clinical Rule: &ge; 72h Gap</span>
+        </div>
+
+        <!-- Quick Strategy Presets -->
+        <div class="space-y-2">
+          <label class="text-xs font-semibold text-slate-700 uppercase tracking-wider">Strategy Presets for Next Injection</label>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <button onclick="applyShiftPreset('workday_shield')" class="preset-btn p-3 rounded-2xl border border-stone-200 text-left hover:border-lavender-300 hover:bg-lavender-50/50 transition-all group">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-900 group-hover:text-lavender-700">The Workday Shield</span>
+                <i data-lucide="briefcase" class="w-3.5 h-3.5 text-slate-400 group-hover:text-lavender-500"></i>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-1">Thursday 8:30 PM</p>
+              <span class="inline-block mt-2 text-[10px] px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-medium">Fatigue absorbed over weekend</span>
+            </button>
+
+            <button onclick="applyShiftPreset('weekend_freedom')" class="preset-btn p-3 rounded-2xl border border-stone-200 text-left hover:border-lavender-300 hover:bg-lavender-50/50 transition-all group">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-900 group-hover:text-lavender-700">The Social Weekend</span>
+                <i data-lucide="party-popper" class="w-3.5 h-3.5 text-slate-400 group-hover:text-lavender-500"></i>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-1">Sunday 7:00 PM</p>
+              <span class="inline-block mt-2 text-[10px] px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 font-medium">100% normal energy for Sat/Sun</span>
+            </button>
+
+            <button onclick="applyShiftPreset('friday_wind_down')" class="preset-btn p-3 rounded-2xl border border-stone-200 text-left hover:border-lavender-300 hover:bg-lavender-50/50 transition-all group">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-900 group-hover:text-lavender-700">Friday Couch Night</span>
+                <i data-lucide="moon" class="w-3.5 h-3.5 text-slate-400 group-hover:text-lavender-500"></i>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-1">Friday 5:00 PM</p>
+              <span class="inline-block mt-2 text-[10px] px-2 py-0.5 rounded bg-purple-50 text-purple-700 font-medium">Sleep off early peak</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Custom Date/Time Calibrator -->
+        <div class="bg-stone-50 rounded-2xl p-4 border border-stone-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-white border border-stone-200 flex items-center justify-center text-slate-600">
+              <i data-lucide="calendar-clock" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <div class="text-xs font-semibold text-slate-700">Custom Shot Candidate</div>
+              <div class="flex items-center gap-2 mt-1">
+                <input type="datetime-local" id="shift-candidate-input" onchange="simulateCandidateShift()" class="text-xs bg-white border border-stone-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-lavender-400 font-medium text-slate-800">
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button onclick="commitDeliberateDose()" class="w-full sm:w-auto px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs flex items-center justify-center gap-1.5 shadow-xs transition-colors">
+              <i data-lucide="calendar-check-2" class="w-4 h-4"></i>
+              Lock In This Deliberate Slot (+35 Petals)
+            </button>
+          </div>
+        </div>
+
+        <!-- Simulated Blast Radius Forecast Breakdown -->
+        <div id="simulation-results-card" class="rounded-2xl p-5 border transition-all duration-300 bg-white border-stone-200 space-y-4">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500">Forecasted Blast Radius & Impact</h4>
+            <span id="sim-safety-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+              ✓ Complies with 72h rule (168h since last shot)
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div class="p-3 rounded-xl bg-lavender-50/70 border border-lavender-100">
+              <div class="text-[11px] font-bold text-lavender-900 flex items-center gap-1.5">
+                <i data-lucide="battery-low" class="w-3.5 h-3.5 text-lavender-600"></i>
+                Peak Fatigue Window
+              </div>
+              <p id="sim-fatigue-window" class="text-xs font-semibold text-slate-800 mt-1">Friday 1:00 PM – Saturday 5:00 PM</p>
+              <p class="text-[10px] text-slate-500 mt-0.5">Expect lower physical stamina and mild appetite drop.</p>
+            </div>
+
+            <div class="p-3 rounded-xl bg-sage-50/70 border border-sage-100">
+              <div class="text-[11px] font-bold text-sage-900 flex items-center gap-1.5">
+                <i data-lucide="sparkle" class="w-3.5 h-3.5 text-sage-600"></i>
+                Peak Focus & Stability
+              </div>
+              <p id="sim-focus-window" class="text-xs font-semibold text-slate-800 mt-1">Sunday 9:00 AM – Wednesday 8:00 PM</p>
+              <p class="text-[10px] text-slate-500 mt-0.5">Optimal energy and strong food satiety. Great for demanding work.</p>
+            </div>
+
+            <div class="p-3 rounded-xl bg-amber-50/70 border border-amber-100">
+              <div class="text-[11px] font-bold text-amber-900 flex items-center gap-1.5">
+                <i data-lucide="coffee" class="w-3.5 h-3.5 text-amber-600"></i>
+                Hunger Rebound Trough
+              </div>
+              <p id="sim-trough-window" class="text-xs font-semibold text-slate-800 mt-1">Next Wednesday night – Thursday</p>
+              <p class="text-[10px] text-slate-500 mt-0.5">Appetite normalizes. Keep high-protein snacks handy.</p>
+            </div>
+          </div>
+
+          <!-- Recommendation Verdict -->
+          <div class="p-3 rounded-xl bg-stone-50 border border-stone-200 text-xs text-slate-700 flex items-center gap-2">
+            <span class="font-bold text-slate-900">Deliberate Verdict:</span>
+            <span id="sim-verdict-text">This slot shields your Monday-Thursday work week completely while letting you relax during the weekend dip.</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 2: PATCH ANCHOR & BATH GUARD -->
+    <div id="tab-patch" class="tab-content hidden space-y-6">
+
+      <!-- Active Patch Card -->
+      <div class="bg-white rounded-3xl p-6 shadow-sm border border-stone-200/80">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-stone-100 pb-5">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-terracotta-100 text-terracotta-600 flex items-center justify-center shrink-0">
+              <i data-lucide="bandage" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="text-lg font-bold text-slate-900">Current Active Patch</h2>
+                <span id="patch-anchor-pair-badge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-terracotta-50 text-terracotta-600 border border-terracotta-200">Mon AM ⇄ Thu PM</span>
+              </div>
+              <p id="patch-meta-label" class="text-xs text-slate-500 mt-0.5">Applied: Monday Oct 20 @ 8:00 AM · Lower Left Abdomen</p>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex items-center gap-2">
+            <!-- The Big Rescue Action -->
+            <button onclick="openPatchDownModal()" class="px-4 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold text-xs border border-rose-200 flex items-center gap-2 transition-all active:scale-95 shadow-xs">
+              <i data-lucide="alert-circle" class="w-4 h-4 text-rose-500"></i>
+              🩹 Patch Came Off Early!
+            </button>
+            <button onclick="openLogPatchModal()" class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs flex items-center gap-2 shadow-xs transition-all active:scale-95">
+              <i data-lucide="check" class="w-4 h-4"></i>
+              Log Scheduled Change
+            </button>
+          </div>
+        </div>
+
+        <!-- Patch Life Progress -->
+        <div class="mt-6 space-y-3">
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-slate-600 flex items-center gap-1.5">
+              <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-400"></i>
+              Current Wear Time: <strong id="patch-hours-worn" class="text-slate-900">54 hrs on skin</strong>
+            </span>
+            <span class="text-slate-500">Scheduled Change: <strong id="patch-next-change-text" class="text-slate-800">Thursday @ 8:00 PM</strong> (30 hrs left)</span>
+          </div>
+
+          <div class="w-full h-3 bg-stone-100 rounded-full overflow-hidden">
+            <div id="patch-progress-bar" class="h-full bg-gradient-to-r from-terracotta-500 to-amber-500 rounded-full transition-all duration-500" style="width: 64%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Water & Bath Guard Card -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-stone-200/80 space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-cyan-50 text-cyan-700 border border-cyan-100 flex items-center justify-center">
+              <i data-lucide="bath" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold text-slate-900">Bath & Water Adhesion Guard</h3>
+              <p class="text-xs text-slate-500">Smart timing to prevent soaking off early</p>
+            </div>
+          </div>
+
+          <!-- Adhesive status indicator -->
+          <div id="bath-guard-status-box" class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 space-y-1">
+            <div class="flex items-center gap-1.5 font-bold">
+              <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i>
+              <span>Adhesive Fully Cured (Safe for Normal Bath)</span>
+            </div>
+            <p class="text-[11px] text-emerald-800">Patch has been bonded for &gt; 4 hours. Hot baths can still soften glue—avoid harsh scrubbing over the patch site.</p>
+          </div>
+
+          <!-- Pro Tip Box -->
+          <div class="p-4 rounded-2xl bg-stone-50 border border-stone-200 text-xs text-slate-600 space-y-2">
+            <strong class="text-slate-900 flex items-center gap-1.5">
+              <i data-lucide="lightbulb" class="w-3.5 h-3.5 text-amber-500"></i>
+              The "Soak-Off" Sync Rule
+            </strong>
+            <p class="text-[11px] leading-relaxed">
+              Never apply a fresh patch right before bath time. Instead, take your hot bath on <strong>Thursday evening</strong>, let the water naturally loosen the old patch, dry skin completely, and apply the fresh patch.
+            </p>
+          </div>
+        </div>
+
+        <!-- Inventory & Pharmacy Burn Sentinel -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-stone-200/80 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-2xl bg-amber-50 text-amber-700 border border-amber-100 flex items-center justify-center">
+                <i data-lucide="package" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h3 class="text-sm font-bold text-slate-900">Pharmacy Box & Burn Rate</h3>
+                <p class="text-xs text-slate-500">Tracks early replacements against refill date</p>
+              </div>
+            </div>
+            <span id="patch-box-count-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-stone-100 text-slate-700">3 of 8 Remaining</span>
+          </div>
+
+          <!-- 8-Patch Box Visualizer -->
+          <div class="grid grid-cols-4 gap-2 pt-1">
+            <div class="p-2.5 rounded-xl border border-stone-200 bg-stone-100 text-slate-400 text-center text-xs font-bold flex flex-col items-center">
+              <i data-lucide="check" class="w-3.5 h-3.5 text-slate-400"></i>
+              <span>#1</span>
+            </div>
+            <div class="p-2.5 rounded-xl border border-stone-200 bg-stone-100 text-slate-400 text-center text-xs font-bold flex flex-col items-center">
+              <i data-lucide="check" class="w-3.5 h-3.5 text-slate-400"></i>
+              <span>#2</span>
+            </div>
+            <div class="p-2.5 rounded-xl border border-stone-200 bg-stone-100 text-slate-400 text-center text-xs font-bold flex flex-col items-center">
+              <i data-lucide="check" class="w-3.5 h-3.5 text-slate-400"></i>
+              <span>#3</span>
+            </div>
+            <div class="p-2.5 rounded-xl border border-stone-200 bg-stone-100 text-slate-400 text-center text-xs font-bold flex flex-col items-center">
+              <i data-lucide="check" class="w-3.5 h-3.5 text-slate-400"></i>
+              <span>#4</span>
+            </div>
+            <div class="p-2.5 rounded-xl border border-terracotta-300 bg-terracotta-50 text-terracotta-700 text-center text-xs font-bold flex flex-col items-center shadow-xs">
+              <i data-lucide="sparkle" class="w-3.5 h-3.5 text-terracotta-500"></i>
+              <span>#5 (Active)</span>
+            </div>
+            <div class="p-2.5 rounded-xl border border-stone-200 bg-white text-slate-700 text-center text-xs font-bold flex flex-col items-center">
+              <span>#6</span>
+            </div>
+            <div class="p-2.5 rounded-xl border border-stone-200 bg-white text-slate-700 text-center text-xs font-bold flex flex-col items-center">
+              <span>#7</span>
+            </div>
+            <div class="p-2.5 rounded-xl border border-stone-200 bg-white text-slate-700 text-center text-xs font-bold flex flex-col items-center">
+              <span>#8</span>
+            </div>
+          </div>
+
+          <div class="text-[11px] text-slate-500 flex items-center justify-between pt-1">
+            <span>Next Prescription Refill Window:</span>
+            <strong class="text-slate-800">Nov 12 (Safe Buffer)</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Anchor Pair Calibration -->
+      <div class="bg-white rounded-3xl p-6 shadow-sm border border-stone-200/80 space-y-4">
+        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="anchor" class="w-4 h-4 text-terracotta-600"></i>
+          Standard Twice-Weekly Anchor Pairs
+        </h3>
+        <p class="text-xs text-slate-500">Select which anchor pair fits your weekly bath and work rhythm best:</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <button onclick="setAnchorPair('mon_thu')" id="pair-btn-mon-thu" class="pair-card p-3.5 rounded-2xl border-2 border-terracotta-500 bg-terracotta-50/50 text-left transition-all">
+            <div class="text-xs font-bold text-slate-900">Monday AM ⇄ Thursday PM</div>
+            <p class="text-[11px] text-slate-500 mt-1">Change Mon morning before work & Thu night after bath.</p>
+            <span class="inline-block mt-2 text-[10px] px-2 py-0.5 rounded bg-terracotta-100 text-terracotta-800 font-semibold">Active Cycle</span>
+          </button>
+
+          <button onclick="setAnchorPair('sun_wed')" id="pair-btn-sun-wed" class="pair-card p-3.5 rounded-2xl border border-stone-200 bg-white text-left hover:border-stone-300 transition-all">
+            <div class="text-xs font-bold text-slate-900">Sunday AM ⇄ Wednesday PM</div>
+            <p class="text-[11px] text-slate-500 mt-1">Change Sun morning relaxing & Wed mid-week evening.</p>
+          </button>
+
+          <button onclick="setAnchorPair('tue_fri')" id="pair-btn-tue-fri" class="pair-card p-3.5 rounded-2xl border border-stone-200 bg-white text-left hover:border-stone-300 transition-all">
+            <div class="text-xs font-bold text-slate-900">Tuesday AM ⇄ Friday PM</div>
+            <p class="text-[11px] text-slate-500 mt-1">Change Tue morning & Friday evening before the weekend.</p>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB 3: REWARDS & MILESTONES -->
+    <div id="tab-rewards" class="tab-content hidden space-y-6">
+      
+      <!-- Gamification Hero Header -->
+      <div class="bg-gradient-to-br from-lavender-50 via-white to-sage-50 rounded-3xl p-6 sm:p-8 shadow-sm border border-stone-200/80">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-lavender-100/80 text-lavender-800 text-xs font-semibold">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+              Deliberate Logging Engine
+            </div>
+            <h2 class="text-2xl font-bold text-slate-900">Level 3: Rhythm Keeper</h2>
+            <p class="text-xs text-slate-600 max-w-md">Every time you log a dose, simulate a shift, or handle a patch calmly without stress, you collect Petals toward calm self-care rewards.</p>
+          </div>
+
+          <div class="text-center sm:text-right shrink-0">
+            <div class="text-4xl font-extrabold text-slate-900" id="rewards-total-petals">320</div>
+            <div class="text-xs font-semibold uppercase tracking-wider text-lavender-600">Total Petals Earned</div>
+          </div>
+        </div>
+
+        <!-- Level Progress Bar -->
+        <div class="mt-6 space-y-2">
+          <div class="flex items-center justify-between text-xs text-slate-500">
+            <span>Level 3 (300 Petals)</span>
+            <span>Level 4: Master of Cadence (500 Petals)</span>
+          </div>
+          <div class="w-full h-3 bg-stone-200/60 rounded-full overflow-hidden">
+            <div id="level-progress-fill" class="h-full bg-gradient-to-r from-lavender-500 to-sage-500 rounded-full transition-all duration-500" style="width: 40%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Earned Badges -->
+      <div class="bg-white rounded-3xl p-6 shadow-sm border border-stone-200/80 space-y-4">
+        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="award" class="w-4 h-4 text-amber-500"></i>
+          Consistency Badges Unlocked
+        </h3>
+        
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="p-4 rounded-2xl bg-amber-50/60 border border-amber-200 text-center space-y-1">
+            <div class="w-10 h-10 mx-auto rounded-full bg-amber-100 text-amber-700 flex items-center justify-center">
+              <i data-lucide="flame" class="w-5 h-5"></i>
+            </div>
+            <div class="text-xs font-bold text-slate-800">3-Week Flow</div>
+            <div class="text-[10px] text-slate-500">Logged 21 days straight</div>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-lavender-50/60 border border-lavender-200 text-center space-y-1">
+            <div class="w-10 h-10 mx-auto rounded-full bg-lavender-100 text-lavender-700 flex items-center justify-center">
+              <i data-lucide="compass" class="w-5 h-5"></i>
+            </div>
+            <div class="text-xs font-bold text-slate-800">Deliberate Shifter</div>
+            <div class="text-[10px] text-slate-500">Simulated 5 shots in advance</div>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200 text-center space-y-1">
+            <div class="w-10 h-10 mx-auto rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center">
+              <i data-lucide="shield" class="w-5 h-5"></i>
+            </div>
+            <div class="text-xs font-bold text-slate-800">Snap-Back Pro</div>
+            <div class="text-[10px] text-slate-500">Saved cycle without drift</div>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-stone-50 border border-stone-200 text-center space-y-1 opacity-60">
+            <div class="w-10 h-10 mx-auto rounded-full bg-stone-200 text-slate-500 flex items-center justify-center">
+              <i data-lucide="lock" class="w-5 h-5"></i>
+            </div>
+            <div class="text-xs font-bold text-slate-800">Zen Month</div>
+            <div class="text-[10px] text-slate-500">Reach 500 Petals to unlock</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Self-Care Rewards Shop (Redeem Petals) -->
+      <div class="bg-white rounded-3xl p-6 shadow-sm border border-stone-200/80 space-y-4">
+        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="coffee" class="w-4 h-4 text-terracotta-500"></i>
+          Self-Care Treats & Perks (Redeem with Petals)
+        </h3>
+        <p class="text-xs text-slate-500">Reward yourself with intentional guilt-free rest when you maintain your deliberate rhythm:</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="p-4 rounded-2xl border border-stone-200 flex flex-col justify-between space-y-3">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-900">Guilt-Free Long Bath & Book</span>
+                <span class="text-[11px] font-semibold text-lavender-600">80 Petals</span>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-1">45 minutes of uninterrupted soaking and quiet reading.</p>
+            </div>
+            <button onclick="redeemPerk('Guilt-Free Long Bath & Book', 80)" class="w-full py-2 rounded-xl bg-stone-100 hover:bg-lavender-50 hover:text-lavender-700 text-slate-700 text-xs font-semibold transition-colors">
+              Claim Treat
+            </button>
+          </div>
+
+          <div class="p-4 rounded-2xl border border-stone-200 flex flex-col justify-between space-y-3">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-900">Favorite Drink / Latte Treat</span>
+                <span class="text-[11px] font-semibold text-lavender-600">120 Petals</span>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-1">Order your favorite iced tea, matcha, or latte treat.</p>
+            </div>
+            <button onclick="redeemPerk('Favorite Drink / Latte Treat', 120)" class="w-full py-2 rounded-xl bg-stone-100 hover:bg-lavender-50 hover:text-lavender-700 text-slate-700 text-xs font-semibold transition-colors">
+              Claim Treat
+            </button>
+          </div>
+
+          <div class="p-4 rounded-2xl border border-stone-200 flex flex-col justify-between space-y-3">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-900">Movie Night Absolute Veto Power</span>
+                <span class="text-[11px] font-semibold text-lavender-600">150 Petals</span>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-1">Zero debate—you pick the movie, couch spot, and snacks.</p>
+            </div>
+            <button onclick="redeemPerk('Movie Night Absolute Veto Power', 150)" class="w-full py-2 rounded-xl bg-stone-100 hover:bg-lavender-50 hover:text-lavender-700 text-slate-700 text-xs font-semibold transition-colors">
+              Claim Treat
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB 4: LOG HISTORY & AUDIT TRAIL -->
+    <div id="tab-history" class="tab-content hidden space-y-6">
+      <div class="bg-white rounded-3xl p-6 shadow-sm border border-stone-200/80 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-100 pb-4">
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">Cadence Activity Log</h3>
+            <p class="text-xs text-slate-500">Every dose, snap-back reapplication, and deliberate shift decision.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="exportLogsToJSON()" class="px-3 py-1.5 rounded-lg border border-stone-200 text-xs font-semibold text-slate-700 hover:bg-stone-50 flex items-center gap-1.5">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i>
+              Export JSON
+            </button>
+            <button onclick="clearDemoData()" class="px-3 py-1.5 rounded-lg border border-rose-200 text-xs font-semibold text-rose-700 hover:bg-rose-50 flex items-center gap-1.5">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              Reset Sample Data
+            </button>
+          </div>
+        </div>
+
+        <!-- History Entries Container -->
+        <div id="history-container" class="space-y-3">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- MODAL: LOG ZEPBOUND DOSE -->
+  <div id="modal-log-zep" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+    <div class="bg-white w-full max-w-md rounded-3xl p-6 shadow-xl border border-stone-200 space-y-5">
+      <div class="flex items-center justify-between border-b border-stone-100 pb-3">
+        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="syringe" class="w-4 h-4 text-lavender-600"></i>
+          Log Zepbound Injection
+        </h3>
+        <button onclick="closeModal('modal-log-zep')" class="text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <div>
+          <label class="font-semibold text-slate-700 block mb-1">Dose Amount</label>
+          <select id="modal-zep-dose-select" class="w-full bg-stone-50 border border-stone-300 rounded-xl p-2.5 font-medium text-slate-800 focus:ring-2 focus:ring-lavender-400 focus:outline-none">
+            <option value="2.5 mg">2.5 mg</option>
+            <option value="5.0 mg" selected>5.0 mg</option>
+            <option value="7.5 mg">7.5 mg</option>
+            <option value="10.0 mg">10.0 mg</option>
+            <option value="12.5 mg">12.5 mg</option>
+            <option value="15.0 mg">15.0 mg</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="font-semibold text-slate-700 block mb-1">Date & Time Administered</label>
+          <input type="datetime-local" id="modal-zep-time-input" class="w-full bg-stone-50 border border-stone-300 rounded-xl p-2.5 font-medium text-slate-800 focus:ring-2 focus:ring-lavender-400 focus:outline-none">
+        </div>
+
+        <div>
+          <label class="font-semibold text-slate-700 block mb-1">Injection Site</label>
+          <select id="modal-zep-site-select" class="w-full bg-stone-50 border border-stone-300 rounded-xl p-2.5 font-medium text-slate-800 focus:ring-2 focus:ring-lavender-400 focus:outline-none">
+            <option value="Left Abdomen">Left Abdomen</option>
+            <option value="Right Abdomen">Right Abdomen</option>
+            <option value="Left Thigh">Left Thigh</option>
+            <option value="Right Thigh">Right Thigh</option>
+            <option value="Back of Left Arm">Back of Left Arm</option>
+            <option value="Back of Right Arm">Back of Right Arm</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="font-semibold text-slate-700 block mb-1">Notes / Feeling</label>
+          <input type="text" id="modal-zep-notes-input" placeholder="e.g. Took with electrolytes, went to sleep right after" class="w-full bg-stone-50 border border-stone-300 rounded-xl p-2.5 font-medium text-slate-800 focus:ring-2 focus:ring-lavender-400 focus:outline-none">
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-stone-100">
+        <button onclick="closeModal('modal-log-zep')" class="px-4 py-2 rounded-xl border border-stone-200 text-xs font-semibold text-slate-600 hover:bg-stone-50">Cancel</button>
+        <button onclick="submitZepboundLog()" class="px-5 py-2 rounded-xl bg-lavender-600 hover:bg-lavender-700 text-white text-xs font-semibold shadow-xs flex items-center gap-1.5">
+          <i data-lucide="check" class="w-4 h-4"></i>
+          Save & Earn +50 Petals
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: PATCH CAME OFF EARLY (SNAP-BACK ENGINE) -->
+  <div id="modal-patch-down" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+    <div class="bg-white w-full max-w-lg rounded-3xl p-6 shadow-xl border border-stone-200 space-y-5">
+      <div class="flex items-center justify-between border-b border-stone-100 pb-3">
+        <h3 class="text-sm font-bold text-rose-700 flex items-center gap-2">
+          <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-500"></i>
+          Early Detachment State Machine
+        </h3>
+        <button onclick="closeModal('modal-patch-down')" class="text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <p class="text-slate-600">
+          Don’t worry! Falling off during baths or with sweat is normal. The engine will determine whether to <strong>Snap-Back</strong> to preserve your schedule or <strong>Pivot</strong> cleanly.
+        </p>
+
+        <div>
+          <label class="font-semibold text-slate-700 block mb-1">What caused it to come off?</label>
+          <select id="modal-down-reason" class="w-full bg-stone-50 border border-stone-300 rounded-xl p-2.5 font-medium text-slate-800">
+            <option value="warm bath/soak">During or immediately after a warm bath/soak</option>
+            <option value="shower peeling">Peeling corner in shower</option>
+            <option value="clothing friction">Friction from waistband/clothing</option>
+            <option value="exercise sweat">Work/exercise sweat</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="font-semibold text-slate-700 block mb-1">Time of Detachment</label>
+          <input type="datetime-local" id="modal-down-time" class="w-full bg-stone-50 border border-stone-300 rounded-xl p-2.5 font-medium text-slate-800">
+        </div>
+
+        <!-- Dynamic Decision Recommendation Banner -->
+        <div id="modal-down-decision-card" class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs space-y-2">
+          <div class="font-bold text-emerald-900 flex items-center gap-1.5">
+            <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i>
+            Recommendation: The Snap-Back Rule
+          </div>
+          <p class="text-emerald-800 leading-relaxed">
+            You still have 30+ hours left on this cycle. <strong>Apply a replacement patch now, but keep Thursday @ 8:00 PM as your scheduled change!</strong> Do NOT drift your week.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-stone-100">
+        <button onclick="closeModal('modal-patch-down')" class="px-4 py-2 rounded-xl border border-stone-200 text-xs font-semibold text-slate-600 hover:bg-stone-50">Cancel</button>
+        <button onclick="submitPatchDownResolution()" class="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-xs flex items-center gap-1.5">
+          <i data-lucide="check" class="w-4 h-4"></i>
+          Apply Rescue Patch & Keep Rhythm (+40 Petals)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: LOG SCHEDULED PATCH CHANGE -->
+  <div id="modal-log-patch" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+    <div class="bg-white w-full max-w-md rounded-3xl p-6 shadow-xl border border-stone-200 space-y-5">
+      <div class="flex items-center justify-between border-b border-stone-100 pb-3">
+        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="bandage" class="w-4 h-4 text-terracotta-500"></i>
+          Log Regular Patch Change
+        </h3>
+        <button onclick="closeModal('modal-log-patch')" class="text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <div>
+          <label class="font-semibold text-slate-700 block mb-1">New Patch Application Site</label>
+          <select id="modal-patch-site-select" class="w-full bg-stone-50 border border-stone-300 rounded-xl p-2.5 font-medium text-slate-800">
+            <option value="Lower Right Abdomen">Lower Right Abdomen</option>
+            <option value="Lower Left Abdomen">Lower Left Abdomen</option>
+            <option value="Upper Buttock / Hip Left">Upper Buttock / Hip Left</option>
+            <option value="Upper Buttock / Hip Right">Upper Buttock / Hip Right</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="font-semibold text-slate-700 block mb-1">Date & Time</label>
+          <input type="datetime-local" id="modal-patch-time-input" class="w-full bg-stone-50 border border-stone-300 rounded-xl p-2.5 font-medium text-slate-800">
+        </div>
+
+        <div class="p-3 bg-cyan-50 rounded-xl border border-cyan-200 text-cyan-900">
+          <strong class="font-bold flex items-center gap-1">
+            <i data-lucide="bath" class="w-3.5 h-3.5 text-cyan-600"></i>
+            Bath Reminder
+          </strong>
+          <span class="text-[11px] block mt-0.5">Allow 4 hours of warm, dry skin contact before your next bath so the adhesive forms its bond.</span>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-stone-100">
+        <button onclick="closeModal('modal-log-patch')" class="px-4 py-2 rounded-xl border border-stone-200 text-xs font-semibold text-slate-600 hover:bg-stone-50">Cancel</button>
+        <button onclick="submitRegularPatchChange()" class="px-5 py-2 rounded-xl bg-terracotta-600 hover:bg-terracotta-700 text-white text-xs font-semibold shadow-xs flex items-center gap-1.5">
+          <i data-lucide="check" class="w-4 h-4"></i>
+          Record Change (+30 Petals)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="mt-auto py-6 border-t border-stone-200 bg-white/50 text-center text-xs text-slate-400">
+    <p>Cadence · Private Local Storage · Unlinked Module</p>
+  </footer>
+
+  <!-- Application Logic -->
+  <script>
+    const DEFAULT_STATE = {
+      zepbound: {
+        lastDoseTime: new Date(Date.now() - 42 * 60 * 60 * 1000).toISOString(),
+        dosage: "5.0 mg",
+        site: "Left Abdomen",
+        notes: "Took before bed with electrolytes.",
+        deliberateScheduledSlot: null
+      },
+      patch: {
+        anchorPair: "mon_thu",
+        appliedTime: new Date(Date.now() - 54 * 60 * 60 * 1000).toISOString(),
+        site: "Lower Left Abdomen",
+        boxCountTotal: 8,
+        boxCountRemaining: 3,
+        refillDate: "Nov 12, 2026"
+      },
+      gamification: {
+        petals: 320,
+        streakWeeks: 3,
+        level: 3,
+        levelTitle: "Rhythm Keeper",
+        nextLevelPetals: 500,
+        badges: [
+          { id: 'streak_3', name: '3-Week Flow', icon: 'flame', desc: 'Logged 21 days straight' },
+          { id: 'deliberate_5', name: 'Deliberate Shifter', icon: 'compass', desc: 'Simulated 5 shots in advance' },
+          { id: 'snapback_pro', name: 'Snap-Back Pro', icon: 'shield', desc: 'Saved cycle without drift' }
+        ]
+      },
+      logs: [
+        {
+          id: 'log-1',
+          type: 'zepbound',
+          title: 'Zepbound 5.0 mg Injected',
+          timestamp: new Date(Date.now() - 42 * 60 * 60 * 1000).toISOString(),
+          details: 'Left Abdomen · Evening dose',
+          petals: 50
+        },
+        {
+          id: 'log-2',
+          type: 'patch',
+          title: 'Steroid Patch Applied',
+          timestamp: new Date(Date.now() - 54 * 60 * 60 * 1000).toISOString(),
+          details: 'Lower Left Abdomen · Monday AM cycle anchor',
+          petals: 30
+        },
+        {
+          id: 'log-3',
+          type: 'deliberate_shift',
+          title: 'Deliberate Shot Shift Planned',
+          timestamp: new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString(),
+          details: 'Shifted candidate to Thursday 8:30 PM to protect work week',
+          petals: 35
+        }
+      ]
+    };
+
+    let appState = loadState();
+
+    function loadState() {
+      const saved = localStorage.getItem('cadence_private_state');
+      if (saved) {
+        try { return JSON.parse(saved); } catch (e) { console.error(e); }
+      }
+      return JSON.parse(JSON.stringify(DEFAULT_STATE));
+    }
+
+    function saveState() {
+      localStorage.setItem('cadence_private_state', JSON.stringify(appState));
+      updateUI();
+    }
+
+    function clearDemoData() {
+      if (confirm("Reset to clean baseline sample data?")) {
+        localStorage.removeItem('cadence_private_state');
+        appState = JSON.parse(JSON.stringify(DEFAULT_STATE));
+        saveState();
+        triggerConfetti();
+      }
+    }
+
+    function switchTab(tabName) {
+      ['zepbound', 'patch', 'rewards', 'history'].forEach(t => {
+        const el = document.getElementById(`tab-${t}`);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (el) el.classList.toggle('hidden', t !== tabName);
+        if (btn) {
+          if (t === tabName) {
+            btn.classList.add('border-lavender-600', 'text-lavender-700', 'active-tab');
+            btn.classList.remove('border-transparent', 'text-slate-500');
+          } else {
+            btn.classList.remove('border-lavender-600', 'text-lavender-700', 'active-tab');
+            btn.classList.add('border-transparent', 'text-slate-500');
+          }
+        }
+      });
+      if (tabName === 'history') renderHistory();
+    }
+
+    function triggerConfetti() {
+      if (window.confetti) {
+        window.confetti({
+          particleCount: 65,
+          spread: 60,
+          origin: { y: 0.7 },
+          colors: ['#8e7cc3', '#588157', '#d97757', '#f59e0b']
+        });
+      }
+    }
+
+    function addPetals(amount) {
+      appState.gamification.petals += amount;
+      triggerConfetti();
+      saveState();
+    }
+
+    function calculateZepboundWaveform() {
+      const lastDose = new Date(appState.zepbound.lastDoseTime);
+      const now = new Date();
+      const elapsedHours = Math.max(0, Math.floor((now - lastDose) / (1000 * 60 * 60)));
+
+      const hoursElapsedEl = document.getElementById('zep-hours-elapsed');
+      const phaseLabelEl = document.getElementById('zep-current-phase-label');
+      const insightEl = document.getElementById('zep-phase-insight');
+      const pinEl = document.getElementById('zep-waveform-pin');
+      const metaEl = document.getElementById('zep-last-taken-meta');
+      const badgeEl = document.getElementById('zep-dosage-badge');
+
+      if (badgeEl) badgeEl.textContent = appState.zepbound.dosage || '5.0 mg';
+      if (metaEl) {
+        metaEl.textContent = `Taken: ${lastDose.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} @ ${lastDose.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })} (${appState.zepbound.site || 'Abdomen'})`;
+      }
+      if (hoursElapsedEl) hoursElapsedEl.textContent = `Hour ${elapsedHours} of 168`;
+
+      const percentCycle = Math.min(100, Math.max(0, (elapsedHours / 168) * 100));
+      if (pinEl) pinEl.style.left = `${percentCycle}%`;
+
+      if (elapsedHours <= 44) {
+        if (phaseLabelEl) {
+          phaseLabelEl.className = 'px-2 py-0.5 rounded-md bg-lavender-100 text-lavender-800 border border-lavender-200 text-xs font-semibold';
+          phaseLabelEl.textContent = 'Phase 1: Peak Impact (Fatigue/Satiety Wave)';
+        }
+        if (insightEl) {
+          insightEl.innerHTML = `
+            <i data-lucide="info" class="w-4 h-4 text-lavender-600 shrink-0 mt-0.5"></i>
+            <div>
+              <strong class="text-slate-800">Current Physiological Window (Hour ${elapsedHours}):</strong>
+              <p class="mt-0.5">Tirzepatide plasma concentration is at its highest (Tmax window). Mild fatigue, early fullness, or mild sluggishness is completely normal. Prioritize hydration and lower physical demands today. Monday work is outside this blast zone.</p>
+            </div>
+          `;
+        }
+      } else if (elapsedHours <= 120) {
+        if (phaseLabelEl) {
+          phaseLabelEl.className = 'px-2 py-0.5 rounded-md bg-sage-100 text-sage-800 border border-sage-200 text-xs font-semibold';
+          phaseLabelEl.textContent = 'Phase 2: Stable Rhythm & High Satiety';
+        }
+        if (insightEl) {
+          insightEl.innerHTML = `
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-sage-600 shrink-0 mt-0.5"></i>
+            <div>
+              <strong class="text-slate-800">Current Physiological Window (Hour ${elapsedHours}):</strong>
+              <p class="mt-0.5">The peak fatigue wave has passed! Energy is stable and appetite suppression is high. Great window for demanding work, physical movement, and routine focus.</p>
+            </div>
+          `;
+        }
+      } else {
+        if (phaseLabelEl) {
+          phaseLabelEl.className = 'px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-200 text-xs font-semibold';
+          phaseLabelEl.textContent = 'Phase 3: The Hunger Rebound (Trough)';
+        }
+        if (insightEl) {
+          insightEl.innerHTML = `
+            <i data-lucide="coffee" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
+            <div>
+              <strong class="text-slate-800">Current Physiological Window (Hour ${elapsedHours}):</strong>
+              <p class="mt-0.5">Medication plasma levels are waning. Appetite naturally creeps back in. Keep high-protein snacks handy and prepare for your next deliberate injection window.</p>
+            </div>
+          `;
+        }
+      }
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function simulateCandidateShift(candidateDate) {
+      const lastDose = new Date(appState.zepbound.lastDoseTime);
+      let candidate;
+      if (candidateDate) {
+        candidate = new Date(candidateDate);
+      } else {
+        const input = document.getElementById('shift-candidate-input');
+        candidate = input && input.value ? new Date(input.value) : new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);
+      }
+
+      const gapHours = Math.round((candidate - lastDose) / (1000 * 60 * 60));
+      const complies72h = gapHours >= 72;
+
+      const fatigueStart = new Date(candidate.getTime() + 16 * 60 * 60 * 1000);
+      const fatigueEnd = new Date(candidate.getTime() + 44 * 60 * 60 * 1000);
+      const focusStart = fatigueEnd;
+      const focusEnd = new Date(candidate.getTime() + 120 * 60 * 60 * 1000);
+
+      const formatWindow = (d) => d.toLocaleDateString('en-US', { weekday: 'short' }) + ' ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+      const safetyBadge = document.getElementById('sim-safety-badge');
+      const fatigueWindowEl = document.getElementById('sim-fatigue-window');
+      const focusWindowEl = document.getElementById('sim-focus-window');
+      const troughWindowEl = document.getElementById('sim-trough-window');
+      const verdictEl = document.getElementById('sim-verdict-text');
+
+      if (safetyBadge) {
+        if (complies72h) {
+          safetyBadge.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200';
+          safetyBadge.textContent = `✓ Complies with 72h rule (${gapHours}h gap from last dose)`;
+        } else {
+          safetyBadge.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200';
+          safetyBadge.textContent = `⚠ Too early! Only ${gapHours}h since last dose (Must be ≥ 72h)`;
+        }
+      }
+
+      if (fatigueWindowEl) fatigueWindowEl.textContent = `${formatWindow(fatigueStart)} – ${formatWindow(fatigueEnd)}`;
+      if (focusWindowEl) focusWindowEl.textContent = `${formatWindow(focusStart)} – ${formatWindow(focusEnd)}`;
+      if (troughWindowEl) troughWindowEl.textContent = `${formatWindow(focusEnd)} onward`;
+
+      const dayName = candidate.toLocaleDateString('en-US', { weekday: 'long' });
+      if (verdictEl) {
+        if (!complies72h) {
+          verdictEl.textContent = `Unsafe shift: Please wait until at least ${new Date(lastDose.getTime() + 72 * 60 * 60 * 1000).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric' })} before taking next shot.`;
+        } else if (dayName === 'Thursday' || dayName === 'Friday') {
+          verdictEl.textContent = `Excellent slot! Peak fatigue will hit Friday evening into Saturday, letting you sleep through the brunt of it while keeping Monday–Thursday 100% sharp for work.`;
+        } else if (dayName === 'Saturday' || dayName === 'Sunday') {
+          verdictEl.textContent = `Weekend Preserver: Your Saturday & Sunday will have full normal energy. Peak fatigue will hit Monday morning—ensure your Monday work calendar has low pressure.`;
+        } else {
+          verdictEl.textContent = `Mid-week candidate: Peak fatigue falls during the work week. Ensure you have quiet focus time scheduled during the 16h-44h blast radius.`;
+        }
+      }
+    }
+
+    function applyShiftPreset(preset) {
+      const now = new Date();
+      let target = new Date();
+      if (preset === 'workday_shield') {
+        const daysUntilThu = (4 - now.getDay() + 7) % 7 || 7;
+        target.setDate(now.getDate() + daysUntilThu);
+        target.setHours(20, 30, 0, 0);
+      } else if (preset === 'weekend_freedom') {
+        const daysUntilSun = (0 - now.getDay() + 7) % 7 || 7;
+        target.setDate(now.getDate() + daysUntilSun);
+        target.setHours(19, 0, 0, 0);
+      } else if (preset === 'friday_wind_down') {
+        const daysUntilFri = (5 - now.getDay() + 7) % 7 || 7;
+        target.setDate(now.getDate() + daysUntilFri);
+        target.setHours(17, 0, 0, 0);
+      }
+
+      const input = document.getElementById('shift-candidate-input');
+      if (input) input.value = target.toISOString().slice(0, 16);
+      simulateCandidateShift(target);
+    }
+
+    function commitDeliberateDose() {
+      const input = document.getElementById('shift-candidate-input');
+      if (!input || !input.value) return;
+
+      const chosenDate = new Date(input.value);
+      appState.zepbound.deliberateScheduledSlot = chosenDate.toISOString();
+
+      appState.logs.unshift({
+        id: 'log-' + Date.now(),
+        type: 'deliberate_shift',
+        title: 'Deliberate Shot Shift Committed',
+        timestamp: new Date().toISOString(),
+        details: `Planned for ${chosenDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} @ ${chosenDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`,
+        petals: 35
+      });
+
+      addPetals(35);
+      alert(`Deliberate slot locked in for ${chosenDate.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })} @ ${chosenDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}! +35 Petals earned.`);
+    }
+
+    function calculatePatchStatus() {
+      const applied = new Date(appState.patch.appliedTime);
+      const now = new Date();
+      const elapsedHours = Math.max(0, Math.floor((now - applied) / (1000 * 60 * 60)));
+      const standardWearHours = 84;
+      const remainingHours = Math.max(0, standardWearHours - elapsedHours);
+
+      const hoursWornEl = document.getElementById('patch-hours-worn');
+      const nextChangeEl = document.getElementById('patch-next-change-text');
+      const progressBar = document.getElementById('patch-progress-bar');
+      const metaLabel = document.getElementById('patch-meta-label');
+      const boxBadge = document.getElementById('patch-box-count-badge');
+
+      if (hoursWornEl) hoursWornEl.textContent = `${elapsedHours} hrs on skin`;
+      if (progressBar) {
+        const pct = Math.min(100, (elapsedHours / standardWearHours) * 100);
+        progressBar.style.width = `${pct}%`;
+      }
+
+      const scheduledChangeDate = new Date(applied.getTime() + standardWearHours * 60 * 60 * 1000);
+      if (nextChangeEl) {
+        nextChangeEl.textContent = `${scheduledChangeDate.toLocaleDateString('en-US', { weekday: 'short' })} @ ${scheduledChangeDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })} (${remainingHours}h remaining)`;
+      }
+
+      if (metaLabel) {
+        metaLabel.textContent = `Applied: ${applied.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} @ ${applied.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })} · ${appState.patch.site}`;
+      }
+
+      if (boxBadge) {
+        boxBadge.textContent = `${appState.patch.boxCountRemaining} of ${appState.patch.boxCountTotal} Remaining`;
+      }
+
+      const bathBox = document.getElementById('bath-guard-status-box');
+      if (bathBox) {
+        if (elapsedHours < 4) {
+          const waitHours = (4 - elapsedHours).toFixed(1);
+          bathBox.className = 'p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 space-y-1';
+          bathBox.innerHTML = `
+            <div class="flex items-center gap-1.5 font-bold">
+              <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600"></i>
+              <span>Adhesive Curing Window Active (${waitHours}h remaining)</span>
+            </div>
+            <p class="text-[11px] text-amber-800">Fresh patch applied recently. Submerging in warm water now will cause early detachment. Wait ${waitHours} hours or apply waterproof tape/Tegaderm before bathing.</p>
+          `;
+        } else {
+          bathBox.className = 'p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 space-y-1';
+          bathBox.innerHTML = `
+            <div class="flex items-center gap-1.5 font-bold">
+              <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i>
+              <span>Adhesive Fully Cured (Safe for Normal Bath)</span>
+            </div>
+            <p class="text-[11px] text-emerald-800">Patch has bonded for > 4 hours. Hot baths can still soften glue over long soaks—avoid harsh scrubbing over the patch site.</p>
+          `;
+        }
+      }
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function setAnchorPair(pair) {
+      appState.patch.anchorPair = pair;
+      ['mon-thu', 'sun-wed', 'tue-fri'].forEach(p => {
+        const btn = document.getElementById(`pair-btn-${p}`);
+        if (btn) {
+          if (p.replace('-', '_') === pair) {
+            btn.classList.add('border-terracotta-500', 'bg-terracotta-50/50');
+            btn.classList.remove('border-stone-200', 'bg-white');
+          } else {
+            btn.classList.remove('border-terracotta-500', 'bg-terracotta-50/50');
+            btn.classList.add('border-stone-200', 'bg-white');
+          }
+        }
+      });
+
+      const pairNames = {
+        'mon_thu': 'Mon AM ⇄ Thu PM',
+        'sun_wed': 'Sun AM ⇄ Wed PM',
+        'tue_fri': 'Tue AM ⇄ Fri PM'
+      };
+
+      const badge = document.getElementById('patch-anchor-pair-badge');
+      if (badge) badge.textContent = pairNames[pair];
+      saveState();
+    }
+
+    function openPatchDownModal() {
+      const modal = document.getElementById('modal-patch-down');
+      const timeInput = document.getElementById('modal-down-time');
+      if (timeInput) timeInput.value = new Date().toISOString().slice(0, 16);
+
+      const applied = new Date(appState.patch.appliedTime);
+      const now = new Date();
+      const elapsedHours = Math.max(0, Math.floor((now - applied) / (1000 * 60 * 60)));
+      const remainingHours = Math.max(0, 84 - elapsedHours);
+
+      const decisionCard = document.getElementById('modal-down-decision-card');
+      if (decisionCard) {
+        if (remainingHours > 18) {
+          decisionCard.className = 'p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs space-y-2';
+          decisionCard.innerHTML = `
+            <div class="font-bold text-emerald-900 flex items-center gap-1.5">
+              <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i>
+              Directive: The Snap-Back Rule (Preserve Rhythm)
+            </div>
+            <p class="text-emerald-800 leading-relaxed">
+              You still have <strong>${remainingHours} hours</strong> remaining on this cycle. 
+              <strong>Apply a replacement patch now, but DO NOT drift your schedule!</strong> 
+              Retire this replacement patch on your regular scheduled change day.
+            </p>
+          `;
+        } else {
+          decisionCard.className = 'p-4 rounded-2xl bg-indigo-50 border border-indigo-200 text-xs space-y-2';
+          decisionCard.innerHTML = `
+            <div class="font-bold text-indigo-900 flex items-center gap-1.5">
+              <i data-lucide="refresh-cw" class="w-4 h-4 text-indigo-600"></i>
+              Directive: The Pivot Rule (Early Roll)
+            </div>
+            <p class="text-indigo-800 leading-relaxed">
+              Your patch was only ${remainingHours} hours from expiring anyway! 
+              <strong>Count this replacement as your official new change.</strong> 
+              Your new 3.5-day cycle starts today.
+            </p>
+          `;
+        }
+      }
+
+      if (modal) modal.classList.remove('hidden');
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function submitPatchDownResolution() {
+      const reason = document.getElementById('modal-down-reason').value;
+      const timeVal = document.getElementById('modal-down-time').value;
+      const downTime = timeVal ? new Date(timeVal) : new Date();
+
+      const applied = new Date(appState.patch.appliedTime);
+      const elapsedHours = Math.max(0, Math.floor((downTime - applied) / (1000 * 60 * 60)));
+      const remainingHours = Math.max(0, 84 - elapsedHours);
+
+      let detailsText = '';
+      if (remainingHours > 18) {
+        detailsText = `Snap-Back Protocol: Replaced patch after ${reason}. Kept weekly change anchor intact!`;
+        appState.patch.appliedTime = downTime.toISOString();
+      } else {
+        detailsText = `Pivot Protocol: Replaced early patch (${reason}). Rolled into fresh twice-weekly cycle.`;
+        appState.patch.appliedTime = downTime.toISOString();
+      }
+
+      if (appState.patch.boxCountRemaining > 0) {
+        appState.patch.boxCountRemaining -= 1;
+      }
+
+      appState.logs.unshift({
+        id: 'log-' + Date.now(),
+        type: 'patch_rescue',
+        title: '🩹 Emergency Patch Replacement Handled',
+        timestamp: downTime.toISOString(),
+        details: detailsText,
+        petals: 40
+      });
+
+      closeModal('modal-patch-down');
+      addPetals(40);
+      alert(`Rescue patch recorded! Your cycle remains anchored and steady. +40 Petals earned.`);
+    }
+
+    function openLogPatchModal() {
+      const modal = document.getElementById('modal-log-patch');
+      const input = document.getElementById('modal-patch-time-input');
+      if (input) input.value = new Date().toISOString().slice(0, 16);
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function submitRegularPatchChange() {
+      const site = document.getElementById('modal-patch-site-select').value;
+      const timeVal = document.getElementById('modal-patch-time-input').value;
+      const changeTime = timeVal ? new Date(timeVal) : new Date();
+
+      appState.patch.appliedTime = changeTime.toISOString();
+      appState.patch.site = site;
+
+      appState.logs.unshift({
+        id: 'log-' + Date.now(),
+        type: 'patch',
+        title: 'Steroid Patch Changed (Scheduled)',
+        timestamp: changeTime.toISOString(),
+        details: `${site} · On schedule`,
+        petals: 30
+      });
+
+      closeModal('modal-log-patch');
+      addPetals(30);
+      alert("Scheduled patch change recorded! +30 Petals earned.");
+    }
+
+    function openLogZepModal() {
+      const modal = document.getElementById('modal-log-zep');
+      const input = document.getElementById('modal-zep-time-input');
+      if (input) input.value = new Date().toISOString().slice(0, 16);
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function submitZepboundLog() {
+      const dose = document.getElementById('modal-zep-dose-select').value;
+      const timeVal = document.getElementById('modal-zep-time-input').value;
+      const site = document.getElementById('modal-zep-site-select').value;
+      const notes = document.getElementById('modal-zep-notes-input').value;
+      const shotTime = timeVal ? new Date(timeVal) : new Date();
+
+      appState.zepbound.dosage = dose;
+      appState.zepbound.lastDoseTime = shotTime.toISOString();
+      appState.zepbound.site = site;
+      appState.zepbound.notes = notes;
+
+      appState.logs.unshift({
+        id: 'log-' + Date.now(),
+        type: 'zepbound',
+        title: `Zepbound ${dose} Injected`,
+        timestamp: shotTime.toISOString(),
+        details: `${site}${notes ? ' · ' + notes : ''}`,
+        petals: 50
+      });
+
+      closeModal('modal-log-zep');
+      addPetals(50);
+      alert(`Zepbound ${dose} injection logged! Waveform updated. +50 Petals earned.`);
+    }
+
+    function closeModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function redeemPerk(name, cost) {
+      if (appState.gamification.petals < cost) {
+        alert(`You need ${cost} Petals for this perk (you currently have ${appState.gamification.petals}). Keep logging deliberately to earn more!`);
+        return;
+      }
+
+      if (confirm(`Redeem "${name}" for ${cost} Petals?`)) {
+        appState.gamification.petals -= cost;
+        appState.logs.unshift({
+          id: 'log-' + Date.now(),
+          type: 'reward_redeem',
+          title: `Claimed Treat: ${name}`,
+          timestamp: new Date().toISOString(),
+          details: `Spent ${cost} Petals on well-earned guilt-free self-care.`,
+          petals: -cost
+        });
+        saveState();
+        triggerConfetti();
+        alert(`🎉 Treat claimed! Enjoy your ${name}.`);
+      }
+    }
+
+    function renderHistory() {
+      const container = document.getElementById('history-container');
+      if (!container) return;
+
+      if (appState.logs.length === 0) {
+        container.innerHTML = `<div class="p-8 text-center text-xs text-slate-400">No activity logged yet.</div>`;
+        return;
+      }
+
+      container.innerHTML = appState.logs.map(log => {
+        const date = new Date(log.timestamp);
+        const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const timeStr = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+        let iconName = 'activity';
+        let iconClass = 'text-slate-500 bg-stone-100';
+
+        if (log.type === 'zepbound') {
+          iconName = 'syringe';
+          iconClass = 'text-lavender-700 bg-lavender-100';
+        } else if (log.type === 'patch') {
+          iconName = 'bandage';
+          iconClass = 'text-terracotta-600 bg-terracotta-100';
+        } else if (log.type === 'patch_rescue') {
+          iconName = 'shield-alert';
+          iconClass = 'text-rose-600 bg-rose-100';
+        } else if (log.type === 'deliberate_shift') {
+          iconName = 'sliders-horizontal';
+          iconClass = 'text-indigo-600 bg-indigo-100';
+        } else if (log.type === 'reward_redeem') {
+          iconName = 'gift';
+          iconClass = 'text-amber-600 bg-amber-100';
+        }
+
+        const petalTag = log.petals > 0 
+          ? `<span class="text-[11px] font-semibold text-lavender-600 bg-lavender-50 border border-lavender-100 px-2 py-0.5 rounded-md">+${log.petals} Petals</span>`
+          : `<span class="text-[11px] font-semibold text-amber-600 bg-amber-50 border border-amber-100 px-2 py-0.5 rounded-md">${log.petals} Petals</span>`;
+
+        return `
+          <div class="p-3.5 rounded-2xl border border-stone-200/80 bg-white flex items-center justify-between gap-4 hover:border-stone-300 transition-colors">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl ${iconClass} flex items-center justify-center shrink-0">
+                <i data-lucide="${iconName}" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <div class="text-xs font-bold text-slate-800">${log.title}</div>
+                <div class="text-[11px] text-slate-500 mt-0.5">${log.details}</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 shrink-0">
+              ${petalTag}
+              <div class="text-right text-[11px] text-slate-400">
+                <div>${dateStr}</div>
+                <div>${timeStr}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function exportLogsToJSON() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
+      const dlAnchorElem = document.createElement('a');
+      dlAnchorElem.setAttribute("href", dataStr);
+      dlAnchorElem.setAttribute("download", `cadence_logs_${new Date().toISOString().slice(0, 10)}.json`);
+      dlAnchorElem.click();
+    }
+
+    function updateUI() {
+      const petalsCounter = document.getElementById('petals-counter');
+      const streakCounter = document.getElementById('streak-counter');
+      const totalPetalsEl = document.getElementById('rewards-total-petals');
+      const levelFillEl = document.getElementById('level-progress-fill');
+
+      if (petalsCounter) petalsCounter.textContent = `${appState.gamification.petals} Petals`;
+      if (streakCounter) streakCounter.textContent = `${appState.gamification.streakWeeks} Week Streak`;
+      if (totalPetalsEl) totalPetalsEl.textContent = appState.gamification.petals;
+
+      if (levelFillEl) {
+        const pct = Math.min(100, (appState.gamification.petals / appState.gamification.nextLevelPetals) * 100);
+        levelFillEl.style.width = `${pct}%`;
+      }
+
+      calculateZepboundWaveform();
+      calculatePatchStatus();
+
+      const shiftInput = document.getElementById('shift-candidate-input');
+      if (shiftInput && !shiftInput.value) {
+        applyShiftPreset('workday_shield');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateUI();
+      if (window.lucide) window.lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
