@@ -371,7 +371,7 @@ export default async function handler(req, res) {
           operativeId,
           type: 'DEPOSIT',
           amount,
-          category: 'DIRECT_DEPOSIT',
+          category: body.category || 'Direct Credit',
           memo,
           authorizer: 'BANKER'
         };

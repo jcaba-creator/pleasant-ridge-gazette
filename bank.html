@@ -404,6 +404,39 @@
       color: var(--rose);
     }
 
+    .preset-chip {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--emerald);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .preset-chip:hover, .preset-chip:active {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: var(--emerald);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .preset-chip.text-chip {
+      font-family: var(--font-sans);
+      color: var(--text-muted);
+      font-size: 10px;
+      padding: 4px 8px;
+    }
+
+    .preset-chip.text-chip:hover, .preset-chip.text-chip:active {
+      background: rgba(245, 158, 11, 0.2);
+      border-color: var(--amber);
+      color: var(--amber);
+    }
+
     /* Banker Deck */
     .banker-deck {
       display: none;
@@ -576,14 +609,66 @@
       </div>
 
       <!-- Action Tabs within Banker Deck -->
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 16px;">
-        <button onclick="setBankerTab('bounty')" id="btTabBounty" class="btn-action" style="background: var(--amber); color: #000; justify-content: center;">+ Bounty</button>
-        <button onclick="setBankerTab('debit')" id="btTabDebit" class="btn-action" style="background: rgba(255,255,255,0.08); color: #fff; justify-content: center;">Debit / Spend</button>
-        <button onclick="setBankerTab('inspect')" id="btTabInspect" class="btn-action" style="background: rgba(255,255,255,0.08); color: #fff; justify-content: center;">Inspections (<span id="pendingCount">0</span>)</button>
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 16px;">
+        <button onclick="setBankerTab('credit')" id="btTabCredit" class="btn-action" style="background: var(--emerald); color: #000; font-weight: 800; justify-content: center; padding: 10px 8px;">⚡ Quick Credit</button>
+        <button onclick="setBankerTab('bounty')" id="btTabBounty" class="btn-action" style="background: rgba(255,255,255,0.08); color: #fff; justify-content: center; padding: 10px 8px;">📋 + Post Bounty</button>
+        <button onclick="setBankerTab('debit')" id="btTabDebit" class="btn-action" style="background: rgba(255,255,255,0.08); color: #fff; justify-content: center; padding: 10px 8px;">🛒 Debit / Spend</button>
+        <button onclick="setBankerTab('inspect')" id="btTabInspect" class="btn-action" style="background: rgba(255,255,255,0.08); color: #fff; justify-content: center; padding: 10px 8px;">🔍 Inspections (<span id="pendingCount">0</span>)</button>
+      </div>
+
+      <!-- Pane 0: Instant Credit / Ad-Hoc Job Pay -->
+      <div id="paneCredit">
+        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 8px; padding: 10px 12px; margin-bottom: 14px; font-size: 11px; color: #a7f3d0; line-height: 1.4;">
+          <strong>⚡ Instant Banker Pay:</strong> Credit a kid on the spot for an ad-hoc chore or job that wasn’t on the bounty board. The reason is permanently stamped to their passbook ledger.
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <div class="form-group">
+            <label class="form-label">Operative / Kid</label>
+            <select id="creditOperative" class="form-select">
+              <option value="op_ldog">L-Dog</option>
+              <option value="op_rainbow4">Rainbow-4</option>
+              <option value="op_peacemaker9">Peacemaker 9</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Credit Amount ($)</label>
+            <input type="number" id="creditAmount" class="form-input" step="0.25" min="0.25" placeholder="2.00">
+          </div>
+        </div>
+
+        <!-- Quick Amount Presets -->
+        <div style="display: flex; gap: 6px; margin-top: -4px; margin-bottom: 12px; flex-wrap: wrap;">
+          <button type="button" onclick="setCreditPreset(0.50)" class="preset-chip">$0.50</button>
+          <button type="button" onclick="setCreditPreset(1.00)" class="preset-chip">$1.00</button>
+          <button type="button" onclick="setCreditPreset(2.00)" class="preset-chip">$2.00</button>
+          <button type="button" onclick="setCreditPreset(3.00)" class="preset-chip">$3.00</button>
+          <button type="button" onclick="setCreditPreset(5.00)" class="preset-chip">$5.00</button>
+          <button type="button" onclick="setCreditPreset(10.00)" class="preset-chip">$10.00</button>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Job Done / What They Did (Ledger Reason)</label>
+          <input type="text" id="creditMemo" class="form-input" placeholder="e.g., Unloaded truck, Swept shop, Hauled firewood">
+        </div>
+
+        <!-- Quick Chore Reason Presets -->
+        <div style="display: flex; gap: 6px; margin-top: -4px; margin-bottom: 14px; flex-wrap: wrap;">
+          <button type="button" onclick="setCreditReason('Unloaded truck / groceries')" class="preset-chip text-chip">Groceries</button>
+          <button type="button" onclick="setCreditReason('Stacked firewood')" class="preset-chip text-chip">Firewood</button>
+          <button type="button" onclick="setCreditReason('Swept shop / garage')" class="preset-chip text-chip">Swept Shop</button>
+          <button type="button" onclick="setCreditReason('Helped with animals / feed')" class="preset-chip text-chip">Animals / Feed</button>
+          <button type="button" onclick="setCreditReason('Yard / brush cleanup')" class="preset-chip text-chip">Yard Cleanup</button>
+          <button type="button" onclick="setCreditReason('Special assist for Josh')" class="preset-chip text-chip">Quick Assist</button>
+        </div>
+
+        <button id="btnAuthorizeCredit" onclick="authorizeCredit()" class="btn-action" style="width: 100%; background: var(--emerald); color: #000; justify-content: center; padding: 12px; font-weight: 900; font-size: 13px;">
+          ⚡ Credit Account &amp; Record Reason
+        </button>
       </div>
 
       <!-- Pane 1: Create Bounty -->
-      <div id="paneBounty">
+      <div id="paneBounty" style="display: none;">
         <div class="form-group">
           <label class="form-label">Task Title</label>
           <input type="text" id="bountyTitle" class="form-input" placeholder="e.g., Detail Truck Bed, Weed Garden Bed #2">
@@ -669,6 +754,14 @@
       <div class="balance-label" id="currentOpTitle">L-DOG • CURRENT BALANCE</div>
       <div class="balance-amount" id="currentBalanceDisplay">$0.00</div>
       <div class="balance-sub" id="currentOpRank">Verified Field Bank Funds</div>
+      <div id="bankerOpQuickActions" style="display: none; margin-top: 14px; gap: 8px; justify-content: center;">
+        <button onclick="quickCreditActiveOp()" class="btn-action" style="background: var(--emerald); color: #000; font-weight: 900; padding: 8px 16px; font-size: 11px;">
+          ⚡ Credit <span id="quickCreditOpName">L-Dog</span>
+        </button>
+        <button onclick="quickDebitActiveOp()" class="btn-action" style="background: rgba(244, 63, 94, 0.15); border: 1px solid var(--rose); color: #fca5a5; font-weight: 800; padding: 8px 16px; font-size: 11px;">
+          🛒 Deduct Spend
+        </button>
+      </div>
     </section>
 
     <!-- Operative Active Tasks -->
@@ -917,16 +1010,60 @@
 
     function setBankerTab(tab) {
       playSound('click');
+      document.getElementById('paneCredit').style.display = tab === 'credit' ? 'block' : 'none';
       document.getElementById('paneBounty').style.display = tab === 'bounty' ? 'block' : 'none';
       document.getElementById('paneDebit').style.display = tab === 'debit' ? 'block' : 'none';
       document.getElementById('paneInspect').style.display = tab === 'inspect' ? 'block' : 'none';
 
+      document.getElementById('btTabCredit').style.background = tab === 'credit' ? 'var(--emerald)' : 'rgba(255,255,255,0.08)';
+      document.getElementById('btTabCredit').style.color = tab === 'credit' ? '#000' : '#fff';
+
       document.getElementById('btTabBounty').style.background = tab === 'bounty' ? 'var(--amber)' : 'rgba(255,255,255,0.08)';
       document.getElementById('btTabBounty').style.color = tab === 'bounty' ? '#000' : '#fff';
-      document.getElementById('btTabDebit').style.background = tab === 'debit' ? 'var(--amber)' : 'rgba(255,255,255,0.08)';
-      document.getElementById('btTabDebit').style.color = tab === 'debit' ? '#000' : '#fff';
-      document.getElementById('btTabInspect').style.background = tab === 'inspect' ? 'var(--amber)' : 'rgba(255,255,255,0.08)';
+
+      document.getElementById('btTabDebit').style.background = tab === 'debit' ? 'var(--rose)' : 'rgba(255,255,255,0.08)';
+      document.getElementById('btTabDebit').style.color = tab === 'debit' ? '#fff' : '#fff';
+
+      document.getElementById('btTabInspect').style.background = tab === 'inspect' ? 'var(--cyan)' : 'rgba(255,255,255,0.08)';
       document.getElementById('btTabInspect').style.color = tab === 'inspect' ? '#000' : '#fff';
+    }
+
+    function setCreditPreset(val) {
+      playSound('click');
+      document.getElementById('creditAmount').value = val.toFixed(2);
+    }
+
+    function setCreditReason(text) {
+      playSound('click');
+      const input = document.getElementById('creditMemo');
+      input.value = text;
+      input.focus();
+    }
+
+    function quickCreditActiveOp() {
+      if (!isBankerUnlocked) {
+        toggleBanker();
+        return;
+      }
+      setBankerTab('credit');
+      const sel = document.getElementById('creditOperative');
+      if (sel) sel.value = activeOpId;
+      const deck = document.getElementById('bankerDeck');
+      deck.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setTimeout(() => document.getElementById('creditAmount').focus(), 200);
+    }
+
+    function quickDebitActiveOp() {
+      if (!isBankerUnlocked) {
+        toggleBanker();
+        return;
+      }
+      setBankerTab('debit');
+      const sel = document.getElementById('debitOperative');
+      if (sel) sel.value = activeOpId;
+      const deck = document.getElementById('bankerDeck');
+      deck.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setTimeout(() => document.getElementById('debitAmount').focus(), 200);
     }
 
     // --- API CLIENT (Zero Local Fake Fallbacks) ---
@@ -985,6 +1122,54 @@
     }
 
     // --- BANKER ACTIONS ---
+    async function authorizeCredit() {
+      const operativeId = document.getElementById('creditOperative').value;
+      const amount = parseFloat(document.getElementById('creditAmount').value) || 0;
+      const memo = document.getElementById('creditMemo').value.trim();
+      const btn = document.getElementById('btnAuthorizeCredit');
+
+      if (amount <= 0) {
+        playSound('buzz');
+        showToast('⚠️ Positive credit amount required.');
+        document.getElementById('creditAmount').focus();
+        return;
+      }
+
+      if (!memo) {
+        playSound('buzz');
+        showToast('⚠️ Please enter the chore or job description.');
+        document.getElementById('creditMemo').focus();
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Crediting Account...';
+
+      const res = await apiRequest('DIRECT_DEPOSIT', {
+        operativeId,
+        amount,
+        memo,
+        category: 'Quick Credit'
+      });
+      btn.disabled = false;
+      btn.textContent = '⚡ Credit Account & Record Reason';
+
+      if (res && res.ok && res.transaction) {
+        playSound('payday');
+        const opName = treasury.operatives[operativeId]?.callSign || 'Operative';
+        showToast(`💰 Credited $${amount.toFixed(2)} to ${opName} for: "${memo}"`);
+        document.getElementById('creditAmount').value = '';
+        document.getElementById('creditMemo').value = '';
+        if (activeOpId !== operativeId) {
+          selectOperative(operativeId);
+        }
+        await fetchTreasuryState();
+      } else {
+        playSound('buzz');
+        showToast('⚠️ Failed: ' + (res?.error || 'Authorization error'));
+      }
+    }
+
     async function dispatchBounty() {
       const title = document.getElementById('bountyTitle').value.trim();
       const amount = parseFloat(document.getElementById('bountyAmount').value) || 0;
@@ -1110,14 +1295,17 @@
     function renderUI() {
       const bBtn = document.getElementById('btnBankerToggle');
       const bDeck = document.getElementById('bankerDeck');
+      const bankerQuickBar = document.getElementById('bankerOpQuickActions');
       if (isBankerUnlocked) {
         bBtn.classList.add('unlocked');
         bBtn.innerHTML = '👑 Banker Deck (Unlocked)';
         bDeck.classList.add('active');
+        if (bankerQuickBar) bankerQuickBar.style.display = 'flex';
       } else {
         bBtn.classList.remove('unlocked');
         bBtn.innerHTML = '🔒 Banker Command';
         bDeck.classList.remove('active');
+        if (bankerQuickBar) bankerQuickBar.style.display = 'none';
       }
 
       for (const opId in treasury.operatives) {
@@ -1130,6 +1318,8 @@
       document.getElementById('currentOpTitle').textContent = `${currentOp.callSign.toUpperCase()} • CURRENT BALANCE`;
       document.getElementById('currentBalanceDisplay').textContent = '$' + (currentOp.balance || 0).toFixed(2);
       document.getElementById('currentOpRank').textContent = `Call Sign: ${currentOp.callSign} • Rank: ${currentOp.rank || 'Operative'}`;
+      const quickOpSpan = document.getElementById('quickCreditOpName');
+      if (quickOpSpan) quickOpSpan.textContent = currentOp.callSign;
 
       const openBounties = (treasury.bounties || []).filter(b => b.status === 'OPEN' && (b.targetOperative === 'ALL' || b.targetOperative === activeOpId));
       document.getElementById('openBountiesCount').textContent = `${openBounties.length} AVAILABLE`;
