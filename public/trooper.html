@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Trooper's Ranch Quest</title>
+  <title>Trooper's Everyday Chores</title>
   <style>
     /* 100% Self-Contained Styles - Zero External CDNs or Fonts Required */
     :root {
@@ -32,9 +32,9 @@
     body {
       background-color: var(--bg-dark);
       color: var(--text-main);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Trebuchet MS", "Comic Sans MS", system-ui, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Trebuchet MS", sans-serif;
       min-height: 100vh;
-      padding: 16px;
+      padding: 14px;
       display: flex;
       justify-content: center;
     }
@@ -44,7 +44,8 @@
       max-width: 580px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
+      padding-bottom: 50px;
     }
 
     .btn-3d {
@@ -67,7 +68,7 @@
       background: linear-gradient(145deg, #1e293b, #111827);
       border: 2px solid rgba(245, 158, 11, 0.45);
       border-radius: 20px;
-      padding: 18px;
+      padding: 16px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.5);
     }
 
@@ -75,26 +76,27 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     .avatar-wrapper {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
     }
 
     .avatar-badge {
-      width: 58px;
-      height: 58px;
+      width: 54px;
+      height: 54px;
       background: linear-gradient(135deg, #f59e0b, #d97706);
       border: 3px solid #fef08a;
-      border-radius: 18px;
-      font-size: 32px;
+      border-radius: 16px;
+      font-size: 28px;
       display: flex;
       align-items: center;
       justify-content: center;
       box-shadow: 0 6px 14px rgba(245, 158, 11, 0.4);
+      cursor: pointer;
     }
 
     .hero-title-group h1 {
@@ -116,7 +118,6 @@
       font-weight: 800;
       padding: 2px 8px;
       border-radius: 999px;
-      letter-spacing: 0.5px;
     }
 
     .hero-rank {
@@ -144,14 +145,11 @@
       justify-content: center;
       cursor: pointer;
     }
-    .icon-btn:hover {
-      background: #475569;
-    }
 
     .xp-section {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
     }
 
     .xp-labels {
@@ -160,7 +158,6 @@
       font-size: 11px;
       font-weight: 800;
       color: #fde047;
-      letter-spacing: 0.5px;
     }
 
     .xp-bar-bg {
@@ -182,8 +179,8 @@
     }
 
     .stats-footer {
-      margin-top: 14px;
-      padding-top: 12px;
+      margin-top: 12px;
+      padding-top: 10px;
       border-top: 1px solid #334155;
       display: flex;
       align-items: center;
@@ -192,7 +189,7 @@
 
     .stats-counts {
       display: flex;
-      gap: 16px;
+      gap: 14px;
       font-size: 12px;
       font-weight: 800;
       color: var(--text-muted);
@@ -201,12 +198,8 @@
       color: #fff;
       font-size: 14px;
     }
-    .stats-counts .green-val {
-      color: #34d399;
-    }
-    .stats-counts .gold-val {
-      color: #facc15;
-    }
+    .stats-counts .green-val { color: #34d399; }
+    .stats-counts .gold-val { color: #facc15; }
 
     .loot-claim-btn {
       background: linear-gradient(90deg, #f59e0b, #fbbf24);
@@ -225,7 +218,7 @@
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 18px;
-      padding: 16px;
+      padding: 14px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.25);
     }
 
@@ -233,7 +226,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .zone-title {
@@ -268,7 +261,7 @@
     .chore-list {
       display: flex;
       flex-direction: column;
-      gap: 9px;
+      gap: 8px;
     }
 
     .chore-item {
@@ -282,7 +275,7 @@
       transition: all 0.2s ease;
     }
     .chore-item.done {
-      opacity: 0.55;
+      opacity: 0.5;
       background: rgba(6, 78, 59, 0.2);
       border-color: rgba(5, 150, 105, 0.4);
     }
@@ -292,6 +285,7 @@
       align-items: center;
       gap: 12px;
       cursor: pointer;
+      flex: 1;
     }
 
     .chore-checkbox {
@@ -331,7 +325,7 @@
       color: #f1f5f9;
     }
     .chore-desc {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 500;
       color: #94a3b8;
       margin-top: 1px;
@@ -342,26 +336,92 @@
       margin-left: 8px;
     }
 
-    .page-footer {
+    /* SCRATCH PAD SECTION AT THE BOTTOM */
+    .scratchpad-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 18px;
+      padding: 14px;
+      margin-top: 6px;
+    }
+    .scratchpad-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 4px 6px 30px;
-      font-size: 12px;
-      color: #64748b;
+      margin-bottom: 8px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 6px;
     }
-    .reset-link {
-      color: #94a3b8;
-      background: none;
-      border: none;
+    .scratchpad-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: #fde047;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .quick-tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 8px;
+    }
+    .tag-btn {
+      background: #0f172a;
+      border: 1px solid #475569;
+      color: #cbd5e1;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
       cursor: pointer;
-      text-decoration: underline;
-      font-size: 12px;
     }
-    .reset-link:hover {
-      color: #e2e8f0;
+    .tag-btn:hover {
+      background: #334155;
+      color: #fff;
+    }
+    .scratchpad-input {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 9px 12px;
+      color: #f8fafc;
+      font-size: 13px;
+      outline: none;
+      resize: vertical;
+      min-height: 60px;
+      font-family: inherit;
+      user-select: text;
+    }
+    .scratchpad-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 6px;
+    }
+    .notes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+    .note-row {
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: text;
     }
 
+    /* Modal Backdrop */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -372,9 +432,7 @@
       padding: 16px;
       z-index: 999;
     }
-    .modal-overlay.hidden {
-      display: none;
-    }
+    .modal-overlay.hidden { display: none; }
 
     .modal-card {
       background: #1e293b;
@@ -393,15 +451,12 @@
       font-size: 20px;
       font-weight: 900;
       margin-bottom: 6px;
-      letter-spacing: 0.5px;
     }
-
     .modal-desc {
       font-size: 12px;
       color: #cbd5e1;
       margin-bottom: 16px;
     }
-
     .prize-box {
       background: #0f172a;
       border: 2px dashed #f59e0b;
@@ -416,7 +471,6 @@
       justify-content: center;
       margin-bottom: 20px;
     }
-
     .claim-btn {
       width: 100%;
       padding: 14px;
@@ -424,67 +478,6 @@
       background: linear-gradient(90deg, #10b981, #059669);
       color: white;
       font-size: 14px;
-    }
-
-    .parent-modal-card {
-      background: #1e293b;
-      border: 2px solid #475569;
-      border-radius: 22px;
-      width: 100%;
-      max-width: 440px;
-      padding: 22px;
-      text-align: left;
-    }
-    .parent-modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-      border-bottom: 1px solid #334155;
-      padding-bottom: 10px;
-    }
-    .parent-modal-header h3 {
-      font-size: 16px;
-      font-weight: 800;
-      color: #f8fafc;
-    }
-    .close-btn {
-      background: none;
-      border: none;
-      color: #94a3b8;
-      font-size: 20px;
-      cursor: pointer;
-    }
-
-    .field-label {
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      color: #cbd5e1;
-      margin-bottom: 4px;
-      display: block;
-    }
-    .field-textarea {
-      width: 100%;
-      height: 110px;
-      background: #0f172a;
-      border: 1px solid #475569;
-      border-radius: 12px;
-      padding: 10px;
-      color: #f8fafc;
-      font-family: inherit;
-      font-size: 12px;
-      resize: vertical;
-      margin-bottom: 12px;
-    }
-
-    .parent-modal-actions {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-top: 1px solid #334155;
-      padding-top: 14px;
-      margin-top: 14px;
     }
 
     #confetti-canvas {
@@ -503,14 +496,14 @@
 
   <div class="container">
 
-    <!-- Top Dashboard Header -->
+    <!-- Top Dashboard Header (Clean, No Settings Button For Trooper) -->
     <header class="header-card">
       <div class="hero-profile">
         <div class="avatar-wrapper">
-          <div class="avatar-badge" id="avatar-icon">🤠</div>
+          <div class="avatar-badge" id="avatar-icon" onclick="handleAvatarTap()" title="Trooper">🤠</div>
           <div class="hero-title-group">
             <h1>
-              <span id="hero-name-display">Trooper</span>
+              <span>Trooper</span>
               <span class="streak-pill" id="streak-badge">🔥 <span id="streak-count">1</span> DAY STREAK</span>
             </h1>
             <div class="hero-rank" id="rank-title">Level 1 • Barn Scout</div>
@@ -518,8 +511,7 @@
         </div>
 
         <div class="action-icons">
-          <button class="icon-btn" id="sound-btn" onclick="toggleSound()" title="Sound Effects">🔊</button>
-          <button class="icon-btn" onclick="openParentModal()" title="Parent Settings">⚙️</button>
+          <button class="icon-btn" id="sound-btn" onclick="toggleSound()" title="Sound">🔊</button>
         </div>
       </div>
 
@@ -547,182 +539,39 @@
       </div>
     </header>
 
-    <!-- QUEST SECTIONS -->
+    <!-- DYNAMIC QUEST ZONES CONTAINER -->
+    <div id="quest-zones-container" class="space-y-4" style="display: flex; flex-direction: column; gap: 14px;">
+      <!-- Populated dynamically from storage -->
+    </div>
 
-    <!-- Zone 1: Morning Hero Launch -->
-    <section class="quest-zone zone-am">
-      <div class="zone-header">
-        <div class="zone-title">
-          <span>🌅</span> Morning Hero Launch
+    <!-- FIELD SCRATCHPAD AT THE BOTTOM -->
+    <div class="scratchpad-card">
+      <div class="scratchpad-header">
+        <div class="scratchpad-title">
+          <span>📝</span> Scratch Pad / Daily Notes
         </div>
-        <div class="zone-tag">+25 XP Each</div>
+        <span id="date-display" style="font-size: 11px; color: #94a3b8;">Today</span>
       </div>
 
-      <div class="chore-list">
-        <div class="chore-item" data-id="get_dressed" data-xp="25">
-          <label class="chore-left" for="c_dressed">
-            <input type="checkbox" id="c_dressed" class="chore-checkbox" onchange="handleChoreToggle(this, 'get_dressed')">
-            <div class="chore-labels">
-              <span class="chore-name">Armor Up (Get Dressed)</span>
-              <span class="chore-desc">Put on full clothes and socks for the day</span>
-            </div>
-          </label>
-          <span class="chore-emoji">👕</span>
-        </div>
-
-        <div class="chore-item" data-id="brush_teeth" data-xp="25">
-          <label class="chore-left" for="c_teeth">
-            <input type="checkbox" id="c_teeth" class="chore-checkbox" onchange="handleChoreToggle(this, 'brush_teeth')">
-            <div class="chore-labels">
-              <span class="chore-name">Sparkle Smile (Brush Teeth)</span>
-              <span class="chore-desc">2 full minutes of brushing shine</span>
-            </div>
-          </label>
-          <span class="chore-emoji">🪥</span>
-        </div>
-
-        <div class="chore-item" data-id="eat_breakfast" data-xp="25">
-          <label class="chore-left" for="c_breakfast">
-            <input type="checkbox" id="c_breakfast" class="chore-checkbox" onchange="handleChoreToggle(this, 'eat_breakfast')">
-            <div class="chore-labels">
-              <span class="chore-name">Power Fuel (Eat Breakfast)</span>
-              <span class="chore-desc">Finish morning meal and drink</span>
-            </div>
-          </label>
-          <span class="chore-emoji">🥞</span>
-        </div>
-
-        <div class="chore-item" data-id="get_backpack" data-xp="25">
-          <label class="chore-left" for="c_backpack">
-            <input type="checkbox" id="c_backpack" class="chore-checkbox" onchange="handleChoreToggle(this, 'get_backpack')">
-            <div class="chore-labels">
-              <span class="chore-name">Mission Satchel (Get Backpack)</span>
-              <span class="chore-desc">Packed, zipped, and placed at launchpad</span>
-            </div>
-          </label>
-          <span class="chore-emoji">🎒</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- Zone 2: Pasture & Herd Patrol -->
-    <section class="quest-zone zone-pasture">
-      <div class="zone-header">
-        <div class="zone-title">
-          <span>🐴</span> Pasture & Herd Patrol
-        </div>
-        <div class="zone-tag">+50 XP Each</div>
+      <div class="quick-tag-row">
+        <button class="tag-btn" onclick="appendTag('+ Did great')">+ Did great</button>
+        <button class="tag-btn" onclick="appendTag('+ Needed help')">+ Needed help</button>
+        <button class="tag-btn" onclick="appendTag('+ Water filled')">+ Water filled</button>
+        <button class="tag-btn" onclick="appendTag('+ Animals good')">+ Animals good</button>
+        <button class="tag-btn" onclick="appendTag('+ Fast breakfast')">+ Fast breakfast</button>
       </div>
 
-      <div class="chore-list">
-        <div class="chore-item" data-id="check_horse_water" data-xp="50">
-          <label class="chore-left" for="c_horse_water">
-            <input type="checkbox" id="c_horse_water" class="chore-checkbox" onchange="handleChoreToggle(this, 'check_horse_water')">
-            <div class="chore-labels">
-              <span class="chore-name">Check Horse Water Trough</span>
-              <span class="chore-desc">Verify water level is clean, full, and running</span>
-            </div>
-          </label>
-          <span class="chore-emoji">💧</span>
-        </div>
+      <textarea id="scratchpad-input" class="scratchpad-input" placeholder="Type a note or quick observation here..."></textarea>
 
-        <div class="chore-item" data-id="horse_cow_care" data-xp="50">
-          <label class="chore-left" for="c_horse_cow">
-            <input type="checkbox" id="c_horse_cow" class="chore-checkbox" onchange="handleChoreToggle(this, 'horse_cow_care')">
-            <div class="chore-labels">
-              <span class="chore-name">Care for Horse & Cow</span>
-              <span class="chore-desc">Hay, feed check, gates secure, inspect stock</span>
-            </div>
-          </label>
-          <span class="chore-emoji">🐄</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- Zone 3: House Critter Squad -->
-    <section class="quest-zone zone-critters">
-      <div class="zone-header">
-        <div class="zone-title">
-          <span>🐾</span> House Critter Squad
-        </div>
-        <div class="zone-tag">+35 XP Each</div>
+      <div class="scratchpad-actions">
+        <button onclick="clearScratchpadInput()" class="tag-btn" style="border: none;">Clear</button>
+        <button onclick="saveScratchpadNote()" class="btn-3d" style="background: #10b981; color: white; padding: 6px 14px; border-radius: 8px; font-size: 12px;">
+          Save Note
+        </button>
       </div>
 
-      <div class="chore-list">
-        <div class="chore-item" data-id="feed_dog" data-xp="35">
-          <label class="chore-left" for="c_dog">
-            <input type="checkbox" id="c_dog" class="chore-checkbox" onchange="handleChoreToggle(this, 'feed_dog')">
-            <div class="chore-labels">
-              <span class="chore-name">Hound Feast (Feed Dog)</span>
-              <span class="chore-desc">Scoop clean ration into dog bowl</span>
-            </div>
-          </label>
-          <span class="chore-emoji">🐕</span>
-        </div>
-
-        <div class="chore-item" data-id="feed_cat" data-xp="35">
-          <label class="chore-left" for="c_cat">
-            <input type="checkbox" id="c_cat" class="chore-checkbox" onchange="handleChoreToggle(this, 'feed_cat')">
-            <div class="chore-labels">
-              <span class="chore-name">Feline Chow (Feed Cat)</span>
-              <span class="chore-desc">Fill cat food bowl</span>
-            </div>
-          </label>
-          <span class="chore-emoji">🐈</span>
-        </div>
-
-        <div class="chore-item" data-id="water_cat" data-xp="35">
-          <label class="chore-left" for="c_water_cat">
-            <input type="checkbox" id="c_water_cat" class="chore-checkbox" onchange="handleChoreToggle(this, 'water_cat')">
-            <div class="chore-labels">
-              <span class="chore-name">Fresh Spring (Water Cat)</span>
-              <span class="chore-desc">Rinse and refresh clean kitty water</span>
-            </div>
-          </label>
-          <span class="chore-emoji">🥛</span>
-        </div>
-
-        <div class="chore-item" data-id="do_litter" data-xp="35">
-          <label class="chore-left" for="c_litter">
-            <input type="checkbox" id="c_litter" class="chore-checkbox" onchange="handleChoreToggle(this, 'do_litter')">
-            <div class="chore-labels">
-              <span class="chore-name">Sandbox Sifter (Do Litter)</span>
-              <span class="chore-desc">Scoop clean & dispose in bin</span>
-            </div>
-          </label>
-          <span class="chore-emoji">🧹</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- Zone 4: Sunset Sanctuary & Reset -->
-    <section class="quest-zone zone-pm">
-      <div class="zone-header">
-        <div class="zone-title">
-          <span>🌙</span> Evening Sanctuary & Reset
-        </div>
-        <div class="zone-tag">+50 XP</div>
-      </div>
-
-      <div class="chore-list">
-        <div class="chore-item" data-id="chill_reset" data-xp="50">
-          <label class="chore-left" for="c_reset">
-            <input type="checkbox" id="c_reset" class="chore-checkbox" onchange="handleChoreToggle(this, 'chill_reset')">
-            <div class="chore-labels">
-              <span class="chore-name">Chill & Reset Beat for Tomorrow</span>
-              <span class="chore-desc">Shoes stowed, launchpad ready, evening unwind earned</span>
-            </div>
-          </label>
-          <span class="chore-emoji">🎧</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- Footer Controls -->
-    <footer class="page-footer">
-      <span id="date-display">Today's Quest</span>
-      <button class="reset-link" onclick="confirmResetDay()">Reset Today's Checks</button>
-    </footer>
+      <div id="notes-display" class="notes-list"></div>
+    </div>
 
   </div>
 
@@ -731,7 +580,7 @@
     <div class="modal-card">
       <div style="font-size: 52px; margin-bottom: 6px;">🎁</div>
       <h3 class="modal-title">LOOT BOX UNLOCKED!</h3>
-      <p class="modal-desc">Trooper stayed on mission and earned a Homestead Reward!</p>
+      <p class="modal-desc">Trooper finished chores and earned a reward!</p>
 
       <div class="prize-box" id="reward-result"></div>
 
@@ -739,42 +588,8 @@
     </div>
   </div>
 
-  <!-- PARENT SETTINGS MODAL -->
-  <div id="parent-modal" class="modal-overlay hidden">
-    <div class="parent-modal-card">
-      <div class="parent-modal-header">
-        <h3>⚙️ Parent Command Desk</h3>
-        <button class="close-btn" onclick="closeParentModal()">✕</button>
-      </div>
-
-      <label class="field-label">Custom Reward Chest Drops (One per line)</label>
-      <textarea id="reward-pool-input" class="field-textarea"></textarea>
-
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
-        <div>
-          <label class="field-label">Hero's Name</label>
-          <input type="text" id="kid-name-input" style="width: 100%; background: #0f172a; border: 1px solid #475569; border-radius: 10px; padding: 8px; color: #fff; font-size: 13px;">
-        </div>
-        <div>
-          <label class="field-label">Bonus XP Reward</label>
-          <button onclick="addParentBonusXP(50)" class="btn-3d" style="width: 100%; background: #d97706; color: white; padding: 8px; border-radius: 10px; font-size: 12px;">
-            +50 Quick XP
-          </button>
-        </div>
-      </div>
-
-      <div class="parent-modal-actions">
-        <button onclick="resetFullHeroProfile()" style="background: none; border: none; color: #f87171; font-size: 11px; cursor: pointer; text-decoration: underline;">
-          Reset All Stats
-        </button>
-        <button onclick="saveParentSettings()" class="btn-3d" style="background: #10b981; color: white; padding: 8px 18px; border-radius: 10px; font-size: 13px;">
-          Save Settings
-        </button>
-      </div>
-    </div>
-  </div>
-
   <script>
+    // --- AUDIO SYNTHESIZER ---
     const AudioEngine = {
       ctx: null,
       enabled: true,
@@ -782,13 +597,9 @@
       init() {
         if (!this.ctx) {
           const AudioContext = window.AudioContext || window.webkitAudioContext;
-          if (AudioContext) {
-            this.ctx = new AudioContext();
-          }
+          if (AudioContext) this.ctx = new AudioContext();
         }
-        if (this.ctx && this.ctx.state === 'suspended') {
-          this.ctx.resume();
-        }
+        if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
       },
 
       playCoin() {
@@ -808,7 +619,6 @@
 
         osc.connect(gain);
         gain.connect(this.ctx.destination);
-
         osc.start(now);
         osc.stop(now + 0.35);
       },
@@ -825,13 +635,11 @@
 
           osc.type = 'square';
           osc.frequency.setValueAtTime(freq, now);
-
           gain.gain.setValueAtTime(0.12, now);
           gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
 
           osc.connect(gain);
           gain.connect(this.ctx.destination);
-
           osc.start(now);
           osc.stop(now + 0.25);
         });
@@ -849,13 +657,11 @@
 
           osc.type = 'triangle';
           osc.frequency.setValueAtTime(freq, now);
-
           gain.gain.setValueAtTime(0.2, now);
           gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
 
           osc.connect(gain);
           gain.connect(this.ctx.destination);
-
           osc.start(now);
           osc.stop(now + 0.4);
         });
@@ -878,11 +684,30 @@
 
         osc.connect(gain);
         gain.connect(this.ctx.destination);
-
         osc.start(now);
         osc.stop(now + 0.5);
       }
     };
+
+    // --- GAME ENGINE & STATE ---
+    const TASKS_KEY = "bb_trooper_tasks_config_v1";
+    const DATA_KEY = "bb_trooper_ranch_quest_data";
+    const NOTES_KEY = "bb_trooper_scratchpad_notes";
+
+    // 100% REAL-WORLD, DIRECT DESCRIPTIONS (NO FANCY WORDS)
+    const DEFAULT_REAL_WORLD_TASKS = [
+      { id: "get_dressed", name: "Get dressed", desc: "Put on clothes and socks", zone: "am", xp: 25, emoji: "👕" },
+      { id: "brush_teeth", name: "Brush teeth", desc: "Brush teeth for 2 minutes", zone: "am", xp: 25, emoji: "🪥" },
+      { id: "eat_breakfast", name: "Eat breakfast", desc: "Finish breakfast food and drink", zone: "am", xp: 25, emoji: "🥞" },
+      { id: "get_backpack", name: "Get backpack", desc: "Packed and placed by the door", zone: "am", xp: 25, emoji: "🎒" },
+      { id: "check_horse_water", name: "Check horse water", desc: "Check trough - make sure it is full and clean", zone: "pasture", xp: 50, emoji: "💧" },
+      { id: "horse_cow_care", name: "Take care of horse and cow", desc: "Feed and check on horse and cow", zone: "pasture", xp: 50, emoji: "🐄" },
+      { id: "feed_dog", name: "Feed dog", desc: "Put food in the dog bowl", zone: "critters", xp: 35, emoji: "🐕" },
+      { id: "feed_cat", name: "Feed cat", desc: "Put food in the cat bowl", zone: "critters", xp: 35, emoji: "🐈" },
+      { id: "water_cat", name: "Water cat", desc: "Give cat fresh clean water", zone: "critters", xp: 35, emoji: "🥛" },
+      { id: "do_litter", name: "Do litter", desc: "Clean the cat litter box", zone: "critters", xp: 35, emoji: "🧹" },
+      { id: "chill_reset", name: "Chill and reset for tomorrow", desc: "Put shoes away and relax for tomorrow", zone: "pm", xp: 50, emoji: "🎧" }
+    ];
 
     const RANKS = [
       { level: 1, title: "Barn Scout", xpReq: 100, avatar: "🤠" },
@@ -903,6 +728,7 @@
       "🪙 +50 BONUS XP Deposit in the Hero Bank!"
     ];
 
+    let tasks = [];
     let state = {
       xp: 0,
       coins: 0,
@@ -914,39 +740,119 @@
       kidName: "Trooper"
     };
 
-    function loadState() {
-      const saved = localStorage.getItem('bb_trooper_ranch_quest_data');
-      if (saved) {
-        try {
-          state = Object.assign(state, JSON.parse(saved));
-        } catch (e) {
-          console.error("State parse error", e);
+    let avatarTapCount = 0;
+    let avatarTapTimeout = null;
+
+    function handleAvatarTap() {
+      avatarTapCount++;
+      clearTimeout(avatarTapTimeout);
+      avatarTapTimeout = setTimeout(() => { avatarTapCount = 0; }, 2000);
+      if (avatarTapCount >= 5) {
+        avatarTapCount = 0;
+        if (confirm("Open Parent Command Deck?")) {
+          window.location.href = "/trooper-deck/";
         }
       }
+    }
 
+    function loadState() {
+      // 1. Load Tasks from Command Deck or Default
+      const savedTasks = localStorage.getItem(TASKS_KEY);
+      if (savedTasks) {
+        try { tasks = JSON.parse(savedTasks); } catch(e) { tasks = [...DEFAULT_REAL_WORLD_TASKS]; }
+      } else {
+        tasks = [...DEFAULT_REAL_WORLD_TASKS];
+        localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
+      }
+
+      // 2. Load Hero State
+      const saved = localStorage.getItem(DATA_KEY);
+      if (saved) {
+        try { state = Object.assign(state, JSON.parse(saved)); } catch (e) {}
+      }
+
+      // 3. Check Daily Rollover
       const today = new Date().toISOString().split('T')[0];
       if (state.lastActiveDate !== today) {
         const last = new Date(state.lastActiveDate);
         const curr = new Date(today);
         const diffDays = Math.round((curr - last) / (1000 * 60 * 60 * 24));
 
-        if (diffDays === 1) {
-          state.streak += 1;
-        } else if (diffDays > 1) {
-          state.streak = 1;
-        }
+        if (diffDays === 1) state.streak += 1;
+        else if (diffDays > 1) state.streak = 1;
 
         state.completedChores = {};
         state.lastActiveDate = today;
         saveState();
       }
 
-      document.getElementById('date-display').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+      document.getElementById('date-display').innerText = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+      renderDynamicZones();
       renderUI();
+      renderScratchpad();
     }
 
     function saveState() {
-      localStorage.setItem('bb_trooper_ranch_quest_data', JSON.stringify(state));
+      localStorage.setItem(DATA_KEY, JSON.stringify(state));
+    }
+
+    function renderDynamicZones() {
+      const container = document.getElementById('quest-zones-container');
+      container.innerHTML = '';
+
+      const zonesMeta = {
+        am: { title: "Morning", emoji: "🌅", cls: "zone-am" },
+        pasture: { title: "Pasture & Barn", emoji: "🐴", cls: "zone-pasture" },
+        critters: { title: "House Animals", emoji: "🐾", cls: "zone-critters" },
+        pm: { title: "Evening Reset", emoji: "🌙", cls: "zone-pm" }
+      };
+
+      const grouped = {};
+      tasks.forEach(t => {
+        const z = t.zone || 'am';
+        if (!grouped[z]) grouped[z] = [];
+        grouped[z].push(t);
+      });
+
+      ['am', 'pasture', 'critters', 'pm'].forEach(zoneKey => {
+        const zoneTasks = grouped[zoneKey];
+        if (!zoneTasks || zoneTasks.length === 0) return;
+        const meta = zonesMeta[zoneKey] || { title: zoneKey, emoji: "⭐", cls: "zone-am" };
+
+        const sec = document.createElement('section');
+        sec.className = `quest-zone ${meta.cls}`;
+        sec.innerHTML = `
+          <div class="zone-header">
+            <div class="zone-title">
+              <span>${meta.emoji}</span> ${meta.title}
+            </div>
+            <div class="zone-tag">${zoneTasks.length} ${zoneTasks.length === 1 ? 'task' : 'tasks'}</div>
+          </div>
+          <div class="chore-list" id="list_${zoneKey}"></div>
+        `;
+        container.appendChild(sec);
+
+        const listEl = sec.querySelector(`#list_${zoneKey}`);
+        zoneTasks.forEach(t => {
+          const isDone = !!state.completedChores[t.id];
+          const item = document.createElement('div');
+          item.className = `chore-item ${isDone ? 'done' : ''}`;
+          item.setAttribute('data-id', t.id);
+          item.setAttribute('data-xp', t.xp || 25);
+
+          item.innerHTML = `
+            <label class="chore-left" for="cb_${t.id}">
+              <input type="checkbox" id="cb_${t.id}" class="chore-checkbox" ${isDone ? 'checked' : ''} onchange="handleChoreToggle(this, '${t.id}')">
+              <div class="chore-labels">
+                <span class="chore-name">${t.name}</span>
+                <span class="chore-desc">${t.desc || ''}</span>
+              </div>
+            </label>
+            <span class="chore-emoji">${t.emoji || '⭐'}</span>
+          `;
+          listEl.appendChild(item);
+        });
+      });
     }
 
     function getRankInfo(xp) {
@@ -965,22 +871,12 @@
       let totalCompleted = 0;
       const allCheckboxes = document.querySelectorAll('.chore-checkbox');
       allCheckboxes.forEach(cb => {
-        const fullId = cb.closest('.chore-item').getAttribute('data-id');
-        const isDone = !!state.completedChores[fullId];
-        cb.checked = isDone;
-        const itemRow = cb.closest('.chore-item');
-        if (isDone) {
-          itemRow.classList.add('done');
-          totalCompleted++;
-        } else {
-          itemRow.classList.remove('done');
-        }
+        if (cb.checked) totalCompleted++;
       });
 
-      document.getElementById('completed-count').innerText = `${totalCompleted}/${allCheckboxes.length}`;
+      document.getElementById('completed-count').innerText = `${totalCompleted}/${tasks.length}`;
       document.getElementById('coin-count').innerText = `🪙 ${state.coins}`;
       document.getElementById('streak-count').innerText = state.streak;
-      document.getElementById('hero-name-display').innerText = state.kidName || "Trooper";
 
       const { currentRank, prevXp, nextXp } = getRankInfo(state.xp);
       document.getElementById('rank-title').innerText = `Level ${currentRank.level} • ${currentRank.title}`;
@@ -1008,6 +904,7 @@
       const xpVal = parseInt(choreItem.getAttribute('data-xp') || '25', 10);
 
       if (checkbox.checked) {
+        choreItem.classList.add('done');
         state.completedChores[choreId] = true;
         const oldRank = getRankInfo(state.xp).currentRank.level;
         state.xp += xpVal;
@@ -1019,7 +916,6 @@
         }
 
         const newRank = getRankInfo(state.xp).currentRank.level;
-
         if (newRank > oldRank) {
           AudioEngine.playLevelUp();
           triggerConfetti(true);
@@ -1028,8 +924,7 @@
           triggerConfetti(false);
         }
 
-        const total = document.querySelectorAll('.chore-checkbox').length;
-        if (completedCount === total) {
+        if (completedCount === tasks.length) {
           setTimeout(() => {
             AudioEngine.playFanfare();
             triggerConfetti(true);
@@ -1039,6 +934,7 @@
         }
 
       } else {
+        choreItem.classList.remove('done');
         delete state.completedChores[choreId];
         state.xp = Math.max(0, state.xp - xpVal);
         state.coins = Math.max(0, state.coins - 5);
@@ -1068,63 +964,80 @@
       document.getElementById('loot-modal').classList.add('hidden');
     }
 
-    function openParentModal() {
-      document.getElementById('reward-pool-input').value = (state.rewardsPool || DEFAULT_REWARDS).join('\n');
-      document.getElementById('kid-name-input').value = state.kidName || "Trooper";
-      document.getElementById('parent-modal').classList.remove('hidden');
-    }
-
-    function closeParentModal() {
-      document.getElementById('parent-modal').classList.add('hidden');
-    }
-
-    function saveParentSettings() {
-      const text = document.getElementById('reward-pool-input').value.trim();
-      const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-      if (lines.length > 0) {
-        state.rewardsPool = lines;
-      }
-      state.kidName = document.getElementById('kid-name-input').value.trim() || "Trooper";
-      saveState();
-      closeParentModal();
-      renderUI();
-    }
-
-    function addParentBonusXP(amt) {
-      state.xp += amt;
-      state.coins += 10;
-      AudioEngine.playLevelUp();
-      triggerConfetti(false);
-      saveState();
-      renderUI();
-    }
-
-    function resetFullHeroProfile() {
-      if (confirm("Reset XP, Level, and All Hero Data?")) {
-        state.xp = 0;
-        state.coins = 0;
-        state.streak = 1;
-        state.completedChores = {};
-        state.pendingChests = 0;
-        saveState();
-        closeParentModal();
-        renderUI();
-      }
-    }
-
-    function confirmResetDay() {
-      if (confirm("Reset today's checked chores? (Your Level and XP will remain!)")) {
-        state.completedChores = {};
-        saveState();
-        renderUI();
-      }
-    }
-
     function toggleSound() {
       AudioEngine.enabled = !AudioEngine.enabled;
       document.getElementById('sound-btn').innerText = AudioEngine.enabled ? '🔊' : '🔇';
     }
 
+    // --- SCRATCHPAD LOGIC ---
+    function appendTag(tag) {
+      const input = document.getElementById('scratchpad-input');
+      const val = input.value.trim();
+      input.value = val ? `${val} ${tag}` : tag;
+      input.focus();
+    }
+
+    function clearScratchpadInput() {
+      document.getElementById('scratchpad-input').value = '';
+    }
+
+    function saveScratchpadNote() {
+      const input = document.getElementById('scratchpad-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      let notes = [];
+      try {
+        const raw = localStorage.getItem(NOTES_KEY);
+        if (raw) notes = JSON.parse(raw);
+      } catch(e) {}
+
+      const timestamp = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+      notes.unshift({ text, timestamp, date: new Date().toISOString().split('T')[0] });
+      localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+
+      input.value = '';
+      renderScratchpad();
+    }
+
+    function renderScratchpad() {
+      const container = document.getElementById('notes-display');
+      let notes = [];
+      try {
+        const raw = localStorage.getItem(NOTES_KEY);
+        if (raw) notes = JSON.parse(raw);
+      } catch(e) {}
+
+      container.innerHTML = '';
+      if (notes.length === 0) {
+        container.innerHTML = '<div style="font-size: 11px; color: #64748b; font-style: italic; padding: 4px;">No notes yet today.</div>';
+        return;
+      }
+
+      notes.slice(0, 5).forEach((n, idx) => {
+        const div = document.createElement('div');
+        div.className = 'note-row';
+        div.innerHTML = `
+          <div>
+            <span style="color: #f1f5f9; font-weight: 600;">${n.text}</span>
+            <span style="color: #64748b; font-size: 10px; margin-left: 6px;">${n.timestamp}</span>
+          </div>
+          <button onclick="deleteScratchpadNote(${idx})" style="background:none; border:none; color:#94a3b8; cursor:pointer; font-size:12px;">✕</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function deleteScratchpadNote(idx) {
+      try {
+        let notes = JSON.parse(localStorage.getItem(NOTES_KEY) || '[]');
+        notes.splice(idx, 1);
+        localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+        renderScratchpad();
+      } catch(e) {}
+    }
+
+    // --- CANVAS CONFETTI ---
     const canvas = document.getElementById('confetti-canvas');
     const ctx = canvas.getContext('2d');
     let particles = [];

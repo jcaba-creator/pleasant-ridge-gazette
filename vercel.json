@@ -2,6 +2,22 @@
   "trailingSlash": true,
   "rewrites": [
     {
+      "source": "/trooper-deck",
+      "destination": "/trooper_deck.html"
+    },
+    {
+      "source": "/trooper-deck/",
+      "destination": "/trooper_deck.html"
+    },
+    {
+      "source": "/trooper/deck",
+      "destination": "/trooper_deck.html"
+    },
+    {
+      "source": "/trooper/deck/",
+      "destination": "/trooper_deck.html"
+    },
+    {
       "source": "/trooper",
       "destination": "/trooper.html"
     },
