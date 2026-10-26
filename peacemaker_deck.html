@@ -446,11 +446,22 @@
     function init() {
       const savedTasks = localStorage.getItem(TASKS_KEY);
       if (savedTasks) {
-        try { tasks = JSON.parse(savedTasks); } catch(e) { tasks = [...DEFAULT_REAL_WORLD_TASKS]; }
+        try {
+          const loaded = JSON.parse(savedTasks);
+          const existingIds = new Set(loaded.map(t => t.id));
+          DEFAULT_REAL_WORLD_TASKS.forEach(dt => {
+            if (!existingIds.has(dt.id)) {
+              loaded.push(dt);
+            }
+          });
+          tasks = loaded;
+        } catch(e) {
+          tasks = [...DEFAULT_REAL_WORLD_TASKS];
+        }
       } else {
         tasks = [...DEFAULT_REAL_WORLD_TASKS];
-        saveTasks();
       }
+      saveTasks();
 
       const savedData = localStorage.getItem(DATA_KEY);
       if (savedData) {

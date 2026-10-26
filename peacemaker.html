@@ -486,6 +486,181 @@
       width: 100%;
       height: 100%;
     }
+  
+    /* EASTON LOCAL WEATHER & OUTFIT SELECTOR WIDGET */
+    .weather-widget {
+      background: linear-gradient(145deg, #16203a, #0d1527);
+      border: 2px solid rgba(45, 212, 191, 0.45);
+      border-radius: 20px;
+      padding: 14px 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 16px rgba(45, 212, 191, 0.15);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 4px;
+      margin-bottom: 2px;
+    }
+
+    .weather-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(45, 212, 191, 0.15);
+      padding-bottom: 8px;
+    }
+
+    .weather-location {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #99f6e4;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #2dd4bf;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #2dd4bf;
+      animation: pulseLive 2s infinite;
+      display: inline-block;
+    }
+
+    @keyframes pulseLive {
+      0% { transform: scale(0.95); opacity: 0.7; }
+      50% { transform: scale(1.25); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.7; }
+    }
+
+    .weather-condition-pill {
+      font-size: 12px;
+      font-weight: 700;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .outfit-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      transition: all 0.25s ease;
+    }
+
+    .outfit-icon-badge {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+    }
+
+    .outfit-content {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      flex: 1;
+    }
+
+    .outfit-decision-title {
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+
+    .outfit-tagline {
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .outfit-helper {
+      font-size: 11px;
+      color: #cbd5e1;
+      line-height: 1.25;
+    }
+
+    /* Outfit Modes */
+    /* Mode 1: Jacket (Below 40°F) */
+    .mode-jacket {
+      background: linear-gradient(135deg, rgba(30, 58, 138, 0.7), rgba(15, 23, 42, 0.95));
+      border: 2px solid #38bdf8;
+    }
+    .mode-jacket .outfit-icon-badge {
+      background: linear-gradient(135deg, #0284c7, #38bdf8);
+      border: 2px solid #bae6fd;
+    }
+    .mode-jacket .outfit-decision-title {
+      color: #7dd3fc;
+    }
+    .mode-jacket .outfit-tagline {
+      color: #e0f2fe;
+    }
+
+    /* Mode 2: Hoodie (Below 70°F or Rain Expected) */
+    .mode-hoodie {
+      background: linear-gradient(135deg, rgba(126, 34, 206, 0.55), rgba(13, 148, 136, 0.45));
+      border: 2px solid #c084fc;
+    }
+    .mode-hoodie .outfit-icon-badge {
+      background: linear-gradient(135deg, #a855f7, #14b8a6);
+      border: 2px solid #e9d5ff;
+    }
+    .mode-hoodie .outfit-decision-title {
+      color: #f3e8ff;
+    }
+    .mode-hoodie .outfit-tagline {
+      color: #2dd4bf;
+    }
+
+    /* Mode 3: Nothing / Regular Shirt (70°F+ & Dry) */
+    .mode-nothing {
+      background: linear-gradient(135deg, rgba(20, 83, 45, 0.6), rgba(15, 23, 42, 0.95));
+      border: 2px solid #34d399;
+    }
+    .mode-nothing .outfit-icon-badge {
+      background: linear-gradient(135deg, #059669, #10b981);
+      border: 2px solid #a7f3d0;
+    }
+    .mode-nothing .outfit-decision-title {
+      color: #6ee7b7;
+    }
+    .mode-nothing .outfit-tagline {
+      color: #fef08a;
+    }
+
+    .weather-sub-metrics {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: #94a3b8;
+      padding-top: 4px;
+    }
+
+    .refresh-weather-btn {
+      background: transparent;
+      border: none;
+      color: #2dd4bf;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 0;
+      text-decoration: underline;
+    }
+
   </style>
 </head>
 <body>
@@ -536,6 +711,36 @@
         </button>
       </div>
     </header>
+
+    <!-- EASTON LOCAL WEATHER & OUTFIT SELECTOR WIDGET -->
+    <div class="weather-widget" id="weather-widget">
+      <div class="weather-top-row">
+        <div class="weather-location">
+          <span class="live-dot"></span>
+          <span>Easton, KS Live Weather</span>
+        </div>
+        <div class="weather-condition-pill" id="weather-condition-pill">
+          <span id="weather-icon">⛅</span>
+          <span id="weather-temp-text">Loading NWS data...</span>
+        </div>
+      </div>
+
+      <div class="outfit-banner mode-hoodie" id="outfit-banner">
+        <div class="outfit-icon-badge" id="outfit-icon">🧥</div>
+        <div class="outfit-content">
+          <div class="outfit-decision-title" id="outfit-title">CHECKING WEATHER...</div>
+          <div class="outfit-tagline" id="outfit-tagline">Connecting to National Weather Service...</div>
+          <div class="outfit-helper" id="outfit-helper">Pulls live Easton conditions to tell you whether to wear a jacket, hoodie, or just a shirt!</div>
+        </div>
+      </div>
+
+      <div class="weather-sub-metrics">
+        <span id="weather-rain-chance">💧 Rain Chance: --%</span>
+        <button class="refresh-weather-btn" onclick="loadEastonWeather(true)">🔄 Refresh Weather</button>
+        <span id="weather-updated-time">Updated: Just now</span>
+      </div>
+    </div>
+
 
     <!-- DYNAMIC QUEST ZONES CONTAINER -->
     <div id="quest-zones-container" style="display: flex; flex-direction: column; gap: 14px;">
@@ -762,11 +967,22 @@
     function loadState() {
       const savedTasks = localStorage.getItem(TASKS_KEY);
       if (savedTasks) {
-        try { tasks = JSON.parse(savedTasks); } catch(e) { tasks = [...DEFAULT_REAL_WORLD_TASKS]; }
+        try {
+          const loaded = JSON.parse(savedTasks);
+          const existingIds = new Set(loaded.map(t => t.id));
+          DEFAULT_REAL_WORLD_TASKS.forEach(dt => {
+            if (!existingIds.has(dt.id)) {
+              loaded.push(dt);
+            }
+          });
+          tasks = loaded;
+        } catch(e) {
+          tasks = [...DEFAULT_REAL_WORLD_TASKS];
+        }
       } else {
         tasks = [...DEFAULT_REAL_WORLD_TASKS];
-        localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
       }
+      localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
 
       const saved = localStorage.getItem(DATA_KEY);
       if (saved) {
