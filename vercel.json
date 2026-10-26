@@ -2,6 +2,30 @@
   "trailingSlash": true,
   "rewrites": [
     {
+      "source": "/peacemaker-deck",
+      "destination": "/peacemaker_deck.html"
+    },
+    {
+      "source": "/peacemaker-deck/",
+      "destination": "/peacemaker_deck.html"
+    },
+    {
+      "source": "/peacemaker/deck",
+      "destination": "/peacemaker_deck.html"
+    },
+    {
+      "source": "/peacemaker/deck/",
+      "destination": "/peacemaker_deck.html"
+    },
+    {
+      "source": "/peacemaker",
+      "destination": "/peacemaker.html"
+    },
+    {
+      "source": "/peacemaker/",
+      "destination": "/peacemaker.html"
+    },
+    {
       "source": "/trooper-deck",
       "destination": "/trooper_deck.html"
     },

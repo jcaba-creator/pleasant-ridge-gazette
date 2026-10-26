@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Peacemaker 9 Command Deck • Parent Ops</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card-bg: #131d33;
+      --card-border: #243456;
+      --lavender: #c084fc;
+      --lavender-dark: #9333ea;
+      --teal: #2dd4bf;
+      --teal-dark: #0f766e;
+      --green: #10b981;
+      --red: #ef4444;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Trebuchet MS", sans-serif;
+      min-height: 100vh;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 640px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding-bottom: 40px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    }
+
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-lavender { background: var(--lavender); color: #0b1120; }
+    .btn-teal { background: var(--teal); color: #0b1120; }
+    .btn-green { background: var(--green); color: white; }
+    .btn-red { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .btn-muted { background: #18223d; color: #cbd5e1; border: 1px solid #334155; }
+
+    .header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+    }
+    .header-title {
+      font-size: 17px;
+      font-weight: 900;
+      color: #e9d5ff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #cbd5e1;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .task-item {
+      background: #0b1120;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      gap: 10px;
+    }
+    .task-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+    }
+    .task-emoji {
+      font-size: 22px;
+      width: 32px;
+      text-align: center;
+    }
+    .task-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+    .task-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .task-zone-badge {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: #18223d;
+      color: #2dd4bf;
+      display: inline-block;
+      margin-top: 3px;
+    }
+    .task-actions {
+      display: flex;
+      gap: 6px;
+    }
+    .btn-icon {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+    .field-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: #cbd5e1;
+      text-transform: uppercase;
+    }
+    .input-text, .select-input {
+      background: #0b1120;
+      border: 1px solid #334155;
+      color: #f8fafc;
+      padding: 9px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      outline: none;
+    }
+    .input-text:focus, .select-input:focus {
+      border-color: var(--teal);
+    }
+    .textarea {
+      width: 100%;
+      background: #0b1120;
+      border: 1px solid #334155;
+      color: #f8fafc;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      min-height: 90px;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    .stat-pill {
+      background: #0b1120;
+      border: 1px solid #1e293b;
+      padding: 10px;
+      border-radius: 12px;
+      text-align: center;
+    }
+    .stat-val {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--teal);
+    }
+    .stat-lbl {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 1000;
+    }
+    .modal-overlay.hidden { display: none; }
+    .modal-card {
+      background: var(--card-bg);
+      border: 2px solid var(--teal);
+      border-radius: 18px;
+      width: 100%;
+      max-width: 440px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 10px;
+      font-size: 12px;
+    }
+    .nav-link {
+      color: #2dd4bf;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .nav-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Top Navigation Header -->
+    <div class="card">
+      <div class="header-bar">
+        <div class="header-title">
+          <span>🌿</span> PEACEMAKER 9 COMMAND DECK
+        </div>
+        <div class="nav-links">
+          <a href="/peacemaker/" class="nav-link" target="_blank">Open Peacemaker View ↗</a>
+        </div>
+      </div>
+      <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">
+        Private Parent Control Desk for adjusting Peacemaker 9's chore list, custom mystery rewards, XP leveling telemetry, and reviewing scratchpad field observations.
+      </p>
+    </div>
+
+    <!-- Live Telemetry Quick Adjust -->
+    <div class="card">
+      <div class="section-title">
+        <span>HERO STATUS & FAST TELEMETRY</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px;">
+        <div class="stat-pill">
+          <div class="stat-val" id="stat-xp">0</div>
+          <div class="stat-lbl">Total XP</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-val" id="stat-lvl">1</div>
+          <div class="stat-lbl">Hero Rank</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-val" id="stat-streak">1</div>
+          <div class="stat-lbl">Streak</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-val" id="stat-chests">0</div>
+          <div class="stat-lbl">Loot Ready</div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+        <button class="btn btn-teal" onclick="adjustXP(50)">+50 Bonus XP</button>
+        <button class="btn btn-lavender" onclick="adjustChests(1)">+1 Loot Box</button>
+        <button class="btn btn-muted" onclick="adjustStreak(1)">+1 Day Streak</button>
+        <button class="btn btn-red" onclick="resetDayChecks()">Clear Today's Checks</button>
+      </div>
+    </div>
+
+    <!-- TASK CAPTURE & MANIFEST MANAGER -->
+    <div class="card">
+      <div class="section-title">
+        <span>ROUTINE MANIFEST (<span id="task-count">0</span> TASKS)</span>
+        <button class="btn btn-teal" onclick="openAddTaskModal()">+ Add New Task</button>
+      </div>
+
+      <div id="tasks-list">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 10px; border-top: 1px solid #1e293b;">
+        <button class="btn btn-muted" onclick="resetTasksToDefault()">Restore Default 11 Tasks</button>
+        <span style="font-size: 11px; color: var(--text-muted);">Syncs live to Peacemaker's device</span>
+      </div>
+    </div>
+
+    <!-- LOOT BOX REWARDS POOL -->
+    <div class="card">
+      <div class="section-title">
+        <span>MYSTERY REWARD POOL</span>
+        <button class="btn btn-lavender" onclick="saveRewardsPool()">Save Prizes</button>
+      </div>
+      <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">
+        Each line becomes a possible reward drawn when Peacemaker unlocks a mystery chest:
+      </p>
+      <textarea id="rewards-input" class="textarea" rows="6"></textarea>
+    </div>
+
+    <!-- SCRATCHPAD LOGS REVIEW -->
+    <div class="card">
+      <div class="section-title">
+        <span>FIELD SCRATCHPAD OBSERVATIONS</span>
+        <div style="display: flex; gap: 6px;">
+          <button class="btn btn-muted btn-icon" onclick="copyAllNotes()">Copy All</button>
+          <button class="btn btn-red btn-icon" onclick="clearAllNotes()">Clear</button>
+        </div>
+      </div>
+      <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">
+        Field notes recorded at the bottom of Peacemaker's tracker:
+      </p>
+      <div id="scratchpad-log-list" style="display: flex; flex-direction: column; gap: 6px; max-height: 240px; overflow-y: auto;">
+        <!-- Log rows rendered dynamically -->
+      </div>
+    </div>
+
+    <!-- CONFIG BACKUP & SYNC EXPORT -->
+    <div class="card">
+      <div class="section-title">
+        <span>DEVICE SYNC & CONFIG BACKUP</span>
+      </div>
+      <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">
+        To export this configuration to another tablet or browser, copy this JSON snippet:
+      </p>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn btn-muted" onclick="copyFullConfig()">Copy Config JSON</button>
+        <button class="btn btn-muted" onclick="importConfigPrompt()">Import Config JSON</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ADD / EDIT TASK MODAL -->
+  <div id="task-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <h3 id="modal-title" style="font-size: 16px; font-weight: 800; color: #2dd4bf; margin-bottom: 12px;">Add New Task</h3>
+
+      <div class="field-group">
+        <label class="field-label">Task Name</label>
+        <input type="text" id="m-task-name" class="input-text" placeholder="e.g. Put shoes in closet">
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Description / Guidance</label>
+        <input type="text" id="m-task-desc" class="input-text" placeholder="e.g. Neatly put pair away">
+      </div>
+
+      <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px;">
+        <div class="field-group">
+          <label class="field-label">Zone</label>
+          <select id="m-task-zone" class="select-input">
+            <option value="readiness">🌸 Morning Readiness</option>
+            <option value="backpack">🎒 Backpack & Gear</option>
+            <option value="wellness">🌿 Breakfast & Health</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">XP</label>
+          <input type="number" id="m-task-xp" class="input-text" value="25" min="5" step="5">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Emoji</label>
+          <input type="text" id="m-task-emoji" class="input-text" value="🌿" style="text-align: center;">
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px;">
+        <button class="btn btn-muted" onclick="closeTaskModal()">Cancel</button>
+        <button class="btn btn-teal" onclick="saveTaskModal()">Save Task</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const TASKS_KEY = "bb_peacemaker_tasks_config_v1";
+    const DATA_KEY = "bb_peacemaker_ranch_quest_data";
+    const NOTES_KEY = "bb_peacemaker_scratchpad_notes";
+
+    const DEFAULT_REAL_WORLD_TASKS = [
+      { id: "shoes_socks", name: "Shoes and socks", desc: "Put on shoes and socks", zone: "readiness", xp: 25, emoji: "👟" },
+      { id: "get_dressed", name: "Get dressed", desc: "Put on day clothes", zone: "readiness", xp: 25, emoji: "👕" },
+      { id: "do_hair", name: "Do hair", desc: "Brush and style hair", zone: "readiness", xp: 25, emoji: "🪮" },
+      { id: "brush_floss", name: "Brush and floss teeth", desc: "Brush for 2 minutes and floss", zone: "readiness", xp: 25, emoji: "🪥" },
+      { id: "get_backpack", name: "Get backpack", desc: "Get backpack ready by the door", zone: "backpack", xp: 25, emoji: "🎒" },
+      { id: "get_jacket", name: "Get a jacket", desc: "Grab jacket for the day", zone: "backpack", xp: 25, emoji: "🧥" },
+      { id: "put_fidgets", name: "Put fidgets in backpack", desc: "Pack fidgets into backpack", zone: "backpack", xp: 25, emoji: "🌀" },
+      { id: "water_bottle", name: "Fill and put water bottle in backpack", desc: "Fill water bottle and put inside backpack", zone: "backpack", xp: 25, emoji: "💧" },
+      { id: "eat_breakfast", name: "Eat breakfast", desc: "Eat breakfast food and drink", zone: "wellness", xp: 25, emoji: "🥞" },
+      { id: "take_medicine", name: "Take medicine", desc: "Take morning medicine", zone: "wellness", xp: 25, emoji: "💊" },
+      { id: "rap_toe", name: "Wrap toe", desc: "Wrap and bandage toe", zone: "wellness", xp: 25, emoji: "🩹" }
+    ];
+
+    const DEFAULT_REWARDS = [
+      "🎮 20 Minutes Extra Screen / Free Choice Time",
+      "🍕 Pick What We Have for Dinner Tonight!",
+      "🍦 Ice Cream / Sweet Treat Run",
+      "🌙 15 Minutes Stay Up Late Pass",
+      "🎨 Art / Craft Supplies Project Time",
+      "🎟️ Free Pass: Skip One Evening Tidy Duty",
+      "✨ +50 BONUS XP Deposit in the Hero Bank!"
+    ];
+
+    let tasks = [];
+    let heroData = {};
+    let editingTaskId = null;
+
+    function init() {
+      const savedTasks = localStorage.getItem(TASKS_KEY);
+      if (savedTasks) {
+        try { tasks = JSON.parse(savedTasks); } catch(e) { tasks = [...DEFAULT_REAL_WORLD_TASKS]; }
+      } else {
+        tasks = [...DEFAULT_REAL_WORLD_TASKS];
+        saveTasks();
+      }
+
+      const savedData = localStorage.getItem(DATA_KEY);
+      if (savedData) {
+        try { heroData = JSON.parse(savedData); } catch(e) { heroData = {}; }
+      }
+
+      renderTelemetry();
+      renderTasks();
+      renderRewards();
+      renderScratchpadNotes();
+    }
+
+    function saveTasks() {
+      localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
+      renderTasks();
+    }
+
+    function saveHeroData() {
+      localStorage.setItem(DATA_KEY, JSON.stringify(heroData));
+      renderTelemetry();
+    }
+
+    function renderTelemetry() {
+      document.getElementById('stat-xp').innerText = heroData.xp || 0;
+      document.getElementById('stat-streak').innerText = heroData.streak || 1;
+      document.getElementById('stat-chests').innerText = heroData.pendingChests || 0;
+
+      const xp = heroData.xp || 0;
+      let lvl = 1;
+      if (xp >= 2000) lvl = 6;
+      else if (xp >= 1300) lvl = 5;
+      else if (xp >= 850) lvl = 4;
+      else if (xp >= 500) lvl = 3;
+      else if (xp >= 250) lvl = 2;
+      document.getElementById('stat-lvl').innerText = lvl;
+    }
+
+    function adjustXP(amt) {
+      heroData.xp = (heroData.xp || 0) + amt;
+      saveHeroData();
+    }
+
+    function adjustChests(amt) {
+      heroData.pendingChests = Math.max(0, (heroData.pendingChests || 0) + amt);
+      saveHeroData();
+    }
+
+    function adjustStreak(amt) {
+      heroData.streak = Math.max(1, (heroData.streak || 1) + amt);
+      saveHeroData();
+    }
+
+    function resetDayChecks() {
+      if (confirm("Reset today's chore checkmarks on Peacemaker's view? (XP and rank will remain!)")) {
+        heroData.completedChores = {};
+        saveHeroData();
+        alert("Today's checkmarks cleared!");
+      }
+    }
+
+    function renderTasks() {
+      const container = document.getElementById('tasks-list');
+      document.getElementById('task-count').innerText = tasks.length;
+      container.innerHTML = '';
+
+      const zoneNames = {
+        readiness: "🌸 Morning Readiness",
+        backpack: "🎒 Backpack & Gear",
+        wellness: "🌿 Breakfast & Health"
+      };
+
+      tasks.forEach((t) => {
+        const div = document.createElement('div');
+        div.className = 'task-item';
+        div.innerHTML = `
+          <div class="task-info">
+            <span class="task-emoji">${t.emoji || '🌿'}</span>
+            <div>
+              <div class="task-name">${t.name}</div>
+              <div class="task-desc">${t.desc || ''}</div>
+              <span class="task-zone-badge">${zoneNames[t.zone] || t.zone} • +${t.xp} XP</span>
+            </div>
+          </div>
+          <div class="task-actions">
+            <button class="btn btn-muted btn-icon" onclick="editTask('${t.id}')">✏️</button>
+            <button class="btn btn-red btn-icon" onclick="deleteTask('${t.id}')">✕</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function openAddTaskModal() {
+      editingTaskId = null;
+      document.getElementById('modal-title').innerText = "Add New Task";
+      document.getElementById('m-task-name').value = '';
+      document.getElementById('m-task-desc').value = '';
+      document.getElementById('m-task-zone').value = 'readiness';
+      document.getElementById('m-task-xp').value = '25';
+      document.getElementById('m-task-emoji').value = '🌿';
+      document.getElementById('task-modal').classList.remove('hidden');
+    }
+
+    function editTask(id) {
+      const t = tasks.find(x => x.id === id);
+      if (!t) return;
+      editingTaskId = id;
+      document.getElementById('modal-title').innerText = "Edit Task";
+      document.getElementById('m-task-name').value = t.name;
+      document.getElementById('m-task-desc').value = t.desc || '';
+      document.getElementById('m-task-zone').value = t.zone || 'readiness';
+      document.getElementById('m-task-xp').value = t.xp || 25;
+      document.getElementById('m-task-emoji').value = t.emoji || '🌿';
+      document.getElementById('task-modal').classList.remove('hidden');
+    }
+
+    function closeTaskModal() {
+      document.getElementById('task-modal').classList.add('hidden');
+    }
+
+    function saveTaskModal() {
+      const name = document.getElementById('m-task-name').value.trim();
+      if (!name) return alert("Please enter a task name.");
+      const desc = document.getElementById('m-task-desc').value.trim();
+      const zone = document.getElementById('m-task-zone').value;
+      const xp = parseInt(document.getElementById('m-task-xp').value, 10) || 25;
+      const emoji = document.getElementById('m-task-emoji').value.trim() || '🌿';
+
+      if (editingTaskId) {
+        const item = tasks.find(x => x.id === editingTaskId);
+        if (item) {
+          item.name = name;
+          item.desc = desc;
+          item.zone = zone;
+          item.xp = xp;
+          item.emoji = emoji;
+        }
+      } else {
+        const id = 'task_' + Date.now();
+        tasks.push({ id, name, desc, zone, xp, emoji });
+      }
+
+      saveTasks();
+      closeTaskModal();
+    }
+
+    function deleteTask(id) {
+      const item = tasks.find(x => x.id === id);
+      if (!item) return;
+      if (confirm(`Remove task "${item.name}" from Peacemaker's routine?`)) {
+        tasks = tasks.filter(x => x.id !== id);
+        saveTasks();
+      }
+    }
+
+    function resetTasksToDefault() {
+      if (confirm("Reset task list to the default 11 tasks?")) {
+        tasks = [...DEFAULT_REAL_WORLD_TASKS];
+        saveTasks();
+      }
+    }
+
+    function renderRewards() {
+      const pool = heroData.rewardsPool && heroData.rewardsPool.length > 0 ? heroData.rewardsPool : DEFAULT_REWARDS;
+      document.getElementById('rewards-input').value = pool.join('\n');
+    }
+
+    function saveRewardsPool() {
+      const lines = document.getElementById('rewards-input').value.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      if (lines.length > 0) {
+        heroData.rewardsPool = lines;
+        saveHeroData();
+        alert("Rewards pool saved!");
+      }
+    }
+
+    function renderScratchpadNotes() {
+      const container = document.getElementById('scratchpad-log-list');
+      let notes = [];
+      try {
+        const raw = localStorage.getItem(NOTES_KEY);
+        if (raw) notes = JSON.parse(raw);
+      } catch(e) {}
+
+      container.innerHTML = '';
+      if (notes.length === 0) {
+        container.innerHTML = '<div style="font-size: 12px; color: var(--text-muted); font-style: italic; padding: 6px;">No scratchpad observations logged yet.</div>';
+        return;
+      }
+
+      notes.forEach((n, idx) => {
+        const item = document.createElement('div');
+        item.style.background = '#0b1120';
+        item.style.padding = '8px 10px';
+        item.style.borderRadius = '8px';
+        item.style.border = '1px solid #1e293b';
+        item.style.fontSize = '12px';
+        item.style.display = 'flex';
+        item.style.justifyContent = 'space-between';
+        item.style.alignItems = 'center';
+
+        item.innerHTML = `
+          <div>
+            <div style="color: #f1f5f9; font-weight: 600;">${n.text}</div>
+            <div style="font-size: 10px; color: #64748b; margin-top: 2px;">${n.timestamp}</div>
+          </div>
+          <button onclick="deleteSingleNote(${idx})" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 14px;">✕</button>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function deleteSingleNote(idx) {
+      try {
+        let notes = JSON.parse(localStorage.getItem(NOTES_KEY) || '[]');
+        notes.splice(idx, 1);
+        localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+        renderScratchpadNotes();
+      } catch(e) {}
+    }
+
+    function clearAllNotes() {
+      if (confirm("Clear all field scratchpad notes?")) {
+        localStorage.removeItem(NOTES_KEY);
+        renderScratchpadNotes();
+      }
+    }
+
+    function copyAllNotes() {
+      let notes = [];
+      try { notes = JSON.parse(localStorage.getItem(NOTES_KEY) || '[]'); } catch(e) {}
+      if (notes.length === 0) return alert("No notes to copy.");
+      const text = notes.map(n => `[${n.timestamp}] ${n.text}`).join('\n');
+      navigator.clipboard.writeText(text).then(() => alert("All notes copied to clipboard!"));
+    }
+
+    function copyFullConfig() {
+      const config = { tasks, heroData };
+      navigator.clipboard.writeText(JSON.stringify(config, null, 2)).then(() => alert("Full configuration JSON copied to clipboard!"));
+    }
+
+    function importConfigPrompt() {
+      const raw = prompt("Paste Configuration JSON here:");
+      if (!raw) return;
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed.tasks && Array.isArray(parsed.tasks)) {
+          tasks = parsed.tasks;
+          saveTasks();
+        }
+        if (parsed.heroData) {
+          heroData = parsed.heroData;
+          saveHeroData();
+        }
+        alert("Configuration imported successfully!");
+      } catch(e) {
+        alert("Invalid JSON format.");
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
