@@ -1,7 +1,7 @@
 window.GAZETTE_GAS_FEED = {
   "status": "success",
-  "last_updated_iso": "2026-10-26T05:00:05.979027",
-  "last_updated_human": "Monday, October 26, 2026 - 05:00 AM",
+  "last_updated_iso": "2026-10-26T15:00:06.085528",
+  "last_updated_human": "Monday, October 26, 2026 - 03:00 PM",
   "date_header": "Monday, Oct 26, 2026",
   "cheapest_station": {
     "name": "Sunoco",
@@ -25,7 +25,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "10th Ave / Eisenhower (Leavenworth)",
       "address": "1050 Eisenhower Road (Leavenworth)",
       "price": 3.84,
-      "updated": "2026-10-26T08:31:03.627Z",
+      "updated": "2026-10-26T19:01:23.908Z",
       "is_estimate": false
     },
     {
@@ -34,16 +34,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "Metropolitan Ave (Leavenworth)",
       "address": "609 Metropolitan Ave (Leavenworth)",
       "price": 3.85,
-      "updated": "2026-10-26T05:15:11.347Z",
-      "is_estimate": false
-    },
-    {
-      "id": "143099",
-      "name": "Hilltop Market / 66",
-      "loc": "Easton-Tongie Loop (Easton)",
-      "address": "21315 Easton Rd (Easton)",
-      "price": 3.86,
-      "updated": "2026-10-24T17:08:43.140Z",
+      "updated": "2026-10-26T14:50:25.670Z",
       "is_estimate": false
     },
     {
@@ -70,7 +61,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "2100 S 4th St (Leavenworth)",
       "address": "2100 S 4th St (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-26T08:46:35.930Z",
+      "updated": "2026-10-26T19:40:27.499Z",
       "is_estimate": false
     },
     {
@@ -79,16 +70,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "2004 Spruce St (Leavenworth)",
       "address": "2004 Spruce St (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-26T09:47:56.132Z",
-      "is_estimate": false
-    },
-    {
-      "id": "129028",
-      "name": "Cenex",
-      "loc": "109 4H Rd (Lansing)",
-      "address": "109 4H Rd (Lansing)",
-      "price": 3.87,
-      "updated": "2026-10-24T16:40:14.396Z",
+      "updated": "2026-10-26T19:39:41.765Z",
       "is_estimate": false
     },
     {
@@ -110,11 +92,29 @@ window.GAZETTE_GAS_FEED = {
       "is_estimate": true
     },
     {
+      "id": "129028",
+      "name": "Cenex",
+      "loc": "109 4H Rd (Lansing)",
+      "address": "109 4H Rd (Lansing)",
+      "price": 3.89,
+      "updated": null,
+      "is_estimate": true
+    },
+    {
       "id": "103082",
       "name": "Fav Trip",
       "loc": "1300 S 4th St (Leavenworth)",
       "address": "1300 S 4th St (Leavenworth)",
       "price": 3.89,
+      "updated": null,
+      "is_estimate": true
+    },
+    {
+      "id": "143099",
+      "name": "Hilltop Market / 66",
+      "loc": "Easton-Tongie Loop (Easton)",
+      "address": "21315 Easton Rd (Easton)",
+      "price": 3.91,
       "updated": null,
       "is_estimate": true
     },
