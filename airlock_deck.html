@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Operation: Airlock - Command Deck</title>
+  <style>
+    /* 100% Self-Contained Styles - Zero External CDNs or Fonts Required */
+    :root {
+      --bg: #090d16;
+      --card-bg: #131b2e;
+      --card-border: #1e293b;
+      --gold: #f59e0b;
+      --gold-light: #fbbf24;
+      --green: #10b981;
+      --indigo: #6366f1;
+      --purple: #a855f7;
+      --blue: #38bdf8;
+      --red: #ef4444;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Trebuchet MS", sans-serif;
+      min-height: 100vh;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding-bottom: 60px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-gold { background: var(--gold); color: #090d16; }
+    .btn-green { background: var(--green); color: white; }
+    .btn-indigo { background: var(--indigo); color: white; }
+    .btn-red { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .btn-muted { background: #1e293b; color: #cbd5e1; border: 1px solid #334155; }
+
+    .header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+    }
+    .header-title {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--gold-light);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #cbd5e1;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .task-item {
+      background: #090d16;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      gap: 10px;
+    }
+    .task-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-width: 0;
+    }
+    .task-emoji {
+      font-size: 22px;
+      width: 32px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .task-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #f1f5f9;
+      word-break: break-word;
+    }
+    .task-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      line-height: 1.3;
+    }
+    .task-zone-badge {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: #1e293b;
+      color: #94a3b8;
+      display: inline-block;
+      margin-top: 4px;
+    }
+    .task-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+    .field-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: #cbd5e1;
+      text-transform: uppercase;
+    }
+    .input-text, .select-input {
+      background: #090d16;
+      border: 1px solid #334155;
+      color: #f8fafc;
+      padding: 9px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      outline: none;
+      font-family: inherit;
+    }
+    .input-text:focus, .select-input:focus {
+      border-color: var(--gold);
+    }
+    .textarea {
+      width: 100%;
+      background: #090d16;
+      border: 1px solid #334155;
+      color: #f8fafc;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      min-height: 80px;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    .stat-pill {
+      background: #090d16;
+      border: 1px solid #1e293b;
+      padding: 10px;
+      border-radius: 12px;
+      text-align: center;
+    }
+    .stat-val {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--gold);
+    }
+    .stat-lbl {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 1000;
+    }
+    .modal-overlay.hidden { display: none; }
+    .modal-card {
+      background: var(--card-bg);
+      border: 2px solid var(--gold);
+      border-radius: 18px;
+      width: 100%;
+      max-width: 440px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    }
+
+    .nav-links { display: flex; gap: 10px; font-size: 12px; }
+    .nav-link { color: #38bdf8; text-decoration: none; font-weight: 700; }
+    .nav-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Top Navigation Header -->
+    <div class="card">
+      <div class="header-bar">
+        <div class="header-title">
+          <span>🛡️</span> OPERATION: AIRLOCK — COMMAND DECK
+        </div>
+        <div class="nav-links">
+          <a href="/airlock/" class="nav-link">Open Airlock Checklist →</a>
+        </div>
+      </div>
+      <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">
+        Private Command Desk for Operation: Airlock. Add newly discovered recurring bills, adjust XP bounties, route items between The Vault and The Trench, and manage your migration notes.
+      </p>
+    </div>
+
+    <!-- Live Telemetry Quick Adjust -->
+    <div class="card">
+      <div class="section-title">
+        <span>MISSION STATUS &amp; METRICS</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px;">
+        <div class="stat-pill">
+          <div class="stat-val" id="stat-xp">0</div>
+          <div class="stat-lbl">Total XP</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-val" id="stat-lvl">1</div>
+          <div class="stat-lbl">Rank Level</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-val" id="stat-streak">1</div>
+          <div class="stat-lbl">Day Streak</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-val" id="stat-tasks">0/6</div>
+          <div class="stat-lbl">Items Done</div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+        <button class="btn btn-gold" onclick="adjustXP(50)">+50 Bonus XP</button>
+        <button class="btn btn-green" onclick="adjustStreak(1)">+1 Day Streak</button>
+        <button class="btn btn-red" onclick="resetDayChecks()">Clear Today's Checks</button>
+      </div>
+    </div>
+
+    <!-- TASK CAPTURE & MANIFEST MANAGER -->
+    <div class="card">
+      <div class="section-title">
+        <span>AIRLOCK MIGRATION MANIFEST (<span id="task-count">0</span> ITEMS)</span>
+        <button class="btn btn-green" onclick="openAddTaskModal()">+ Add New Item / Bill</button>
+      </div>
+
+      <div id="tasks-list">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 10px; border-top: 1px solid #1e293b;">
+        <button class="btn btn-muted" onclick="resetTasksToDefault()">Restore Default 6 Tasks</button>
+        <span style="font-size: 11px; color: var(--text-muted);">Syncs live with your Airlock view</span>
+      </div>
+    </div>
+
+    <!-- FIELD SCRATCHPAD OBSERVATIONS -->
+    <div class="card">
+      <div class="section-title">
+        <span>MIGRATION LOG &amp; SCRATCHPAD ENTRIES</span>
+        <div style="display: flex; gap: 6px;">
+          <button class="btn btn-muted" onclick="copyAllNotes()">Copy All Notes</button>
+          <button class="btn btn-red" onclick="clearAllNotes()">Clear</button>
+        </div>
+      </div>
+      <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">
+        Field notes, routing numbers, and observations logged during your dual-account migration:
+      </p>
+      <div id="scratchpad-log-list" style="display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow-y: auto;">
+        <!-- Log rows rendered dynamically -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ADD ITEM MODAL -->
+  <div id="task-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #1e293b; padding-bottom: 8px;">
+        <h3 style="font-size: 16px; font-weight: 800; color: var(--gold-light);" id="modal-heading">Add New Item or Bill</h3>
+        <button onclick="closeTaskModal()" style="background: none; border: none; color: #94a3b8; font-size: 18px; cursor: pointer;">✕</button>
+      </div>
+
+      <form id="task-form" onsubmit="saveTaskForm(event)">
+        <input type="hidden" id="edit-task-id">
+
+        <div class="field-group">
+          <label class="field-label">Bill Name / Action Item</label>
+          <input type="text" id="task-name-input" class="input-text" required placeholder="e.g. Switch Water Utility to Vault Autopay">
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Description / Instructions</label>
+          <input type="text" id="task-desc-input" class="input-text" placeholder="e.g. Update bank routing number on provider portal">
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Target Account / Zone</label>
+          <select id="task-zone-input" class="select-input">
+            <option value="setup">Account Infrastructure &amp; The Trench</option>
+            <option value="payroll">Payroll &amp; Allotment Routing</option>
+            <option value="autopay" selected>Fixed Debt &amp; Autopay Migration (The Vault)</option>
+            <option value="habit">Daily Operating &amp; Habit</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">XP Bounty</label>
+          <select id="task-xp-input" class="select-input">
+            <option value="50">50 XP (Standard Bill / Quick Change)</option>
+            <option value="150">150 XP (Loan / Utility Autopay)</option>
+            <option value="200">200 XP (High Friction / 2FA / Phone Call)</option>
+            <option value="300">300 XP (Security Protocol / Cards)</option>
+            <option value="500">500 XP (Critical Setup / W-2 Allotment)</option>
+          </select>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 16px;">
+          <button type="button" class="btn btn-muted" style="flex: 1;" onclick="closeTaskModal()">Cancel</button>
+          <button type="submit" class="btn btn-gold" style="flex: 1;">Save Item</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const TASKS_KEY = "airlock_tasks_config_v3";
+    const DATA_KEY = "airlock_state_data_v3";
+    const NOTES_KEY = "airlock_scratchpad_notes_v3";
+
+    const DEFAULT_AIRLOCK_TASKS = [
+      {
+        id: "open_trench",
+        name: 'Open "The Trench" (Secondary Checking Account)',
+        desc: "Set up secondary checking account to isolate daily spending allowance",
+        zone: "setup",
+        xp: 200,
+        emoji: "⚔️"
+      },
+      {
+        id: "destroy_cards",
+        name: "Destroy / Lock away The Vault physical debit cards",
+        desc: "Prevent unbudgeted retail spending spills directly from fixed reserve",
+        zone: "setup",
+        xp: 300,
+        emoji: "🔒"
+      },
+      {
+        id: "w2_allotment",
+        name: "Submit O-4 W-2 Allotment targeting The Vault",
+        desc: "Route primary payroll inflow directly into The Vault fortress",
+        zone: "payroll",
+        xp: 500,
+        emoji: "🏛️"
+      },
+      {
+        id: "coastal_loan",
+        name: "Migrate Coastal Credit Union Auto Loan to Vault Autopay",
+        desc: "Ensure auto debt payment pulls directly from The Vault",
+        zone: "autopay",
+        xp: 150,
+        emoji: "🚗"
+      },
+      {
+        id: "migrate_utilities",
+        name: "Migrate utilities to Vault Autopay",
+        desc: "Electricity, water, gas, and internet autopay linked to The Vault",
+        zone: "autopay",
+        xp: 150,
+        emoji: "⚡"
+      },
+      {
+        id: "habit_checkin",
+        name: "60-Day Utilization Check-in",
+        desc: "Daily habit verification: confirm zero unbudgeted spills from The Vault",
+        zone: "habit",
+        xp: 50,
+        emoji: "🎯"
+      }
+    ];
+
+    const ZONES = {
+      setup: "Infrastructure & The Trench",
+      payroll: "Payroll Allotment",
+      autopay: "Vault Fixed Autopay",
+      habit: "Daily Operating"
+    };
+
+    let tasks = [];
+    let state = {
+      xp: 0,
+      streak: 1,
+      lastCheckinDate: null,
+      completedTasks: {},
+      notes: []
+    };
+
+    function loadData() {
+      const savedTasks = localStorage.getItem(TASKS_KEY);
+      if (savedTasks) {
+        try {
+          tasks = JSON.parse(savedTasks);
+        } catch(e) {
+          tasks = [...DEFAULT_AIRLOCK_TASKS];
+        }
+      } else {
+        tasks = [...DEFAULT_AIRLOCK_TASKS];
+      }
+
+      const savedState = localStorage.getItem(DATA_KEY);
+      if (savedState) {
+        try {
+          const d = JSON.parse(savedState);
+          state.xp = typeof d.xp === 'number' ? d.xp : 0;
+          state.streak = typeof d.streak === 'number' ? d.streak : 1;
+          state.lastCheckinDate = d.lastCheckinDate || null;
+          state.completedTasks = d.completedTasks || {};
+        } catch(e) {}
+      }
+
+      const savedNotes = localStorage.getItem(NOTES_KEY);
+      if (savedNotes) {
+        try {
+          state.notes = JSON.parse(savedNotes);
+        } catch(e) {
+          state.notes = [];
+        }
+      }
+
+      renderUI();
+    }
+
+    function saveData() {
+      localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
+      localStorage.setItem(DATA_KEY, JSON.stringify(state));
+      localStorage.setItem(NOTES_KEY, JSON.stringify(state.notes));
+    }
+
+    function renderUI() {
+      // Metrics
+      document.getElementById('stat-xp').innerText = state.xp.toLocaleString();
+      const level = Math.floor(state.xp / 1000) + 1;
+      document.getElementById('stat-lvl').innerText = level;
+      document.getElementById('stat-streak').innerText = state.streak;
+
+      const completedCount = Object.keys(state.completedTasks).filter(k => state.completedTasks[k]).length;
+      document.getElementById('stat-tasks').innerText = `${completedCount}/${tasks.length}`;
+      document.getElementById('task-count').innerText = tasks.length;
+
+      // Render Task List
+      const tasksContainer = document.getElementById('tasks-list');
+      tasksContainer.innerHTML = '';
+
+      if (tasks.length === 0) {
+        tasksContainer.innerHTML = '<div style="text-align: center; color: #64748b; padding: 20px;">No items in manifest. Click "+ Add New Item / Bill" above.</div>';
+      } else {
+        tasks.forEach(task => {
+          const item = document.createElement('div');
+          item.className = 'task-item';
+          const isDone = !!state.completedTasks[task.id];
+
+          item.innerHTML = `
+            <div class="task-info">
+              <div class="task-emoji">${task.emoji || '📌'}</div>
+              <div>
+                <div class="task-name" style="${isDone ? 'text-decoration: line-through; opacity: 0.6;' : ''}">
+                  ${escapeHtml(task.name)}
+                </div>
+                <div class="task-desc">${escapeHtml(task.desc || '')}</div>
+                <span class="task-zone-badge">${ZONES[task.zone] || task.zone} • ${task.xp} XP</span>
+              </div>
+            </div>
+            <div class="task-actions">
+              <button class="btn btn-muted btn-icon" onclick="editTask('${task.id}')">Edit</button>
+              <button class="btn btn-red btn-icon" onclick="deleteTask('${task.id}')">✕</button>
+            </div>
+          `;
+          tasksContainer.appendChild(item);
+        });
+      }
+
+      // Render Scratchpad
+      const notesContainer = document.getElementById('scratchpad-log-list');
+      notesContainer.innerHTML = '';
+
+      if (state.notes.length === 0) {
+        notesContainer.innerHTML = '<div style="font-size: 11px; color: #64748b; padding: 12px; text-align: center;">No migration notes logged yet.</div>';
+      } else {
+        state.notes.forEach(note => {
+          const row = document.createElement('div');
+          row.style.background = '#090d16';
+          row.style.border = '1px solid #1e293b';
+          row.style.padding = '8px 10px';
+          row.style.borderRadius = '8px';
+          row.style.fontSize = '12px';
+          row.style.display = 'flex';
+          row.style.justifyContent = 'space-between';
+          row.style.alignItems = 'flex-start';
+          row.style.gap = '8px';
+
+          row.innerHTML = `
+            <div style="flex: 1; word-break: break-word;">
+              <div style="font-size: 10px; color: var(--gold); margin-bottom: 2px;">${escapeHtml(note.date)}</div>
+              <div>${escapeHtml(note.text)}</div>
+            </div>
+            <button class="btn btn-red btn-icon" onclick="deleteNote('${note.id}')">✕</button>
+          `;
+          notesContainer.appendChild(row);
+        });
+      }
+    }
+
+    // Modal & Form Handlers
+    function openAddTaskModal() {
+      document.getElementById('edit-task-id').value = '';
+      document.getElementById('modal-heading').innerText = 'Add New Item or Bill';
+      document.getElementById('task-name-input').value = '';
+      document.getElementById('task-desc-input').value = '';
+      document.getElementById('task-zone-input').value = 'autopay';
+      document.getElementById('task-xp-input').value = '150';
+      document.getElementById('task-modal').classList.remove('hidden');
+      document.getElementById('task-name-input').focus();
+    }
+
+    function editTask(taskId) {
+      const task = tasks.find(t => t.id === taskId);
+      if (!task) return;
+
+      document.getElementById('edit-task-id').value = task.id;
+      document.getElementById('modal-heading').innerText = 'Edit Migration Item';
+      document.getElementById('task-name-input').value = task.name;
+      document.getElementById('task-desc-input').value = task.desc || '';
+      document.getElementById('task-zone-input').value = task.zone || 'autopay';
+      document.getElementById('task-xp-input').value = task.xp || 50;
+      document.getElementById('task-modal').classList.remove('hidden');
+    }
+
+    function closeTaskModal() {
+      document.getElementById('task-modal').classList.add('hidden');
+    }
+
+    function saveTaskForm(e) {
+      e.preventDefault();
+      const editId = document.getElementById('edit-task-id').value;
+      const name = document.getElementById('task-name-input').value.trim();
+      const desc = document.getElementById('task-desc-input').value.trim();
+      const zone = document.getElementById('task-zone-input').value;
+      const xp = parseInt(document.getElementById('task-xp-input').value) || 50;
+
+      if (!name) return;
+
+      if (editId) {
+        const task = tasks.find(t => t.id === editId);
+        if (task) {
+          task.name = name;
+          task.desc = desc;
+          task.zone = zone;
+          task.xp = xp;
+        }
+      } else {
+        const newTask = {
+          id: 'task_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+          name: name,
+          desc: desc,
+          zone: zone,
+          xp: xp,
+          emoji: zone === 'setup' ? '⚔️' : zone === 'payroll' ? '🏛️' : zone === 'autopay' ? '⚡' : '🎯'
+        };
+        tasks.unshift(newTask);
+      }
+
+      saveData();
+      renderUI();
+      closeTaskModal();
+    }
+
+    function deleteTask(taskId) {
+      const task = tasks.find(t => t.id === taskId);
+      if (!task) return;
+
+      if (confirm(`Remove "${task.name}" from the checklist?`)) {
+        if (state.completedTasks[taskId]) {
+          state.xp = Math.max(0, state.xp - task.xp);
+          delete state.completedTasks[taskId];
+        }
+        tasks = tasks.filter(t => t.id !== taskId);
+        saveData();
+        renderUI();
+      }
+    }
+
+    function resetTasksToDefault() {
+      if (confirm("Restore default 6 migration items? Any custom items will be overwritten.")) {
+        tasks = JSON.parse(JSON.stringify(DEFAULT_AIRLOCK_TASKS));
+        saveData();
+        renderUI();
+      }
+    }
+
+    function adjustXP(amount) {
+      state.xp += amount;
+      saveData();
+      renderUI();
+    }
+
+    function adjustStreak(amount) {
+      state.streak += amount;
+      saveData();
+      renderUI();
+    }
+
+    function resetDayChecks() {
+      if (confirm("Reset all checkmarks for today?")) {
+        state.completedTasks = {};
+        state.lastCheckinDate = null;
+        saveData();
+        renderUI();
+      }
+    }
+
+    // Notes Handlers
+    function deleteNote(id) {
+      state.notes = state.notes.filter(n => n.id !== id);
+      saveData();
+      renderUI();
+    }
+
+    function clearAllNotes() {
+      if (state.notes.length === 0) return;
+      if (confirm("Clear all migration notes?")) {
+        state.notes = [];
+        saveData();
+        renderUI();
+      }
+    }
+
+    function copyAllNotes() {
+      if (state.notes.length === 0) {
+        alert("No notes to copy.");
+        return;
+      }
+      let md = "# Operation: Airlock — Command Deck Migration Notes\n\n";
+      state.notes.forEach(n => {
+        md += `### [${n.date}]\n${n.text}\n\n`;
+      });
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(md).then(() => {
+          alert("All notes copied to clipboard!");
+        });
+      }
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    window.addEventListener('DOMContentLoaded', loadData);
+  </script>
+</body>
+</html>

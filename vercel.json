@@ -2,6 +2,22 @@
   "trailingSlash": true,
   "rewrites": [
     {
+      "source": "/airlock/deck",
+      "destination": "/airlock_deck.html"
+    },
+    {
+      "source": "/airlock/deck/",
+      "destination": "/airlock_deck.html"
+    },
+    {
+      "source": "/airlock-deck",
+      "destination": "/airlock_deck.html"
+    },
+    {
+      "source": "/airlock-deck/",
+      "destination": "/airlock_deck.html"
+    },
+    {
       "source": "/airlock",
       "destination": "/airlock.html"
     },

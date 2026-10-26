@@ -1,10 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="robots" content="noindex, nofollow">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Operation: Airlock â€” Dual-Account Financial Migration System</title>
+  <title>Operation: Airlock - Dual-Account Financial Migration System</title>
   <style>
     /* 100% Self-Contained Styles - Zero External CDNs or Fonts Required */
     :root {
@@ -94,12 +94,14 @@
       background: linear-gradient(135deg, #f59e0b, #d97706);
       border: 3px solid #fef08a;
       border-radius: 16px;
-      font-size: 26px;
+      font-size: 24px;
       display: flex;
       align-items: center;
       justify-content: center;
       box-shadow: 0 6px 14px rgba(245, 158, 11, 0.4);
       user-select: none;
+      color: #090d16;
+      font-weight: 900;
     }
 
     .hero-title-group h1 {
@@ -132,25 +134,36 @@
 
     .action-icons {
       display: flex;
+      align-items: center;
       gap: 8px;
     }
 
-    .icon-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
+    .nav-btn {
+      padding: 7px 11px;
+      border-radius: 10px;
       background: #1e293b;
       border: 1px solid #334155;
-      color: #fff;
-      font-size: 17px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      color: #cbd5e1;
+      font-size: 11px;
+      font-weight: 700;
       cursor: pointer;
-      transition: background 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      text-decoration: none;
+      transition: all 0.15s ease;
     }
-    .icon-btn:hover {
+    .nav-btn:hover {
       background: #334155;
+      color: #fff;
+    }
+    .nav-btn.gold {
+      background: rgba(245, 158, 11, 0.15);
+      border-color: rgba(245, 158, 11, 0.4);
+      color: #fde047;
+    }
+    .nav-btn.gold:hover {
+      background: rgba(245, 158, 11, 0.25);
     }
 
     /* XP Progress Bar */
@@ -361,7 +374,7 @@
       box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
     }
     .chore-checkbox:checked::before {
-      content: "âœ“";
+      content: "\2713";
       color: #ffffff;
       font-size: 20px;
       font-weight: 900;
@@ -685,19 +698,20 @@
     <header class="header-card">
       <div class="hero-profile">
         <div class="avatar-wrapper">
-          <div class="avatar-badge" id="avatar-icon">ðŸ›¡ï¸</div>
+          <div class="avatar-badge" id="avatar-icon">A</div>
           <div class="hero-title-group">
             <h1>
               <span>Operation: Airlock</span>
-              <span class="streak-pill" id="streak-badge">ðŸ”¥ <span id="streak-count">1</span>/60 DAYS</span>
+              <span class="streak-pill" id="streak-badge"><span id="streak-count">1</span>/60 DAYS</span>
             </h1>
-            <div class="hero-rank" id="rank-title">Level 1 â€¢ Recruit</div>
+            <div class="hero-rank" id="rank-title">Level 1 - Recruit</div>
           </div>
         </div>
 
         <div class="action-icons">
-          <button class="icon-btn" id="sound-btn" onclick="toggleSound()" title="Toggle Sound">ðŸ”Š</button>
-          <button class="icon-btn" onclick="toggleAdminBoard()" title="Toggle Admin Board">âœï¸</button>
+          <button class="nav-btn" id="sound-btn" onclick="toggleSound()">Sound On</button>
+          <button class="nav-btn gold" onclick="toggleAdminBoard()">+ Add Item</button>
+          <a href="/airlock/deck/" class="nav-btn" title="Open Dedicated Command Deck">Command Deck &rarr;</a>
         </div>
       </div>
 
@@ -716,7 +730,7 @@
       <div class="architecture-grid">
         <div class="arch-card">
           <div class="arch-card-title vault">
-            <span>ðŸ›¡ï¸</span> The Vault (Fortress)
+            <span>[Vault]</span> The Vault (Fortress)
           </div>
           <div class="arch-card-desc">
             Primary Inflow. O-4 W-2 Allotment lands here. Fixed bills autopay from here. Debit cards destroyed.
@@ -724,7 +738,7 @@
         </div>
         <div class="arch-card">
           <div class="arch-card-title trench">
-            <span>âš”ï¸</span> The Trench (Frontlines)
+            <span>[Trench]</span> The Trench (Frontlines)
           </div>
           <div class="arch-card-desc">
             Secondary Operating. Funded by automated allowance. Only account with a debit card. Safe to drain to zero.
@@ -745,11 +759,11 @@
       </div>
     </header>
 
-    <!-- ADMIN BOARD (TOGGLEABLE INTAKE DESK) -->
+    <!-- ADMIN BOARD (TOGGLEABLE INLINE INTAKE DESK) -->
     <div id="admin-board-card" class="admin-card" style="display: none;">
       <div class="admin-header">
         <div class="admin-title">
-          <span>âœï¸</span> Admin Board â€” Intake New Items
+          <span>Admin Board</span> - Intake New Items
         </div>
         <button onclick="toggleAdminBoard()" class="tag-btn" style="border: none;">Close</button>
       </div>
@@ -800,7 +814,7 @@
     <div class="scratchpad-card">
       <div class="scratchpad-header">
         <div class="scratchpad-title">
-          <span>ðŸ“</span> Scratchpad &amp; Migration Notes
+          <span>Scratchpad &amp; Migration Notes</span>
         </div>
         <div style="display: flex; gap: 6px;">
           <button onclick="copyScratchpadNotes()" id="copy-notes-btn" class="tag-btn">Copy Notes</button>
@@ -834,7 +848,7 @@
   <!-- LEVEL-UP & MILESTONE MODAL -->
   <div id="loot-modal" class="modal-overlay hidden">
     <div class="modal-card">
-      <div style="font-size: 48px; margin-bottom: 6px;">ðŸ†</div>
+      <div style="font-size: 40px; margin-bottom: 6px; font-weight:900; color:#fde047;">★</div>
       <h3 class="modal-title" id="modal-title-text">PROMOTION EARNED!</h3>
       <p class="modal-desc" id="modal-desc-text">You have advanced to the next operational tier.</p>
 
@@ -943,7 +957,7 @@
         desc: "Set up secondary checking account to isolate daily spending allowance",
         zone: "setup",
         xp: 200,
-        emoji: "âš”ï¸"
+        emoji: "⚔️"
       },
       {
         id: "destroy_cards",
@@ -951,7 +965,7 @@
         desc: "Prevent unbudgeted retail spending spills directly from fixed reserve",
         zone: "setup",
         xp: 300,
-        emoji: "ðŸ”’"
+        emoji: "🔒"
       },
       {
         id: "w2_allotment",
@@ -959,7 +973,7 @@
         desc: "Route primary payroll inflow directly into The Vault fortress",
         zone: "payroll",
         xp: 500,
-        emoji: "ðŸ›ï¸"
+        emoji: "🏛️"
       },
       {
         id: "coastal_loan",
@@ -967,7 +981,7 @@
         desc: "Ensure auto debt payment pulls directly from The Vault",
         zone: "autopay",
         xp: 150,
-        emoji: "ðŸš - "
+        emoji: "🚗"
       },
       {
         id: "migrate_utilities",
@@ -975,7 +989,7 @@
         desc: "Electricity, water, gas, and internet autopay linked to The Vault",
         zone: "autopay",
         xp: 150,
-        emoji: "âš¡"
+        emoji: "⚡"
       },
       {
         id: "habit_checkin",
@@ -983,19 +997,19 @@
         desc: "Daily habit verification: confirm zero unbudgeted spills from The Vault",
         zone: "habit",
         xp: 50,
-        emoji: "ðŸŽ¯"
+        emoji: "🎯"
       }
     ];
 
     const RANKS = [
-      { level: 1, title: "Recruit", xpReq: 1000, avatar: "ðŸ›¡ï¸" },
-      { level: 2, title: "Specialist", xpReq: 2000, avatar: "âš”ï¸" },
-      { level: 3, title: "Sergeant", xpReq: 3000, avatar: "ðŸ¦…" },
-      { level: 4, title: "Master Sergeant", xpReq: 4000, avatar: "ðŸ°" },
-      { level: 5, title: "Chief Warrant", xpReq: 5000, avatar: "â­" },
-      { level: 6, title: "Commander", xpReq: 6000, avatar: "ðŸŽ–ï¸" },
-      { level: 7, title: "Captain", xpReq: 7000, avatar: "ðŸ‘‘" },
-      { level: 8, title: "Major â€” Financial Sovereign", xpReq: 10000, avatar: "ðŸŒŸ" }
+      { level: 1, title: "Recruit", xpReq: 1000, avatar: "A" },
+      { level: 2, title: "Specialist", xpReq: 2000, avatar: "B" },
+      { level: 3, title: "Sergeant", xpReq: 3000, avatar: "C" },
+      { level: 4, title: "Master Sergeant", xpReq: 4000, avatar: "D" },
+      { level: 5, title: "Chief Warrant", xpReq: 5000, avatar: "E" },
+      { level: 6, title: "Commander", xpReq: 6000, avatar: "F" },
+      { level: 7, title: "Captain", xpReq: 7000, avatar: "G" },
+      { level: 8, title: "Major - Financial Sovereign", xpReq: 10000, avatar: "M" }
     ];
 
     let tasks = [];
@@ -1094,7 +1108,7 @@
       const rankInfo = getRankInfo(state.xp);
 
       document.getElementById('avatar-icon').innerText = rankInfo.currentRank.avatar;
-      document.getElementById('rank-title').innerText = `Level ${rankInfo.currentRank.level} â€¢ ${rankInfo.currentRank.title}`;
+      document.getElementById('rank-title').innerText = `Level ${rankInfo.currentRank.level} - ${rankInfo.currentRank.title}`;
       document.getElementById('streak-count').innerText = state.streak;
 
       document.getElementById('xp-bar').style.width = `${rankInfo.progress}%`;
@@ -1104,12 +1118,11 @@
       const completedCount = Object.keys(state.completedTasks).filter(k => state.completedTasks[k]).length;
       document.getElementById('completed-count').innerText = `${completedCount}/${tasks.length}`;
 
-      // Checkin button state
       const today = getTodayIso();
       const dailyBtn = document.getElementById('daily-btn');
       if (state.lastCheckinDate === today) {
         dailyBtn.classList.add('done');
-        dailyBtn.innerText = "CHECKED IN TODAY (âœ“)";
+        dailyBtn.innerText = "CHECKED IN TODAY (Complete)";
       } else {
         dailyBtn.classList.remove('done');
         dailyBtn.innerText = "60-DAY CHECK-IN (+50 XP)";
@@ -1144,7 +1157,7 @@
         zoneCard.innerHTML = `
           <div class="zone-header">
             <div class="zone-title">
-              <span>${zoneKey === 'setup' ? 'âš”ï¸' : zoneKey === 'payroll' ? 'ðŸ›ï¸' : zoneKey === 'autopay' ? 'âš¡' : 'ðŸŽ¯'}</span>
+              <span>[${zoneConfig.tag}]</span>
               <span>${zoneConfig.title}</span>
             </div>
             <span class="zone-tag">${zoneDoneCount}/${zoneTasks.length} Done</span>
@@ -1176,7 +1189,7 @@
             </div>
             <div class="chore-right">
               <span class="${badgeClass}">+${task.xp} XP</span>
-              <button class="delete-item-btn" onclick="deleteTask('${task.id}', event)" title="Remove item">âœ•</button>
+              <button class="delete-item-btn" onclick="deleteTask('${task.id}', event)" title="Remove item">✕</button>
             </div>
           `;
 
@@ -1206,7 +1219,6 @@
           triggerConfetti(false);
         }
 
-        // Check if all tasks done
         const completedCount = Object.keys(state.completedTasks).filter(k => state.completedTasks[k]).length;
         if (completedCount === tasks.length) {
           setTimeout(() => {
@@ -1259,7 +1271,6 @@
       AudioEngine.playCoin();
       triggerConfetti(state.streak % 7 === 0 || state.streak === 60);
 
-      // Check for milestone modal
       if (state.streak === 60) {
         showMilestoneModal("60-DAY AIRLOCK COMPLETE!", "You have established complete dual-account financial separation. Discretionary spending is isolated, and fixed obligations are 100% fortified in The Vault.");
       } else if (state.streak % 7 === 0) {
@@ -1273,7 +1284,7 @@
     function showLevelUpModal(level) {
       const rank = RANKS.find(r => r.level === level) || { title: "Commander" };
       document.getElementById('modal-title-text').innerText = "PROMOTION UNLOCKED!";
-      document.getElementById('modal-desc-text').innerText = `You have advanced to Level ${level} â€¢ ${rank.title}`;
+      document.getElementById('modal-desc-text').innerText = `You have advanced to Level ${level} - ${rank.title}`;
       document.getElementById('reward-result').innerText = `Your financial airlock is fortifying. Fixed liabilities and lifestyle outflow are cleanly decoupled!`;
       document.getElementById('loot-modal').classList.remove('hidden');
     }
@@ -1291,7 +1302,7 @@
 
     function toggleSound() {
       AudioEngine.enabled = !AudioEngine.enabled;
-      document.getElementById('sound-btn').innerText = AudioEngine.enabled ? 'ðŸ”Š' : 'ðŸ”‡';
+      document.getElementById('sound-btn').innerText = AudioEngine.enabled ? 'Sound On' : 'Sound Off';
     }
 
     function toggleAdminBoard() {
@@ -1323,7 +1334,7 @@
         desc: desc,
         zone: zone,
         xp: xp,
-        emoji: zone === 'setup' ? 'âš”ï¸' : zone === 'payroll' ? 'ðŸ›ï¸' : zone === 'autopay' ? 'âš¡' : 'ðŸŽ¯'
+        emoji: zone === 'setup' ? '⚔️' : zone === 'payroll' ? '🏛️' : zone === 'autopay' ? '⚡' : '🎯'
       };
 
       tasks.unshift(newTask);
@@ -1391,7 +1402,7 @@
         alert("No notes to copy.");
         return;
       }
-      let md = "# Operation: Airlock â€” Scratchpad & Daily Notes\n\n";
+      let md = "# Operation: Airlock - Scratchpad & Daily Notes\n\n";
       state.notes.forEach(n => {
         md += `### [${n.date}]\n${n.text}\n\n`;
       });
@@ -1441,7 +1452,7 @@
             <div class="note-date">${escapeHtml(note.date)}</div>
             <div>${escapeHtml(note.text)}</div>
           </div>
-          <button class="delete-item-btn" onclick="deleteNote('${note.id}')" title="Delete note">âœ•</button>
+          <button class="delete-item-btn" onclick="deleteNote('${note.id}')" title="Delete note">✕</button>
         `;
         container.appendChild(row);
       });
@@ -1529,4 +1540,3 @@
   </script>
 </body>
 </html>
-
