@@ -2,6 +2,30 @@
   "trailingSlash": true,
   "rewrites": [
     {
+      "source": "/birdie-deck",
+      "destination": "/birdie_deck.html"
+    },
+    {
+      "source": "/birdie-deck/",
+      "destination": "/birdie_deck.html"
+    },
+    {
+      "source": "/birdie/deck",
+      "destination": "/birdie_deck.html"
+    },
+    {
+      "source": "/birdie/deck/",
+      "destination": "/birdie_deck.html"
+    },
+    {
+      "source": "/birdie",
+      "destination": "/birdie.html"
+    },
+    {
+      "source": "/birdie/",
+      "destination": "/birdie.html"
+    },
+    {
       "source": "/airlock/deck",
       "destination": "/airlock_deck.html"
     },

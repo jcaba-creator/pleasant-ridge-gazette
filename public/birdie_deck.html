@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Birdie Command Deck</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card-bg: #182238;
+      --card-border: #334155;
+      --pink: #f43f5e;
+      --yellow: #facc15;
+      --teal: #14b8a6;
+      --green: #22c55e;
+      --red: #ef4444;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 660px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding-bottom: 50px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+    }
+
+    .header-card {
+      border: 2px solid rgba(244, 63, 94, 0.4);
+      background: linear-gradient(135deg, #1f2942, #111a2f);
+    }
+
+    .title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: 900;
+      color: #ffe4e6;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 12px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-pink { background: var(--pink); color: white; }
+    .btn-yellow { background: var(--yellow); color: #090d16; }
+    .btn-green { background: var(--green); color: white; }
+    .btn-teal { background: var(--teal); color: white; }
+    .btn-red { background: var(--red); color: white; }
+    .btn-muted { background: #334155; color: #f8fafc; }
+
+    .stat-pill {
+      background: #090d16;
+      border: 1px solid #2b3954;
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+    }
+    .stat-val { font-size: 20px; font-weight: 900; color: #fde047; }
+    .stat-lbl { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-top: 2px; }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 900;
+      color: #fde047;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mission-item {
+      background: #090d16;
+      border: 1px solid #2b3954;
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .telemetry-badge {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 5px;
+      text-transform: uppercase;
+    }
+    .badge-check { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
+    .badge-uncheck { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .badge-voice { background: rgba(56, 189, 248, 0.2); color: #7dd3fc; border: 1px solid rgba(56, 189, 248, 0.4); }
+    .badge-system { background: rgba(244, 63, 94, 0.2); color: #fda4af; border: 1px solid rgba(244, 63, 94, 0.4); }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(11, 17, 32, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 100;
+    }
+    .modal-overlay.hidden { display: none; }
+
+    .modal-box {
+      background: #182238;
+      border: 2px solid var(--pink);
+      border-radius: 20px;
+      padding: 20px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 12px;
+    }
+    .field-label { font-size: 11px; font-weight: 800; color: #fde047; text-transform: uppercase; }
+    .input-text {
+      background: #090d16;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 10px;
+      color: #f8fafc;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .nav-link { color: #f43f5e; text-decoration: none; font-weight: 800; font-size: 12px; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <div class="card header-card">
+      <div class="title-row">
+        <div class="title">
+          <span>🐥</span> BIRDIE COMMAND DECK (AGE 4)
+        </div>
+        <div>
+          <a href="/birdie/" class="nav-link" target="_blank">Open Birdie Tracker ↗</a>
+        </div>
+      </div>
+      <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">
+        Private Parent Control Desk for Birdie: manage 6 visual mission cards, customize voice prompts, and inspect real-time click telemetry.
+      </p>
+    </div>
+
+    <!-- Hero Status & Telemetry -->
+    <div class="card">
+      <div class="section-title">
+        <span>BIRDIE STATUS & METRICS</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px;">
+        <div class="stat-pill">
+          <div class="stat-val" id="stat-completed">0/6</div>
+          <div class="stat-lbl">Stars Today</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-val" id="stat-streak">1</div>
+          <div class="stat-lbl">Streak Days</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-val" id="stat-total-events">0</div>
+          <div class="stat-lbl">Audit Clicks</div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+        <button class="btn btn-yellow" onclick="adjustStreak(1)">+1 Day Streak</button>
+        <button class="btn btn-red" onclick="resetDayChecks()">Clear Today's Stars</button>
+      </div>
+    </div>
+
+    <!-- LIVE TELEMETRY & CLICK STREAM AUDIT -->
+    <div class="card">
+      <div class="section-title">
+        <span>CLICK STREAM & ACTIVITY AUDIT (<span id="telemetry-count">0</span> EVENTS)</span>
+        <div style="display: flex; gap: 6px;">
+          <button class="btn btn-muted" onclick="exportTelemetry()">Export CSV</button>
+          <button class="btn btn-red" onclick="clearTelemetry()">Clear</button>
+        </div>
+      </div>
+      <div id="telemetry-stream" style="display: flex; flex-direction: column; gap: 6px; max-height: 240px; overflow-y: auto;">
+        <!-- Telemetry events injected here -->
+      </div>
+    </div>
+
+    <!-- MISSION MANIFEST (CARDS & VOICE PROMPTS) -->
+    <div class="card">
+      <div class="section-title">
+        <span>BIRDIE'S MORNING MISSIONS (<span id="mission-count">6</span>)</span>
+        <button class="btn btn-green" onclick="openAddMissionModal()">+ Add New Mission</button>
+      </div>
+      <div id="missions-list">
+        <!-- Missions injected here -->
+      </div>
+    </div>
+
+    <!-- PARENT FIELD SCRATCHPAD -->
+    <div class="card">
+      <div class="section-title">
+        <span>PARENT FIELD SCRATCHPAD NOTES</span>
+      </div>
+      <div id="scratchpad-log-list" style="display: flex; flex-direction: column; gap: 6px; max-height: 200px; overflow-y: auto;">
+        <!-- Notes injected here -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ADD / EDIT MISSION MODAL -->
+  <div id="mission-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <h3 id="modal-title" style="font-size: 16px; font-weight: 900; color: #ffe4e6; margin-bottom: 12px;">Add Mission</h3>
+
+      <div class="field-group">
+        <label class="field-label">Mission Name (Short)</label>
+        <input type="text" id="m-name" class="input-text" placeholder="e.g. Shoes & Socks">
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Spoken Voice Prompt (What Browser Says)</label>
+        <input type="text" id="m-prompt" class="input-text" placeholder="e.g. Put on your shoes and socks!">
+        <div style="margin-top: 4px;">
+          <button class="btn btn-teal" style="font-size: 11px; padding: 4px 8px;" onclick="testVoicePrompt()">🗣️ Test Voice</button>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Big Emoji Icon</label>
+        <input type="text" id="m-emoji" class="input-text" value="⭐" style="text-align: center; font-size: 20px;">
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px;">
+        <button class="btn btn-muted" onclick="closeMissionModal()">Cancel</button>
+        <button class="btn btn-pink" onclick="saveMissionModal()">Save Mission</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const TASKS_KEY = "bb_birdie_tasks_config_v1";
+    const DATA_KEY = "bb_birdie_ranch_quest_data";
+    const NOTES_KEY = "bb_birdie_scratchpad_notes";
+    const TELEMETRY_KEY = "bb_birdie_telemetry_v1";
+
+    const DEFAULT_BIRDIE_TASKS = [
+      { id: "shoes_socks", name: "Shoes & Socks", prompt: "Put on your shoes and socks!", emoji: "🧦", xp: 10 },
+      { id: "get_dressed", name: "Get Dressed", prompt: "Put on your clothes for the day!", emoji: "👕", xp: 10 },
+      { id: "brush_teeth", name: "Brush Teeth", prompt: "Brush your teeth shiny and clean!", emoji: "🪥", xp: 10 },
+      { id: "eat_breakfast", name: "Eat Breakfast", prompt: "Eat your yummy breakfast!", emoji: "🥣", xp: 10 },
+      { id: "get_jacket", name: "Jacket or Hoodie", prompt: "Check the weather and grab your jacket or hoodie!", emoji: "🧥", xp: 10 },
+      { id: "get_backpack", name: "Grab Backpack", prompt: "Get your backpack ready to go!", emoji: "🎒", xp: 10 }
+    ];
+
+    let tasks = [];
+    let heroData = {};
+    let editingId = null;
+
+    function init() {
+      const savedTasks = localStorage.getItem(TASKS_KEY);
+      if (savedTasks) {
+        try {
+          const loaded = JSON.parse(savedTasks);
+          const existingIds = new Set(loaded.map(t => t.id));
+          DEFAULT_BIRDIE_TASKS.forEach(dt => {
+            if (!existingIds.has(dt.id)) loaded.push(dt);
+          });
+          tasks = loaded;
+        } catch(e) {
+          tasks = [...DEFAULT_BIRDIE_TASKS];
+        }
+      } else {
+        tasks = [...DEFAULT_BIRDIE_TASKS];
+      }
+      saveTasks();
+
+      const savedData = localStorage.getItem(DATA_KEY);
+      if (savedData) {
+        try { heroData = JSON.parse(savedData); } catch(e) { heroData = {}; }
+      }
+
+      renderStatus();
+      renderTelemetry();
+      renderMissions();
+      renderScratchpad();
+    }
+
+    function saveTasks() {
+      localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
+      renderMissions();
+    }
+
+    function saveHeroData() {
+      localStorage.setItem(DATA_KEY, JSON.stringify(heroData));
+      renderStatus();
+    }
+
+    function renderStatus() {
+      const completed = heroData.completedMissions ? Object.keys(heroData.completedMissions).length : 0;
+      document.getElementById('stat-completed').innerText = `${completed}/${tasks.length}`;
+      document.getElementById('stat-streak').innerText = heroData.streak || 1;
+    }
+
+    function renderTelemetry() {
+      const container = document.getElementById('telemetry-stream');
+      let events = [];
+      try { events = JSON.parse(localStorage.getItem(TELEMETRY_KEY) || '[]'); } catch(e) {}
+      document.getElementById('telemetry-count').innerText = events.length;
+      document.getElementById('stat-total-events').innerText = events.length;
+      container.innerHTML = '';
+
+      if (events.length === 0) {
+        container.innerHTML = '<div style="font-size: 11px; color: var(--text-muted); font-style: italic; padding: 6px;">No telemetry logged yet. Open Birdie page to test.</div>';
+        return;
+      }
+
+      events.slice(0, 40).forEach(ev => {
+        const row = document.createElement('div');
+        row.style.background = '#090d16';
+        row.style.border = '1px solid #2b3954';
+        row.style.borderRadius = '8px';
+        row.style.padding = '8px 10px';
+        row.style.fontSize = '12px';
+        row.style.display = 'flex';
+        row.style.justifyContent = 'space-between';
+        row.style.alignItems = 'center';
+
+        let badgeClass = 'badge-system';
+        if (ev.action === 'MISSION_COMPLETED') badgeClass = 'badge-check';
+        else if (ev.action === 'MISSION_UNCHECKED') badgeClass = 'badge-uncheck';
+        else if (ev.action.includes('VOICE')) badgeClass = 'badge-voice';
+
+        row.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="telemetry-badge ${badgeClass}">${ev.action.replace(/_/g, ' ')}</span>
+            <span style="color: #f1f5f9; font-weight: 500;">${ev.detail}</span>
+          </div>
+          <span style="font-size: 10px; color: #64748b; white-space: nowrap; margin-left: 10px;">${ev.displayDate} ${ev.displayTime}</span>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function exportTelemetry() {
+      let events = [];
+      try { events = JSON.parse(localStorage.getItem(TELEMETRY_KEY) || '[]'); } catch(e) {}
+      if (events.length === 0) return alert("No telemetry events to export.");
+
+      let csv = "Timestamp,Date,Time,Action,Detail,Stars,Streak\n";
+      events.forEach(e => {
+        const cleanDetail = (e.detail || '').replace(/"/g, '""');
+        csv += `"${e.timestamp}","${e.displayDate}","${e.displayTime}","${e.action}","${cleanDetail}",${e.stars || 0},${e.streak || 1}\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `birdie_telemetry_${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+    }
+
+    function clearTelemetry() {
+      if (confirm("Clear all click telemetry events?")) {
+        localStorage.removeItem(TELEMETRY_KEY);
+        renderTelemetry();
+      }
+    }
+
+    function adjustStreak(amt) {
+      heroData.streak = (heroData.streak || 1) + amt;
+      saveHeroData();
+    }
+
+    function resetDayChecks() {
+      if (confirm("Reset today's star checks for Birdie?")) {
+        heroData.completedMissions = {};
+        saveHeroData();
+        alert("Cleared today's stars!");
+      }
+    }
+
+    function renderMissions() {
+      const container = document.getElementById('missions-list');
+      document.getElementById('mission-count').innerText = tasks.length;
+      container.innerHTML = '';
+
+      tasks.forEach((t) => {
+        const div = document.createElement('div');
+        div.className = 'mission-item';
+        div.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 26px;">${t.emoji}</span>
+            <div>
+              <div style="font-weight: 900; color: #f8fafc; font-size: 14px;">${t.name}</div>
+              <div style="font-size: 12px; color: #38bdf8;">🗣️ "${t.prompt}"</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 6px;">
+            <button class="btn btn-muted" onclick="openEditMissionModal('${t.id}')">✏️ Edit</button>
+            <button class="btn btn-red" onclick="deleteMission('${t.id}')">✕</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function openAddMissionModal() {
+      editingId = null;
+      document.getElementById('modal-title').innerText = "Add Mission";
+      document.getElementById('m-name').value = '';
+      document.getElementById('m-prompt').value = '';
+      document.getElementById('m-emoji').value = '⭐';
+      document.getElementById('mission-modal').classList.remove('hidden');
+    }
+
+    function openEditMissionModal(id) {
+      const t = tasks.find(x => x.id === id);
+      if (!t) return;
+      editingId = id;
+      document.getElementById('modal-title').innerText = "Edit Mission";
+      document.getElementById('m-name').value = t.name;
+      document.getElementById('m-prompt').value = t.prompt;
+      document.getElementById('m-emoji').value = t.emoji;
+      document.getElementById('mission-modal').classList.remove('hidden');
+    }
+
+    function closeMissionModal() {
+      document.getElementById('mission-modal').classList.add('hidden');
+    }
+
+    function testVoicePrompt() {
+      const text = document.getElementById('m-prompt').value.trim();
+      if (!text) return alert("Type a prompt first!");
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.rate = 0.95;
+        u.pitch = 1.15;
+        window.speechSynthesis.speak(u);
+      } else {
+        alert("Speech synthesis not supported in this browser.");
+      }
+    }
+
+    function saveMissionModal() {
+      const name = document.getElementById('m-name').value.trim();
+      const prompt = document.getElementById('m-prompt').value.trim();
+      const emoji = document.getElementById('m-emoji').value.trim() || '⭐';
+      if (!name) return alert("Please enter a mission name.");
+      if (!prompt) return alert("Please enter a spoken prompt.");
+
+      if (editingId) {
+        const item = tasks.find(x => x.id === editingId);
+        if (item) {
+          item.name = name;
+          item.prompt = prompt;
+          item.emoji = emoji;
+        }
+      } else {
+        const id = 'mission_' + Date.now();
+        tasks.push({ id, name, prompt, emoji, xp: 10 });
+      }
+
+      saveTasks();
+      closeMissionModal();
+    }
+
+    function deleteMission(id) {
+      const item = tasks.find(x => x.id === id);
+      if (!item) return;
+      if (confirm(`Remove mission "${item.name}" from Birdie's tracker?`)) {
+        tasks = tasks.filter(x => x.id !== id);
+        saveTasks();
+      }
+    }
+
+    function renderScratchpad() {
+      const container = document.getElementById('scratchpad-log-list');
+      let notes = [];
+      try { notes = JSON.parse(localStorage.getItem(NOTES_KEY) || '[]'); } catch(e) {}
+      container.innerHTML = '';
+      if (notes.length === 0) {
+        container.innerHTML = '<div style="font-size: 11px; color: var(--text-muted); font-style: italic;">No observations logged yet.</div>';
+        return;
+      }
+      notes.forEach((n) => {
+        const row = document.createElement('div');
+        row.style.background = '#090d16';
+        row.style.border = '1px solid #2b3954';
+        row.style.borderRadius = '8px';
+        row.style.padding = '8px 10px';
+        row.style.fontSize = '12px';
+        row.style.color = '#cbd5e1';
+        row.innerHTML = `<span style="color:#fde047; font-weight:800;">${n.date} ${n.timestamp}</span>: ${n.text}`;
+        container.appendChild(row);
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Birdie's Morning Missions</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card-bg: #182238;
+      --card-border: #334155;
+      --pink: #f43f5e;
+      --pink-glow: rgba(244, 63, 94, 0.4);
+      --yellow: #facc15;
+      --yellow-glow: rgba(250, 204, 21, 0.4);
+      --teal: #14b8a6;
+      --teal-glow: rgba(20, 184, 166, 0.4);
+      --green: #22c55e;
+      --text-white: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-white);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 10px 40px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* 3D Squishy Buttons */
+    .btn-squishy {
+      border: none;
+      cursor: pointer;
+      font-weight: 900;
+      transition: all 0.12s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 18px;
+    }
+    .btn-squishy:active {
+      transform: translateY(4px);
+    }
+
+    /* Top Dashboard Header */
+    .header-card {
+      background: linear-gradient(145deg, #1f2942, #111a2f);
+      border: 3px solid rgba(244, 63, 94, 0.45);
+      border-radius: 24px;
+      padding: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5), 0 0 20px var(--pink-glow);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .hero-profile {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .avatar-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar-badge {
+      width: 62px;
+      height: 62px;
+      background: linear-gradient(135deg, #f43f5e, #fb923c, #facc15);
+      border: 3px solid #fef08a;
+      border-radius: 20px;
+      font-size: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 16px rgba(244, 63, 94, 0.4);
+      pointer-events: none;
+    }
+
+    .hero-title-group h1 {
+      font-size: 24px;
+      font-weight: 900;
+      color: #ffe4e6;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .streak-pill {
+      background: rgba(250, 204, 21, 0.2);
+      border: 1px solid var(--yellow);
+      color: #fef08a;
+      font-size: 11px;
+      font-weight: 900;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .hero-subtitle {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fde047;
+      margin-top: 2px;
+    }
+
+    .action-icons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: #1e293b;
+      border: 2px solid #334155;
+      color: #fff;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .icon-btn:active {
+      transform: scale(0.92);
+    }
+
+    /* The Treasure Star Jar (Visual Progress) */
+    .star-jar-container {
+      background: #090d16;
+      border: 2px solid #28354f;
+      border-radius: 18px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .jar-label-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .jar-icon {
+      font-size: 30px;
+    }
+    .jar-text-title {
+      font-size: 13px;
+      font-weight: 900;
+      color: #fef08a;
+      text-transform: uppercase;
+    }
+    .jar-text-count {
+      font-size: 11px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+
+    .star-slots-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .star-slot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #1e293b;
+      border: 2px dashed #475569;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: #475569;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .star-slot.filled {
+      background: linear-gradient(135deg, #f59e0b, #facc15);
+      border: 2px solid #fef08a;
+      color: #090d16;
+      box-shadow: 0 0 12px rgba(250, 204, 21, 0.7);
+      transform: scale(1.15);
+    }
+
+    /* Easton Live Weather Widget */
+    .weather-widget {
+      background: linear-gradient(145deg, #19233c, #10182b);
+      border: 2.5px solid rgba(250, 204, 21, 0.4);
+      border-radius: 22px;
+      padding: 14px 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 15px rgba(250, 204, 21, 0.15);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .weather-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(250, 204, 21, 0.2);
+      padding-bottom: 8px;
+    }
+
+    .weather-location {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 900;
+      color: #fde047;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #22c55e;
+      animation: pulseLive 2s infinite;
+      display: inline-block;
+    }
+
+    @keyframes pulseLive {
+      0% { transform: scale(0.95); opacity: 0.7; }
+      50% { transform: scale(1.25); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.7; }
+    }
+
+    .weather-condition-pill {
+      font-size: 12px;
+      font-weight: 800;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .outfit-banner {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      transition: all 0.2s ease;
+    }
+
+    .outfit-icon-badge {
+      width: 58px;
+      height: 58px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    }
+
+    .outfit-content {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      flex: 1;
+    }
+
+    .outfit-decision-title {
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+
+    .outfit-tagline {
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+
+    .outfit-tap-hint {
+      font-size: 11px;
+      font-weight: 700;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Weather Modes */
+    .mode-jacket {
+      background: linear-gradient(135deg, rgba(30, 58, 138, 0.7), rgba(15, 23, 42, 0.95));
+      border: 2px solid #38bdf8;
+    }
+    .mode-jacket .outfit-icon-badge {
+      background: linear-gradient(135deg, #0284c7, #38bdf8);
+      border: 2px solid #bae6fd;
+    }
+    .mode-jacket .outfit-decision-title { color: #7dd3fc; }
+    .mode-jacket .outfit-tagline { color: #e0f2fe; }
+
+    .mode-hoodie {
+      background: linear-gradient(135deg, rgba(217, 119, 6, 0.5), rgba(15, 23, 42, 0.95));
+      border: 2px solid #f59e0b;
+    }
+    .mode-hoodie .outfit-icon-badge {
+      background: linear-gradient(135deg, #f59e0b, #fbbf24);
+      border: 2px solid #fef08a;
+    }
+    .mode-hoodie .outfit-decision-title { color: #fef08a; }
+    .mode-hoodie .outfit-tagline { color: #fde047; }
+
+    .mode-nothing {
+      background: linear-gradient(135deg, rgba(20, 83, 45, 0.6), rgba(15, 23, 42, 0.95));
+      border: 2px solid #34d399;
+    }
+    .mode-nothing .outfit-icon-badge {
+      background: linear-gradient(135deg, #059669, #10b981);
+      border: 2px solid #a7f3d0;
+    }
+    .mode-nothing .outfit-decision-title { color: #6ee7b7; }
+    .mode-nothing .outfit-tagline { color: #fef08a; }
+
+    /* GIANT CHORE MISSION CARDS (Tactile & Pre-Reader Friendly) */
+    .missions-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .mission-card {
+      background: linear-gradient(145deg, #18233a, #0f172a);
+      border: 2.5px solid #2a3754;
+      border-radius: 24px;
+      padding: 16px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mission-card.completed {
+      background: linear-gradient(145deg, #0f2e22, #091c15);
+      border-color: #22c55e;
+      box-shadow: 0 8px 22px rgba(34, 197, 94, 0.25);
+    }
+
+    .mission-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex: 1;
+      cursor: pointer;
+    }
+
+    .mission-icon-box {
+      width: 64px;
+      height: 64px;
+      border-radius: 20px;
+      background: #1e293b;
+      border: 2px solid #334155;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      transition: all 0.2s ease;
+    }
+    .mission-card.completed .mission-icon-box {
+      background: #14532d;
+      border-color: #4ade80;
+      transform: rotate(-6deg) scale(1.05);
+    }
+
+    .mission-text-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .mission-title {
+      font-size: 19px;
+      font-weight: 900;
+      color: #f8fafc;
+      letter-spacing: 0.3px;
+    }
+    .mission-card.completed .mission-title {
+      color: #86efac;
+      text-decoration: line-through;
+    }
+
+    .mission-audio-pill {
+      font-size: 11px;
+      font-weight: 800;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Giant Big Tactile Tap Button */
+    .done-btn {
+      min-width: 110px;
+      height: 58px;
+      padding: 0 16px;
+      border-radius: 18px;
+      font-size: 15px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 6px 0 rgba(0,0,0,0.45);
+    }
+
+    .done-btn-todo {
+      background: linear-gradient(135deg, #f43f5e, #e11d48);
+      color: white;
+      border: 2px solid #fda4af;
+      box-shadow: 0 5px 0 #9f1239, 0 8px 18px var(--pink-glow);
+    }
+    .done-btn-todo:active {
+      transform: translateY(4px);
+      box-shadow: 0 1px 0 #9f1239;
+    }
+
+    .done-btn-done {
+      background: linear-gradient(135deg, #16a34a, #15803d);
+      color: #f0fdf4;
+      border: 2px solid #86efac;
+      box-shadow: 0 5px 0 #14532d;
+    }
+    .done-btn-done:active {
+      transform: translateY(4px);
+      box-shadow: 0 1px 0 #14532d;
+    }
+
+    /* Scratchpad at bottom */
+    .scratchpad-card {
+      background: #182238;
+      border: 2px solid #2b3954;
+      border-radius: 22px;
+      padding: 16px;
+      margin-top: 10px;
+    }
+
+    .scratchpad-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .scratchpad-title {
+      font-size: 13px;
+      font-weight: 900;
+      color: #fde047;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .scratchpad-input {
+      width: 100%;
+      background: #090d16;
+      border: 1.5px solid #2b3954;
+      border-radius: 14px;
+      padding: 12px;
+      color: #f8fafc;
+      font-size: 14px;
+      min-height: 70px;
+      outline: none;
+      resize: none;
+    }
+    .scratchpad-input:focus {
+      border-color: var(--teal);
+    }
+
+    .scratchpad-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    /* VICTORY GRAND POPUP MODAL */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(11, 17, 32, 0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 100;
+      animation: fadeIn 0.25s ease;
+    }
+    .modal-overlay.hidden { display: none; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-card {
+      background: linear-gradient(145deg, #1f2942, #111a2f);
+      border: 3.5px solid #facc15;
+      border-radius: 28px;
+      padding: 26px 20px;
+      width: 100%;
+      max-width: 440px;
+      text-align: center;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.8), 0 0 35px var(--yellow-glow);
+    }
+
+    .victory-emoji {
+      font-size: 72px;
+      animation: bounceWin 0.6s infinite alternate;
+    }
+    @keyframes bounceWin {
+      from { transform: translateY(0); }
+      to { transform: translateY(-12px); }
+    }
+
+    .victory-title {
+      font-size: 24px;
+      font-weight: 900;
+      color: #fef08a;
+      margin: 10px 0 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .victory-desc {
+      font-size: 14px;
+      font-weight: 700;
+      color: #cbd5e1;
+      line-height: 1.4;
+      margin-bottom: 18px;
+    }
+
+    .victory-box {
+      background: #090d16;
+      border: 2px dashed #facc15;
+      border-radius: 18px;
+      padding: 16px;
+      font-size: 17px;
+      font-weight: 900;
+      color: #fde047;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+
+    .claim-btn {
+      width: 100%;
+      height: 60px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: white;
+      font-size: 17px;
+      font-weight: 900;
+      border: 2px solid #86efac;
+      box-shadow: 0 6px 0 #14532d;
+    }
+
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 99;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="container">
+
+    <!-- Top Dashboard Header -->
+    <header class="header-card">
+      <div class="hero-profile">
+        <div class="avatar-wrapper">
+          <div class="avatar-badge" id="avatar-icon">🐥</div>
+          <div class="hero-title-group">
+            <h1>
+              <span>Birdie</span>
+              <span class="streak-pill" id="streak-badge">⭐ <span id="streak-count">1</span> DAY STREAK</span>
+            </h1>
+            <div class="hero-subtitle">Morning Mission Champion</div>
+          </div>
+        </div>
+
+        <div class="action-icons">
+          <button class="icon-btn" id="voice-btn" onclick="toggleVoice()" title="Voice Prompts">🗣️</button>
+          <button class="icon-btn" id="sound-btn" onclick="toggleSound()" title="Sound Effects">🔊</button>
+        </div>
+      </div>
+
+      <!-- The Treasure Star Jar (Visual Progress Filling) -->
+      <div class="star-jar-container" onclick="speakStarProgress()">
+        <div class="jar-label-group">
+          <span class="jar-icon">⭐</span>
+          <div>
+            <div class="jar-text-title">STAR JAR</div>
+            <div class="jar-text-count" id="star-count-text">0 / 6 STARS</div>
+          </div>
+        </div>
+        <div class="star-slots-row" id="star-slots">
+          <!-- 6 slots injected here -->
+        </div>
+      </div>
+    </header>
+
+    <!-- EASTON LIVE WEATHER & CLOTHING SELECTOR (Tap to Hear!) -->
+    <div class="weather-widget mode-hoodie" id="weather-widget" onclick="speakWeatherAdvice()">
+      <div class="weather-top-row">
+        <div class="weather-location">
+          <span class="live-dot"></span>
+          <span>Easton, KS Weather</span>
+        </div>
+        <div class="weather-condition-pill" id="weather-condition-pill">
+          <span id="weather-icon">⛅</span>
+          <span id="weather-temp-text">Checking weather...</span>
+        </div>
+      </div>
+
+      <div class="outfit-banner" id="outfit-banner">
+        <div class="outfit-icon-badge" id="outfit-icon">🧥</div>
+        <div class="outfit-content">
+          <div class="outfit-decision-title" id="outfit-title">CHECKING WEATHER...</div>
+          <div class="outfit-tagline" id="outfit-tagline">Loading Easton forecast...</div>
+          <div class="outfit-tap-hint">👉 Tap to hear what to wear today!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GIANT CHORE MISSIONS LIST -->
+    <div class="missions-list" id="missions-container">
+      <!-- Populated dynamically -->
+    </div>
+
+    <!-- FIELD SCRATCHPAD AT BOTTOM -->
+    <div class="scratchpad-card">
+      <div class="scratchpad-header">
+        <div class="scratchpad-title">
+          <span>📝</span> Scratch Pad / Daily Notes
+        </div>
+        <span id="date-display" style="font-size: 11px; color: #94a3b8;">Today</span>
+      </div>
+
+      <textarea id="scratchpad-input" class="scratchpad-input" placeholder="Type a note or quick observation for Birdie here..."></textarea>
+
+      <div class="scratchpad-actions">
+        <button onclick="saveScratchpadNote()" class="btn-squishy" style="background: #14b8a6; color: white; padding: 8px 18px; border-radius: 12px; font-size: 13px;">
+          Save Note
+        </button>
+      </div>
+
+      <div id="notes-display" style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;"></div>
+    </div>
+
+  </div>
+
+  <!-- VICTORY MODAL WHEN ALL 6 ARE COMPLETED -->
+  <div id="victory-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="victory-emoji">🌟</div>
+      <h3 class="victory-title">ALL MISSIONS DONE!</h3>
+      <p class="victory-desc">Birdie finished all morning chores and filled the entire Star Jar!</p>
+
+      <div class="victory-box" id="victory-message">
+        You are a superstar, Birdie! Your family loves you and is so proud of you! 💖
+      </div>
+
+      <button class="btn-squishy claim-btn" onclick="closeVictoryModal()">YAY, I DID IT! 🎉</button>
+    </div>
+  </div>
+
+  <script>
+    // --- NATIVE AUDIO ENGINE (Web Audio API) ---
+    const AudioEngine = {
+      ctx: null,
+      enabled: true,
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.ctx = new AudioContext();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+      },
+
+      playPop() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(440, now);
+        osc.frequency.exponentialRampToValueAtTime(880, now + 0.12);
+
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.15);
+      },
+
+      playFanfare() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const notes = [523.25, 659.25, 783.99, 1046.50]; // C E G C
+        notes.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.value = freq;
+          const startTime = now + idx * 0.12;
+          gain.gain.setValueAtTime(0.25, startTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.45);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(startTime);
+          osc.stop(startTime + 0.45);
+        });
+      }
+    };
+
+    // --- NATIVE VOICE ENGINE (Web Speech API) ---
+    const SpeechEngine = {
+      enabled: true,
+
+      speak(text) {
+        if (!this.enabled || !('speechSynthesis' in window)) return;
+        try {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.rate = 0.95; // warm, friendly tempo
+          utterance.pitch = 1.15; // cheerful tone
+          const voices = window.speechSynthesis.getVoices();
+          const eng = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Samantha') || v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Female')));
+          if (eng) utterance.voice = eng;
+          window.speechSynthesis.speak(utterance);
+        } catch(e) {}
+      }
+    };
+
+    // --- STORAGE KEYS & INITIAL DATA ---
+    const TASKS_KEY = "bb_birdie_tasks_config_v1";
+    const DATA_KEY = "bb_birdie_ranch_quest_data";
+    const NOTES_KEY = "bb_birdie_scratchpad_notes";
+    const TELEMETRY_KEY = "bb_birdie_telemetry_v1";
+
+    const DEFAULT_BIRDIE_TASKS = [
+      { id: "shoes_socks", name: "Shoes & Socks", prompt: "Put on your shoes and socks!", emoji: "🧦", xp: 10 },
+      { id: "get_dressed", name: "Get Dressed", prompt: "Put on your clothes for the day!", emoji: "👕", xp: 10 },
+      { id: "brush_teeth", name: "Brush Teeth", prompt: "Brush your teeth shiny and clean!", emoji: "🪥", xp: 10 },
+      { id: "eat_breakfast", name: "Eat Breakfast", prompt: "Eat your yummy breakfast!", emoji: "🥣", xp: 10 },
+      { id: "get_jacket", name: "Jacket or Hoodie", prompt: "Check the weather and grab your jacket or hoodie!", emoji: "🧥", xp: 10 },
+      { id: "get_backpack", name: "Grab Backpack", prompt: "Get your backpack ready to go!", emoji: "🎒", xp: 10 }
+    ];
+
+    let tasks = [];
+    let state = {
+      stars: 0,
+      streak: 1,
+      lastActiveDate: new Date().toISOString().split('T')[0],
+      completedMissions: {},
+      kidName: "Birdie"
+    };
+
+    let currentWeatherAdvice = "Good morning Birdie! Let's get ready for an awesome day!";
+
+    // --- TELEMETRY ---
+    function logEvent(action, detail) {
+      try {
+        let log = JSON.parse(localStorage.getItem(TELEMETRY_KEY) || '[]');
+        const now = new Date();
+        const entry = {
+          id: 'evt_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+          timestamp: now.toISOString(),
+          displayTime: now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' }),
+          displayDate: now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+          action: action,
+          detail: detail || '',
+          stars: Object.keys(state.completedMissions).length,
+          streak: state.streak
+        };
+        log.unshift(entry);
+        if (log.length > 500) log = log.slice(0, 500);
+        localStorage.setItem(TELEMETRY_KEY, JSON.stringify(log));
+      } catch(e) {}
+    }
+
+    function loadState() {
+      // Smart Auto-Merge
+      const savedTasks = localStorage.getItem(TASKS_KEY);
+      if (savedTasks) {
+        try {
+          const loaded = JSON.parse(savedTasks);
+          const existingIds = new Set(loaded.map(t => t.id));
+          DEFAULT_BIRDIE_TASKS.forEach(dt => {
+            if (!existingIds.has(dt.id)) loaded.push(dt);
+          });
+          tasks = loaded;
+        } catch(e) {
+          tasks = [...DEFAULT_BIRDIE_TASKS];
+        }
+      } else {
+        tasks = [...DEFAULT_BIRDIE_TASKS];
+      }
+      localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
+
+      const savedData = localStorage.getItem(DATA_KEY);
+      if (savedData) {
+        try { state = Object.assign(state, JSON.parse(savedData)); } catch(e) {}
+      }
+
+      const today = new Date().toISOString().split('T')[0];
+      if (state.lastActiveDate !== today) {
+        const last = new Date(state.lastActiveDate);
+        const curr = new Date(today);
+        const diffDays = Math.round((curr - last) / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 1) state.streak += 1;
+        else if (diffDays > 1) state.streak = 1;
+
+        state.completedMissions = {};
+        state.lastActiveDate = today;
+        saveState();
+        logEvent("DAY_ROLLOVER", `Rollover to ${today}. Streak: ${state.streak}`);
+      }
+
+      document.getElementById('date-display').innerText = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+      renderMissions();
+      renderStarJar();
+      renderScratchpad();
+
+      logEvent("APP_OPENED", "Birdie page loaded in browser");
+    }
+
+    function saveState() {
+      localStorage.setItem(DATA_KEY, JSON.stringify(state));
+    }
+
+    // --- RENDER VISUAL CHORE CARDS ---
+    function renderMissions() {
+      const container = document.getElementById('missions-container');
+      container.innerHTML = '';
+
+      tasks.forEach((t) => {
+        const isDone = !!state.completedMissions[t.id];
+        const card = document.createElement('div');
+        card.className = `mission-card ${isDone ? 'completed' : ''}`;
+        card.setAttribute('data-id', t.id);
+
+        card.innerHTML = `
+          <div class="mission-left" onclick="speakMission('${t.prompt.replace(/'/g, "\'")}')">
+            <div class="mission-icon-box">${t.emoji}</div>
+            <div class="mission-text-group">
+              <div class="mission-title">${t.name}</div>
+              <div class="mission-audio-pill">🗣️ Tap to hear</div>
+            </div>
+          </div>
+          <button class="btn-squishy done-btn ${isDone ? 'done-btn-done' : 'done-btn-todo'}" onclick="toggleMission('${t.id}', '${t.name.replace(/'/g, "\'")}')">
+            ${isDone ? '⭐ DONE!' : 'I DID IT!'}
+          </button>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function renderStarJar() {
+      const slotsContainer = document.getElementById('star-slots');
+      slotsContainer.innerHTML = '';
+
+      const total = tasks.length;
+      const completed = Object.keys(state.completedMissions).length;
+      document.getElementById('star-count-text').innerText = `${completed} / ${total} STARS`;
+      document.getElementById('streak-count').innerText = state.streak || 1;
+
+      for (let i = 0; i < total; i++) {
+        const slot = document.createElement('div');
+        slot.className = `star-slot ${i < completed ? 'filled' : ''}`;
+        slot.innerText = '⭐';
+        slotsContainer.appendChild(slot);
+      }
+    }
+
+    function speakMission(promptText) {
+      SpeechEngine.speak(promptText);
+      logEvent("VOICE_PROMPT_PLAYED", promptText);
+    }
+
+    function speakStarProgress() {
+      const completed = Object.keys(state.completedMissions).length;
+      const total = tasks.length;
+      if (completed === total) {
+        SpeechEngine.speak("Hooray Birdie! Your Star Jar is completely full! You did it!");
+      } else {
+        SpeechEngine.speak(`You have ${completed} stars in your jar! Keep going, Birdie!`);
+      }
+    }
+
+    function toggleMission(id, name) {
+      AudioEngine.init();
+
+      if (state.completedMissions[id]) {
+        delete state.completedMissions[id];
+        AudioEngine.playPop();
+        logEvent("MISSION_UNCHECKED", `Unchecked "${name}"`);
+      } else {
+        state.completedMissions[id] = true;
+        AudioEngine.playPop();
+        triggerConfetti(false);
+        logEvent("MISSION_COMPLETED", `Completed "${name}"`);
+
+        const completed = Object.keys(state.completedMissions).length;
+        const total = tasks.length;
+
+        if (completed === total) {
+          setTimeout(() => {
+            AudioEngine.playFanfare();
+            triggerConfetti(true);
+            document.getElementById('victory-modal').classList.remove('hidden');
+            SpeechEngine.speak("Hooray Birdie! You finished all your morning missions! You are an amazing superstar!");
+            logEvent("ALL_MISSIONS_COMPLETED", "All missions completed!");
+          }, 400);
+        } else {
+          SpeechEngine.speak("Great job Birdie! Star added to your jar!");
+        }
+      }
+
+      saveState();
+      renderMissions();
+      renderStarJar();
+    }
+
+    function closeVictoryModal() {
+      document.getElementById('victory-modal').classList.add('hidden');
+    }
+
+    function toggleVoice() {
+      SpeechEngine.enabled = !SpeechEngine.enabled;
+      document.getElementById('voice-btn').innerText = SpeechEngine.enabled ? '🗣️' : '🔇';
+      logEvent("VOICE_TOGGLED", SpeechEngine.enabled ? "Enabled" : "Muted");
+    }
+
+    function toggleSound() {
+      AudioEngine.enabled = !AudioEngine.enabled;
+      document.getElementById('sound-btn').innerText = AudioEngine.enabled ? '🔊' : '🔇';
+      logEvent("SOUND_TOGGLED", AudioEngine.enabled ? "Enabled" : "Muted");
+    }
+
+    // --- EASTON LIVE WEATHER & VOICE ADVICE ---
+    const CORRIDOR_WEATHER_URL = "/api/weather-forecast/";
+
+    async function loadEastonWeather() {
+      let temp = 56;
+      let shortDesc = "Mostly Cloudy";
+      let pop = 0;
+
+      try {
+        const res = await fetch(CORRIDOR_WEATHER_URL, { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.ok) {
+            temp = Number(data.currentTemp);
+            shortDesc = data.currentForecast || "Fair";
+            pop = Number(data.winterPrecipProb || 0);
+          }
+        }
+      } catch(e) {}
+
+      const rainKeywords = ['rain', 'shower', 'drizzle', 'thunderstorm', 'storm'];
+      const isRain = pop >= 30 || rainKeywords.some(k => shortDesc.toLowerCase().includes(k));
+
+      const widget = document.getElementById('weather-widget');
+      const icon = document.getElementById('weather-icon');
+      const tempText = document.getElementById('weather-temp-text');
+      const outfitIcon = document.getElementById('outfit-icon');
+      const title = document.getElementById('outfit-title');
+      const tagline = document.getElementById('outfit-tagline');
+
+      tempText.innerText = `${temp}°F • ${shortDesc}`;
+      widget.className = 'weather-widget';
+
+      if (temp < 40) {
+        widget.classList.add('mode-jacket');
+        outfitIcon.innerText = '🧥';
+        title.innerText = 'WEAR A WARM JACKET';
+        tagline.innerText = `Chilly morning in Easton (${temp}°F)`;
+        currentWeatherAdvice = `Good morning Birdie! It's chilly outside at ${temp} degrees. Wear your warm winter coat or jacket today!`;
+      } else if (temp < 70 || isRain) {
+        widget.classList.add('mode-hoodie');
+        outfitIcon.innerText = isRain ? '🌧️' : '🧥';
+        title.innerText = 'WEAR A HOODIE';
+        tagline.innerText = isRain ? `Rain expected (${pop}%) in Easton!` : `Cool morning in Easton (${temp}°F)`;
+        currentWeatherAdvice = isRain
+          ? `Good morning Birdie! It might rain today! Wear your cozy hoodie or rain jacket to stay dry!`
+          : `Good morning Birdie! It's ${temp} degrees in Easton. A cozy hoodie is the perfect layer today!`;
+      } else {
+        widget.classList.add('mode-nothing');
+        outfitIcon.innerText = '👕';
+        title.innerText = 'NO JACKET NEEDED';
+        tagline.innerText = `Warm & sunny in Easton (${temp}°F)`;
+        currentWeatherAdvice = `Good morning Birdie! It's warm and nice outside at ${temp} degrees. You don't need a jacket today!`;
+      }
+    }
+
+    function speakWeatherAdvice() {
+      SpeechEngine.speak(currentWeatherAdvice);
+      logEvent("WEATHER_VOICE_SPOKEN", currentWeatherAdvice);
+    }
+
+    // --- SCRATCHPAD LOGIC ---
+    function renderScratchpad() {
+      const container = document.getElementById('notes-display');
+      let notes = [];
+      try { notes = JSON.parse(localStorage.getItem(NOTES_KEY) || '[]'); } catch(e) {}
+      container.innerHTML = '';
+
+      notes.slice(0, 5).forEach((n, idx) => {
+        const item = document.createElement('div');
+        item.style.background = '#090d16';
+        item.style.border = '1px solid #2b3954';
+        item.style.borderRadius = '12px';
+        item.style.padding = '8px 12px';
+        item.style.fontSize = '12px';
+        item.style.color = '#cbd5e1';
+        item.innerHTML = `<span style="color:#fde047; font-weight:800;">${n.timestamp}</span>: ${n.text}`;
+        container.appendChild(item);
+      });
+    }
+
+    function saveScratchpadNote() {
+      const input = document.getElementById('scratchpad-input');
+      const text = input.value.trim();
+      if (!text) return;
+      let notes = [];
+      try { notes = JSON.parse(localStorage.getItem(NOTES_KEY) || '[]'); } catch(e) {}
+      const timestamp = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+      notes.unshift({ text, timestamp, date: new Date().toISOString().split('T')[0] });
+      localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+      logEvent("NOTE_SAVED", text);
+      input.value = '';
+      renderScratchpad();
+    }
+
+    // --- CONFETTI CANVASES ---
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function triggerConfetti(isGrand = false) {
+      const count = isGrand ? 120 : 45;
+      const colors = ['#f43f5e', '#facc15', '#14b8a6', '#a855f7', '#38bdf8', '#fb923c'];
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: canvas.width / 2 + (Math.random() - 0.5) * 160,
+          y: canvas.height * 0.4,
+          vx: (Math.random() - 0.5) * (isGrand ? 16 : 9),
+          vy: (Math.random() - 0.8) * (isGrand ? 20 : 12),
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 10,
+          life: 1,
+          decay: Math.random() * 0.02 + 0.015
+        });
+      }
+    }
+
+    function updateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.45;
+        p.rotation += p.rotSpeed;
+        p.life -= p.decay;
+
+        if (p.life <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        ctx.save();
+        ctx.globalAlpha = p.life;
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+        ctx.restore();
+      }
+      requestAnimationFrame(updateConfetti);
+    }
+    requestAnimationFrame(updateConfetti);
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      loadEastonWeather();
+    });
+  </script>
+</body>
+</html>
