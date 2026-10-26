@@ -1,0 +1,1228 @@
+﻿<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta name="robots" content="noindex, nofollow">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OPERATION: AIRLOCK // Tactical Dual-Account Migration</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <!-- Google Fonts: Orbitron & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            mono: ['"JetBrains Mono"', 'monospace'],
+            display: ['"Orbitron"', 'sans-serif'],
+          },
+          colors: {
+            void: '#070a0f',
+            surface: '#0d131d',
+            panel: '#121a27',
+            card: '#162030',
+            neon: {
+              green: '#00ff66',
+              cyan: '#00f0ff',
+              amber: '#ffaa00',
+              red: '#ff3344',
+            }
+          },
+          boxShadow: {
+            'neon-green': '0 0 20px rgba(0, 255, 102, 0.35)',
+            'neon-cyan': '0 0 20px rgba(0, 240, 255, 0.35)',
+            'neon-amber': '0 0 20px rgba(255, 170, 0, 0.35)',
+            'neon-red': '0 0 20px rgba(255, 51, 68, 0.35)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Scanline & Tactical HUD overlay */
+    body {
+      background-color: #070a0f;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.08) 0%, transparent 60%),
+        linear-gradient(rgba(18, 26, 39, 0.5) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(18, 26, 39, 0.5) 1px, transparent 1px);
+      background-size: 100% 100%, 32px 32px, 32px 32px;
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+
+    /* Custom tactical scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #090e17;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #00ff66;
+    }
+
+    /* Dopamine Task Strikethrough & Completion Transition */
+    .task-item {
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .task-completed {
+      background: rgba(0, 255, 102, 0.04) !important;
+      border-color: rgba(0, 255, 102, 0.4) !important;
+    }
+    .task-completed .task-label {
+      text-decoration: line-through;
+      text-decoration-thickness: 2px;
+      text-decoration-color: #00ff66;
+      color: #6ee7b7 !important;
+      text-shadow: 0 0 8px rgba(0, 255, 102, 0.3);
+    }
+
+    /* Pulse radar effect */
+    @keyframes radarSweep {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .radar-sweep {
+      animation: radarSweep 4s linear infinite;
+    }
+
+    /* Glowing border animation on hover */
+    .tactical-border {
+      position: relative;
+    }
+    .tactical-border::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: -1px; right: -1px; bottom: -1px;
+      border: 1px solid rgba(0, 240, 255, 0.15);
+      pointer-events: none;
+      border-radius: inherit;
+    }
+  </style>
+</head>
+<body class="font-mono antialiased text-slate-300 selection:bg-neon-green selection:text-black">
+
+  <!-- HUD STATUS BAR -->
+  <header class="border-b border-slate-800 bg-surface/90 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+      
+      <!-- Logo & Metaphor Callout -->
+      <div class="flex items-center gap-3">
+        <div class="relative w-9 h-9 rounded-lg bg-panel border border-neon-cyan/40 flex items-center justify-center shadow-neon-cyan/20">
+          <svg class="w-5 h-5 text-neon-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          </svg>
+          <span class="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon-green opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-neon-green"></span>
+          </span>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-display font-black text-lg tracking-wider text-white">OPERATION: AIRLOCK</h1>
+            <span class="text-[10px] uppercase font-bold tracking-widest px-1.5 py-0.5 rounded bg-neon-green/10 text-neon-green border border-neon-green/30">
+              DEFCON 1
+            </span>
+          </div>
+          <p class="text-xs text-slate-400">FINANCIAL SEPARATION MATRIX // THE VAULT <span class="text-neon-cyan">â‡„</span> THE TRENCH</p>
+        </div>
+      </div>
+
+      <!-- Live Quick Stats & Audio Control -->
+      <div class="flex items-center gap-4 text-xs">
+        <!-- Audio Synthesizer Toggle -->
+        <button id="soundToggleBtn" onclick="toggleAudio()" class="px-2.5 py-1.5 rounded border border-slate-700 bg-panel hover:border-slate-500 flex items-center gap-1.5 transition text-slate-300">
+          <span id="soundIcon">ðŸ”Š</span>
+          <span id="soundLabel">SFX ON</span>
+        </button>
+
+        <!-- Current Rank Pill -->
+        <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded border border-slate-800 bg-panel">
+          <span class="text-slate-500 uppercase tracking-wider text-[10px]">RANK:</span>
+          <span id="rankBadge" class="font-bold text-neon-cyan">E-1 RECRUIT</span>
+        </div>
+
+        <!-- Total XP Pill -->
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded border border-slate-800 bg-panel">
+          <span class="text-neon-green font-bold text-sm" id="hudTotalXp">0</span>
+          <span class="text-slate-500 text-[10px] tracking-wider">XP</span>
+        </div>
+
+        <!-- Reset & Diagnostic Modal Trigger -->
+        <button onclick="toggleDataModal()" title="System Data Controls" class="p-1.5 rounded border border-slate-800 bg-panel hover:text-white hover:border-slate-600 transition text-slate-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN HUD CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+
+    <!-- TOP TELEMETRY: LEVEL PROGRESSION & 60-DAY STREAK DIAL -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <!-- TELEMETRY 1: XP LEVEL ENGINE (2 COLUMNS ON LG) -->
+      <div class="lg:col-span-2 rounded-xl bg-panel/90 border border-slate-800 p-5 tactical-border shadow-lg space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+          <div>
+            <div class="text-[10px] text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+              <span class="inline-block w-2 h-2 rounded-full bg-neon-cyan animate-pulse"></span>
+              PILOT DOSSIER // XP ENGINE
+            </div>
+            <div class="text-xl font-display font-black text-white flex items-center gap-2 mt-0.5">
+              <span>LEVEL <span id="currentLevelNumber" class="text-neon-cyan">1</span></span>
+              <span class="text-slate-600">//</span>
+              <span id="rankTitle" class="text-sm font-mono font-bold text-neon-green">E-1 RECRUIT</span>
+            </div>
+          </div>
+          <div class="text-right font-mono">
+            <span class="text-xs text-slate-400">TO NEXT RANK:</span>
+            <div class="text-sm font-bold text-slate-200">
+              <span id="xpRemaining">1000</span> <span class="text-slate-500 text-xs">XP NEEDED</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROGRESS BAR -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-xs font-mono text-slate-400">
+            <span>LEVEL PROGRESS [<span id="currentLevelXp">0</span> / 1000 XP]</span>
+            <span id="progressPercent" class="text-neon-cyan font-bold">0%</span>
+          </div>
+          <div class="h-4 w-full bg-slate-900 rounded-md border border-slate-700/60 p-0.5 overflow-hidden">
+            <div id="xpProgressBar" class="h-full bg-gradient-to-r from-emerald-500 via-neon-green to-neon-cyan rounded transition-all duration-500 ease-out shadow-neon-green" style="width: 0%"></div>
+          </div>
+          <div class="flex justify-between text-[10px] text-slate-500 uppercase tracking-wider">
+            <span>Current Floor: <span id="tierFloorXp">0</span> XP</span>
+            <span>Next Tier Milestone: <span id="tierCeilXp">1000</span> XP</span>
+          </div>
+        </div>
+
+        <!-- ARCHITECTURAL METAPHOR CALLOUT -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 text-xs">
+          <div class="p-2.5 rounded bg-card/60 border border-slate-800 flex items-start gap-2.5">
+            <span class="text-neon-cyan text-base">ðŸ›¡ï¸</span>
+            <div>
+              <div class="font-bold text-white uppercase text-[11px] tracking-wide">The Vault (Primary / Inflow)</div>
+              <div class="text-[11px] text-slate-400">O-4 Allotment drops here. Fixed bills autopay from here. Debit card shredded. Impenetrable.</div>
+            </div>
+          </div>
+          <div class="p-2.5 rounded bg-card/60 border border-slate-800 flex items-start gap-2.5">
+            <span class="text-neon-green text-base">âš”ï¸</span>
+            <div>
+              <div class="font-bold text-white uppercase text-[11px] tracking-wide">The Trench (Secondary / Outflow)</div>
+              <div class="text-[11px] text-slate-400">Daily spending allowance only. Operates on the frontlines. Safe to drain to zero.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TELEMETRY 2: 60-DAY HABIT STREAK & DAILY RECURRING CHECK-IN -->
+      <div class="rounded-xl bg-panel/90 border border-slate-800 p-5 tactical-border shadow-lg flex flex-col justify-between space-y-4">
+        <div>
+          <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+            <div class="text-[10px] text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+              <span class="inline-block w-2 h-2 rounded-full bg-neon-amber animate-pulse"></span>
+              60-DAY HABIT REINFORCER
+            </div>
+            <span class="text-xs px-2 py-0.5 rounded font-bold bg-neon-amber/10 text-neon-amber border border-neon-amber/30">
+              TARGET: 60 DAYS
+            </span>
+          </div>
+
+          <!-- Streak Visualization Dial -->
+          <div class="mt-4 flex items-center justify-around gap-4">
+            <div class="relative w-24 h-24 flex items-center justify-center">
+              <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                <!-- Background track -->
+                <path class="text-slate-800" stroke-width="3.5" stroke="currentColor" fill="none"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <!-- Progress ring -->
+                <path id="streakProgressCircle" class="text-neon-amber transition-all duration-700 ease-out" stroke-dasharray="0, 100" stroke-width="3.5" stroke-linecap="round" stroke="currentColor" fill="none"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              </svg>
+              <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                <span id="streakCount" class="font-display font-black text-2xl text-white">0</span>
+                <span class="text-[9px] uppercase tracking-tighter text-slate-400">DAYS</span>
+              </div>
+            </div>
+
+            <div class="text-xs space-y-1.5">
+              <div class="text-slate-400">Streak Best: <span id="streakBest" class="text-white font-bold">0</span> Days</div>
+              <div class="text-slate-400">Milestone: <span id="streakMilestone" class="text-neon-amber font-bold">Phase 1</span></div>
+              <div class="text-[11px] text-slate-500">Every 7-day streak awards massive milestone fireworks!</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 60-Day Utilization Check-in Button -->
+        <div class="pt-2">
+          <button id="dailyCheckInBtn" onclick="handleDailyCheckIn()" class="w-full py-3 px-4 rounded-lg font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 border transition-all duration-200 bg-gradient-to-r from-amber-500/20 to-neon-amber/20 hover:from-amber-500/30 hover:to-neon-amber/30 text-neon-amber border-neon-amber/40 shadow-neon-amber/10 active:scale-95">
+            <svg class="w-4 h-4 text-neon-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span id="checkInBtnText">DAILY UTILIZATION CHECK-IN (+50 XP)</span>
+          </button>
+          <div id="checkInStatusSubtext" class="text-[10px] text-center text-slate-500 mt-1.5">Daily audit: Verify zero unbudgeted spills from The Vault.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CORE DECK: FRONT-FACE ("THE TRENCH") & BACK-FACE ("THE RADAR") -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      
+      <!-- FRONT-FACE: THE TRENCH (ACTIVE TARGET LIST) - 8 COLS -->
+      <section class="lg:col-span-8 rounded-xl bg-panel/90 border border-slate-800 p-5 tactical-border shadow-lg space-y-4">
+        
+        <!-- Header & Filtering Controls -->
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-neon-green text-sm">ðŸŽ¯</span>
+              <h2 class="font-display font-bold text-lg text-white tracking-wide">THE TRENCH // ACTIVE TARGET LIST</h2>
+            </div>
+            <p class="text-xs text-slate-400">Execute tasks to secure the perimeter and harvest XP.</p>
+          </div>
+
+          <!-- Target Filter Tabs -->
+          <div class="flex items-center gap-1 bg-surface p-1 rounded-lg border border-slate-800 text-xs">
+            <button onclick="setFilter('all')" id="filter-all" class="filter-btn px-2.5 py-1 rounded font-medium text-white bg-slate-800">All (<span id="count-all">0</span>)</button>
+            <button onclick="setFilter('active')" id="filter-active" class="filter-btn px-2.5 py-1 rounded font-medium text-slate-400 hover:text-white">Active (<span id="count-active">0</span>)</button>
+            <button onclick="setFilter('completed')" id="filter-completed" class="filter-btn px-2.5 py-1 rounded font-medium text-slate-400 hover:text-white">Secured (<span id="count-completed">0</span>)</button>
+          </div>
+        </div>
+
+        <!-- Task List Container -->
+        <div id="targetListContainer" class="space-y-2.5 min-h-[300px]">
+          <!-- Target items dynamically rendered here -->
+        </div>
+
+        <!-- Target Summary Footnote -->
+        <div class="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-800/80">
+          <span>Secured: <span id="securedCountText" class="text-neon-green font-bold">0</span> / <span id="totalCountText">0</span> Targets</span>
+          <span>Dual-Account Lock Status: <span id="airlockIntegrityText" class="text-neon-cyan font-bold">0%</span></span>
+        </div>
+      </section>
+
+      <!-- BACK-FACE: THE RADAR (ADMIN RECON & NEW BILL INTAKE) - 4 COLS -->
+      <section class="lg:col-span-4 rounded-xl bg-panel/90 border border-slate-800 p-5 tactical-border shadow-lg space-y-4">
+        
+        <div class="border-b border-slate-800 pb-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <!-- Radar Icon with rotating sweep -->
+              <div class="relative w-5 h-5 rounded-full border border-neon-cyan/50 overflow-hidden flex items-center justify-center">
+                <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-transparent to-neon-cyan/30 radar-sweep"></div>
+                <div class="w-1 h-1 rounded-full bg-neon-cyan"></div>
+              </div>
+              <h2 class="font-display font-bold text-base text-white tracking-wide">THE RADAR // RECON</h2>
+            </div>
+            <span class="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-neon-cyan/10 text-neon-cyan border border-neon-cyan/30">
+              INTAKE
+            </span>
+          </div>
+          <p class="text-xs text-slate-400 mt-1">Discover a new bill, debt, or autopay? Deploy it directly to the target list.</p>
+        </div>
+
+        <!-- Radar Input Form -->
+        <form id="radarIntakeForm" onsubmit="handleRadarSubmit(event)" class="space-y-3.5 text-xs">
+          
+          <!-- Target Title -->
+          <div class="space-y-1">
+            <label class="block uppercase tracking-wider text-[10px] text-slate-400 font-bold">Target Description / Bill Name</label>
+            <input type="text" id="intakeTitle" required placeholder="e.g., Migrate Water & Sewage to Vault Autopay" 
+              class="w-full bg-surface border border-slate-700 rounded-lg px-3 py-2 text-white placeholder-slate-600 focus:outline-none focus:border-neon-cyan focus:ring-1 focus:ring-neon-cyan">
+          </div>
+
+          <!-- Friction & XP Weight Selector -->
+          <div class="space-y-1">
+            <label class="block uppercase tracking-wider text-[10px] text-slate-400 font-bold">Friction Class & Bounty</label>
+            <div class="grid grid-cols-3 gap-2">
+              <label class="cursor-pointer">
+                <input type="radio" name="frictionTier" value="50" checked class="peer sr-only">
+                <div class="p-2 rounded border border-slate-700 bg-surface text-center peer-checked:border-neon-green peer-checked:bg-neon-green/10 peer-checked:text-neon-green transition">
+                  <div class="font-bold">50 XP</div>
+                  <div class="text-[9px] text-slate-400">Standard Bill</div>
+                </div>
+              </label>
+              
+              <label class="cursor-pointer">
+                <input type="radio" name="frictionTier" value="200" class="peer sr-only">
+                <div class="p-2 rounded border border-slate-700 bg-surface text-center peer-checked:border-neon-cyan peer-checked:bg-neon-cyan/10 peer-checked:text-neon-cyan transition">
+                  <div class="font-bold">200 XP</div>
+                  <div class="text-[9px] text-slate-400">High 2FA</div>
+                </div>
+              </label>
+
+              <label class="cursor-pointer">
+                <input type="radio" name="frictionTier" value="500" class="peer sr-only">
+                <div class="p-2 rounded border border-slate-700 bg-surface text-center peer-checked:border-neon-amber peer-checked:bg-neon-amber/10 peer-checked:text-neon-amber transition">
+                  <div class="font-bold">500 XP</div>
+                  <div class="text-[9px] text-slate-400">Critical / W-2</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Account Category Tag -->
+          <div class="space-y-1">
+            <label class="block uppercase tracking-wider text-[10px] text-slate-400 font-bold">Operational Sector</label>
+            <select id="intakeCategory" class="w-full bg-surface border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-neon-cyan">
+              <option value="vault-bill">The Vault // Fixed Autopay Bill</option>
+              <option value="vault-debt">The Vault // Debt / Loan Migration</option>
+              <option value="trench-ops">The Trench // Discretionary Protocol</option>
+              <option value="allotment">Allotment // Payroll & W-2 Routing</option>
+            </select>
+          </div>
+
+          <!-- Custom XP Override (Optional) -->
+          <div class="space-y-1">
+            <label class="block uppercase tracking-wider text-[10px] text-slate-400 font-bold">Custom XP Bounty (Optional)</label>
+            <input type="number" id="intakeCustomXp" min="10" max="2500" step="10" placeholder="Leave empty to use tier selected above" 
+              class="w-full bg-surface border border-slate-700 rounded-lg px-3 py-2 text-white placeholder-slate-600 focus:outline-none focus:border-neon-cyan">
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="w-full py-2.5 px-4 rounded-lg font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 border border-neon-cyan/50 bg-neon-cyan/10 hover:bg-neon-cyan/20 text-neon-cyan transition shadow-neon-cyan/10 active:scale-95">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            <span>LOCK TARGET TO TRENCH</span>
+          </button>
+        </form>
+
+        <!-- Quick Metaphor Quick-Reference Card -->
+        <div class="p-3 rounded-lg bg-surface/80 border border-slate-800 text-[11px] space-y-2">
+          <div class="font-bold text-slate-300 flex items-center gap-1.5">
+            <span class="text-neon-cyan">ðŸ’¡</span>
+            <span>BEHAVIORAL PSYCHOLOGY RULE</span>
+          </div>
+          <p class="text-slate-400 leading-relaxed">
+            By migrating all fixed liabilities to <strong class="text-white">The Vault</strong> and cutting its cards, you eliminate decision fatigue. Your brain only ever monitors <strong class="text-white">The Trench</strong> balance.
+          </p>
+        </div>
+
+      </section>
+    </div>
+  </main>
+
+  <!-- MODAL: DATA BACKUP / RESTORE / DIAGNOSTICS -->
+  <div id="dataModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-panel border border-slate-800 rounded-xl max-w-md w-full p-6 space-y-4 shadow-2xl tactical-border">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="font-display font-bold text-white text-base flex items-center gap-2">
+          <span>âš™ï¸</span>
+          <span>AIRLOCK DATA MATRIX</span>
+        </h3>
+        <button onclick="toggleDataModal()" class="text-slate-400 hover:text-white text-lg">&times;</button>
+      </div>
+
+      <p class="text-xs text-slate-400">All Operation: Airlock data is strictly stored locally on your device via HTML5 LocalStorage. No cloud dependencies.</p>
+
+      <div class="space-y-3 pt-2 text-xs">
+        <button onclick="exportData()" class="w-full py-2 px-3 rounded bg-surface border border-slate-700 hover:border-slate-500 text-slate-200 flex items-center justify-between">
+          <span>Export State (JSON Backup)</span>
+          <span>ðŸ’¾</span>
+        </button>
+
+        <label class="w-full py-2 px-3 rounded bg-surface border border-slate-700 hover:border-slate-500 text-slate-200 flex items-center justify-between cursor-pointer">
+          <span>Import State (Restore JSON)</span>
+          <span>ðŸ“¥</span>
+          <input type="file" id="importFileInput" accept=".json" onchange="importData(event)" class="sr-only">
+        </label>
+
+        <button onclick="resetToDefaultPayload()" class="w-full py-2 px-3 rounded bg-red-950/30 border border-red-800/50 hover:bg-red-900/40 text-red-300 flex items-center justify-between">
+          <span>Reset to Default Mission Payload</span>
+          <span>âš ï¸</span>
+        </button>
+      </div>
+
+      <div class="border-t border-slate-800 pt-3 text-right">
+        <button onclick="toggleDataModal()" class="px-4 py-1.5 rounded bg-slate-800 text-slate-300 hover:text-white text-xs">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT STATE ENGINE & AUDIO SYNTHESIZER -->
+  <script>
+    /* ============================================================
+       1. STATE MANAGEMENT & STORAGE SCHEMA
+       ============================================================ */
+    const STORAGE_KEY = 'OPERATION_AIRLOCK_V1';
+
+    // Ranks matching military / O-4 progression
+    const RANKS = [
+      { minXp: 0, title: "E-1 RECRUIT // GROUND ZERO" },
+      { minXp: 1000, title: "E-3 SPECIALIST // AIRLOCK INITIALIZED" },
+      { minXp: 2000, title: "E-5 SERGEANT // TRENCH DEFENDER" },
+      { minXp: 3000, title: "E-7 MASTER SGT // VAULT FORTIFIER" },
+      { minXp: 4000, title: "W-2 CHIEF WARRANT // ROUTING SPECIALIST" },
+      { minXp: 5000, title: "O-1 ENSIGN // AUTOPAY COMMANDER" },
+      { minXp: 6000, title: "O-3 CAPTAIN // SEPARATION ARCHITECT" },
+      { minXp: 7000, title: "O-4 MAJOR // DUAL-ACCOUNT SOVEREIGN" },
+      { minXp: 8000, title: "O-5 LT COLONEL // TACTICAL CAPITALIST" },
+      { minXp: 9000, title: "O-6 COLONEL // AIRLOCK SUPREMACY" },
+      { minXp: 10000, title: "FLAG OFFICER // SOVEREIGN WEALTH MASTER" }
+    ];
+
+    // Default Mission Payload specified by directives
+    const DEFAULT_TASK_PAYLOAD = [
+      {
+        id: "task-vault-open-trench",
+        title: 'Open "The Trench" (Secondary Checking Account).',
+        xp: 200,
+        completed: false,
+        completedAt: null,
+        category: "trench-ops",
+        friction: "high"
+      },
+      {
+        id: "task-w2-allotment",
+        title: "Submit O-4 W-2 Allotment targeting The Vault.",
+        xp: 500,
+        completed: false,
+        completedAt: null,
+        category: "allotment",
+        friction: "critical"
+      },
+      {
+        id: "task-destroy-debit",
+        title: "Destroy / Lock away The Vault physical debit cards.",
+        xp: 300,
+        completed: false,
+        completedAt: null,
+        category: "vault-ops",
+        friction: "high"
+      },
+      {
+        id: "task-coastal-cu-loan",
+        title: "Migrate Coastal Credit Union Auto Loan to Vault Autopay.",
+        xp: 150,
+        completed: false,
+        completedAt: null,
+        category: "vault-debt",
+        friction: "standard"
+      },
+      {
+        id: "task-migrate-utilities",
+        title: "Migrate utilities to Vault Autopay.",
+        xp: 150,
+        completed: false,
+        completedAt: null,
+        category: "vault-bill",
+        friction: "standard"
+      }
+    ];
+
+    let state = {
+      xp: 0,
+      streak: {
+        current: 0,
+        best: 0,
+        lastCheckInDate: null,
+        history: []
+      },
+      tasks: [],
+      settings: {
+        soundEnabled: true
+      }
+    };
+
+    let activeFilter = 'all';
+
+    /* ============================================================
+       2. WEB AUDIO API SYNTHESIZER (ZERO EXTERNAL ASSETS)
+       ============================================================ */
+    let audioCtx = null;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) {
+          audioCtx = new AudioContext();
+        }
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    // Short tactical click/blip
+    function playBleep(frequency = 800, type = 'sine', duration = 0.08) {
+      if (!state.settings.soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(frequency, ctx.currentTime);
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + duration);
+      } catch (e) {
+        console.warn('Audio synthesis issue:', e);
+      }
+    }
+
+    // Success chime for standard task completion
+    function playSuccessSound() {
+      if (!state.settings.soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const notes = [587.33, 880, 1174.66]; // D5, A5, D6
+        notes.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, ctx.currentTime + (idx * 0.06));
+          gain.gain.setValueAtTime(0.12, ctx.currentTime + (idx * 0.06));
+          gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + (idx * 0.06) + 0.25);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(ctx.currentTime + (idx * 0.06));
+          osc.stop(ctx.currentTime + (idx * 0.06) + 0.25);
+        });
+      } catch (e) {}
+    }
+
+    // Massive sci-fi fanfare for Level Up or 7-Day Streaks
+    function playLevelUpFanfare() {
+      if (!state.settings.soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const notes = [440, 554.37, 659.25, 880, 1108.73, 1318.51]; // A Major arpeggio
+        notes.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(freq, ctx.currentTime + (idx * 0.08));
+          gain.gain.setValueAtTime(0.15, ctx.currentTime + (idx * 0.08));
+          gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + (idx * 0.08) + 0.4);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(ctx.currentTime + (idx * 0.08));
+          osc.stop(ctx.currentTime + (idx * 0.08) + 0.4);
+        });
+      } catch (e) {}
+    }
+
+    function toggleAudio() {
+      state.settings.soundEnabled = !state.settings.soundEnabled;
+      saveState();
+      updateAudioButtonUI();
+      if (state.settings.soundEnabled) {
+        playBleep(1000, 'sine', 0.1);
+      }
+    }
+
+    function updateAudioButtonUI() {
+      const icon = document.getElementById('soundIcon');
+      const label = document.getElementById('soundLabel');
+      if (state.settings.soundEnabled) {
+        icon.textContent = 'ðŸ”Š';
+        label.textContent = 'SFX ON';
+      } else {
+        icon.textContent = 'ðŸ”‡';
+        label.textContent = 'SFX OFF';
+      }
+    }
+
+    /* ============================================================
+       3. CONFETTI TRIGGERS (CANVAS-CONFETTI)
+       ============================================================ */
+    // Localized burst for single target completion
+    function triggerTaskConfetti(xCoord, yCoord) {
+      if (typeof confetti !== 'function') return;
+      const x = xCoord ? xCoord / window.innerWidth : 0.5;
+      const y = yCoord ? yCoord / window.innerHeight : 0.5;
+      confetti({
+        particleCount: 50,
+        spread: 70,
+        origin: { x, y },
+        colors: ['#00ff66', '#00f0ff', '#ffffff', '#38bdf8'],
+        disableForReducedMotion: true
+      });
+    }
+
+    // Massive screen-wide celebration for Level-Up or Milestone
+    function triggerEpicConfetti() {
+      if (typeof confetti !== 'function') return;
+      playLevelUpFanfare();
+
+      const end = Date.now() + 2000;
+      const colors = ['#00ff66', '#00f0ff', '#ffaa00', '#ffffff'];
+
+      (function frame() {
+        confetti({
+          particleCount: 4,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0, y: 0.7 },
+          colors: colors
+        });
+        confetti({
+          particleCount: 4,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1, y: 0.7 },
+          colors: colors
+        });
+
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
+        }
+      }());
+    }
+
+    /* ============================================================
+       4. LOCALSTORAGE ENGINE (WITH ROBUST PARSING & FALLBACKS)
+       ============================================================ */
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          // Sanitize & migrate
+          state.xp = typeof parsed.xp === 'number' && !isNaN(parsed.xp) ? Math.max(0, parsed.xp) : 0;
+          state.streak = {
+            current: parsed.streak?.current || 0,
+            best: parsed.streak?.best || 0,
+            lastCheckInDate: parsed.streak?.lastCheckInDate || null,
+            history: Array.isArray(parsed.streak?.history) ? parsed.streak.history : []
+          };
+          state.settings = {
+            soundEnabled: parsed.settings?.soundEnabled !== false
+          };
+
+          // Validate tasks array
+          if (Array.isArray(parsed.tasks) && parsed.tasks.length > 0) {
+            state.tasks = parsed.tasks;
+          } else {
+            state.tasks = JSON.parse(JSON.stringify(DEFAULT_TASK_PAYLOAD));
+          }
+        } else {
+          // Fresh initialization
+          state.tasks = JSON.parse(JSON.stringify(DEFAULT_TASK_PAYLOAD));
+          state.xp = 0;
+          state.streak = { current: 0, best: 0, lastCheckInDate: null, history: [] };
+          saveState();
+        }
+      } catch (err) {
+        console.error('LocalStorage parsing error, initializing defaults:', err);
+        state.tasks = JSON.parse(JSON.stringify(DEFAULT_TASK_PAYLOAD));
+        state.xp = 0;
+        state.streak = { current: 0, best: 0, lastCheckInDate: null, history: [] };
+        saveState();
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {
+        console.error('Failed to write to localStorage:', e);
+      }
+    }
+
+    /* ============================================================
+       5. LEVEL & XP ENGINE
+       ============================================================ */
+    function calculateLevelInfo(totalXp) {
+      const level = Math.floor(totalXp / 1000) + 1;
+      const currentLevelXp = totalXp % 1000;
+      const xpNeeded = 1000 - currentLevelXp;
+      const progressPercent = Math.min(100, Math.round((currentLevelXp / 1000) * 100));
+      const floorXp = (level - 1) * 1000;
+      const ceilXp = level * 1000;
+
+      // Determine rank title
+      let rankTitle = RANKS[0].title;
+      for (let i = RANKS.length - 1; i >= 0; i--) {
+        if (totalXp >= RANKS[i].minXp) {
+          rankTitle = RANKS[i].title;
+          break;
+        }
+      }
+
+      return { level, currentLevelXp, xpNeeded, progressPercent, floorXp, ceilXp, rankTitle };
+    }
+
+    function addXP(amount, eventOrigin) {
+      const oldLevelInfo = calculateLevelInfo(state.xp);
+      state.xp += amount;
+      const newLevelInfo = calculateLevelInfo(state.xp);
+
+      saveState();
+      renderHUD();
+
+      // Check for level up
+      if (newLevelInfo.level > oldLevelInfo.level) {
+        triggerEpicConfetti();
+      } else if (eventOrigin) {
+        triggerTaskConfetti(eventOrigin.clientX, eventOrigin.clientY);
+        playSuccessSound();
+      } else {
+        playSuccessSound();
+      }
+    }
+
+    function deductXP(amount) {
+      state.xp = Math.max(0, state.xp - amount);
+      saveState();
+      renderHUD();
+      playBleep(350, 'sine', 0.15);
+    }
+
+    /* ============================================================
+       6. 60-DAY STREAK & DAILY CHECK-IN SYSTEM
+       ============================================================ */
+    function getTodayIsoDate() {
+      const now = new Date();
+      return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    }
+
+    function getYesterdayIsoDate() {
+      const d = new Date();
+      d.setDate(d.getDate() - 1);
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    function checkDailyStreakStatus() {
+      const today = getTodayIsoDate();
+      const last = state.streak.lastCheckInDate;
+      const isDoneToday = (last === today);
+      return { isDoneToday, today, last };
+    }
+
+    function handleDailyCheckIn() {
+      const { isDoneToday, today, last } = checkDailyStreakStatus();
+      if (isDoneToday) {
+        playBleep(400, 'sine', 0.1);
+        return;
+      }
+
+      const yesterday = getYesterdayIsoDate();
+
+      if (last === yesterday) {
+        // Consecutive streak
+        state.streak.current += 1;
+      } else {
+        // Streak restart or day 1
+        state.streak.current = 1;
+      }
+
+      if (state.streak.current > state.streak.best) {
+        state.streak.best = state.streak.current;
+      }
+
+      state.streak.lastCheckInDate = today;
+      if (!state.streak.history.includes(today)) {
+        state.streak.history.push(today);
+      }
+
+      // Award 50 XP
+      addXP(50);
+
+      // Check for milestone streak (7, 14, 21, 28, 60 days)
+      if (state.streak.current % 7 === 0 || state.streak.current === 60) {
+        triggerEpicConfetti();
+      }
+
+      saveState();
+      renderStreakModule();
+    }
+
+    function renderStreakModule() {
+      const { isDoneToday } = checkDailyStreakStatus();
+      const streak = state.streak.current;
+      const best = state.streak.best;
+
+      document.getElementById('streakCount').textContent = streak;
+      document.getElementById('streakBest').textContent = best;
+
+      // Circular gauge: percent of 60 days
+      const percent = Math.min(100, Math.round((streak / 60) * 100));
+      const circle = document.getElementById('streakProgressCircle');
+      if (circle) {
+        circle.setAttribute('stroke-dasharray', `${percent}, 100`);
+      }
+
+      // Milestone text
+      const milestoneElem = document.getElementById('streakMilestone');
+      if (streak >= 60) {
+        milestoneElem.textContent = 'Airlock Sovereign (60/60)';
+        milestoneElem.className = 'text-neon-green font-bold';
+      } else if (streak >= 30) {
+        milestoneElem.textContent = 'Vault Fortified (30+ Days)';
+        milestoneElem.className = 'text-neon-cyan font-bold';
+      } else if (streak >= 7) {
+        milestoneElem.textContent = `Fortification Active (${streak}/60)`;
+        milestoneElem.className = 'text-neon-amber font-bold';
+      } else {
+        milestoneElem.textContent = `Phase 1 Calibration (${streak}/60)`;
+        milestoneElem.className = 'text-slate-400 font-bold';
+      }
+
+      // Button status
+      const btn = document.getElementById('dailyCheckInBtn');
+      const btnText = document.getElementById('checkInBtnText');
+      const subtext = document.getElementById('checkInStatusSubtext');
+
+      if (isDoneToday) {
+        btn.disabled = true;
+        btn.className = 'w-full py-3 px-4 rounded-lg font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 border border-slate-700 bg-panel text-slate-500 cursor-not-allowed opacity-80';
+        btnText.textContent = 'CHECK-IN SECURED FOR TODAY (+50 XP COLLECTED)';
+        subtext.textContent = 'Perimeter locked. Next daily audit unlocks tomorrow at 00:00.';
+      } else {
+        btn.disabled = false;
+        btn.className = 'w-full py-3 px-4 rounded-lg font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 border transition-all duration-200 bg-gradient-to-r from-amber-500/20 to-neon-amber/20 hover:from-amber-500/30 hover:to-neon-amber/30 text-neon-amber border-neon-amber/40 shadow-neon-amber/10 active:scale-95 cursor-pointer';
+        btnText.textContent = 'DAILY UTILIZATION CHECK-IN (+50 XP)';
+        subtext.textContent = 'Daily audit: Verify zero unbudgeted spills from The Vault.';
+      }
+    }
+
+    /* ============================================================
+       7. TARGET LIST (FRONT-FACE: THE TRENCH)
+       ============================================================ */
+    function toggleTask(id, event) {
+      const task = state.tasks.find(t => t.id === id);
+      if (!task) return;
+
+      if (!task.completed) {
+        task.completed = true;
+        task.completedAt = new Date().toISOString();
+        addXP(task.xp, event);
+      } else {
+        // Toggle off: deduct XP
+        task.completed = false;
+        task.completedAt = null;
+        deductXP(task.xp);
+      }
+
+      saveState();
+      renderTasks();
+    }
+
+    function deleteTask(id, event) {
+      event.stopPropagation();
+      const task = state.tasks.find(t => t.id === id);
+      if (!task) return;
+
+      if (confirm(`Abort target "${task.title}"?`)) {
+        if (task.completed) {
+          state.xp = Math.max(0, state.xp - task.xp);
+        }
+        state.tasks = state.tasks.filter(t => t.id !== id);
+        saveState();
+        renderHUD();
+        renderTasks();
+        playBleep(300, 'sine', 0.1);
+      }
+    }
+
+    function setFilter(filter) {
+      activeFilter = filter;
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('bg-slate-800', 'text-white');
+        btn.classList.add('text-slate-400');
+      });
+      const activeBtn = document.getElementById(`filter-${filter}`);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-slate-800', 'text-white');
+        activeBtn.classList.remove('text-slate-400');
+      }
+      playBleep(900, 'sine', 0.05);
+      renderTasks();
+    }
+
+    function renderTasks() {
+      const container = document.getElementById('targetListContainer');
+      const allCount = state.tasks.length;
+      const completedCount = state.tasks.filter(t => t.completed).length;
+      const activeCount = allCount - completedCount;
+
+      // Update counters
+      document.getElementById('count-all').textContent = allCount;
+      document.getElementById('count-active').textContent = activeCount;
+      document.getElementById('count-completed').textContent = completedCount;
+      document.getElementById('securedCountText').textContent = completedCount;
+      document.getElementById('totalCountText').textContent = allCount;
+
+      const integrity = allCount > 0 ? Math.round((completedCount / allCount) * 100) : 0;
+      document.getElementById('airlockIntegrityText').textContent = `${integrity}%`;
+
+      // Filter
+      let displayed = state.tasks;
+      if (activeFilter === 'active') {
+        displayed = state.tasks.filter(t => !t.completed);
+      } else if (activeFilter === 'completed') {
+        displayed = state.tasks.filter(t => t.completed);
+      }
+
+      if (displayed.length === 0) {
+        container.innerHTML = `
+          <div class="py-12 text-center rounded-lg border border-dashed border-slate-800 p-6 space-y-2">
+            <div class="text-3xl text-slate-600">ðŸ“¡</div>
+            <div class="text-sm font-bold text-slate-400">NO TARGETS IN THIS SECTOR</div>
+            <div class="text-xs text-slate-500">Use "The Radar" on the right to lock in new fixed bills or tasks.</div>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = displayed.map(task => {
+        // Tag badge color
+        let badgeColor = 'bg-slate-800 text-slate-400 border-slate-700';
+        let xpGlow = 'text-neon-cyan';
+        if (task.xp >= 500) {
+          badgeColor = 'bg-neon-amber/10 text-neon-amber border-neon-amber/30';
+          xpGlow = 'text-neon-amber';
+        } else if (task.xp >= 200) {
+          badgeColor = 'bg-neon-cyan/10 text-neon-cyan border-neon-cyan/30';
+          xpGlow = 'text-neon-cyan';
+        } else {
+          badgeColor = 'bg-neon-green/10 text-neon-green border-neon-green/30';
+          xpGlow = 'text-neon-green';
+        }
+
+        const categoryLabels = {
+          'vault-bill': 'VAULT // BILL',
+          'vault-debt': 'VAULT // DEBT',
+          'vault-ops': 'VAULT // SECURITY',
+          'trench-ops': 'TRENCH // DISCRETIONARY',
+          'allotment': 'W-2 // ALLOTMENT'
+        };
+        const catLabel = categoryLabels[task.category] || 'TARGET';
+
+        return `
+          <div onclick="toggleTask('${task.id}', event)" 
+            class="task-item group p-3.5 rounded-lg border border-slate-800 bg-surface hover:border-slate-700 cursor-pointer flex items-center justify-between gap-3 ${task.completed ? 'task-completed' : ''}">
+            
+            <div class="flex items-center gap-3 min-w-0 flex-1">
+              <!-- Custom Checkbox HUD -->
+              <div class="relative w-5 h-5 flex-shrink-0 rounded border ${task.completed ? 'border-neon-green bg-neon-green/20' : 'border-slate-600 bg-panel group-hover:border-neon-cyan'} flex items-center justify-center transition-all duration-200">
+                ${task.completed ? `
+                  <svg class="w-3.5 h-3.5 text-neon-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                  </svg>
+                ` : `
+                  <span class="w-1.5 h-1.5 rounded-sm bg-transparent group-hover:bg-neon-cyan/40"></span>
+                `}
+              </div>
+
+              <!-- Title & Category -->
+              <div class="min-w-0">
+                <div class="task-label text-sm font-medium text-slate-200 break-words transition-colors">
+                  ${escapeHtml(task.title)}
+                </div>
+                <div class="flex items-center gap-2 mt-0.5 text-[10px]">
+                  <span class="px-1.5 py-0.2 rounded border font-bold uppercase tracking-wider ${badgeColor}">${catLabel}</span>
+                  ${task.completed ? '<span class="text-neon-green uppercase tracking-wider font-bold">â— SECURED</span>' : '<span class="text-slate-500 uppercase tracking-wider">PENDING EXECUTION</span>'}
+                </div>
+              </div>
+            </div>
+
+            <!-- Bounty & Controls -->
+            <div class="flex items-center gap-3 flex-shrink-0">
+              <span class="text-xs font-bold font-mono px-2 py-1 rounded bg-panel border border-slate-800 ${xpGlow}">
+                +${task.xp} XP
+              </span>
+              <button onclick="deleteTask('${task.id}', event)" title="Abort Target" 
+                class="opacity-0 group-hover:opacity-100 p-1 text-slate-500 hover:text-neon-red transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* ============================================================
+       8. RADAR INTAKE FORM (BACK-FACE: THE RADAR)
+       ============================================================ */
+    function handleRadarSubmit(e) {
+      e.preventDefault();
+      const titleInput = document.getElementById('intakeTitle');
+      const title = titleInput.value.trim();
+      if (!title) return;
+
+      const category = document.getElementById('intakeCategory').value;
+      const customXpVal = document.getElementById('intakeCustomXp').value;
+      
+      let xp = 50;
+      if (customXpVal && !isNaN(parseInt(customXpVal))) {
+        xp = Math.max(10, parseInt(customXpVal));
+      } else {
+        const tier = document.querySelector('input[name="frictionTier"]:checked');
+        if (tier) xp = parseInt(tier.value);
+      }
+
+      const newTask = {
+        id: 'target-' + Date.now() + '-' + Math.random().toString(36).substr(2, 4),
+        title: title,
+        xp: xp,
+        completed: false,
+        completedAt: null,
+        category: category,
+        friction: xp >= 500 ? 'critical' : xp >= 200 ? 'high' : 'standard'
+      };
+
+      state.tasks.unshift(newTask);
+      saveState();
+
+      // Reset form
+      titleInput.value = '';
+      document.getElementById('intakeCustomXp').value = '';
+      
+      renderTasks();
+      playBleep(1200, 'sine', 0.12);
+
+      // Brief visual indicator
+      const radarHeader = document.querySelector('#radarIntakeForm button[type="submit"]');
+      if (radarHeader) {
+        radarHeader.classList.add('bg-neon-green/20', 'text-neon-green', 'border-neon-green');
+        setTimeout(() => {
+          radarHeader.classList.remove('bg-neon-green/20', 'text-neon-green', 'border-neon-green');
+        }, 300);
+      }
+    }
+
+    /* ============================================================
+       9. HUD & OVERALL TELEMETRY RENDERER
+       ============================================================ */
+    function renderHUD() {
+      const info = calculateLevelInfo(state.xp);
+
+      document.getElementById('hudTotalXp').textContent = state.xp.toLocaleString();
+      document.getElementById('currentLevelNumber').textContent = info.level;
+      document.getElementById('currentLevelXp').textContent = info.currentLevelXp;
+      document.getElementById('xpRemaining').textContent = info.xpNeeded;
+      document.getElementById('progressPercent').textContent = `${info.progressPercent}%`;
+      document.getElementById('xpProgressBar').style.width = `${info.progressPercent}%`;
+      document.getElementById('tierFloorXp').textContent = info.floorXp.toLocaleString();
+      document.getElementById('tierCeilXp').textContent = info.ceilXp.toLocaleString();
+      document.getElementById('rankBadge').textContent = info.rankTitle;
+      document.getElementById('rankTitle').textContent = info.rankTitle;
+    }
+
+    /* ============================================================
+       10. DATA MANAGEMENT MODAL (EXPORT / IMPORT / RESET)
+       ============================================================ */
+    function toggleDataModal() {
+      const modal = document.getElementById('dataModal');
+      modal.classList.toggle('hidden');
+      playBleep(700, 'sine', 0.05);
+    }
+
+    function exportData() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `operation_airlock_save_${getTodayIsoDate()}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      playSuccessSound();
+    }
+
+    function importData(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        try {
+          const imported = JSON.parse(event.target.result);
+          if (imported && typeof imported === 'object') {
+            state = {
+              xp: typeof imported.xp === 'number' ? imported.xp : 0,
+              streak: imported.streak || { current: 0, best: 0, lastCheckInDate: null, history: [] },
+              tasks: Array.isArray(imported.tasks) ? imported.tasks : DEFAULT_TASK_PAYLOAD,
+              settings: imported.settings || { soundEnabled: true }
+            };
+            saveState();
+            renderHUD();
+            renderStreakModule();
+            renderTasks();
+            updateAudioButtonUI();
+            toggleDataModal();
+            triggerEpicConfetti();
+          } else {
+            alert('Invalid backup payload file.');
+          }
+        } catch (err) {
+          alert('Error parsing JSON backup file.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function resetToDefaultPayload() {
+      if (confirm('CRITICAL ALERT: Reset mission state and reload initial target dossier? XP and streaks will be wiped.')) {
+        state.xp = 0;
+        state.streak = { current: 0, best: 0, lastCheckInDate: null, history: [] };
+        state.tasks = JSON.parse(JSON.stringify(DEFAULT_TASK_PAYLOAD));
+        saveState();
+        renderHUD();
+        renderStreakModule();
+        renderTasks();
+        toggleDataModal();
+        playBleep(300, 'sine', 0.2);
+      }
+    }
+
+    // Utility escape
+    function escapeHtml(text) {
+      if (!text) return '';
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    /* ============================================================
+       INITIALIZATION
+       ============================================================ */
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      updateAudioButtonUI();
+      renderHUD();
+      renderStreakModule();
+      renderTasks();
+    });
+  </script>
+</body>
+</html>
+

@@ -2,6 +2,22 @@
   "trailingSlash": true,
   "rewrites": [
     {
+      "source": "/airlock",
+      "destination": "/airlock.html"
+    },
+    {
+      "source": "/airlock/",
+      "destination": "/airlock.html"
+    },
+    {
+      "source": "/operation-airlock",
+      "destination": "/airlock.html"
+    },
+    {
+      "source": "/operation-airlock/",
+      "destination": "/airlock.html"
+    },
+    {
       "source": "/peacemaker-deck",
       "destination": "/peacemaker_deck.html"
     },
