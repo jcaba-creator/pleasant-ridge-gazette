@@ -421,16 +421,29 @@
     const TELEMETRY_KEY = "bb_trooper_telemetry_v1";
 
     const DEFAULT_REAL_WORLD_TASKS = [
+      // Morning Launch
       { id: "get_dressed", name: "Get dressed", desc: "Put on clothes and socks", zone: "am", xp: 25, emoji: "👕" },
       { id: "brush_teeth", name: "Brush teeth", desc: "Brush teeth for 2 minutes", zone: "am", xp: 25, emoji: "🪥" },
+      { id: "floss_teeth", name: "Floss teeth", desc: "Floss clean between teeth", zone: "am", xp: 25, emoji: "🦷" },
+      { id: "put_deodorant", name: "Put on Deodorant", desc: "Put on fresh deodorant", zone: "am", xp: 25, emoji: "✨" },
+      { id: "take_medicine", name: "Take medicine", desc: "Take morning medicine", zone: "am", xp: 25, emoji: "💊" },
       { id: "eat_breakfast", name: "Eat breakfast", desc: "Finish breakfast food and drink", zone: "am", xp: 25, emoji: "🥞" },
       { id: "get_backpack", name: "Get backpack", desc: "Packed and placed by the door", zone: "am", xp: 25, emoji: "🎒" },
+      { id: "feed_kitten", name: "Feed kitten", desc: "Put food in kitten bowl", zone: "am", xp: 25, emoji: "🐱" },
+      { id: "horse_bowl_garage", name: "Place yesterday’s horse bowl back in garage", desc: "Return empty horse bowl to garage", zone: "am", xp: 25, emoji: "🥣" },
+      { id: "reset_beet_pulp", name: "Reset beet pulp for tomorrow", desc: "Prep and soak beet pulp for tomorrow", zone: "am", xp: 25, emoji: "🌾" },
+
+      // Pasture & Barn Patrol
       { id: "check_horse_water", name: "Check horse water", desc: "Check trough - make sure it is full and clean", zone: "pasture", xp: 50, emoji: "💧" },
       { id: "horse_cow_care", name: "Take care of horse and cow", desc: "Feed and check on horse and cow", zone: "pasture", xp: 50, emoji: "🐄" },
+
+      // Critter Squad
       { id: "feed_dog", name: "Feed dog", desc: "Put food in the dog bowl", zone: "critters", xp: 35, emoji: "🐕" },
       { id: "feed_cat", name: "Feed cat", desc: "Put food in the cat bowl", zone: "critters", xp: 35, emoji: "🐈" },
       { id: "water_cat", name: "Water cat", desc: "Give cat fresh clean water", zone: "critters", xp: 35, emoji: "🥛" },
       { id: "do_litter", name: "Do litter", desc: "Clean the cat litter box", zone: "critters", xp: 35, emoji: "🧹" },
+
+      // Evening Reset
       { id: "chill_reset", name: "Chill and reset for tomorrow", desc: "Put shoes away and relax for tomorrow", zone: "pm", xp: 50, emoji: "🎧" }
     ];
 
@@ -452,11 +465,22 @@
     function init() {
       const savedTasks = localStorage.getItem(TASKS_KEY);
       if (savedTasks) {
-        try { tasks = JSON.parse(savedTasks); } catch(e) { tasks = [...DEFAULT_REAL_WORLD_TASKS]; }
+        try {
+          const loaded = JSON.parse(savedTasks);
+          const existingIds = new Set(loaded.map(t => t.id));
+          DEFAULT_REAL_WORLD_TASKS.forEach(dt => {
+            if (!existingIds.has(dt.id)) {
+              loaded.push(dt);
+            }
+          });
+          tasks = loaded;
+        } catch(e) {
+          tasks = [...DEFAULT_REAL_WORLD_TASKS];
+        }
       } else {
         tasks = [...DEFAULT_REAL_WORLD_TASKS];
-        saveTasks();
       }
+      saveTasks();
 
       const savedData = localStorage.getItem(DATA_KEY);
       if (savedData) {
