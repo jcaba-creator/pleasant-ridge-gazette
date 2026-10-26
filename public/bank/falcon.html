@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" class="dark scroll-smooth">
+<html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Falcon Horizon · Greater KC Birthday Jump & Ancillary Decision Tool</title>
+  <title>Falcon Horizon · The Sassenach Birthday Journey & Decision Matrix</title>
   
   <!-- Prevent search engine indexing -->
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
@@ -14,10 +14,10 @@
   <!-- FontAwesome Icons CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <!-- Google Fonts -->
+  <!-- Google Fonts: Cormorant Garamond (Scottish/Outlander Serif), Playfair Display, Plus Jakarta Sans, JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600;1,700&family=Playfair+Display:ital,wght@0,600;0,700;1,500;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
   <script>
     tailwind.config = {
@@ -25,30 +25,52 @@
       theme: {
         extend: {
           fontFamily: {
-            headline: ['Cinzel', 'Georgia', 'serif'],
+            headline: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+            display: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans: ['"Plus Jakarta Sans"', '-apple-system', 'sans-serif'],
             mono: ['"JetBrains Mono"', 'monospace'],
-            sans: ['Inter', '-apple-system', 'sans-serif'],
           },
           colors: {
-            tactical: {
-              950: '#060a12',
-              900: '#0b1120',
-              850: '#11192d',
-              800: '#17223b',
-              700: '#233357',
-              600: '#344b7e',
-              500: '#4c6cb0',
+            highland: {
+              50: '#F5F8F5',
+              100: '#E8F1EA',
+              200: '#D2E3D5',
+              300: '#ABCDB3',
+              400: '#7BAE88',
+              500: '#528E62',
+              600: '#3D714C',
+              700: '#2D5A3C', // Deep Fraser Pine / Highland Moss
+              800: '#23462F',
+              900: '#1A3322',
+              950: '#0E1D13',
             },
-            champagne: {
-              DEFAULT: '#e6c887',
-              50: '#fdfbf7',
-              100: '#f9f4ea',
-              200: '#f3e6ce',
-              300: '#ebd3a9',
-              400: '#e0bb7b',
-              500: '#d4a34f',
-              600: '#be8638',
-              glow: 'rgba(230, 200, 135, 0.25)',
+            thistle: {
+              50: '#F9F6F8',
+              100: '#F4EDF2',
+              200: '#E8DCE4',
+              300: '#D5C0CE',
+              400: '#B897AE',
+              500: '#9B7290', // Scottish Thistle Heather
+              600: '#7D5572',
+              700: '#64425A',
+              800: '#4E3346',
+            },
+            parchment: {
+              50: '#FDFCF9',
+              100: '#FAF7F0',
+              200: '#F3EDE0',
+              300: '#E9DFC9',
+              400: '#DACAAE',
+              500: '#C7B18E',
+              600: '#B29770',
+              700: '#8E734E',
+              800: '#6E573B',
+            },
+            amberbrass: {
+              DEFAULT: '#B88636',
+              light: '#FBF5EB',
+              border: '#E8D7B8',
+              dark: '#8C621E',
             }
           }
         }
@@ -58,96 +80,115 @@
 
   <style>
     body {
-      background-color: #060a12;
-      color: #e2e8f0;
-      font-family: 'Inter', -apple-system, sans-serif;
+      background-color: #FAF8F5;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(232, 241, 234, 0.5) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(244, 237, 242, 0.4) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(243, 237, 224, 0.5) 0px, transparent 50%);
+      color: #2D3730;
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
     }
-    .glass-card {
-      background: rgba(17, 25, 45, 0.85);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(230, 200, 135, 0.16);
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+    /* Outlander Airy Card */
+    .outlander-card {
+      background: #FFFFFF;
+      border: 1px solid #E6E0D4;
+      box-shadow: 0 4px 20px -2px rgba(45, 90, 60, 0.04), 0 2px 8px -1px rgba(0, 0, 0, 0.02);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .glass-card:hover {
-      border-color: rgba(230, 200, 135, 0.4);
+    .outlander-card:hover {
+      border-color: #B5CEBC;
       transform: translateY(-2px);
+      box-shadow: 0 12px 28px -4px rgba(45, 90, 60, 0.09), 0 4px 10px -2px rgba(0, 0, 0, 0.03);
     }
-    .gradient-gold {
-      background: linear-gradient(135deg, #f9f4ea 0%, #e6c887 50%, #d4a34f 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .glow-gold {
-      box-shadow: 0 0 30px rgba(230, 200, 135, 0.14);
-    }
+
+    /* Selected Card State: Scottish Highland Pine glow */
     .selected-card {
-      border-color: #e6c887 !important;
-      background: rgba(23, 34, 59, 0.95) !important;
-      box-shadow: 0 0 24px rgba(230, 200, 135, 0.28) !important;
+      border-color: #2D5A3C !important;
+      background: #F4F8F5 !important;
+      box-shadow: 0 0 0 2px #2D5A3C, 0 8px 24px -2px rgba(45, 90, 60, 0.16) !important;
       transform: translateY(-2px);
     }
-    .nav-pill-active {
-      background-color: #e6c887 !important;
-      color: #060a12 !important;
-      font-weight: 700 !important;
+
+    .tartan-subtle {
+      background-image: repeating-linear-gradient(45deg, rgba(45, 90, 60, 0.02) 0px, rgba(45, 90, 60, 0.02) 2px, transparent 2px, transparent 10px);
+    }
+
+    /* Romantic Serif Headings */
+    .font-outlander {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+    }
+
+    .scratchpad-paper {
+      background: #FAF8F2;
+      background-image: linear-gradient(#F0EADF 1px, transparent 1px);
+      background-size: 100% 28px;
+      line-height: 28px;
     }
   </style>
 </head>
-<body class="min-h-screen text-slate-200 antialiased selection:bg-champagne-500 selection:text-tactical-950 pb-44">
+<body class="min-h-screen antialiased selection:bg-highland-100 selection:text-highland-900 pb-44 tartan-subtle">
 
-  <!-- TOP PRIVATE HEADER (UNLINKED / SELF-CONTAINED) -->
-  <header class="border-b border-tactical-700/60 bg-tactical-900/95 sticky top-0 z-40 backdrop-blur-md">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center space-x-3">
-        <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-champagne-500/10 border border-champagne-400/30 text-champagne">
-          <i class="fa-solid fa-parachute-box text-base"></i>
+  <!-- TOP AIRY NAVIGATION & HEADER -->
+  <header class="border-b border-[#E6E0D4] bg-white/90 sticky top-0 z-40 backdrop-blur-md shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center space-x-3.5">
+        <span class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-highland-50 border border-highland-200 text-highland-700 shadow-xs">
+          <i class="fa-solid fa-feather-pointed text-base"></i>
         </span>
         <div>
-          <span class="text-[10px] font-mono tracking-widest text-champagne-400 uppercase font-semibold block">Private Mission Dossier</span>
-          <h1 class="text-sm sm:text-base font-headline font-bold text-white tracking-wide">Operation Falcon Horizon • Greater KC Decision Engine</h1>
+          <span class="text-[10px] font-mono tracking-widest text-thistle-600 uppercase font-bold block flex items-center gap-1.5">
+            <span>✦</span> The Sassenach Birthday Journal <span>✦</span>
+          </span>
+          <h1 class="text-base sm:text-lg font-outlander font-bold text-highland-900 tracking-wide">
+            Operation Falcon Horizon · Greater KC Retreat Matrix
+          </h1>
         </div>
       </div>
 
       <div class="flex items-center space-x-2 text-xs font-mono">
-        <span class="px-2.5 py-1 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-semibold flex items-center gap-1.5">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-          FALCON LOCKED • WED NOV 25, 2026
+        <span class="px-3 py-1 rounded-full bg-highland-50 border border-highland-200 text-highland-700 font-semibold flex items-center gap-1.5 shadow-2xs">
+          <span class="w-2 h-2 rounded-full bg-highland-600 animate-ping"></span>
+          FALCON LOCKED · WED NOV 25, 2026
         </span>
-        <span class="hidden sm:inline-block px-2.5 py-1 rounded bg-tactical-800 border border-tactical-700 text-sky-300">
-          <i class="fa-solid fa-hotel text-sky-400 mr-1"></i> BASE: KCI CORRIDOR
+        <span class="hidden sm:inline-block px-3 py-1 rounded-full bg-thistle-50 border border-thistle-200 text-thistle-700 font-semibold">
+          <i class="fa-solid fa-water text-thistle-500 mr-1"></i> HYDRO-RECOVERY MANDATE
         </span>
       </div>
     </div>
 
-    <!-- QUICK-JUMP STICKY NAV BAR (SINGLE-PAGE CONTINUOUS NAVIGATION) -->
-    <nav class="border-t border-tactical-800/80 bg-tactical-950/90 px-4 sm:px-6 py-2 overflow-x-auto">
+    <!-- QUICK-JUMP STICKY NAV BAR -->
+    <nav class="border-t border-[#EDE6DC] bg-[#FDFBF7]/95 px-4 sm:px-6 py-2 overflow-x-auto">
       <div class="max-w-7xl mx-auto flex items-center gap-2 text-xs font-mono whitespace-nowrap scrollbar-none">
-        <span class="text-slate-400 text-[11px] uppercase mr-1 flex items-center gap-1">
-          <i class="fa-solid fa-compass text-amber-400"></i> Jump to:
+        <span class="text-[#75847B] text-[11px] uppercase mr-1 flex items-center gap-1 font-semibold">
+          <i class="fa-solid fa-compass text-amberbrass"></i> Jump to:
         </span>
-        <a href="#sec-hotel" class="px-3 py-1 rounded-lg bg-tactical-800 text-slate-300 hover:text-white border border-tactical-700 hover:border-champagne-400/50 transition-all">
-          1. Base & Hot Tub
+        <a href="#sec-hotel" class="px-3 py-1 rounded-full bg-white hover:bg-highland-50 text-[#3C4A42] hover:text-highland-800 border border-[#DDD5C7] hover:border-highland-300 transition-all shadow-2xs">
+          1. Base Camp & Hot Tub
         </a>
-        <a href="#sec-jump" class="px-3 py-1 rounded-lg bg-tactical-800 text-slate-300 hover:text-white border border-tactical-700 hover:border-champagne-400/50 transition-all">
+        <a href="#sec-jump" class="px-3 py-1 rounded-full bg-white hover:bg-highland-50 text-[#3C4A42] hover:text-highland-800 border border-[#DDD5C7] hover:border-highland-300 transition-all shadow-2xs">
           2. Falcon Skydive
         </a>
-        <a href="#sec-breakfast" class="px-3 py-1 rounded-lg bg-tactical-800 text-slate-300 hover:text-white border border-tactical-700 hover:border-champagne-400/50 transition-all">
+        <a href="#sec-breakfast" class="px-3 py-1 rounded-full bg-white hover:bg-highland-50 text-[#3C4A42] hover:text-highland-800 border border-[#DDD5C7] hover:border-highland-300 transition-all shadow-2xs">
           3. Breakfast
         </a>
-        <a href="#sec-lunch" class="px-3 py-1 rounded-lg bg-tactical-800 text-slate-300 hover:text-white border border-tactical-700 hover:border-champagne-400/50 transition-all">
+        <a href="#sec-lunch" class="px-3 py-1 rounded-full bg-white hover:bg-highland-50 text-[#3C4A42] hover:text-highland-800 border border-[#DDD5C7] hover:border-highland-300 transition-all shadow-2xs">
           4. Lunch
         </a>
-        <a href="#sec-dinner" class="px-3 py-1 rounded-lg bg-tactical-800 text-slate-300 hover:text-white border border-tactical-700 hover:border-champagne-400/50 transition-all">
+        <a href="#sec-dinner" class="px-3 py-1 rounded-full bg-white hover:bg-highland-50 text-[#3C4A42] hover:text-highland-800 border border-[#DDD5C7] hover:border-highland-300 transition-all shadow-2xs">
           5. Dinner
         </a>
-        <a href="#sec-crafts" class="px-3 py-1 rounded-lg bg-tactical-800 text-slate-300 hover:text-white border border-tactical-700 hover:border-champagne-400/50 transition-all">
+        <a href="#sec-crafts" class="px-3 py-1 rounded-full bg-white hover:bg-highland-50 text-[#3C4A42] hover:text-highland-800 border border-[#DDD5C7] hover:border-highland-300 transition-all shadow-2xs">
           6. "Creating"
         </a>
-        <a href="#sec-loot" class="px-3 py-1 rounded-lg bg-tactical-800 text-slate-300 hover:text-white border border-tactical-700 hover:border-champagne-400/50 transition-all">
+        <a href="#sec-loot" class="px-3 py-1 rounded-full bg-white hover:bg-highland-50 text-[#3C4A42] hover:text-highland-800 border border-[#DDD5C7] hover:border-highland-300 transition-all shadow-2xs">
           7. Kid Loot Run
         </a>
-        <a href="#sec-sights" class="px-3 py-1 rounded-lg bg-tactical-800 text-slate-300 hover:text-white border border-tactical-700 hover:border-champagne-400/50 transition-all">
+        <a href="#sec-sights" class="px-3 py-1 rounded-full bg-white hover:bg-highland-50 text-[#3C4A42] hover:text-highland-800 border border-[#DDD5C7] hover:border-highland-300 transition-all shadow-2xs">
           8. Scenic Vistas
+        </a>
+        <a href="#sec-scratchpad" class="px-3 py-1 rounded-full bg-amberbrass-light text-amberbrass-dark border border-amberbrass-border font-bold hover:bg-amber-100 transition-all shadow-2xs flex items-center gap-1">
+          <i class="fa-solid fa-pen-fancy text-[10px]"></i> 9. Scratch Pad
         </a>
       </div>
     </nav>
@@ -155,55 +196,56 @@
 
   <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-12">
 
-    <!-- HERO DOSSIER HEADER -->
-    <section class="glass-card rounded-2xl p-6 sm:p-8 relative overflow-hidden glow-gold">
-      <div class="absolute -right-20 -top-20 w-96 h-96 bg-champagne-500/5 rounded-full blur-3xl pointer-events-none"></div>
+    <!-- HERO OUTLANDER DOSSIER -->
+    <section class="outlander-card rounded-2xl p-6 sm:p-10 relative overflow-hidden bg-gradient-to-br from-white via-[#FCFBF8] to-[#F7FAF7] border border-[#E3DCCF]">
+      <div class="absolute -right-16 -top-16 w-80 h-80 bg-highland-100/40 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -left-16 -bottom-16 w-72 h-72 bg-thistle-100/30 rounded-full blur-3xl pointer-events-none"></div>
 
-      <div class="max-w-4xl space-y-4">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-champagne-500/10 border border-champagne-400/20 text-champagne-300 text-xs font-mono tracking-wider">
-          <i class="fa-solid fa-circle-check text-emerald-400 text-xs"></i> 100% GREATER KANSAS CITY • VERIFIED LOCATIONS, PHONES & DRIVE TIMES
+      <div class="max-w-4xl space-y-4 relative z-10">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-highland-50 border border-highland-200 text-highland-800 text-xs font-mono tracking-wider font-semibold">
+          <i class="fa-solid fa-clover text-highland-600"></i> 100% GREATER KANSAS CITY · VERIFIED LOCAL VENUES, PHONES & DRIVE TIMES
         </div>
 
-        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-headline font-bold text-white tracking-tight leading-tight">
-          Britt's Birthday <span class="gradient-gold">Decision Matrix</span>
+        <h2 class="text-3xl sm:text-5xl font-outlander font-bold text-highland-950 tracking-tight leading-tight">
+          Britt's Highland Sky <span class="italic font-display font-medium text-highland-700">&</span> Birthday Journey
         </h2>
 
-        <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
-          The jump is locked at <strong>Falcon Skydiving (Noah's Ark Airport, MO)</strong> with the KU Health seated slide landing protocol. Every option below is laid out on this <strong>single page</strong>. Click any card to select or <strong>click again to unselect / skip</strong>. Track your live total cost and cumulative drive time in the bottom bar, and tap direct phone links to book.
+        <p class="text-[#4E5C53] text-base sm:text-lg leading-relaxed font-light">
+          The tandem flight is anchored at <strong>Falcon Skydiving (Noah's Ark Airport, MO)</strong> with the KU Health seated slide-in landing protocol. Browse every option below in this light, unhurried single page. Tap any card to select, or <strong>tap again to deselect / skip</strong>. Watch your live budget and drive times calculate in real time, and jot down thoughts in the <strong>Scratch Pad</strong> at the foot of the page.
         </p>
 
-        <!-- CORE SPEC PILLS -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-          <div class="bg-tactical-900/90 border border-tactical-700/80 rounded-xl p-3">
-            <span class="text-[10px] font-mono uppercase text-slate-400 block">Flight Anchor</span>
-            <span class="text-xs sm:text-sm font-semibold text-white flex items-center gap-1.5 mt-0.5">
-              <i class="fa-solid fa-plane-up text-amber-400"></i> Falcon Skydiving
+        <!-- SPEC BADGES -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3">
+          <div class="bg-white/80 border border-[#E5DFD4] rounded-xl p-3.5 shadow-2xs">
+            <span class="text-[10px] font-mono uppercase text-[#738278] block font-semibold">Flight Anchor</span>
+            <span class="text-xs sm:text-sm font-semibold text-highland-900 flex items-center gap-1.5 mt-0.5">
+              <i class="fa-solid fa-plane-up text-amberbrass"></i> Falcon Skydiving
             </span>
-            <span class="text-[11px] text-slate-400 block mt-0.5">Noah's Ark • 12 min drive</span>
+            <span class="text-[11px] text-[#738278] block mt-0.5">Noah's Ark · 12 min drive</span>
           </div>
 
-          <div class="bg-tactical-900/90 border border-tactical-700/80 rounded-xl p-3">
-            <span class="text-[10px] font-mono uppercase text-slate-400 block">Recovery Mandate</span>
-            <span class="text-xs sm:text-sm font-semibold text-champagne flex items-center gap-1.5 mt-0.5">
-              <i class="fa-solid fa-hot-tub-person text-champagne-400"></i> Indoor Whirlpool
+          <div class="bg-white/80 border border-[#E5DFD4] rounded-xl p-3.5 shadow-2xs">
+            <span class="text-[10px] font-mono uppercase text-[#738278] block font-semibold">Hydro-Recovery</span>
+            <span class="text-xs sm:text-sm font-semibold text-thistle-700 flex items-center gap-1.5 mt-0.5">
+              <i class="fa-solid fa-hot-tub-person text-thistle-500"></i> Indoor Whirlpool
             </span>
-            <span class="text-[11px] text-slate-400 block mt-0.5">Hot Tub Hydro-Decompression</span>
+            <span class="text-[11px] text-[#738278] block mt-0.5">Tendon Decompression</span>
           </div>
 
-          <div class="bg-tactical-900/90 border border-tactical-700/80 rounded-xl p-3">
-            <span class="text-[10px] font-mono uppercase text-slate-400 block">Meal Architecture</span>
-            <span class="text-xs sm:text-sm font-semibold text-rose-300 flex items-center gap-1.5 mt-0.5">
-              <i class="fa-solid fa-utensils text-rose-400"></i> B / L / D Curated
+          <div class="bg-white/80 border border-[#E5DFD4] rounded-xl p-3.5 shadow-2xs">
+            <span class="text-[10px] font-mono uppercase text-[#738278] block font-semibold">Meal Architecture</span>
+            <span class="text-xs sm:text-sm font-semibold text-[#8C5E47] flex items-center gap-1.5 mt-0.5">
+              <i class="fa-solid fa-utensils text-[#8C5E47]"></i> B / L / D Curated
             </span>
-            <span class="text-[11px] text-slate-400 block mt-0.5">Verified Wed Open Hours</span>
+            <span class="text-[11px] text-[#738278] block mt-0.5">Verified Wed Open Hours</span>
           </div>
 
-          <div class="bg-tactical-900/90 border border-tactical-700/80 rounded-xl p-3">
-            <span class="text-[10px] font-mono uppercase text-slate-400 block">Interactive Matrix</span>
-            <span class="text-xs sm:text-sm font-semibold text-emerald-400 flex items-center gap-1.5 mt-0.5">
-              <i class="fa-solid fa-toggle-on text-emerald-400"></i> Toggle / Unselect
+          <div class="bg-white/80 border border-[#E5DFD4] rounded-xl p-3.5 shadow-2xs">
+            <span class="text-[10px] font-mono uppercase text-[#738278] block font-semibold">Interactive Matrix</span>
+            <span class="text-xs sm:text-sm font-semibold text-highland-700 flex items-center gap-1.5 mt-0.5">
+              <i class="fa-solid fa-toggle-on text-highland-600"></i> Toggle / Unselect
             </span>
-            <span class="text-[11px] text-slate-400 block mt-0.5">Live Cost & Drive Calculator</span>
+            <span class="text-[11px] text-[#738278] block mt-0.5">Live Cost & Time Bar</span>
           </div>
         </div>
       </div>
@@ -212,148 +254,148 @@
 
     <!-- ==================== SECTION 1: BASE CAMP & HOT TUB ==================== -->
     <section id="sec-hotel" class="space-y-4 pt-4">
-      <div class="flex items-center justify-between border-b border-tactical-700/70 pb-3">
+      <div class="flex items-center justify-between border-b border-[#E3DCCF] pb-3">
         <div>
-          <h3 class="text-xl sm:text-2xl font-headline font-bold text-white flex items-center gap-2">
-            <span class="text-champagne font-mono text-base">01.</span> Base Camp & Hot Tub Hydro-Recovery
+          <h3 class="text-xl sm:text-2xl font-outlander font-bold text-highland-950 flex items-center gap-2">
+            <span class="text-highland-600 font-mono text-base font-bold">01.</span> Base Camp & Hot Tub Hydro-Recovery
           </h3>
-          <p class="text-xs text-slate-400 font-mono mt-0.5">Heated indoor whirlpools required for soothing joint and knee tendons post-jump</p>
+          <p class="text-xs text-[#6B7971] font-mono mt-0.5">Heated indoor whirlpools required for soothing joint and knee tendons post-jump</p>
         </div>
-        <span class="text-[11px] font-mono text-slate-400 hidden sm:inline-block">Click card to select or unselect</span>
+        <span class="text-[11px] font-mono text-[#7B8B82] hidden sm:inline-block">Click card to select or unselect</span>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
         <!-- OPTION 1: DRURY INN KCI -->
-        <div id="card-hotel-drury" class="glass-card rounded-2xl p-6 border flex flex-col justify-between space-y-5 cursor-pointer selected-card" onclick="toggleItem('hotel', 'drury', 125, 'Drury Inn & Suites KCI Airport', 0, 50)">
+        <div id="card-hotel-drury" class="outlander-card rounded-2xl p-6 border flex flex-col justify-between space-y-5 cursor-pointer selected-card" onclick="toggleItem('hotel', 'drury', 125, 'Drury Inn & Suites KCI Airport', 0, 50)">
           <div class="space-y-3">
             <div class="flex items-center justify-between">
-              <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 uppercase">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amberbrass-light text-amberbrass-dark border border-amberbrass-border uppercase">
                 ⭐ Top Recommendation
               </span>
-              <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-tactical-800 text-emerald-400 font-bold">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-highland-50 text-highland-800 font-bold border border-highland-200">
                 $125 / night (Mil)
               </span>
             </div>
 
-            <h4 class="text-lg font-headline font-bold text-white">Drury Inn & Suites KCI Airport</h4>
+            <h4 class="text-lg font-outlander font-bold text-highland-950">Drury Inn & Suites KCI Airport</h4>
             
-            <div class="flex flex-wrap gap-2 text-[11px] font-mono">
-              <span class="px-2 py-0.5 rounded bg-tactical-950 text-slate-300 border border-tactical-800"><i class="fa-solid fa-car text-amber-400 mr-1"></i> 12 min to Dropzone</span>
-              <span class="px-2 py-0.5 rounded bg-tactical-950 text-sky-300 border border-tactical-800"><i class="fa-solid fa-hot-tub-person mr-1"></i> Indoor Whirlpool</span>
-              <span class="px-2 py-0.5 rounded bg-tactical-950 text-emerald-300 border border-tactical-800"><i class="fa-solid fa-utensils mr-1"></i> Free Bfast + 5:30 Dinner</span>
+            <div class="flex flex-wrap gap-1.5 text-[11px] font-mono">
+              <span class="px-2.5 py-0.5 rounded-full bg-[#FAF7F0] text-[#55635B] border border-[#E3DBD0]"><i class="fa-solid fa-car text-amberbrass mr-1"></i> 12 min to Dropzone</span>
+              <span class="px-2.5 py-0.5 rounded-full bg-thistle-50 text-thistle-700 border border-thistle-200"><i class="fa-solid fa-hot-tub-person mr-1"></i> Indoor Whirlpool</span>
+              <span class="px-2.5 py-0.5 rounded-full bg-highland-50 text-highland-700 border border-highland-200"><i class="fa-solid fa-utensils mr-1"></i> Free Bfast + 5:30 Dinner</span>
             </div>
 
-            <p class="text-xs text-slate-300 leading-relaxed">
-              <strong>The Exact Spec Hotel:</strong> Heated indoor whirlpool & pool for joint decompression. Complimentary hot breakfast buffet plus the 5:30 Kickback® (hot dinner buffet + 3 alcoholic drinks nightly per adult).
+            <p class="text-xs text-[#4E5C53] leading-relaxed">
+              <strong>The Exact Spec Hotel:</strong> Heated indoor whirlpool & pool for tendon decompression. Complimentary hot breakfast buffet plus the 5:30 Kickback® (hot dinner buffet + 3 drinks nightly per adult).
             </p>
 
-            <div class="text-[11px] text-slate-400 font-mono space-y-1 pt-1 border-t border-tactical-800">
+            <div class="text-[11px] text-[#6E7D74] font-mono space-y-1 pt-2 border-t border-[#EDE6DC]">
               <div>📍 7833 NW Prairie View Rd, KCMO 64151</div>
-              <div>🎖️ Promo Code: <code class="text-champagne font-bold">SALUTE</code> or Federal Gov Rate</div>
+              <div>🎖️ Promo Code: <code class="text-highland-700 font-bold bg-highland-50 px-1 py-0.5 rounded">SALUTE</code> or Federal Gov Rate</div>
             </div>
           </div>
 
-          <div class="space-y-3">
+          <div class="space-y-3 pt-2">
             <div class="flex gap-2 text-xs font-mono">
-              <a href="https://www.druryhotels.com/locations/kansas-city-mo/drury-inn-and-suites-kansas-city-airport" target="_blank" class="flex-1 py-2 rounded-lg bg-tactical-800 hover:bg-tactical-700 text-center text-slate-200 border border-tactical-600 font-semibold" onclick="event.stopPropagation()">
+              <a href="https://www.druryhotels.com/locations/kansas-city-mo/drury-inn-and-suites-kansas-city-airport" target="_blank" class="flex-1 py-2 rounded-xl bg-white hover:bg-highland-50 text-center text-[#3D4C43] border border-[#DDD5C7] font-semibold transition-all shadow-2xs" onclick="event.stopPropagation()">
                 <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Website
               </a>
-              <a href="tel:18168809700" class="flex-1 py-2 rounded-lg bg-tactical-800 hover:bg-tactical-700 text-center text-champagne border border-tactical-600 font-semibold" onclick="event.stopPropagation()">
+              <a href="tel:18168809700" class="flex-1 py-2 rounded-xl bg-white hover:bg-amberbrass-light text-center text-amberbrass-dark border border-[#DDD5C7] font-semibold transition-all shadow-2xs" onclick="event.stopPropagation()">
                 <i class="fa-solid fa-phone mr-1"></i> (816) 880-9700
               </a>
             </div>
-            <button class="w-full py-2 rounded-xl bg-champagne-500 text-tactical-950 font-bold text-xs font-mono uppercase select-btn">
+            <button class="w-full py-2.5 rounded-xl bg-highland-700 text-white font-bold text-xs font-mono uppercase select-btn shadow-xs">
               ✓ Selected ($125)
             </button>
           </div>
         </div>
 
         <!-- OPTION 2: EMBASSY SUITES KCI -->
-        <div id="card-hotel-embassy" class="glass-card rounded-2xl p-6 border flex flex-col justify-between space-y-5 cursor-pointer" onclick="toggleItem('hotel', 'embassy', 159, 'Embassy Suites by Hilton KCI', 6, 25)">
+        <div id="card-hotel-embassy" class="outlander-card rounded-2xl p-6 border flex flex-col justify-between space-y-5 cursor-pointer" onclick="toggleItem('hotel', 'embassy', 159, 'Embassy Suites by Hilton KCI', 6, 25)">
           <div class="space-y-3">
             <div class="flex items-center justify-between">
-              <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-sky-500/20 text-sky-300 uppercase">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-sky-50 text-sky-800 border border-sky-200 uppercase">
                 All-Suite Layout
               </span>
-              <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-tactical-800 text-slate-200 font-bold">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-[#FAF7F0] text-[#55635B] font-bold border border-[#E3DBD0]">
                 $159 / night
               </span>
             </div>
 
-            <h4 class="text-lg font-headline font-bold text-white">Embassy Suites by Hilton KCI</h4>
+            <h4 class="text-lg font-outlander font-bold text-highland-950">Embassy Suites by Hilton KCI</h4>
             
-            <div class="flex flex-wrap gap-2 text-[11px] font-mono">
-              <span class="px-2 py-0.5 rounded bg-tactical-950 text-slate-300 border border-tactical-800"><i class="fa-solid fa-car text-amber-400 mr-1"></i> 14 min to Dropzone</span>
-              <span class="px-2 py-0.5 rounded bg-tactical-950 text-sky-300 border border-tactical-800"><i class="fa-solid fa-hot-tub-person mr-1"></i> Indoor Whirlpool</span>
-              <span class="px-2 py-0.5 rounded bg-tactical-950 text-emerald-300 border border-tactical-800"><i class="fa-solid fa-egg mr-1"></i> Cooked-to-Order Bfast</span>
+            <div class="flex flex-wrap gap-1.5 text-[11px] font-mono">
+              <span class="px-2.5 py-0.5 rounded-full bg-[#FAF7F0] text-[#55635B] border border-[#E3DBD0"><i class="fa-solid fa-car text-amberbrass mr-1"></i> 14 min to Dropzone</span>
+              <span class="px-2.5 py-0.5 rounded-full bg-thistle-50 text-thistle-700 border border-thistle-200"><i class="fa-solid fa-hot-tub-person mr-1"></i> Indoor Whirlpool</span>
+              <span class="px-2.5 py-0.5 rounded-full bg-highland-50 text-highland-700 border border-highland-200"><i class="fa-solid fa-egg mr-1"></i> Cooked-to-Order Bfast</span>
             </div>
 
-            <p class="text-xs text-slate-300 leading-relaxed">
-              Spacious 2-room suites with private bedroom and separate living room. Heated indoor pool and whirlpool hot tub. Includes complimentary cooked-to-order breakfast and evening manager's reception.
+            <p class="text-xs text-[#4E5C53] leading-relaxed">
+              Spacious 2-room suites with private bedroom and separate living room. Heated indoor pool and whirlpool hot tub. Includes complimentary cooked-to-order breakfast and evening reception.
             </p>
 
-            <div class="text-[11px] text-slate-400 font-mono space-y-1 pt-1 border-t border-tactical-800">
+            <div class="text-[11px] text-[#6E7D74] font-mono space-y-1 pt-2 border-t border-[#EDE6DC]">
               <div>📍 7640 NW Tiffany Springs Pkwy, KCMO 64153</div>
               <div>🎖️ Hilton Military & Government Rate Available</div>
             </div>
           </div>
 
-          <div class="space-y-3">
+          <div class="space-y-3 pt-2">
             <div class="flex gap-2 text-xs font-mono">
-              <a href="https://www.hilton.com/en/hotels/mkcpdes-embassy-suites-kansas-city-international-airport/" target="_blank" class="flex-1 py-2 rounded-lg bg-tactical-800 hover:bg-tactical-700 text-center text-slate-200 border border-tactical-600 font-semibold" onclick="event.stopPropagation()">
+              <a href="https://www.hilton.com/en/hotels/mkcpdes-embassy-suites-kansas-city-international-airport/" target="_blank" class="flex-1 py-2 rounded-xl bg-white hover:bg-highland-50 text-center text-[#3D4C43] border border-[#DDD5C7] font-semibold transition-all shadow-2xs" onclick="event.stopPropagation()">
                 <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Website
               </a>
-              <a href="tel:18168917788" class="flex-1 py-2 rounded-lg bg-tactical-800 hover:bg-tactical-700 text-center text-champagne border border-tactical-600 font-semibold" onclick="event.stopPropagation()">
+              <a href="tel:18168917788" class="flex-1 py-2 rounded-xl bg-white hover:bg-amberbrass-light text-center text-amberbrass-dark border border-[#DDD5C7] font-semibold transition-all shadow-2xs" onclick="event.stopPropagation()">
                 <i class="fa-solid fa-phone mr-1"></i> (816) 891-7788
               </a>
             </div>
-            <button class="w-full py-2 rounded-xl bg-tactical-800 hover:bg-champagne-500 hover:text-tactical-950 text-slate-300 font-bold text-xs font-mono uppercase select-btn">
+            <button class="w-full py-2.5 rounded-xl bg-[#F0EADF] hover:bg-highland-700 hover:text-white text-[#45544B] font-bold text-xs font-mono uppercase select-btn transition-all">
               Select
             </button>
           </div>
         </div>
 
         <!-- OPTION 3: THE ELMS SPA RESORT -->
-        <div id="card-hotel-elms" class="glass-card rounded-2xl p-6 border flex flex-col justify-between space-y-5 cursor-pointer" onclick="toggleItem('hotel', 'elms', 249, 'The Elms Hotel & Historic Mineral Spa', 38, 0)">
+        <div id="card-hotel-elms" class="outlander-card rounded-2xl p-6 border flex flex-col justify-between space-y-5 cursor-pointer" onclick="toggleItem('hotel', 'elms', 249, 'The Elms Hotel & Historic Mineral Spa', 38, 0)">
           <div class="space-y-3">
             <div class="flex items-center justify-between">
-              <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-500/20 text-purple-300 uppercase">
-                Luxury Spa Destination
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-thistle-100 text-thistle-800 border border-thistle-200 uppercase">
+                Historic Mineral Spa
               </span>
-              <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-tactical-800 text-slate-200 font-bold">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-[#FAF7F0] text-[#55635B] font-bold border border-[#E3DBD0]">
                 $249 / night
               </span>
             </div>
 
-            <h4 class="text-lg font-headline font-bold text-white">The Elms Hotel & Mineral Spa</h4>
+            <h4 class="text-lg font-outlander font-bold text-highland-950">The Elms Hotel & Mineral Spa</h4>
             
-            <div class="flex flex-wrap gap-2 text-[11px] font-mono">
-              <span class="px-2 py-0.5 rounded bg-tactical-950 text-slate-300 border border-tactical-800"><i class="fa-solid fa-car text-amber-400 mr-1"></i> 38 min to Dropzone</span>
-              <span class="px-2 py-0.5 rounded bg-tactical-950 text-purple-300 border border-tactical-800"><i class="fa-solid fa-spa mr-1"></i> Historic Grotto Hydrotherapy</span>
-              <span class="px-2 py-0.5 rounded bg-tactical-950 text-slate-300 border border-tactical-800"><i class="fa-solid fa-water mr-1"></i> Mineral Soaks</span>
+            <div class="flex flex-wrap gap-1.5 text-[11px] font-mono">
+              <span class="px-2.5 py-0.5 rounded-full bg-[#FAF7F0] text-[#55635B] border border-[#E3DBD0"><i class="fa-solid fa-car text-amberbrass mr-1"></i> 38 min to Dropzone</span>
+              <span class="px-2.5 py-0.5 rounded-full bg-thistle-50 text-thistle-700 border border-thistle-200"><i class="fa-solid fa-spa mr-1"></i> Historic European Grotto</span>
+              <span class="px-2.5 py-0.5 rounded-full bg-highland-50 text-highland-700 border border-highland-200"><i class="fa-solid fa-water mr-1"></i> Mineral Baths</span>
             </div>
 
-            <p class="text-xs text-slate-300 leading-relaxed">
+            <p class="text-xs text-[#4E5C53] leading-relaxed">
               Historic mineral resort with the famous European Grotto, steam rooms, dry saunas, and hot hydrotherapy soaking tubs designed for deep muscular and tendon restoration.
             </p>
 
-            <div class="text-[11px] text-slate-400 font-mono space-y-1 pt-1 border-t border-tactical-800">
+            <div class="text-[11px] text-[#6E7D74] font-mono space-y-1 pt-2 border-t border-[#EDE6DC]">
               <div>📍 401 Regent St, Excelsior Springs, MO 64024</div>
-              <div>🧖 Destination by Hyatt • Hydrotherapy Grotto session add-on</div>
+              <div>🧖 Destination by Hyatt · Hydrotherapy Grotto session add-on</div>
             </div>
           </div>
 
-          <div class="space-y-3">
+          <div class="space-y-3 pt-2">
             <div class="flex gap-2 text-xs font-mono">
-              <a href="https://www.elmshotelandspa.com" target="_blank" class="flex-1 py-2 rounded-lg bg-tactical-800 hover:bg-tactical-700 text-center text-slate-200 border border-tactical-600 font-semibold" onclick="event.stopPropagation()">
+              <a href="https://www.elmshotelandspa.com" target="_blank" class="flex-1 py-2 rounded-xl bg-white hover:bg-highland-50 text-center text-[#3D4C43] border border-[#DDD5C7] font-semibold transition-all shadow-2xs" onclick="event.stopPropagation()">
                 <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Website
               </a>
-              <a href="tel:18166305500" class="flex-1 py-2 rounded-lg bg-tactical-800 hover:bg-tactical-700 text-center text-champagne border border-tactical-600 font-semibold" onclick="event.stopPropagation()">
+              <a href="tel:18166305500" class="flex-1 py-2 rounded-xl bg-white hover:bg-amberbrass-light text-center text-amberbrass-dark border border-[#DDD5C7] font-semibold transition-all shadow-2xs" onclick="event.stopPropagation()">
                 <i class="fa-solid fa-phone mr-1"></i> (816) 630-5500
               </a>
             </div>
-            <button class="w-full py-2 rounded-xl bg-tactical-800 hover:bg-champagne-500 hover:text-tactical-950 text-slate-300 font-bold text-xs font-mono uppercase select-btn">
+            <button class="w-full py-2.5 rounded-xl bg-[#F0EADF] hover:bg-highland-700 hover:text-white text-[#45544B] font-bold text-xs font-mono uppercase select-btn transition-all">
               Select
             </button>
           </div>
@@ -365,77 +407,83 @@
 
     <!-- ==================== SECTION 2: THE FLIGHT ANCHOR ==================== -->
     <section id="sec-jump" class="space-y-4 pt-4">
-      <div class="flex items-center justify-between border-b border-tactical-700/70 pb-3">
+      <div class="flex items-center justify-between border-b border-[#E3DCCF] pb-3">
         <div>
-          <h3 class="text-xl sm:text-2xl font-headline font-bold text-white flex items-center gap-2">
-            <span class="text-champagne font-mono text-base">02.</span> The Flight Anchor: Falcon Skydiving
+          <h3 class="text-xl sm:text-2xl font-outlander font-bold text-highland-950 flex items-center gap-2">
+            <span class="text-highland-600 font-mono text-base font-bold">02.</span> The Flight Anchor: Falcon Skydiving
           </h3>
-          <p class="text-xs text-slate-400 font-mono mt-0.5">Noah's Ark Airport (Waldron, MO) • Missouri River bluffs ascent • Seated slide-in landing</p>
+          <p class="text-xs text-[#6B7971] font-mono mt-0.5">Noah's Ark Airport (Waldron, MO) • Missouri River bluffs ascent • Seated slide-in landing</p>
         </div>
-        <span class="text-xs font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-1 rounded border border-emerald-500/20">
+        <span class="text-xs font-mono text-highland-800 font-bold bg-highland-50 px-3 py-1 rounded-full border border-highland-200">
           Core Mission Anchor
         </span>
       </div>
 
-      <div class="glass-card rounded-2xl p-6 sm:p-8 border border-tactical-700 space-y-6">
+      <div class="outlander-card rounded-2xl p-6 sm:p-8 border border-[#E3DCCF] space-y-6 bg-gradient-to-br from-white to-[#F9FCFA]">
         <div class="flex flex-wrap items-start justify-between gap-4">
           <div>
             <div class="flex items-center gap-2 mb-1.5">
-              <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 uppercase">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-highland-100 text-highland-800 border border-highland-200 uppercase">
                 Locked Core Event
               </span>
-              <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-tactical-800 text-amber-300">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-amberbrass-light text-amberbrass-dark border border-amberbrass-border">
                 12 Min Drive from Drury KCI Base
               </span>
             </div>
-            <h4 class="text-2xl font-headline font-bold text-white">Falcon Skydiving Tandem Jump</h4>
-            <p class="text-xs text-slate-400 font-mono mt-0.5">Noah's Ark Airport (06MO) • 7620 NW River Rd, Waldron / Kansas City, MO 64152</p>
+            <h4 class="text-2xl font-outlander font-bold text-highland-950">Falcon Skydiving Tandem Jump</h4>
+            <p class="text-xs text-[#6B7971] font-mono mt-0.5">Noah's Ark Airport (06MO) • 7620 NW River Rd, Waldron / Kansas City, MO 64152</p>
           </div>
 
           <div class="text-right">
-            <span class="text-xs text-slate-400 block font-mono">Tandem Special Base</span>
-            <span class="text-2xl font-mono font-bold text-emerald-400">$185 - $210</span>
-            <span class="text-[10px] text-slate-400 block font-mono">Military discount honored at manifest</span>
+            <span class="text-xs text-[#738278] block font-mono">Tandem Special Base</span>
+            <span class="text-2xl font-mono font-bold text-highland-700">$185 - $210</span>
+            <span class="text-[10px] text-[#738278] block font-mono">Military discount honored at manifest</span>
           </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-          <div class="p-4 rounded-xl bg-tactical-900/90 border border-tactical-800 space-y-1">
-            <span class="font-mono text-champagne-400 font-bold block">1. Seated Slide Mandate</span>
-            <p class="text-slate-300">Signed KU Health System note authorizes seated slide touchdown on sod. Senior instructor flares high—zero lower extremity shock.</p>
+          <div class="p-4 rounded-xl bg-[#FAF8F5] border border-[#E6E0D4] space-y-1.5">
+            <span class="font-mono text-highland-800 font-bold block flex items-center gap-1.5">
+              <i class="fa-solid fa-file-medical text-highland-600"></i> 1. Seated Slide Mandate
+            </span>
+            <p class="text-[#4E5C53] leading-relaxed">Signed KU Health note authorizes seated slide touchdown on turf. Senior instructor flares high—zero lower extremity impact.</p>
           </div>
 
-          <div class="p-4 rounded-xl bg-tactical-900/90 border border-tactical-800 space-y-1">
-            <span class="font-mono text-cyan-400 font-bold block">2. River Bluff Ascent</span>
-            <p class="text-slate-300">Climbs directly over the Missouri River bend, forested bluffs, and late-autumn timberline rather than flat farmland.</p>
+          <div class="p-4 rounded-xl bg-[#FAF8F5] border border-[#E6E0D4] space-y-1.5">
+            <span class="font-mono text-highland-800 font-bold block flex items-center gap-1.5">
+              <i class="fa-solid fa-mountain text-highland-600"></i> 2. River Bluff Ascent
+            </span>
+            <p class="text-[#4E5C53] leading-relaxed">Climbs directly over the Missouri River bend, forested bluffs, and late-autumn timberline rather than flat farmland.</p>
           </div>
 
-          <div class="p-4 rounded-xl bg-tactical-900/90 border border-tactical-800 space-y-1">
-            <span class="font-mono text-emerald-400 font-bold block">3. 12-Min Recovery Return</span>
-            <p class="text-slate-300">Touch down, de-harness, and be soaking in the Drury heated indoor whirlpool within 25 minutes of parachute touchdown.</p>
+          <div class="p-4 rounded-xl bg-[#FAF8F5] border border-[#E6E0D4] space-y-1.5">
+            <span class="font-mono text-highland-800 font-bold block flex items-center gap-1.5">
+              <i class="fa-solid fa-clock text-highland-600"></i> 3. 12-Min Recovery Return
+            </span>
+            <p class="text-[#4E5C53] leading-relaxed">Touch down, de-harness, and be soaking in the Drury heated indoor whirlpool within 25 minutes of parachute touchdown.</p>
           </div>
         </div>
 
         <!-- ADD-ON MEDIA TOGGLE -->
-        <div class="p-4 rounded-xl bg-tactical-950 border border-tactical-800 flex items-center justify-between flex-wrap gap-3">
+        <div class="p-4 rounded-xl bg-[#FAF7F0] border border-[#E2D8C9] flex items-center justify-between flex-wrap gap-3">
           <label class="flex items-center gap-3 cursor-pointer">
-            <input type="checkbox" id="check-media" checked onchange="toggleMediaPackage()" class="w-4 h-4 rounded text-champagne-500 focus:ring-0 cursor-pointer">
+            <input type="checkbox" id="check-media" checked onchange="toggleMediaPackage()" class="w-4 h-4 rounded text-highland-700 focus:ring-0 cursor-pointer accent-highland-700">
             <div>
-              <span class="text-xs font-bold text-white block">Include 4K Video & High-Res Photo Combo (+$100)</span>
-              <span class="text-[11px] text-slate-400">Captures the airplane exit, 120 mph freefall reaction, and canopy glide over the Missouri River.</span>
+              <span class="text-xs font-bold text-highland-950 block">Include 4K Video & High-Res Photo Combo (+$100)</span>
+              <span class="text-[11px] text-[#6B7971]">Captures the airplane exit, 120 mph freefall reaction, and canopy glide over the Missouri River.</span>
             </div>
           </label>
-          <span class="text-xs font-mono text-champagne-400 font-bold">+$100 Total Combo</span>
+          <span class="text-xs font-mono text-highland-800 font-bold bg-white px-3 py-1 rounded-full border border-[#DDD5C7]">+$100 Total Combo</span>
         </div>
 
         <div class="flex flex-wrap gap-3 pt-2">
-          <a href="https://falconskydiving.com" target="_blank" class="px-5 py-2.5 rounded-xl bg-tactical-800 hover:bg-tactical-700 text-white font-mono text-xs font-semibold border border-tactical-600 transition-all flex items-center gap-2">
+          <a href="https://falconskydiving.com" target="_blank" class="px-5 py-2.5 rounded-xl bg-white hover:bg-highland-50 text-[#3C4B41] font-mono text-xs font-semibold border border-[#DDD5C7] transition-all flex items-center gap-2 shadow-2xs">
             <i class="fa-solid fa-arrow-up-right-from-square"></i> Falcon Skydiving Website
           </a>
-          <a href="tel:19132051224" class="px-5 py-2.5 rounded-xl bg-champagne-500 hover:bg-champagne-400 text-tactical-950 font-mono text-xs font-bold transition-all flex items-center gap-2">
+          <a href="tel:19132051224" class="px-5 py-2.5 rounded-xl bg-highland-700 hover:bg-highland-800 text-white font-mono text-xs font-bold transition-all flex items-center gap-2 shadow-xs">
             <i class="fa-solid fa-phone"></i> Call Falcon Manifest: (913) 205-1224
           </a>
-          <a href="mailto:falconskydiving@gmail.com" class="px-4 py-2.5 rounded-xl bg-tactical-800 hover:bg-tactical-700 text-slate-300 font-mono text-xs border border-tactical-700 flex items-center gap-2">
+          <a href="mailto:falconskydiving@gmail.com" class="px-4 py-2.5 rounded-xl bg-white hover:bg-highland-50 text-[#55645B] font-mono text-xs border border-[#DDD5C7] flex items-center gap-2 shadow-2xs">
             <i class="fa-solid fa-envelope"></i> falconskydiving@gmail.com
           </a>
         </div>
@@ -445,69 +493,69 @@
 
     <!-- ==================== SECTION 3: BREAKFAST OPTIONS ==================== -->
     <section id="sec-breakfast" class="space-y-4 pt-4">
-      <div class="flex items-center justify-between border-b border-tactical-700/70 pb-3">
+      <div class="flex items-center justify-between border-b border-[#E3DCCF] pb-3">
         <div>
-          <h3 class="text-xl sm:text-2xl font-headline font-bold text-white flex items-center gap-2">
-            <span class="text-champagne font-mono text-base">03.</span> Pre-Jump Fueling: Breakfast Options
+          <h3 class="text-xl sm:text-2xl font-outlander font-bold text-highland-950 flex items-center gap-2">
+            <span class="text-highland-600 font-mono text-base font-bold">03.</span> Pre-Jump Fueling: Breakfast Options
           </h3>
-          <p class="text-xs text-slate-400 font-mono mt-0.5">High-protein nutrition and espresso before taking off for 12,000 feet</p>
+          <p class="text-xs text-[#6B7971] font-mono mt-0.5">High-protein nutrition and espresso before taking off for 12,000 feet</p>
         </div>
-        <span class="text-[11px] font-mono text-slate-400 hidden sm:inline-block">Click card to select or unselect</span>
+        <span class="text-[11px] font-mono text-[#7B8B82] hidden sm:inline-block">Click card to select or unselect</span>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
         <!-- BFAST 1: DRURY FREE BFAST -->
-        <div id="card-bfast-drury" class="glass-card rounded-xl p-5 border flex flex-col justify-between space-y-4 cursor-pointer selected-card" onclick="toggleItem('bfast', 'drury', 0, 'Drury Complimentary Hot Breakfast', 0, 35)">
+        <div id="card-bfast-drury" class="outlander-card rounded-xl p-5 border flex flex-col justify-between space-y-4 cursor-pointer selected-card" onclick="toggleItem('bfast', 'drury', 0, 'Drury Complimentary Hot Breakfast', 0, 35)">
           <div class="space-y-2">
             <div class="flex justify-between items-center">
-              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">Included Free</span>
-              <span class="text-xs font-mono text-slate-400">0 min drive</span>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-highland-50 text-highland-800 font-bold border border-highland-200">Included Free</span>
+              <span class="text-xs font-mono text-[#738278]">0 min drive</span>
             </div>
-            <h4 class="font-headline font-bold text-white text-base">Drury Hot Breakfast Buffet</h4>
-            <p class="text-xs text-slate-300">Belgian waffles, scrambled eggs, sausage links, fresh fruit, oatmeal, juice & fresh hot coffee in lobby.</p>
-            <div class="text-[11px] font-mono text-slate-400">📍 Drury Inn Lobby • Wed 6:00 AM – 9:30 AM</div>
+            <h4 class="font-outlander font-bold text-highland-950 text-base">Drury Hot Breakfast Buffet</h4>
+            <p class="text-xs text-[#4E5C53]">Belgian waffles, scrambled eggs, sausage links, fresh fruit, oatmeal, juice & fresh hot coffee in the lobby.</p>
+            <div class="text-[11px] font-mono text-[#6E7D74]">📍 Drury Inn Lobby • Wed 6:00 AM – 9:30 AM</div>
           </div>
-          <button class="w-full py-1.5 rounded-lg bg-champagne-500 text-tactical-950 font-bold text-xs font-mono uppercase select-btn">✓ Selected ($0)</button>
+          <button class="w-full py-2 rounded-xl bg-highland-700 text-white font-bold text-xs font-mono uppercase select-btn shadow-xs">✓ Selected ($0)</button>
         </div>
 
         <!-- BFAST 2: MILDRED'S -->
-        <div id="card-bfast-mildreds" class="glass-card rounded-xl p-5 border flex flex-col justify-between space-y-4 cursor-pointer" onclick="toggleItem('bfast', 'mildreds', 32, 'Mildred\'s Crossroads Breakfast', 20, 0)">
+        <div id="card-bfast-mildreds" class="outlander-card rounded-xl p-5 border flex flex-col justify-between space-y-4 cursor-pointer" onclick="toggleItem('bfast', 'mildreds', 32, 'Mildred's Crossroads Breakfast', 20, 0)">
           <div class="space-y-2">
             <div class="flex justify-between items-center">
-              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-tactical-800 text-amber-300">KC Breakfast Icon</span>
-              <span class="text-xs font-mono text-slate-400">20 min drive</span>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amberbrass-light text-amberbrass-dark border border-amberbrass-border">KC Breakfast Icon</span>
+              <span class="text-xs font-mono text-[#738278]">20 min drive</span>
             </div>
-            <h4 class="font-headline font-bold text-white text-base">Mildred's (Crossroads)</h4>
-            <p class="text-xs text-slate-300">Legendary steamed egg & bacon breakfast sandwiches on sourdough, scratch pastries, and espresso bar.</p>
-            <div class="text-[11px] font-mono text-slate-400">📍 1901 Wyandotte St, KCMO • Wed 7:00 AM – 4:00 PM • ~$16 / person</div>
+            <h4 class="font-outlander font-bold text-highland-950 text-base">Mildred's (Crossroads)</h4>
+            <p class="text-xs text-[#4E5C53]">Legendary steamed egg & bacon breakfast sandwiches on sourdough, scratch pastries, and espresso bar.</p>
+            <div class="text-[11px] font-mono text-[#6E7D74]">📍 1901 Wyandotte St, KCMO • Wed 7 AM – 4 PM • ~$16 / person</div>
           </div>
           <div class="space-y-2">
             <div class="flex gap-2 text-xs font-mono">
-              <a href="https://mildredskc.com" target="_blank" class="flex-1 py-1.5 rounded bg-tactical-800 text-center text-slate-200 border border-tactical-600" onclick="event.stopPropagation()">Menu</a>
-              <a href="tel:18165076837" class="flex-1 py-1.5 rounded bg-tactical-800 text-center text-champagne border border-tactical-600" onclick="event.stopPropagation()">(816) 507-6837</a>
+              <a href="https://mildredskc.com" target="_blank" class="flex-1 py-1.5 rounded-lg bg-white text-center text-[#3D4C43] border border-[#DDD5C7]" onclick="event.stopPropagation()">Menu</a>
+              <a href="tel:18165076837" class="flex-1 py-1.5 rounded-lg bg-white text-center text-amberbrass-dark border border-[#DDD5C7]" onclick="event.stopPropagation()">(816) 507-6837</a>
             </div>
-            <button class="w-full py-1.5 rounded-lg bg-tactical-800 text-slate-300 font-bold text-xs font-mono uppercase select-btn">Select</button>
+            <button class="w-full py-2 rounded-xl bg-[#F0EADF] text-[#45544B] font-bold text-xs font-mono uppercase select-btn">Select</button>
           </div>
         </div>
 
         <!-- BFAST 3: MESSENGER COFFEE -->
-        <div id="card-bfast-messenger" class="glass-card rounded-xl p-5 border flex flex-col justify-between space-y-4 cursor-pointer" onclick="toggleItem('bfast', 'messenger', 36, 'Messenger Coffee & Ibis Bakery', 20, 0)">
+        <div id="card-bfast-messenger" class="outlander-card rounded-xl p-5 border flex flex-col justify-between space-y-4 cursor-pointer" onclick="toggleItem('bfast', 'messenger', 36, 'Messenger Coffee & Ibis Bakery', 20, 0)">
           <div class="space-y-2">
             <div class="flex justify-between items-center">
-              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-tactical-800 text-cyan-300">Rooftop Fireplace</span>
-              <span class="text-xs font-mono text-slate-400">20 min drive</span>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-sky-50 text-sky-800 border border-sky-200">Rooftop Fireplace</span>
+              <span class="text-xs font-mono text-[#738278]">20 min drive</span>
             </div>
-            <h4 class="font-headline font-bold text-white text-base">Messenger Coffee & Ibis Bakery</h4>
-            <p class="text-xs text-slate-300">3-story architectural coffee roastery, wood-fired artisan sourdough pastries, and outdoor rooftop fire pit deck.</p>
-            <div class="text-[11px] font-mono text-slate-400">📍 1624 Grand Blvd, KCMO • Wed 7:00 AM – 5:00 PM • ~$18 / person</div>
+            <h4 class="font-outlander font-bold text-highland-950 text-base">Messenger Coffee & Ibis Bakery</h4>
+            <p class="text-xs text-[#4E5C53]">3-story architectural coffee roastery, wood-fired artisan sourdough pastries, and outdoor rooftop fire pit deck.</p>
+            <div class="text-[11px] font-mono text-[#6E7D74]">📍 1624 Grand Blvd, KCMO • Wed 7 AM – 5 PM • ~$18 / person</div>
           </div>
           <div class="space-y-2">
             <div class="flex gap-2 text-xs font-mono">
-              <a href="https://messengercoffee.co" target="_blank" class="flex-1 py-1.5 rounded bg-tactical-800 text-center text-slate-200 border border-tactical-600" onclick="event.stopPropagation()">Menu</a>
-              <a href="tel:19136699883" class="flex-1 py-1.5 rounded bg-tactical-800 text-center text-champagne border border-tactical-600" onclick="event.stopPropagation()">(913) 669-9883</a>
+              <a href="https://messengercoffee.co" target="_blank" class="flex-1 py-1.5 rounded-lg bg-white text-center text-[#3D4C43] border border-[#DDD5C7]" onclick="event.stopPropagation()">Menu</a>
+              <a href="tel:19136699883" class="flex-1 py-1.5 rounded-lg bg-white text-center text-amberbrass-dark border border-[#DDD5C7]" onclick="event.stopPropagation()">(913) 669-9883</a>
             </div>
-            <button class="w-full py-1.5 rounded-lg bg-tactical-800 text-slate-300 font-bold text-xs font-mono uppercase select-btn">Select</button>
+            <button class="w-full py-2 rounded-xl bg-[#F0EADF] text-[#45544B] font-bold text-xs font-mono uppercase select-btn">Select</button>
           </div>
         </div>
 
@@ -517,75 +565,75 @@
 
     <!-- ==================== SECTION 4: LUNCH OPTIONS ==================== -->
     <section id="sec-lunch" class="space-y-4 pt-4">
-      <div class="flex items-center justify-between border-b border-tactical-700/70 pb-3">
+      <div class="flex items-center justify-between border-b border-[#E3DCCF] pb-3">
         <div>
-          <h3 class="text-xl sm:text-2xl font-headline font-bold text-white flex items-center gap-2">
-            <span class="text-champagne font-mono text-base">04.</span> Post-Jump Victory Lunch
+          <h3 class="text-xl sm:text-2xl font-outlander font-bold text-highland-950 flex items-center gap-2">
+            <span class="text-highland-600 font-mono text-base font-bold">04.</span> Post-Jump Victory Lunch
           </h3>
-          <p class="text-xs text-slate-400 font-mono mt-0.5">Midday refuel after touchdown (all locations verified open Wednesday lunch)</p>
+          <p class="text-xs text-[#6B7971] font-mono mt-0.5">Midday refuel after touchdown (all locations verified open Wednesday lunch)</p>
         </div>
-        <span class="text-[11px] font-mono text-slate-400 hidden sm:inline-block">Click card to select or unselect</span>
+        <span class="text-[11px] font-mono text-[#7B8B82] hidden sm:inline-block">Click card to select or unselect</span>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
         <!-- LUNCH 1: TREZO MARE BRIARCLIFF -->
-        <div id="card-lunch-trezo" class="glass-card rounded-xl p-5 border flex flex-col justify-between space-y-4 cursor-pointer selected-card" onclick="toggleItem('lunch', 'trezo', 50, 'Trezo Mare Restaurant (Briarcliff)', 10, 0)">
+        <div id="card-lunch-trezo" class="outlander-card rounded-xl p-5 border flex flex-col justify-between space-y-4 cursor-pointer selected-card" onclick="toggleItem('lunch', 'trezo', 50, 'Trezo Mare Restaurant (Briarcliff)', 10, 0)">
           <div class="space-y-2">
             <div class="flex justify-between items-center">
-              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold">Briarcliff Hill</span>
-              <span class="text-xs font-mono text-slate-400">10 min drive</span>
+              <span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-highland-50 text-highland-800 font-bold border border-highland-200">Briarcliff Hill</span>
+              <span class="text-xs font-mono text-[#738278]">10 min drive</span>
             </div>
-            <h4 class="font-headline font-bold text-white text-base">Trezo Mare Restaurant & Lounge</h4>
-            <p class="text-xs text-slate-300">Wood-fired scratch Italian & American fare, fresh sea bass, pasta, flatbreads, and scenic river valley patio views.</p>
-            <div class="text-[11px] font-mono text-slate-400">📍 4105 N Mulberry Dr, KCMO • Wed Lunch 11 AM – 4 PM • ~$25 / person</div>
+            <h4 class="font-outlander font-bold text-highland-950 text-base">Trezo Mare Restaurant & Lounge</h4>
+            <p class="text-xs text-[#4E5C53]">Wood-fired scratch Italian & American fare, fresh sea bass, pasta, flatbreads, and scenic river valley patio views.</p>
+            <div class="text-[11px] font-mono text-[#6E7D74]">📍 4105 N Mulberry Dr, KCMO • Wed Lunch 11 AM – 4 PM • ~$25 / person</div>
           </div>
           <div class="space-y-2">
             <div class="flex gap-2 text-xs font-mono">
-              <a href="https://trezomare.com" target="_blank" class="flex-1 py-1.5 rounded bg-tactical-800 text-center text-slate-200 border border-tactical-600" onclick="event.stopPropagation()">Menu</a>
-              <a href="tel:18165053200" class="flex-1 py-1.5 rounded bg-tactical-800 text-center text-champagne border border-tactical-600" onclick="event.stopPropagation()">(816) 505-3200</a>
+              <a href="https://trezomare.com" target="_blank" class="flex-1 py-1.5 rounded-lg bg-white text-center text-[#3D4C43] border border-[#DDD5C7]" onclick="event.stopPropagation()">Menu</a>
+              <a href="tel:18165053200" class="flex-1 py-1.5 rounded-lg bg-white text-center text-amberbrass-dark border border-[#DDD5C7]" onclick="event.stopPropagation()">(816) 505-3200</a>
             </div>
-            <button class="w-full py-1.5 rounded-lg bg-champagne-500 text-tactical-950 font-bold text-xs font-mono uppercase select-btn">✓ Selected ($50)</button>
+            <button class="w-full py-2 rounded-xl bg-highland-700 text-white font-bold text-xs font-mono uppercase select-btn shadow-xs">✓ Selected ($50)</button>
           </div>
         </div>
 
         <!-- LUNCH 2: TIN KITCHEN WESTON -->
-        <div id="card-lunch-tinkitchen" class="glass-card rounded-xl p-5 border flex flex-col justify-between space-y-4 cursor-pointer" onclick="toggleItem('lunch', 'tinkitchen', 48, 'Tin Kitchen Southern Smokehouse (Weston)', 16, 0)">
+        <div id="card-lunch-tinkitchen" class="outlander-card rounded-xl p-5 border flex flex-col justify-between space-y-4 cursor-pointer" onclick="toggleItem('lunch', 'tinkitchen', 48, 'Tin Kitchen Southern Smokehouse (Weston)', 16, 0)">
           <div class="space-y-2">
             <div class="flex justify-between items-center">
-              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-bold">Historic Weston</span>
-              <span class="text-xs font-mono text-slate-400">16 min drive</span>
+              <span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-thistle-50 text-thistle-700 font-bold border border-thistle-200">Historic Weston</span>
+              <span class="text-xs font-mono text-[#738278]">16 min drive</span>
             </div>
-            <h4 class="font-headline font-bold text-white text-base">Tin Kitchen Southern Smokehouse</h4>
-            <p class="text-xs text-slate-300">Pecan-wood pit-smoked brisket, pulled pork, and scratch southern sides inside a restored 1842 building on Main St.</p>
-            <div class="text-[11px] font-mono text-slate-400">📍 509 Main St, Weston, MO • Wed 11 AM – 9 PM • ~$24 / person</div>
+            <h4 class="font-outlander font-bold text-highland-950 text-base">Tin Kitchen Southern Smokehouse</h4>
+            <p class="text-xs text-[#4E5C53]">Pecan-wood pit-smoked brisket, pulled pork, and scratch southern sides inside a restored 1842 building on Main St.</p>
+            <div class="text-[11px] font-mono text-[#6E7D74]">📍 509 Main St, Weston, MO • Wed 11 AM – 9 PM • ~$24 / person</div>
           </div>
           <div class="space-y-2">
             <div class="flex gap-2 text-xs font-mono">
-              <a href="https://tinkitchen.com" target="_blank" class="flex-1 py-1.5 rounded bg-tactical-800 text-center text-slate-200 border border-tactical-600" onclick="event.stopPropagation()">Menu</a>
-              <a href="tel:18166400100" class="flex-1 py-1.5 rounded bg-tactical-800 text-center text-champagne border border-tactical-600" onclick="event.stopPropagation()">(816) 640-0100</a>
+              <a href="https://tinkitchen.com" target="_blank" class="flex-1 py-1.5 rounded-lg bg-white text-center text-[#3D4C43] border border-[#DDD5C7]" onclick="event.stopPropagation()">Menu</a>
+              <a href="tel:18166400100" class="flex-1 py-1.5 rounded-lg bg-white text-center text-amberbrass-dark border border-[#DDD5C7]" onclick="event.stopPropagation()">(816) 640-0100</a>
             </div>
-            <button class="w-full py-1.5 rounded-lg bg-tactical-800 text-slate-300 font-bold text-xs font-mono uppercase select-btn">Select</button>
+            <button class="w-full py-2 rounded-xl bg-[#F0EADF] text-[#45544B] font-bold text-xs font-mono uppercase select-btn">Select</button>
           </div>
         </div>
 
         <!-- LUNCH 3: Q39 MIDTOWN -->
-        <div id="card-lunch-q39" class="glass-card rounded-xl p-5 border flex flex-col justify-between space-y-4 cursor-pointer" onclick="toggleItem('lunch', 'q39', 60, 'Q39 Midtown KC BBQ', 22, 0)">
+        <div id="card-lunch-q39" class="outlander-card rounded-xl p-5 border flex flex-col justify-between space-y-4 cursor-pointer" onclick="toggleItem('lunch', 'q39', 60, 'Q39 Midtown KC BBQ', 22, 0)">
           <div class="space-y-2">
             <div class="flex justify-between items-center">
-              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold">KC BBQ Legend</span>
-              <span class="text-xs font-mono text-slate-400">22 min drive</span>
+              <span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-amberbrass-light text-amberbrass-dark border border-amberbrass-border">KC BBQ Legend</span>
+              <span class="text-xs font-mono text-[#738278]">22 min drive</span>
             </div>
-            <h4 class="font-headline font-bold text-white text-base">Q39 BBQ (Midtown)</h4>
-            <p class="text-xs text-slate-300">Award-winning wood-fired competition BBQ. Famous burnt ends, smoked pork belly, and apple coleslaw.</p>
-            <div class="text-[11px] font-mono text-slate-400">📍 1000 W 39th St, KCMO • Wed 11 AM – 9 PM • ~$30 / person</div>
+            <h4 class="font-outlander font-bold text-highland-950 text-base">Q39 BBQ (Midtown)</h4>
+            <p class="text-xs text-[#4E5C53]">Award-winning wood-fired competition BBQ. Famous burnt ends, smoked pork belly, and apple coleslaw.</p>
+            <div class="text-[11px] font-mono text-[#6E7D74]">📍 1000 W 39th St, KCMO • Wed 11 AM – 9 PM • ~$30 / person</div>
           </div>
           <div class="space-y-2">
             <div class="flex gap-2 text-xs font-mono">
-              <a href="https://q39kc.com" target="_blank" class="flex-1 py-1.5 rounded bg-tactical-800 text-center text-slate-200 border border-tactical-600" onclick="event.stopPropagation()">Menu</a>
-              <a href="tel:18162553796" class="flex-1 py-1.5 rounded bg-tactical-800 text-center text-champagne border border-tactical-600" onclick="event.stopPropagation()">(816) 255-3796</a>
+              <a href="https://q39kc.com" target="_blank" class="flex-1 py-1.5 rounded-lg bg-white text-center text-[#3D4C43] border border-[#DDD5C7]" onclick="event.stopPropagation()">Menu</a>
+              <a href="tel:18162553796" class="flex-1 py-1.5 rounded-lg bg-white text-center text-amberbrass-dark border border-[#DDD5C7]" onclick="event.stopPropagation()">(816) 255-3796</a>
             </div>
-            <button class="w-full py-1.5 rounded-lg bg-tactical-800 text-slate-300 font-bold text-xs font-mono uppercase select-btn">Select</button>
+            <button class="w-full py-2 rounded-xl bg-[#F0EADF] text-[#45544B] font-bold text-xs font-mono uppercase select-btn">Select</button>
           </div>
         </div>
 
@@ -595,70 +643,70 @@
 
     <!-- ==================== SECTION 5: DINNER OPTIONS ==================== -->
     <section id="sec-dinner" class="space-y-4 pt-4">
-      <div class="flex items-center justify-between border-b border-tactical-700/70 pb-3">
+      <div class="flex items-center justify-between border-b border-[#E3DCCF] pb-3">
         <div>
-          <h3 class="text-xl sm:text-2xl font-headline font-bold text-white flex items-center gap-2">
-            <span class="text-champagne font-mono text-base">05.</span> Celebratory Birthday Dinner
+          <h3 class="text-xl sm:text-2xl font-outlander font-bold text-highland-950 flex items-center gap-2">
+            <span class="text-highland-600 font-mono text-base font-bold">05.</span> Celebratory Birthday Dinner
           </h3>
-          <p class="text-xs text-slate-400 font-mono mt-0.5">Evening climax: from panoramic skyline dining to underground limestone pub caverns</p>
+          <p class="text-xs text-[#6B7971] font-mono mt-0.5">Evening climax: from panoramic skyline dining to underground limestone pub caverns</p>
         </div>
-        <span class="text-[11px] font-mono text-slate-400 hidden sm:inline-block">Click card to select or unselect</span>
+        <span class="text-[11px] font-mono text-[#7B8B82] hidden sm:inline-block">Click card to select or unselect</span>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
         <!-- DINNER 1: PIROPOS -->
-        <div id="card-dinner-piropos" class="glass-card rounded-xl p-5 border flex flex-col justify-between space-y-4 cursor-pointer selected-card" onclick="toggleItem('dinner', 'piropos', 140, 'Piropos Restaurant (Briarcliff Skyline)', 10, 0)">
+        <div id="card-dinner-piropos" class="outlander-card rounded-xl p-5 border flex flex-col justify-between space-y-4 cursor-pointer selected-card" onclick="toggleItem('dinner', 'piropos', 140, 'Piropos Restaurant (Briarcliff Skyline)', 10, 0)">
           <div class="space-y-2">
             <div class="flex justify-between items-center">
-              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-bold">Panoramic Skyline</span>
-              <span class="text-xs font-mono text-slate-400">10 min drive</span>
+              <span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-thistle-50 text-thistle-700 font-bold border border-thistle-200">Panoramic Skyline</span>
+              <span class="text-xs font-mono text-[#738278]">10 min drive</span>
             </div>
-            <h4 class="font-headline font-bold text-white text-base">Piropos (Briarcliff Hill)</h4>
-            <p class="text-xs text-slate-300">Floor-to-ceiling glass view of the Kansas City skyline. Upscale Argentine grilled steaks, Chilean sea bass, fine wine. Free front-door valet.</p>
-            <div class="text-[11px] font-mono text-slate-400">📍 4141 N Mulberry Dr, KCMO • Wed 4 PM – 9 PM • ~$70 / person</div>
+            <h4 class="font-outlander font-bold text-highland-950 text-base">Piropos (Briarcliff Hill)</h4>
+            <p class="text-xs text-[#4E5C53]">Floor-to-ceiling glass view of the Kansas City skyline. Upscale Argentine grilled steaks, Chilean sea bass, fine wine. Free front-door valet.</p>
+            <div class="text-[11px] font-mono text-[#6E7D74]">📍 4141 N Mulberry Dr, KCMO • Wed 4 PM – 9 PM • ~$70 / person</div>
           </div>
           <div class="space-y-2">
             <div class="flex gap-2 text-xs font-mono">
-              <a href="https://piroposkc.com" target="_blank" class="flex-1 py-1.5 rounded bg-tactical-800 text-center text-slate-200 border border-tactical-600" onclick="event.stopPropagation()">Menu</a>
-              <a href="tel:18167413600" class="flex-1 py-1.5 rounded bg-tactical-800 text-center text-champagne border border-tactical-600" onclick="event.stopPropagation()">(816) 741-3600</a>
+              <a href="https://piroposkc.com" target="_blank" class="flex-1 py-1.5 rounded-lg bg-white text-center text-[#3D4C43] border border-[#DDD5C7]" onclick="event.stopPropagation()">Menu</a>
+              <a href="tel:18167413600" class="flex-1 py-1.5 rounded-lg bg-white text-center text-amberbrass-dark border border-[#DDD5C7]" onclick="event.stopPropagation()">(816) 741-3600</a>
             </div>
-            <button class="w-full py-1.5 rounded-lg bg-champagne-500 text-tactical-950 font-bold text-xs font-mono uppercase select-btn">✓ Selected ($140)</button>
+            <button class="w-full py-2 rounded-xl bg-highland-700 text-white font-bold text-xs font-mono uppercase select-btn shadow-xs">✓ Selected ($140)</button>
           </div>
         </div>
 
         <!-- DINNER 2: THE AVALON & O'MALLEY'S -->
-        <div id="card-dinner-avalon" class="glass-card rounded-xl p-5 border flex flex-col justify-between space-y-4 cursor-pointer" onclick="toggleItem('dinner', 'avalon', 110, 'The Avalon Cafe & O\'Malley\'s Cellar', 16, 0)">
+        <div id="card-dinner-avalon" class="outlander-card rounded-xl p-5 border flex flex-col justify-between space-y-4 cursor-pointer" onclick="toggleItem('dinner', 'avalon', 110, 'The Avalon Cafe & O'Malley's Cellar', 16, 0)">
           <div class="space-y-2">
             <div class="flex justify-between items-center">
-              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold">Fireside & Caverns</span>
-              <span class="text-xs font-mono text-slate-400">16 min drive</span>
+              <span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-amberbrass-light text-amberbrass-dark border border-amberbrass-border">Fireside & Caverns</span>
+              <span class="text-xs font-mono text-[#738278]">16 min drive</span>
             </div>
-            <h4 class="font-headline font-bold text-white text-base">The Avalon Cafe (Weston)</h4>
-            <p class="text-xs text-slate-300">Restored Victorian hilltop dining with roaring fireplace. Follow with pints in O'Malley's 1842 Pub limestone cellars 60ft underground.</p>
-            <div class="text-[11px] font-mono text-slate-400">📍 608 Main St, Weston, MO • Wed Dinner 5:30 PM – 8 PM • ~$55 / person</div>
+            <h4 class="font-outlander font-bold text-highland-950 text-base">The Avalon Cafe (Weston)</h4>
+            <p class="text-xs text-[#4E5C53]">Restored Victorian hilltop dining with roaring fireplace. Follow with pints in O'Malley's 1842 Pub limestone cellars 60ft underground.</p>
+            <div class="text-[11px] font-mono text-[#6E7D74]">📍 608 Main St, Weston, MO • Wed Dinner 5:30 PM – 8 PM • ~$55 / person</div>
           </div>
           <div class="space-y-2">
             <div class="flex gap-2 text-xs font-mono">
-              <a href="https://avaloncafeweston.com" target="_blank" class="flex-1 py-1.5 rounded bg-tactical-800 text-center text-slate-200 border border-tactical-600" onclick="event.stopPropagation()">Menu</a>
-              <a href="tel:18166402835" class="flex-1 py-1.5 rounded bg-tactical-800 text-center text-champagne border border-tactical-600" onclick="event.stopPropagation()">(816) 640-2835</a>
+              <a href="https://avaloncafeweston.com" target="_blank" class="flex-1 py-1.5 rounded-lg bg-white text-center text-[#3D4C43] border border-[#DDD5C7]" onclick="event.stopPropagation()">Menu</a>
+              <a href="tel:18166402835" class="flex-1 py-1.5 rounded-lg bg-white text-center text-amberbrass-dark border border-[#DDD5C7]" onclick="event.stopPropagation()">(816) 640-2835</a>
             </div>
-            <button class="w-full py-1.5 rounded-lg bg-tactical-800 text-slate-300 font-bold text-xs font-mono uppercase select-btn">Select</button>
+            <button class="w-full py-2 rounded-xl bg-[#F0EADF] text-[#45544B] font-bold text-xs font-mono uppercase select-btn">Select</button>
           </div>
         </div>
 
         <!-- DINNER 3: DRURY 5:30 KICKBACK -->
-        <div id="card-dinner-kickback" class="glass-card rounded-xl p-5 border flex flex-col justify-between space-y-4 cursor-pointer" onclick="toggleItem('dinner', 'kickback', 0, 'Drury Complimentary 5:30 Kickback Dinner', 0, 80)">
+        <div id="card-dinner-kickback" class="outlander-card rounded-xl p-5 border flex flex-col justify-between space-y-4 cursor-pointer" onclick="toggleItem('dinner', 'kickback', 0, 'Drury Complimentary 5:30 Kickback Dinner', 0, 80)">
           <div class="space-y-2">
             <div class="flex justify-between items-center">
-              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">Included Free</span>
-              <span class="text-xs font-mono text-slate-400">0 min drive</span>
+              <span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-highland-50 text-highland-800 font-bold border border-highland-200">Included Free</span>
+              <span class="text-xs font-mono text-[#738278]">0 min drive</span>
             </div>
-            <h4 class="font-headline font-bold text-white text-base">Drury 5:30 Kickback® Dinner</h4>
-            <p class="text-xs text-slate-300">Hot dinner buffet (sliders, pasta, baked potatoes, soup, salad) + 3 complimentary cocktails/beer/wine per adult in the hotel lounge.</p>
-            <div class="text-[11px] font-mono text-slate-400">📍 Drury Inn Lounge • Wed 5:30 PM – 7:00 PM • Free with stay</div>
+            <h4 class="font-outlander font-bold text-highland-950 text-base">Drury 5:30 Kickback® Dinner</h4>
+            <p class="text-xs text-[#4E5C53]">Hot dinner buffet (sliders, pasta, baked potatoes, soup, salad) + 3 complimentary cocktails/beer/wine per adult in the hotel lounge.</p>
+            <div class="text-[11px] font-mono text-[#6E7D74]">📍 Drury Inn Lounge • Wed 5:30 PM – 7:00 PM • Free with stay</div>
           </div>
-          <button class="w-full py-1.5 rounded-lg bg-tactical-800 text-slate-300 font-bold text-xs font-mono uppercase select-btn">Select ($0)</button>
+          <button class="w-full py-2 rounded-xl bg-[#F0EADF] text-[#45544B] font-bold text-xs font-mono uppercase select-btn">Select ($0)</button>
         </div>
 
       </div>
@@ -667,105 +715,105 @@
 
     <!-- ==================== SECTION 6: "CREATING" WORKSHOPS ==================== -->
     <section id="sec-crafts" class="space-y-4 pt-4">
-      <div class="flex items-center justify-between border-b border-tactical-700/70 pb-3">
+      <div class="flex items-center justify-between border-b border-[#E3DCCF] pb-3">
         <div>
-          <h3 class="text-xl sm:text-2xl font-headline font-bold text-white flex items-center gap-2">
-            <span class="text-champagne font-mono text-base">06.</span> Hands-On "Creating" Workshops
+          <h3 class="text-xl sm:text-2xl font-outlander font-bold text-highland-950 flex items-center gap-2">
+            <span class="text-highland-600 font-mono text-base font-bold">06.</span> Hands-On "Creating" Workshops
           </h3>
-          <p class="text-xs text-slate-400 font-mono mt-0.5">100% seated, shared flow-state sessions resulting in an enduring physical keepsake</p>
+          <p class="text-xs text-[#6B7971] font-mono mt-0.5">100% seated, shared flow-state sessions resulting in an enduring physical keepsake</p>
         </div>
-        <span class="text-[11px] font-mono text-slate-400 hidden sm:inline-block">Optional • Click to toggle on/off</span>
+        <span class="text-[11px] font-mono text-[#7B8B82] hidden sm:inline-block">Optional • Click to toggle on/off</span>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
         <!-- CRAFT 1: CREATIVE CULTURE (WESTPORT) -->
-        <div id="card-craft-creative" class="glass-card rounded-2xl p-6 border flex flex-col justify-between space-y-4 cursor-pointer selected-card" onclick="toggleItem('craft', 'creative', 70, 'Creative Culture DIY Studio & Milkshake Bar', 22, 0)">
+        <div id="card-craft-creative" class="outlander-card rounded-2xl p-6 border flex flex-col justify-between space-y-4 cursor-pointer selected-card" onclick="toggleItem('craft', 'creative', 70, 'Creative Culture DIY Studio & Milkshake Bar', 22, 0)">
           <div class="space-y-3">
             <div class="flex items-center justify-between">
-              <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 uppercase">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amberbrass-light text-amberbrass-dark border border-amberbrass-border uppercase">
                 Crafts & Milkshakes
               </span>
-              <span class="text-xs font-mono text-emerald-400 font-bold">~$35 / person ($70 total)</span>
+              <span class="text-xs font-mono text-highland-700 font-bold">~$35 / person ($70 total)</span>
             </div>
 
-            <h4 class="text-lg font-headline font-bold text-white flex items-center gap-2">
-              <i class="fa-solid fa-paintbrush text-amber-400"></i> Creative Culture (Westport)
+            <h4 class="text-lg font-outlander font-bold text-highland-950 flex items-center gap-2">
+              <i class="fa-solid fa-paintbrush text-amberbrass"></i> Creative Culture (Westport)
             </h4>
             
-            <div class="text-[11px] font-mono text-slate-400">🚗 22 min drive • 207 Westport Rd, KCMO 64111</div>
+            <div class="text-[11px] font-mono text-[#6E7D74]">🚗 22 min drive • 207 Westport Rd, KCMO 64111</div>
 
-            <p class="text-xs text-slate-300 leading-relaxed">
+            <p class="text-xs text-[#4E5C53] leading-relaxed">
               Beloved Westport DIY craft studio and artisanal milkshake bar. Sit together and work on custom wood signs, canvas painting, or pottery while sipping famous gourmet milkshakes.
             </p>
           </div>
 
           <div class="space-y-2">
             <div class="flex gap-2 text-xs font-mono">
-              <a href="https://creativeculturediy.com" target="_blank" class="flex-1 py-1.5 rounded bg-tactical-800 text-center text-slate-200 border border-tactical-600" onclick="event.stopPropagation()">Website</a>
-              <a href="tel:18165693445" class="flex-1 py-1.5 rounded bg-tactical-800 text-center text-champagne border border-tactical-600" onclick="event.stopPropagation()">(816) 569-3445</a>
+              <a href="https://creativeculturediy.com" target="_blank" class="flex-1 py-1.5 rounded-lg bg-white text-center text-[#3D4C43] border border-[#DDD5C7]" onclick="event.stopPropagation()">Website</a>
+              <a href="tel:18165693445" class="flex-1 py-1.5 rounded-lg bg-white text-center text-amberbrass-dark border border-[#DDD5C7]" onclick="event.stopPropagation()">(816) 569-3445</a>
             </div>
-            <button class="w-full py-2 rounded-xl bg-champagne-500 text-tactical-950 font-bold text-xs font-mono uppercase select-btn">✓ Selected ($70)</button>
+            <button class="w-full py-2.5 rounded-xl bg-highland-700 text-white font-bold text-xs font-mono uppercase select-btn shadow-xs">✓ Selected ($70)</button>
           </div>
         </div>
 
         <!-- CRAFT 2: DRIFTWOOD CERAMICS -->
-        <div id="card-craft-driftwood" class="glass-card rounded-2xl p-6 border flex flex-col justify-between space-y-4 cursor-pointer" onclick="toggleItem('craft', 'driftwood', 130, 'Driftwood Ceramics Pottery Throwing', 15, 0)">
+        <div id="card-craft-driftwood" class="outlander-card rounded-2xl p-6 border flex flex-col justify-between space-y-4 cursor-pointer" onclick="toggleItem('craft', 'driftwood', 130, 'Driftwood Ceramics Pottery Throwing', 15, 0)">
           <div class="space-y-3">
             <div class="flex items-center justify-between">
-              <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 uppercase">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-highland-50 text-highland-800 border border-highland-200 uppercase">
                 Wheel Throwing
               </span>
-              <span class="text-xs font-mono text-emerald-400 font-bold">$65 / person ($130 total)</span>
+              <span class="text-xs font-mono text-highland-700 font-bold">$65 / person ($130 total)</span>
             </div>
 
-            <h4 class="text-lg font-headline font-bold text-white flex items-center gap-2">
-              <i class="fa-solid fa-shapes text-cyan-400"></i> Driftwood Ceramics (North KC)
+            <h4 class="text-lg font-outlander font-bold text-highland-950 flex items-center gap-2">
+              <i class="fa-solid fa-shapes text-highland-600"></i> Driftwood Ceramics (North KC)
             </h4>
             
-            <div class="text-[11px] font-mono text-slate-400">🚗 15 min drive • 1827 Buchanan St, North KCMO 64116</div>
+            <div class="text-[11px] font-mono text-[#6E7D74]">🚗 15 min drive • 1827 Buchanan St, North KCMO 64116</div>
 
-            <p class="text-xs text-slate-300 leading-relaxed">
+            <p class="text-xs text-[#4E5C53] leading-relaxed">
               Private 90-minute wheel-throwing pottery lesson. Learn wheel sculpting to make mugs or tapas bowls. Studio kiln-fires and glazes the pieces with your jump date stamped on the base.
             </p>
           </div>
 
           <div class="space-y-2">
             <div class="flex gap-2 text-xs font-mono">
-              <a href="https://driftwoodceramics.com" target="_blank" class="flex-1 py-1.5 rounded bg-tactical-800 text-center text-slate-200 border border-tactical-600" onclick="event.stopPropagation()">Website</a>
-              <a href="tel:19138024798" class="flex-1 py-1.5 rounded bg-tactical-800 text-center text-champagne border border-tactical-600" onclick="event.stopPropagation()">(913) 802-4798</a>
+              <a href="https://driftwoodceramics.com" target="_blank" class="flex-1 py-1.5 rounded-lg bg-white text-center text-[#3D4C43] border border-[#DDD5C7]" onclick="event.stopPropagation()">Website</a>
+              <a href="tel:19138024798" class="flex-1 py-1.5 rounded-lg bg-white text-center text-amberbrass-dark border border-[#DDD5C7]" onclick="event.stopPropagation()">(913) 802-4798</a>
             </div>
-            <button class="w-full py-2 rounded-xl bg-tactical-800 text-slate-300 font-bold text-xs font-mono uppercase select-btn">Select</button>
+            <button class="w-full py-2.5 rounded-xl bg-[#F0EADF] text-[#45544B] font-bold text-xs font-mono uppercase select-btn">Select</button>
           </div>
         </div>
 
         <!-- CRAFT 3: FUSE CANDLE STUDIO (LENEXA) -->
-        <div id="card-craft-fuse" class="glass-card rounded-2xl p-6 border flex flex-col justify-between space-y-4 cursor-pointer" onclick="toggleItem('craft', 'fuse', 70, 'Fuse Candle Studio Pouring Bar (Lenexa)', 24, 0)">
+        <div id="card-craft-fuse" class="outlander-card rounded-2xl p-6 border flex flex-col justify-between space-y-4 cursor-pointer" onclick="toggleItem('craft', 'fuse', 70, 'Fuse Candle Studio Pouring Bar (Lenexa)', 24, 0)">
           <div class="space-y-3">
             <div class="flex items-center justify-between">
-              <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 uppercase">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-thistle-50 text-thistle-700 border border-thistle-200 uppercase">
                 Candle Pouring Bar
               </span>
-              <span class="text-xs font-mono text-emerald-400 font-bold">$35 / person ($70 total)</span>
+              <span class="text-xs font-mono text-highland-700 font-bold">$35 / person ($70 total)</span>
             </div>
 
-            <h4 class="text-lg font-headline font-bold text-white flex items-center gap-2">
-              <i class="fa-solid fa-fire-flame-curved text-emerald-400"></i> Fuse Candle Studio (Lenexa)
+            <h4 class="text-lg font-outlander font-bold text-highland-950 flex items-center gap-2">
+              <i class="fa-solid fa-fire-flame-curved text-amberbrass"></i> Fuse Candle Studio (Lenexa)
             </h4>
             
-            <div class="text-[11px] font-mono text-slate-400">🚗 24 min drive • 8826 Maurer Rd, Lenexa, KS 66219</div>
+            <div class="text-[11px] font-mono text-[#6E7D74]">🚗 24 min drive • 8826 Maurer Rd, Lenexa, KS 66219</div>
 
-            <p class="text-xs text-slate-300 leading-relaxed">
+            <p class="text-xs text-[#4E5C53] leading-relaxed">
               Step up to the scent wall, blend signature botanical and amber fragrance oils, and pour custom soy candles with personalized commemorative birthday labels. Right near Collector's Cache!
             </p>
           </div>
 
           <div class="space-y-2">
             <div class="flex gap-2 text-xs font-mono">
-              <a href="https://fusecandlebar.com" target="_blank" class="flex-1 py-1.5 rounded bg-tactical-800 text-center text-slate-200 border border-tactical-600" onclick="event.stopPropagation()">Website</a>
-              <a href="tel:19132177028" class="flex-1 py-1.5 rounded bg-tactical-800 text-center text-champagne border border-tactical-600" onclick="event.stopPropagation()">Call Studio</a>
+              <a href="https://fusecandlebar.com" target="_blank" class="flex-1 py-1.5 rounded-lg bg-white text-center text-[#3D4C43] border border-[#DDD5C7]" onclick="event.stopPropagation()">Website</a>
+              <a href="tel:19132177028" class="flex-1 py-1.5 rounded-lg bg-white text-center text-amberbrass-dark border border-[#DDD5C7]" onclick="event.stopPropagation()">(913) 217-7028</a>
             </div>
-            <button class="w-full py-2 rounded-xl bg-tactical-800 text-slate-300 font-bold text-xs font-mono uppercase select-btn">Select</button>
+            <button class="w-full py-2.5 rounded-xl bg-[#F0EADF] text-[#45544B] font-bold text-xs font-mono uppercase select-btn">Select</button>
           </div>
         </div>
 
@@ -775,105 +823,105 @@
 
     <!-- ==================== SECTION 7: KID "LOOT RUN" TROPHIES ==================== -->
     <section id="sec-loot" class="space-y-4 pt-4">
-      <div class="flex items-center justify-between border-b border-tactical-700/70 pb-3">
+      <div class="flex items-center justify-between border-b border-[#E3DCCF] pb-3">
         <div>
-          <h3 class="text-xl sm:text-2xl font-headline font-bold text-white flex items-center gap-2">
-            <span class="text-champagne font-mono text-base">07.</span> The Parent Homecoming "Loot Run"
+          <h3 class="text-xl sm:text-2xl font-outlander font-bold text-highland-950 flex items-center gap-2">
+            <span class="text-highland-600 font-mono text-base font-bold">07.</span> The Parent Homecoming "Loot Run"
           </h3>
-          <p class="text-xs text-slate-400 font-mono mt-0.5">High-win kid trophies: hard-to-find Pokémon TCG, authentic NeeDoh, and imported Japanese blind boxes</p>
+          <p class="text-xs text-[#6B7971] font-mono mt-0.5">High-win kid trophies: hard-to-find Pokémon TCG, authentic NeeDoh, and imported Japanese blind boxes</p>
         </div>
-        <span class="text-[11px] font-mono text-slate-400 hidden sm:inline-block">Optional • Click to toggle on/off</span>
+        <span class="text-[11px] font-mono text-[#7B8B82] hidden sm:inline-block">Optional • Click to toggle on/off</span>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
         <!-- LOOT 1: COLLECTOR'S CACHE POKEMON -->
-        <div id="card-loot-pokemon" class="glass-card rounded-2xl p-6 border flex flex-col justify-between space-y-4 cursor-pointer selected-card" onclick="toggleItem('loot', 'pokemon', 40, 'Collector\'s Cache Pokémon TCG Run', 24, 0)">
+        <div id="card-loot-pokemon" class="outlander-card rounded-2xl p-6 border flex flex-col justify-between space-y-4 cursor-pointer selected-card" onclick="toggleItem('loot', 'pokemon', 40, 'Collector's Cache Pokémon TCG Run', 24, 0)">
           <div class="space-y-3">
             <div class="flex items-center justify-between">
-              <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-yellow-500/20 text-yellow-300 uppercase">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amberbrass-light text-amberbrass-dark border border-amberbrass-border uppercase">
                 Pokémon / TCG Goldmine
               </span>
-              <span class="text-xs font-mono text-emerald-400 font-bold">~$40 Pack Run</span>
+              <span class="text-xs font-mono text-highland-700 font-bold">~$40 Pack Run</span>
             </div>
 
-            <h4 class="text-lg font-headline font-bold text-white flex items-center gap-2">
-              <i class="fa-solid fa-dragon text-yellow-400"></i> Collector's Cache (Lenexa, KS)
+            <h4 class="text-lg font-outlander font-bold text-highland-950 flex items-center gap-2">
+              <i class="fa-solid fa-dragon text-amberbrass"></i> Collector's Cache (Lenexa, KS)
             </h4>
             
-            <div class="text-[11px] font-mono text-slate-400">🚗 24 min drive • 13354 College Blvd, Lenexa, KS 66210</div>
+            <div class="text-[11px] font-mono text-[#6E7D74]">🚗 24 min drive • 13354 College Blvd, Lenexa, KS 66210</div>
 
-            <p class="text-xs text-slate-300 leading-relaxed">
+            <p class="text-xs text-[#4E5C53] leading-relaxed">
               The premier trading card shop in the Midwest. Massive inventory of sealed Pokémon booster packs, Japanese import tins, elite trainer boxes, and rare singles unavailable in regular retail stores.
             </p>
           </div>
 
           <div class="space-y-2">
             <div class="flex gap-2 text-xs font-mono">
-              <a href="https://www.collectorscache.com" target="_blank" class="flex-1 py-1.5 rounded bg-tactical-800 text-center text-slate-200 border border-tactical-600" onclick="event.stopPropagation()">Website</a>
-              <a href="tel:19133382273" class="flex-1 py-1.5 rounded bg-tactical-800 text-center text-champagne border border-tactical-600" onclick="event.stopPropagation()">(913) 338-2273</a>
+              <a href="https://www.collectorscache.com" target="_blank" class="flex-1 py-1.5 rounded-lg bg-white text-center text-[#3D4C43] border border-[#DDD5C7]" onclick="event.stopPropagation()">Website</a>
+              <a href="tel:19133382273" class="flex-1 py-1.5 rounded-lg bg-white text-center text-amberbrass-dark border border-[#DDD5C7]" onclick="event.stopPropagation()">(913) 338-2273</a>
             </div>
-            <button class="w-full py-2 rounded-xl bg-champagne-500 text-tactical-950 font-bold text-xs font-mono uppercase select-btn">✓ Selected ($40)</button>
+            <button class="w-full py-2.5 rounded-xl bg-highland-700 text-white font-bold text-xs font-mono uppercase select-btn shadow-xs">✓ Selected ($40)</button>
           </div>
         </div>
 
         <!-- LOOT 2: AUTHENTIC NEEDOH -->
-        <div id="card-loot-needoh" class="glass-card rounded-2xl p-6 border flex flex-col justify-between space-y-4 cursor-pointer" onclick="toggleItem('loot', 'needoh', 25, 'Brookside Toy & Science Authentic NeeDoh Run', 24, 0)">
+        <div id="card-loot-needoh" class="outlander-card rounded-2xl p-6 border flex flex-col justify-between space-y-4 cursor-pointer" onclick="toggleItem('loot', 'needoh', 25, 'Brookside Toy & Science Authentic NeeDoh Run', 24, 0)">
           <div class="space-y-3">
             <div class="flex items-center justify-between">
-              <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-500/20 text-rose-300 uppercase">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-thistle-50 text-thistle-700 border border-thistle-200 uppercase">
                 Authentic NeeDoh Hub
               </span>
-              <span class="text-xs font-mono text-emerald-400 font-bold">~$25 Toy Run</span>
+              <span class="text-xs font-mono text-highland-700 font-bold">~$25 Toy Run</span>
             </div>
 
-            <h4 class="text-lg font-headline font-bold text-white flex items-center gap-2">
-              <i class="fa-solid fa-cube text-rose-400"></i> Brookside Toy & Science (KC)
+            <h4 class="text-lg font-outlander font-bold text-highland-950 flex items-center gap-2">
+              <i class="fa-solid fa-cube text-thistle-600"></i> Brookside Toy & Science (KC)
             </h4>
             
-            <div class="text-[11px] font-mono text-slate-400">🚗 24 min drive • 330 W 63rd St, KCMO 64113</div>
+            <div class="text-[11px] font-mono text-[#6E7D74]">🚗 24 min drive • 330 W 63rd St, KCMO 64113</div>
 
-            <p class="text-xs text-slate-300 leading-relaxed">
+            <p class="text-xs text-[#4E5C53] leading-relaxed">
               Legendary independent toy shop keeping full walls of authentic Schylling NeeDoh in stock (Nice Cubes, GLO, Gumdrops, Teenie NeeDohs) alongside science kits, puzzles, and sensory novelties.
             </p>
           </div>
 
           <div class="space-y-2">
             <div class="flex gap-2 text-xs font-mono">
-              <a href="https://brooksidetoyandscience.com" target="_blank" class="flex-1 py-1.5 rounded bg-tactical-800 text-center text-slate-200 border border-tactical-600" onclick="event.stopPropagation()">Website</a>
-              <a href="tel:18165234501" class="flex-1 py-1.5 rounded bg-tactical-800 text-center text-champagne border border-tactical-600" onclick="event.stopPropagation()">(816) 523-4501</a>
+              <a href="https://brooksidetoyandscience.com" target="_blank" class="flex-1 py-1.5 rounded-lg bg-white text-center text-[#3D4C43] border border-[#DDD5C7]" onclick="event.stopPropagation()">Website</a>
+              <a href="tel:18165234501" class="flex-1 py-1.5 rounded-lg bg-white text-center text-amberbrass-dark border border-[#DDD5C7]" onclick="event.stopPropagation()">(816) 523-4501</a>
             </div>
-            <button class="w-full py-2 rounded-xl bg-tactical-800 text-slate-300 font-bold text-xs font-mono uppercase select-btn">Select</button>
+            <button class="w-full py-2.5 rounded-xl bg-[#F0EADF] text-[#45544B] font-bold text-xs font-mono uppercase select-btn">Select</button>
           </div>
         </div>
 
         <!-- LOOT 3: 888 INTERNATIONAL MARKET -->
-        <div id="card-loot-888" class="glass-card rounded-2xl p-6 border flex flex-col justify-between space-y-4 cursor-pointer" onclick="toggleItem('loot', '888', 25, '888 Market Japanese Blind Boxes & Treats', 28, 0)">
+        <div id="card-loot-888" class="outlander-card rounded-2xl p-6 border flex flex-col justify-between space-y-4 cursor-pointer" onclick="toggleItem('loot', '888', 25, '888 Market Japanese Blind Boxes & Treats', 28, 0)">
           <div class="space-y-3">
             <div class="flex items-center justify-between">
-              <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-500/20 text-purple-300 uppercase">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-sky-50 text-sky-800 border border-sky-200 uppercase">
                 Japanese Blind Boxes
               </span>
-              <span class="text-xs font-mono text-emerald-400 font-bold">~$25 Snack/Toy Run</span>
+              <span class="text-xs font-mono text-highland-700 font-bold">~$25 Snack/Toy Run</span>
             </div>
 
-            <h4 class="text-lg font-headline font-bold text-white flex items-center gap-2">
-              <i class="fa-solid fa-box-open text-purple-400"></i> 888 International Market (OP, KS)
+            <h4 class="text-lg font-outlander font-bold text-highland-950 flex items-center gap-2">
+              <i class="fa-solid fa-box-open text-sky-700"></i> 888 International Market (OP, KS)
             </h4>
             
-            <div class="text-[11px] font-mono text-slate-400">🚗 28 min drive • 10118 W 119th St, Overland Park, KS 66213</div>
+            <div class="text-[11px] font-mono text-[#6E7D74]">🚗 28 min drive • 10118 W 119th St, Overland Park, KS 66213</div>
 
-            <p class="text-xs text-slate-300 leading-relaxed">
+            <p class="text-xs text-[#4E5C53] leading-relaxed">
               Enormous Asian market featuring aisles of Japanese gachapon toys, character blind boxes (Sanrio, Pokémon, anime), Ramune marble sodas, and exotic Kit-Kat flavors for exciting homecoming gifts.
             </p>
           </div>
 
           <div class="space-y-2">
             <div class="flex gap-2 text-xs font-mono">
-              <a href="https://888intlmarket.com" target="_blank" class="flex-1 py-1.5 rounded bg-tactical-800 text-center text-slate-200 border border-tactical-600" onclick="event.stopPropagation()">Website</a>
-              <a href="tel:19133418700" class="flex-1 py-1.5 rounded bg-tactical-800 text-center text-champagne border border-tactical-600" onclick="event.stopPropagation()">(913) 341-8700</a>
+              <a href="https://888intlmarket.com" target="_blank" class="flex-1 py-1.5 rounded-lg bg-white text-center text-[#3D4C43] border border-[#DDD5C7]" onclick="event.stopPropagation()">Website</a>
+              <a href="tel:19133418700" class="flex-1 py-1.5 rounded-lg bg-white text-center text-amberbrass-dark border border-[#DDD5C7]" onclick="event.stopPropagation()">(913) 341-8700</a>
             </div>
-            <button class="w-full py-2 rounded-xl bg-tactical-800 text-slate-300 font-bold text-xs font-mono uppercase select-btn">Select</button>
+            <button class="w-full py-2.5 rounded-xl bg-[#F0EADF] text-[#45544B] font-bold text-xs font-mono uppercase select-btn">Select</button>
           </div>
         </div>
 
@@ -883,58 +931,137 @@
 
     <!-- ==================== SECTION 8: SCENIC VISTAS ==================== -->
     <section id="sec-sights" class="space-y-4 pt-4">
-      <div class="flex items-center justify-between border-b border-tactical-700/70 pb-3">
+      <div class="flex items-center justify-between border-b border-[#E3DCCF] pb-3">
         <div>
-          <h3 class="text-xl sm:text-2xl font-headline font-bold text-white flex items-center gap-2">
-            <span class="text-champagne font-mono text-base">08.</span> Low-Walking Scenic Vistas
+          <h3 class="text-xl sm:text-2xl font-outlander font-bold text-highland-950 flex items-center gap-2">
+            <span class="text-highland-600 font-mono text-base font-bold">08.</span> Low-Walking Scenic Vistas
           </h3>
-          <p class="text-xs text-slate-400 font-mono mt-0.5">Drive-up viewpoints and heated vehicle cruises with zero joint or tendon impact</p>
+          <p class="text-xs text-[#6B7971] font-mono mt-0.5">Drive-up viewpoints and heated vehicle cruises with zero joint or tendon impact</p>
         </div>
-        <span class="text-[11px] font-mono text-slate-400 hidden sm:inline-block">Optional • Click to toggle on/off</span>
+        <span class="text-[11px] font-mono text-[#7B8B82] hidden sm:inline-block">Optional • Click to toggle on/off</span>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
         <!-- SIGHT 1: WESTON BLUFFS OVERLOOK -->
-        <div id="card-sight-weston" class="glass-card rounded-2xl p-6 border flex flex-col justify-between space-y-4 cursor-pointer selected-card" onclick="toggleItem('sight', 'weston', 0, 'Weston Bend State Park River Bluff Overlook', 16, 0)">
+        <div id="card-sight-weston" class="outlander-card rounded-2xl p-6 border flex flex-col justify-between space-y-4 cursor-pointer selected-card" onclick="toggleItem('sight', 'weston', 0, 'Weston Bend State Park River Bluff Overlook', 16, 0)">
           <div class="space-y-2">
             <div class="flex justify-between items-center">
-              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">Drive-Up Bluff</span>
-              <span class="text-xs font-mono text-slate-400">16 min drive</span>
+              <span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-highland-50 text-highland-800 font-bold border border-highland-200">Drive-Up Bluff</span>
+              <span class="text-xs font-mono text-[#738278]">16 min drive</span>
             </div>
-            <h4 class="font-headline font-bold text-white text-base">Weston Bend River Bluff Overlook</h4>
-            <p class="text-xs text-slate-300">Paved scenic drive directly to a bluff overlook terrace high above the Missouri River basin and timberline. Zero strenuous hiking.</p>
-            <div class="text-[11px] font-mono text-slate-400">📍 16600 MO-45, Weston, MO 64098 • Free entry</div>
+            <h4 class="font-outlander font-bold text-highland-950 text-base">Weston Bend River Bluff Overlook</h4>
+            <p class="text-xs text-[#4E5C53]">Paved scenic drive directly to a bluff overlook terrace high above the Missouri River basin and timberline. Zero strenuous hiking.</p>
+            <div class="text-[11px] font-mono text-[#6E7D74]">📍 16600 MO-45, Weston, MO 64098 • Free entry</div>
           </div>
-          <button class="w-full py-2 rounded-xl bg-champagne-500 text-tactical-950 font-bold text-xs font-mono uppercase select-btn">✓ Selected ($0)</button>
+          <button class="w-full py-2.5 rounded-xl bg-highland-700 text-white font-bold text-xs font-mono uppercase select-btn shadow-xs">✓ Selected ($0)</button>
         </div>
 
         <!-- SIGHT 2: PLAZA LIGHTS -->
-        <div id="card-sight-plaza" class="glass-card rounded-2xl p-6 border flex flex-col justify-between space-y-4 cursor-pointer" onclick="toggleItem('sight', 'plaza', 0, 'Country Club Plaza Holiday Lights Drive', 22, 0)">
+        <div id="card-sight-plaza" class="outlander-card rounded-2xl p-6 border flex flex-col justify-between space-y-4 cursor-pointer" onclick="toggleItem('sight', 'plaza', 0, 'Country Club Plaza Holiday Lights Drive', 22, 0)">
           <div class="space-y-2">
             <div class="flex justify-between items-center">
-              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold">Illuminated Cruise</span>
-              <span class="text-xs font-mono text-slate-400">22 min drive</span>
+              <span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-amberbrass-light text-amberbrass-dark border border-amberbrass-border">Illuminated Cruise</span>
+              <span class="text-xs font-mono text-[#738278]">22 min drive</span>
             </div>
-            <h4 class="font-headline font-bold text-white text-base">Country Club Plaza Holiday Lights</h4>
-            <p class="text-xs text-slate-300">Drive through 15 blocks of Spanish-Moorish architecture glowing with holiday lights. Thanksgiving Eve test preview cruise from a heated car.</p>
-            <div class="text-[11px] font-mono text-slate-400">📍 Country Club Plaza, KCMO • Heated vehicle drive</div>
+            <h4 class="font-outlander font-bold text-highland-950 text-base">Country Club Plaza Holiday Lights</h4>
+            <p class="text-xs text-[#4E5C53]">Drive through 15 blocks of Spanish-Moorish architecture glowing with holiday lights. Thanksgiving Eve test preview cruise from a heated car.</p>
+            <div class="text-[11px] font-mono text-[#6E7D74]">📍 Country Club Plaza, KCMO • Heated vehicle drive</div>
           </div>
-          <button class="w-full py-2 rounded-xl bg-tactical-800 text-slate-300 font-bold text-xs font-mono uppercase select-btn">Select ($0)</button>
+          <button class="w-full py-2.5 rounded-xl bg-[#F0EADF] text-[#45544B] font-bold text-xs font-mono uppercase select-btn">Select ($0)</button>
         </div>
 
         <!-- SIGHT 3: LIBERTY MEMORIAL -->
-        <div id="card-sight-liberty" class="glass-card rounded-2xl p-6 border flex flex-col justify-between space-y-4 cursor-pointer" onclick="toggleItem('sight', 'liberty', 0, 'Liberty Memorial Skyline Panorama Deck', 19, 0)">
+        <div id="card-sight-liberty" class="outlander-card rounded-2xl p-6 border flex flex-col justify-between space-y-4 cursor-pointer" onclick="toggleItem('sight', 'liberty', 0, 'Liberty Memorial Skyline Panorama Deck', 19, 0)">
           <div class="space-y-2">
             <div class="flex justify-between items-center">
-              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-bold">KC Skyline Deck</span>
-              <span class="text-xs font-mono text-slate-400">19 min drive</span>
+              <span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-thistle-50 text-thistle-700 border border-thistle-200">KC Skyline Deck</span>
+              <span class="text-xs font-mono text-[#738278]">19 min drive</span>
             </div>
-            <h4 class="font-headline font-bold text-white text-base">Liberty Memorial Panorama</h4>
-            <p class="text-xs text-slate-300">Park 30 yards from the observation deck overlooking Union Station and the entire downtown Kansas City skyline.</p>
-            <div class="text-[11px] font-mono text-slate-400">📍 2 Memorial Dr, KCMO • Drive-up overlook</div>
+            <h4 class="font-outlander font-bold text-highland-950 text-base">Liberty Memorial Panorama</h4>
+            <p class="text-xs text-[#4E5C53]">Park 30 yards from the observation deck overlooking Union Station and the entire downtown Kansas City skyline.</p>
+            <div class="text-[11px] font-mono text-[#6E7D74]">📍 2 Memorial Dr, KCMO • Drive-up overlook</div>
           </div>
-          <button class="w-full py-2 rounded-xl bg-tactical-800 text-slate-300 font-bold text-xs font-mono uppercase select-btn">Select ($0)</button>
+          <button class="w-full py-2.5 rounded-xl bg-[#F0EADF] text-[#45544B] font-bold text-xs font-mono uppercase select-btn">Select ($0)</button>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ==================== SECTION 9: THE SASSENACH SCRATCH PAD ==================== -->
+    <section id="sec-scratchpad" class="space-y-4 pt-4">
+      <div class="flex items-center justify-between border-b border-[#E3DCCF] pb-3">
+        <div>
+          <h3 class="text-xl sm:text-2xl font-outlander font-bold text-highland-950 flex items-center gap-2">
+            <span class="text-amberbrass font-mono text-base font-bold">09.</span> The Sassenach Scratch Pad & Travel Journal
+          </h3>
+          <p class="text-xs text-[#6B7971] font-mono mt-0.5">Continuous auto-saving scratch pad for Britt's notes, custom timings, surprises & packing thoughts</p>
+        </div>
+        <div class="flex items-center gap-2 text-xs font-mono">
+          <span id="scratchpad-status" class="text-highland-700 bg-highland-50 border border-highland-200 px-2.5 py-1 rounded-full flex items-center gap-1.5 font-semibold">
+            <i class="fa-solid fa-cloud-arrow-up text-highland-600"></i> Auto-saved locally
+          </span>
+        </div>
+      </div>
+
+      <div class="outlander-card rounded-2xl p-6 sm:p-8 border border-[#E3DCCF] space-y-5 bg-gradient-to-b from-[#FCFBF8] to-[#FAF7F2]">
+        
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2.5">
+            <span class="w-8 h-8 rounded-full bg-amberbrass-light border border-amberbrass-border text-amberbrass-dark flex items-center justify-center text-sm shadow-2xs">
+              <i class="fa-solid fa-feather-pointed"></i>
+            </span>
+            <div>
+              <h4 class="font-outlander font-bold text-lg text-highland-950 leading-tight">Field Notes, Reminders & Secret Plans</h4>
+              <span class="text-[11px] text-[#738278] font-mono">Changes persist automatically across browser refreshes</span>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 text-xs font-mono">
+            <span id="scratchpad-counter" class="text-[#738278] text-[11px]">0 characters</span>
+          </div>
+        </div>
+
+        <!-- MAIN SCRATCH PAD TEXTAREA -->
+        <div class="relative">
+          <textarea 
+            id="scratchpad-text" 
+            rows="6" 
+            class="w-full p-4 rounded-xl scratchpad-paper border border-[#DED7CB] focus:border-highland-600 focus:ring-2 focus:ring-highland-600/20 text-[#24332A] font-sans text-sm focus:outline-none transition-all placeholder-[#9AA8A0] resize-y shadow-inner"
+            placeholder="Jot down anything here: e.g. Packing warm layers for 12,000 ft, swimsuits for the Drury hot tub, confirming the KU Health note is printed, or surprise ideas for dinner..."
+            oninput="handleScratchpadInput()"
+          ></textarea>
+        </div>
+
+        <!-- TOOLBAR ACTIONS -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+          <div class="flex items-center gap-2">
+            <button onclick="saveTimestampedEntry()" class="px-4 py-2 rounded-xl bg-highland-700 hover:bg-highland-800 text-white font-mono text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs">
+              <i class="fa-solid fa-bookmark text-highland-200"></i> Save Entry to Log
+            </button>
+            <button onclick="copyScratchpad()" class="px-4 py-2 rounded-xl bg-white hover:bg-highland-50 text-[#3C4A41] border border-[#DDD5C7] font-mono text-xs font-semibold transition-all flex items-center gap-1.5 shadow-2xs">
+              <i class="fa-solid fa-copy text-amberbrass"></i> Copy Notes
+            </button>
+          </div>
+
+          <button onclick="clearScratchpad()" class="text-[11px] font-mono text-[#8C9C92] hover:text-rose-600 transition-colors flex items-center gap-1">
+            <i class="fa-solid fa-trash-can"></i> Clear Pad
+          </button>
+        </div>
+
+        <!-- SAVED ENTRIES LOG (HISTORICAL ENTRIES STREAM) -->
+        <div class="pt-4 border-t border-[#EDE6DC] space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-mono uppercase text-[#738278] font-bold tracking-wider flex items-center gap-1.5">
+              <i class="fa-solid fa-clock-rotate-left text-amberbrass"></i> Saved Log Entries
+            </span>
+            <span id="log-count" class="text-[10px] font-mono bg-white px-2 py-0.5 rounded-full border border-[#DDD5C7] text-[#6E7D74]">1 entry</span>
+          </div>
+
+          <div id="scratchpad-log-list" class="space-y-2.5 max-h-72 overflow-y-auto pr-1">
+            <!-- Dynamically populated -->
+          </div>
         </div>
 
       </div>
@@ -942,53 +1069,60 @@
 
   </main>
 
-  <!-- STICKY REAL-TIME ITINERARY & BUDGET BAR (BOTTOM) -->
-  <aside class="fixed bottom-0 left-0 right-0 z-50 bg-tactical-950/95 border-t border-champagne-400/40 backdrop-blur-md px-4 sm:px-6 py-4 shadow-2xl">
+
+  <!-- STICKY REAL-TIME ITINERARY & BUDGET BAR (LIGHT & AIRY OUTLANDER DOCK) -->
+  <aside class="fixed bottom-0 left-0 right-0 z-50 bg-white/95 border-t border-[#DDD5C7] backdrop-blur-md px-4 sm:px-6 py-3.5 shadow-[0_-8px_30px_rgba(45,90,60,0.08)]">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
       <div>
-        <span class="text-[10px] font-mono text-champagne-400 uppercase tracking-widest font-bold block">Live Custom Itinerary Budget (2 People)</span>
+        <span class="text-[10px] font-mono text-highland-800 uppercase tracking-widest font-bold block flex items-center gap-1">
+          <span>✦</span> Live Custom Itinerary Budget (2 People)
+        </span>
         <div class="flex items-baseline gap-3">
-          <span id="bar-total-cost" class="text-2xl sm:text-3xl font-mono font-bold text-white">$610</span>
-          <span id="bar-drive-time" class="text-xs font-mono text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">🚗 ~62 min drive</span>
-          <span id="bar-savings" class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Saved ~$85 via Mil & Free Perks</span>
+          <span id="bar-total-cost" class="text-2xl sm:text-3xl font-mono font-bold text-highland-950">$610</span>
+          <span id="bar-drive-time" class="text-xs font-mono text-amberbrass-dark bg-amberbrass-light px-2.5 py-0.5 rounded-full border border-amberbrass-border font-semibold">🚗 ~62 min drive</span>
+          <span id="bar-savings" class="text-xs font-mono text-highland-800 bg-highland-50 px-2.5 py-0.5 rounded-full border border-highland-200 font-semibold">Saved ~$85 via Mil & Free Perks</span>
         </div>
       </div>
 
-      <div class="flex items-center gap-3">
-        <button id="btn-open-modal" onclick="toggleSummaryModal()" class="px-4 py-2.5 rounded-xl bg-tactical-800 hover:bg-tactical-700 text-slate-200 border border-tactical-600 text-xs font-mono font-semibold transition-all">
-          <i class="fa-solid fa-list-check mr-1.5 text-champagne"></i> Full Breakdown
+      <div class="flex items-center gap-2.5">
+        <a href="#sec-scratchpad" class="px-3.5 py-2.5 rounded-xl bg-amberbrass-light hover:bg-amber-100 text-amberbrass-dark border border-amberbrass-border text-xs font-mono font-bold transition-all flex items-center gap-1.5 shadow-2xs" title="Jump to Scratch Pad">
+          <i class="fa-solid fa-pen-fancy text-[11px]"></i> <span class="hidden sm:inline">Scratch Pad</span>
+        </a>
+        <button id="btn-open-modal" onclick="toggleSummaryModal()" class="px-4 py-2.5 rounded-xl bg-white hover:bg-highland-50 text-[#3C4A42] border border-[#DDD5C7] text-xs font-mono font-bold transition-all shadow-2xs">
+          <i class="fa-solid fa-list-check mr-1.5 text-highland-700"></i> Full Breakdown
         </button>
-        <button onclick="copyMasterItinerary()" class="px-5 py-2.5 rounded-xl bg-champagne-500 hover:bg-champagne-400 text-tactical-950 font-mono text-xs font-bold transition-all shadow-lg flex items-center gap-2">
+        <button onclick="copyMasterItinerary()" class="px-5 py-2.5 rounded-xl bg-highland-700 hover:bg-highland-800 text-white font-mono text-xs font-bold transition-all shadow-sm flex items-center gap-2">
           <i class="fa-solid fa-share-nodes"></i> Copy Itinerary & Links
         </button>
       </div>
     </div>
   </aside>
 
-  <!-- SUMMARY MODAL (FIXED FULL SCREEN, GUARANTEED Z-INDEX) -->
-  <div id="summaryModal" style="display: none;" class="fixed inset-0 z-[9999] bg-black/85 backdrop-blur-sm items-center justify-center p-4">
-    <div class="glass-card rounded-2xl max-w-2xl w-full p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto border border-champagne-400/50 shadow-2xl relative">
-      <div class="flex items-center justify-between border-b border-tactical-700 pb-3">
+
+  <!-- SUMMARY MODAL (FIXED FULL SCREEN, ROBUST DISPLAY) -->
+  <div id="summaryModal" style="display: none;" class="fixed inset-0 z-[9999] bg-stone-900/60 backdrop-blur-xs items-center justify-center p-4">
+    <div class="outlander-card rounded-2xl max-w-2xl w-full p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto border border-[#DDD5C7] shadow-2xl relative bg-white">
+      <div class="flex items-center justify-between border-b border-[#EDE6DC] pb-3.5">
         <div>
-          <h4 class="text-xl font-headline font-bold text-white flex items-center gap-2">
-            <i class="fa-solid fa-clipboard-list text-champagne"></i> Britt's Tailored Trip Blueprint
+          <h4 class="text-xl font-outlander font-bold text-highland-950 flex items-center gap-2">
+            <i class="fa-solid fa-clipboard-list text-highland-700"></i> Britt's Tailored Trip Blueprint
           </h4>
-          <p class="text-xs font-mono text-slate-400">All direct phone numbers, addresses & links ready to execute</p>
+          <p class="text-xs font-mono text-[#6E7D74]">All direct phone numbers, addresses & links ready to execute</p>
         </div>
-        <button onclick="toggleSummaryModal()" class="w-8 h-8 rounded-lg bg-tactical-800 text-slate-400 hover:text-white flex items-center justify-center text-lg">
+        <button onclick="toggleSummaryModal()" class="w-8 h-8 rounded-full bg-[#FAF7F0] text-[#738278] hover:text-highland-900 hover:bg-[#F2ECE0] flex items-center justify-center text-base transition-colors">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
-      <div id="modalContentList" class="space-y-3 text-xs font-mono text-slate-300">
+      <div id="modalContentList" class="space-y-3 text-xs font-mono text-[#3C4A42]">
         <!-- Dynamically injected -->
       </div>
 
-      <div class="pt-4 border-t border-tactical-700 flex flex-wrap justify-between items-center gap-3">
-        <span class="text-[11px] text-slate-400 font-mono">Tip: You can unselect any item on the page to customize</span>
+      <div class="pt-4 border-t border-[#EDE6DC] flex flex-wrap justify-between items-center gap-3">
+        <span class="text-[11px] text-[#738278] font-mono">Tip: You can unselect any item on the page to customize</span>
         <div class="flex gap-2">
-          <button onclick="toggleSummaryModal()" class="px-4 py-2 rounded-xl bg-tactical-800 text-slate-300 text-xs font-mono hover:bg-tactical-700">Close</button>
-          <button onclick="copyMasterItinerary()" class="px-5 py-2 rounded-xl bg-champagne-500 text-tactical-950 font-bold text-xs font-mono hover:bg-champagne-400 flex items-center gap-1.5">
+          <button onclick="toggleSummaryModal()" class="px-4 py-2 rounded-xl bg-[#FAF7F0] text-[#4E5C53] text-xs font-mono hover:bg-[#F0EADF] transition-all font-semibold">Close</button>
+          <button onclick="copyMasterItinerary()" class="px-5 py-2 rounded-xl bg-highland-700 text-white font-bold text-xs font-mono hover:bg-highland-800 flex items-center gap-1.5 shadow-xs transition-all">
             <i class="fa-solid fa-copy"></i> Copy to Text / Notes
           </button>
         </div>
@@ -996,12 +1130,15 @@
     </div>
   </div>
 
+
   <!-- TOAST NOTIFICATION -->
-  <div id="toast" class="fixed bottom-28 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 px-4 py-3 rounded-xl bg-tactical-800 border border-champagne-400 text-white font-mono text-xs shadow-2xl flex items-center gap-2">
-    <i class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+  <div id="toast" class="fixed bottom-28 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 px-4 py-3 rounded-xl bg-white border border-highland-200 text-highland-950 font-mono text-xs shadow-xl flex items-center gap-2">
+    <i class="fa-solid fa-circle-check text-highland-600 text-base"></i>
     <span id="toastMessage">Copied to clipboard!</span>
   </div>
 
+
+  <!-- JAVASCRIPT STATE & LOGIC -->
   <script>
     // DATA STATE
     const state = {
@@ -1011,7 +1148,7 @@
       lunch: { id: 'trezo', name: 'Trezo Mare Restaurant (Briarcliff)', cost: 50, drive: 10, savings: 0 },
       dinner: { id: 'piropos', name: 'Piropos Restaurant (Briarcliff Skyline)', cost: 140, drive: 10, savings: 0 },
       craft: { id: 'creative', name: 'Creative Culture DIY Studio (Westport)', cost: 70, drive: 22, savings: 0 },
-      loot: { id: 'pokemon', name: 'Collector\'s Cache Pokémon TCG Run', cost: 40, drive: 24, savings: 0 },
+      loot: { id: 'pokemon', name: 'Collector's Cache Pokémon TCG Run', cost: 40, drive: 24, savings: 0 },
       sight: { id: 'weston', name: 'Weston Bend River Bluff Overlook', cost: 0, drive: 16, savings: 0 }
     };
 
@@ -1026,8 +1163,8 @@
           card.classList.remove('selected-card');
           const btn = card.querySelector('.select-btn');
           if (btn) {
-            btn.classList.remove('bg-champagne-500', 'text-tactical-950');
-            btn.classList.add('bg-tactical-800', 'text-slate-300');
+            btn.classList.remove('bg-highland-700', 'text-white', 'shadow-xs');
+            btn.classList.add('bg-[#F0EADF]', 'text-[#45544B]');
             btn.innerText = 'Select';
           }
         });
@@ -1040,8 +1177,8 @@
           card.classList.remove('selected-card');
           const btn = card.querySelector('.select-btn');
           if (btn) {
-            btn.classList.remove('bg-champagne-500', 'text-tactical-950');
-            btn.classList.add('bg-tactical-800', 'text-slate-300');
+            btn.classList.remove('bg-highland-700', 'text-white', 'shadow-xs');
+            btn.classList.add('bg-[#F0EADF]', 'text-[#45544B]');
             btn.innerText = 'Select';
           }
         });
@@ -1051,8 +1188,8 @@
           activeCard.classList.add('selected-card');
           const btn = activeCard.querySelector('.select-btn');
           if (btn) {
-            btn.classList.add('bg-champagne-500', 'text-tactical-950');
-            btn.classList.remove('bg-tactical-800', 'text-slate-300');
+            btn.classList.add('bg-highland-700', 'text-white', 'shadow-xs');
+            btn.classList.remove('bg-[#F0EADF]', 'text-[#45544B]');
             btn.innerText = `✓ Selected ($${cost})`;
           }
         }
@@ -1087,52 +1224,52 @@
 
       // Update Modal Content List
       let modalHTML = `
-        <div class="p-3 rounded-lg bg-tactical-950 border border-tactical-800 space-y-1">
-          <span class="text-champagne font-bold block"><i class="fa-solid fa-hotel mr-1"></i> BASE CAMP & HOT TUB:</span>
-          <div>${state.hotel ? `${state.hotel.name} ($${state.hotel.cost}) • Drive: ${state.hotel.drive} min` : '<span class="text-slate-500 italic">None Selected (Skipped)</span>'}</div>
-          ${state.hotel && state.hotel.id === 'drury' ? '<div class="text-[11px] text-slate-400">7833 NW Prairie View Rd • Phone: (816) 880-9700 • Promo Code: SALUTE</div>' : ''}
-          ${state.hotel && state.hotel.id === 'embassy' ? '<div class="text-[11px] text-slate-400">7640 NW Tiffany Springs Pkwy • Phone: (816) 891-7788</div>' : ''}
-          ${state.hotel && state.hotel.id === 'elms' ? '<div class="text-[11px] text-slate-400">401 Regent St, Excelsior Springs • Phone: (816) 630-5500</div>' : ''}
+        <div class="p-3.5 rounded-xl bg-[#FAF7F0] border border-[#E3DBD0] space-y-1">
+          <span class="text-highland-800 font-bold block flex items-center gap-1.5"><i class="fa-solid fa-hotel text-highland-600"></i> BASE CAMP & HOT TUB:</span>
+          <div class="font-semibold text-highland-950">${state.hotel ? `${state.hotel.name} ($${state.hotel.cost}) • Drive: ${state.hotel.drive} min` : '<span class="text-stone-400 italic font-normal">None Selected (Skipped)</span>'}</div>
+          ${state.hotel && state.hotel.id === 'drury' ? '<div class="text-[11px] text-[#6E7D74]">7833 NW Prairie View Rd • Phone: (816) 880-9700 • Promo Code: SALUTE</div>' : ''}
+          ${state.hotel && state.hotel.id === 'embassy' ? '<div class="text-[11px] text-[#6E7D74]">7640 NW Tiffany Springs Pkwy • Phone: (816) 891-7788</div>' : ''}
+          ${state.hotel && state.hotel.id === 'elms' ? '<div class="text-[11px] text-[#6E7D74]">401 Regent St, Excelsior Springs • Phone: (816) 630-5500</div>' : ''}
         </div>
 
-        <div class="p-3 rounded-lg bg-tactical-950 border border-tactical-800 space-y-1">
-          <span class="text-amber-400 font-bold block"><i class="fa-solid fa-parachute-box mr-1"></i> FLIGHT ANCHOR (KU MED SEATED SLIDE MANDATE):</span>
-          <div>Falcon Skydiving ($${state.jump.cost} ${state.jump.media ? '+ $100 4K Video/Photo Combo' : ''}) • Drive: ${state.jump.drive} min</div>
-          <div class="text-[11px] text-slate-400">Noah\'s Ark Airport (06MO), 7620 NW River Rd, Waldron, MO • Phone: (913) 205-1224</div>
+        <div class="p-3.5 rounded-xl bg-[#FAF7F0] border border-[#E3DBD0] space-y-1">
+          <span class="text-amberbrass-dark font-bold block flex items-center gap-1.5"><i class="fa-solid fa-parachute-box text-amberbrass"></i> FLIGHT ANCHOR (KU MED SEATED SLIDE MANDATE):</span>
+          <div class="font-semibold text-highland-950">Falcon Skydiving ($${state.jump.cost} ${state.jump.media ? '+ $100 4K Video/Photo Combo' : ''}) • Drive: ${state.jump.drive} min</div>
+          <div class="text-[11px] text-[#6E7D74]">Noah's Ark Airport (06MO), 7620 NW River Rd, Waldron, MO • Phone: (913) 205-1224</div>
         </div>
 
-        <div class="p-3 rounded-lg bg-tactical-950 border border-tactical-800 space-y-1">
-          <span class="text-rose-400 font-bold block"><i class="fa-solid fa-utensils mr-1"></i> MEAL ARCHITECTURE:</span>
-          <div>• Breakfast: ${state.bfast ? `${state.bfast.name} ($${state.bfast.cost})` : '<span class="text-slate-500 italic">Skipped</span>'}</div>
-          <div>• Lunch: ${state.lunch ? `${state.lunch.name} ($${state.lunch.cost})` : '<span class="text-slate-500 italic">Skipped</span>'}</div>
-          <div>• Dinner: ${state.dinner ? `${state.dinner.name} ($${state.dinner.cost})` : '<span class="text-slate-500 italic">Skipped</span>'}</div>
+        <div class="p-3.5 rounded-xl bg-[#FAF7F0] border border-[#E3DBD0] space-y-1">
+          <span class="text-[#8C5E47] font-bold block flex items-center gap-1.5"><i class="fa-solid fa-utensils text-[#8C5E47]"></i> MEAL ARCHITECTURE:</span>
+          <div>• Breakfast: <span class="font-semibold text-highland-950">${state.bfast ? `${state.bfast.name} ($${state.bfast.cost})` : '<span class="text-stone-400 italic font-normal">Skipped</span>'}</span></div>
+          <div>• Lunch: <span class="font-semibold text-highland-950">${state.lunch ? `${state.lunch.name} ($${state.lunch.cost})` : '<span class="text-stone-400 italic font-normal">Skipped</span>'}</span></div>
+          <div>• Dinner: <span class="font-semibold text-highland-950">${state.dinner ? `${state.dinner.name} ($${state.dinner.cost})` : '<span class="text-stone-400 italic font-normal">Skipped</span>'}</span></div>
         </div>
 
-        <div class="p-3 rounded-lg bg-tactical-950 border border-tactical-800 space-y-1">
-          <span class="text-cyan-400 font-bold block"><i class="fa-solid fa-paintbrush mr-1"></i> "CREATING" WORKSHOP:</span>
-          <div>${state.craft ? `${state.craft.name} ($${state.craft.cost}) • Drive: ${state.craft.drive} min` : '<span class="text-slate-500 italic">None Selected (Skipped)</span>'}</div>
+        <div class="p-3.5 rounded-xl bg-[#FAF7F0] border border-[#E3DBD0] space-y-1">
+          <span class="text-highland-700 font-bold block flex items-center gap-1.5"><i class="fa-solid fa-paintbrush text-highland-600"></i> "CREATING" WORKSHOP:</span>
+          <div class="font-semibold text-highland-950">${state.craft ? `${state.craft.name} ($${state.craft.cost}) • Drive: ${state.craft.drive} min` : '<span class="text-stone-400 italic font-normal">None Selected (Skipped)</span>'}</div>
         </div>
 
-        <div class="p-3 rounded-lg bg-tactical-950 border border-tactical-800 space-y-1">
-          <span class="text-yellow-400 font-bold block"><i class="fa-solid fa-dragon mr-1"></i> PARENT HOMECOMING LOOT RUN:</span>
-          <div>${state.loot ? `${state.loot.name} ($${state.loot.cost}) • Drive: ${state.loot.drive} min` : '<span class="text-slate-500 italic">None Selected (Skipped)</span>'}</div>
+        <div class="p-3.5 rounded-xl bg-[#FAF7F0] border border-[#E3DBD0] space-y-1">
+          <span class="text-amberbrass-dark font-bold block flex items-center gap-1.5"><i class="fa-solid fa-dragon text-amberbrass"></i> PARENT HOMECOMING LOOT RUN:</span>
+          <div class="font-semibold text-highland-950">${state.loot ? `${state.loot.name} ($${state.loot.cost}) • Drive: ${state.loot.drive} min` : '<span class="text-stone-400 italic font-normal">None Selected (Skipped)</span>'}</div>
         </div>
 
-        <div class="p-3 rounded-lg bg-tactical-950 border border-tactical-800 space-y-1">
-          <span class="text-emerald-400 font-bold block"><i class="fa-solid fa-mountain-sun mr-1"></i> LOW-WALKING SCENIC VISTA:</span>
-          <div>${state.sight ? `${state.sight.name} ($${state.sight.cost}) • Drive: ${state.sight.drive} min` : '<span class="text-slate-500 italic">None Selected (Skipped)</span>'}</div>
+        <div class="p-3.5 rounded-xl bg-[#FAF7F0] border border-[#E3DBD0] space-y-1">
+          <span class="text-thistle-700 font-bold block flex items-center gap-1.5"><i class="fa-solid fa-mountain-sun text-thistle-500"></i> LOW-WALKING SCENIC VISTA:</span>
+          <div class="font-semibold text-highland-950">${state.sight ? `${state.sight.name} ($${state.sight.cost}) • Drive: ${state.sight.drive} min` : '<span class="text-stone-400 italic font-normal">None Selected (Skipped)</span>'}</div>
         </div>
 
-        <div class="p-3 rounded-lg bg-tactical-900 border border-champagne-400/50 flex justify-between items-center text-sm">
-          <span class="font-bold text-white uppercase tracking-wider">Estimated Total (2 People):</span>
-          <span class="font-bold text-champagne text-base">$${totalCost}</span>
+        <div class="p-3.5 rounded-xl bg-white border border-highland-300 flex justify-between items-center text-sm shadow-2xs">
+          <span class="font-bold text-highland-950 uppercase tracking-wider">Estimated Total (2 People):</span>
+          <span class="font-bold text-highland-700 text-lg">$${totalCost}</span>
         </div>
       `;
 
       document.getElementById('modalContentList').innerHTML = modalHTML;
     }
 
-    // ROBUST MODAL DISPLAY CONTROLLER
+    // MODAL DISPLAY CONTROLLER
     function toggleSummaryModal() {
       const modal = document.getElementById('summaryModal');
       if (modal.style.display === 'none' || modal.style.display === '') {
@@ -1152,6 +1289,7 @@
           toggleSummaryModal();
         }
       });
+      initScratchpad();
     });
 
     // CLOSE MODAL ON ESCAPE KEY
@@ -1176,42 +1314,235 @@
       const lootText = state.loot ? `${state.loot.name} ($${state.loot.cost})` : 'None';
       const sightText = state.sight ? `${state.sight.name} ($${state.sight.cost})` : 'None';
 
-      const text = `OPERATION FALCON HORIZON — BRITT'S BIRTHDAY ITINERARY\n` +
-                   `Target: Wednesday, Nov 25, 2026 (Thanksgiving Eve)\n\n` +
-                   `🏨 BASE CAMP & HOT TUB: ${hotelText}\n` +
-                   `   Drury KCI: (816) 880-9700 | Code: SALUTE | druryhotels.com\n\n` +
-                   `🪂 FLIGHT: Falcon Skydiving Tandem Jump ($${state.jump.cost}${state.jump.media ? ' + $100 4K Video/Photo Combo' : ''})\n` +
-                   `   Dropzone: Noah's Ark Airport, Waldron, MO\n` +
-                   `   Medical Mandate: Signed KU Health Seated Slide Landing Only\n` +
-                   `   Manifest Phone: (913) 205-1224 | Web: falconskydiving.com\n\n` +
-                   `☕ BREAKFAST: ${bfastText}\n` +
-                   `🥪 LUNCH: ${lunchText}\n` +
-                   `🍷 DINNER: ${dinnerText}\n\n` +
-                   `🎨 CREATING WORKSHOP: ${craftText}\n` +
-                   `🎁 KID LOOT RUN: ${lootText}\n` +
-                   `🌄 SCENIC VISTA: ${sightText}\n\n` +
-                   `📊 TRIP TOTALS:\n` +
-                   `• Total Estimated Cost (2 People): ${total}\n` +
-                   `• Cumulative Drive: ${drive}\n`;
+      const text = `OPERATION FALCON HORIZON — BRITT'S BIRTHDAY ITINERARY
+` +
+                   `Target: Wednesday, Nov 25, 2026 (Thanksgiving Eve)
+
+` +
+                   `🏨 BASE CAMP & HOT TUB: ${hotelText}
+` +
+                   `   Drury KCI: (816) 880-9700 | Code: SALUTE | druryhotels.com
+
+` +
+                   `🪂 FLIGHT: Falcon Skydiving Tandem Jump ($${state.jump.cost}${state.jump.media ? ' + $100 4K Video/Photo Combo' : ''})
+` +
+                   `   Dropzone: Noah's Ark Airport, Waldron, MO
+` +
+                   `   Medical Mandate: Signed KU Health Seated Slide Landing Only
+` +
+                   `   Manifest Phone: (913) 205-1224 | Web: falconskydiving.com
+
+` +
+                   `☕ BREAKFAST: ${bfastText}
+` +
+                   `🥪 LUNCH: ${lunchText}
+` +
+                   `🍷 DINNER: ${dinnerText}
+
+` +
+                   `🎨 CREATING WORKSHOP: ${craftText}
+` +
+                   `🎁 KID LOOT RUN: ${lootText}
+` +
+                   `🌄 SCENIC VISTA: ${sightText}
+
+` +
+                   `📊 TRIP TOTALS:
+` +
+                   `• Total Estimated Cost (2 People): ${total}
+` +
+                   `• Cumulative Drive: ${drive}
+`;
 
       navigator.clipboard.writeText(text).then(() => {
         showToast("Full itinerary & phone numbers copied to clipboard!");
       });
     }
 
+    // ==================== SCRATCH PAD SYSTEM ====================
+    const SCRATCHPAD_KEY = "sassenach_birthday_scratchpad_text_v1";
+    const LOG_KEY = "sassenach_birthday_scratchpad_log_v1";
+
+    const DEFAULT_LOG_ENTRIES = [
+      {
+        id: "entry_initial",
+        timestamp: "Wednesday Planning Session",
+        text: "💡 Reminder for Britt: Call Falcon Skydiving manifest to confirm KU Health seated slide landing protocol. Remember to bring warm athletic windbreakers for 12,000 ft, and swimsuits for the Drury indoor hot tub!"
+      }
+    ];
+
+    function initScratchpad() {
+      // Load saved raw text
+      const savedText = localStorage.getItem(SCRATCHPAD_KEY);
+      if (savedText !== null) {
+        document.getElementById('scratchpad-text').value = savedText;
+      }
+      updateScratchpadCounter();
+
+      // Load saved entries
+      let entries = [];
+      try {
+        const raw = localStorage.getItem(LOG_KEY);
+        entries = raw ? JSON.parse(raw) : DEFAULT_LOG_ENTRIES;
+      } catch (e) {
+        entries = DEFAULT_LOG_ENTRIES;
+      }
+      renderScratchpadLog(entries);
+    }
+
+    let saveTimeout = null;
+    function handleScratchpadInput() {
+      const text = document.getElementById('scratchpad-text').value;
+      updateScratchpadCounter();
+
+      const statusEl = document.getElementById('scratchpad-status');
+      statusEl.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-amberbrass"></i> Saving...`;
+
+      clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(() => {
+        localStorage.setItem(SCRATCHPAD_KEY, text);
+        statusEl.innerHTML = `<i class="fa-solid fa-check text-highland-600"></i> Auto-saved locally`;
+      }, 400);
+    }
+
+    function updateScratchpadCounter() {
+      const text = document.getElementById('scratchpad-text').value;
+      const count = text.length;
+      const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+      document.getElementById('scratchpad-counter').innerText = `${words} words · ${count} chars`;
+    }
+
+    function saveTimestampedEntry() {
+      const text = document.getElementById('scratchpad-text').value.trim();
+      if (!text) {
+        showToast("Type something in the scratch pad first!");
+        return;
+      }
+
+      const now = new Date();
+      const timeStr = now.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + " · " + 
+                      now.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+
+      let entries = [];
+      try {
+        const raw = localStorage.getItem(LOG_KEY);
+        entries = raw ? JSON.parse(raw) : DEFAULT_LOG_ENTRIES;
+      } catch (e) {
+        entries = DEFAULT_LOG_ENTRIES;
+      }
+
+      const newEntry = {
+        id: "entry_" + Date.now(),
+        timestamp: timeStr,
+        text: text
+      };
+
+      entries.unshift(newEntry);
+      localStorage.setItem(LOG_KEY, JSON.stringify(entries));
+      renderScratchpadLog(entries);
+      showToast("Saved note entry to log!");
+    }
+
+    function renderScratchpadLog(entries) {
+      const container = document.getElementById('scratchpad-log-list');
+      const countEl = document.getElementById('log-count');
+      countEl.innerText = `${entries.length} ${entries.length === 1 ? 'entry' : 'entries'}`;
+
+      if (!entries || entries.length === 0) {
+        container.innerHTML = `<div class="p-3 text-xs text-[#8A9A90] font-mono italic">No saved entries yet. Type above and click "Save Entry to Log".</div>`;
+        return;
+      }
+
+      container.innerHTML = entries.map(item => `
+        <div class="p-3 rounded-xl bg-white border border-[#E3DBD0] shadow-2xs space-y-1.5 transition-all">
+          <div class="flex items-center justify-between text-[11px] font-mono">
+            <span class="text-highland-700 font-semibold flex items-center gap-1">
+              <i class="fa-solid fa-feather text-amberbrass text-[10px]"></i> ${item.timestamp}
+            </span>
+            <div class="flex items-center gap-1.5">
+              <button onclick="copySingleEntry('${item.id}')" class="text-[#78887F] hover:text-highland-800 px-1.5 py-0.5 rounded text-[10px] font-mono" title="Copy Entry">
+                <i class="fa-solid fa-copy"></i>
+              </button>
+              <button onclick="deleteSingleEntry('${item.id}')" class="text-[#78887F] hover:text-rose-600 px-1.5 py-0.5 rounded text-[10px] font-mono" title="Delete Entry">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+          </div>
+          <p class="text-xs text-[#334238] whitespace-pre-wrap leading-relaxed">${escapeHTML(item.text)}</p>
+        </div>
+      `).join('');
+    }
+
+    function copySingleEntry(id) {
+      try {
+        const entries = JSON.parse(localStorage.getItem(LOG_KEY) || '[]');
+        const entry = entries.find(e => e.id === id);
+        if (entry) {
+          navigator.clipboard.writeText(entry.text).then(() => {
+            showToast("Copied entry to clipboard!");
+          });
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function deleteSingleEntry(id) {
+      try {
+        let entries = JSON.parse(localStorage.getItem(LOG_KEY) || '[]');
+        entries = entries.filter(e => e.id !== id);
+        localStorage.setItem(LOG_KEY, JSON.stringify(entries));
+        renderScratchpadLog(entries);
+        showToast("Deleted entry.");
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function copyScratchpad() {
+      const text = document.getElementById('scratchpad-text').value;
+      if (!text.trim()) {
+        showToast("Scratch pad is currently empty.");
+        return;
+      }
+      navigator.clipboard.writeText(text).then(() => {
+        showToast("Scratch pad copied to clipboard!");
+      });
+    }
+
+    function clearScratchpad() {
+      if (confirm("Clear current scratch pad text?")) {
+        document.getElementById('scratchpad-text').value = '';
+        localStorage.removeItem(SCRATCHPAD_KEY);
+        updateScratchpadCounter();
+        showToast("Scratch pad cleared.");
+      }
+    }
+
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, 
+        tag => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          "'": '&#39;',
+          '"': '&quot;'
+        }[tag] || tag)
+      );
+    }
+
     function showToast(msg) {
-      const toast = document.getElementById('toastMessage');
-      const toastContainer = document.getElementById('toast');
-      toast.innerText = msg;
-      toastContainer.classList.remove('translate-y-20', 'opacity-0');
-      toastContainer.classList.add('translate-y-0', 'opacity-100');
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMessage').innerText = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
       setTimeout(() => {
-        toastContainer.classList.remove('translate-y-0', 'opacity-100');
-        toastContainer.classList.add('translate-y-20', 'opacity-0');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0');
       }, 3000);
     }
 
-    // INITIALIZE
+    // INITIALIZE TOTALS
     updateTotals();
   </script>
 </body>
