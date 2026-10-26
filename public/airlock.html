@@ -1,10 +1,10 @@
 ﻿<!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
-  <meta name="robots" content="noindex, nofollow">
   <meta charset="UTF-8">
+  <meta name="robots" content="noindex, nofollow">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OPERATION: AIRLOCK // Tactical Dual-Account Migration</title>
+  <title>Operation: Airlock â€” Dual-Account Financial Migration System</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -12,10 +12,10 @@
   <!-- Canvas Confetti CDN -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
-  <!-- Google Fonts: Orbitron & JetBrains Mono -->
+  <!-- Google Fonts: Playfair Display, Cinzel, Inter, JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,400;1,700&display=swap" rel="stylesheet">
 
   <script>
     tailwind.config = {
@@ -23,26 +23,38 @@
       theme: {
         extend: {
           fontFamily: {
+            headline: ['"Playfair Display"', 'Georgia', 'serif'],
+            masthead: ['Cinzel', '"Playfair Display"', 'serif'],
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
             mono: ['"JetBrains Mono"', 'monospace'],
-            display: ['"Orbitron"', 'sans-serif'],
           },
           colors: {
-            void: '#070a0f',
-            surface: '#0d131d',
-            panel: '#121a27',
-            card: '#162030',
-            neon: {
-              green: '#00ff66',
-              cyan: '#00f0ff',
-              amber: '#ffaa00',
-              red: '#ff3344',
+            ledger: {
+              950: '#0a0d13',
+              900: '#11151f',
+              850: '#161b26',
+              800: '#1d2330',
+              750: '#242b3a',
+              700: '#2c3546',
+              600: '#3d485c',
+            },
+            brass: {
+              DEFAULT: '#d97706',
+              light: '#f59e0b',
+              glow: 'rgba(217, 119, 6, 0.25)',
+              dark: '#92400e',
+            },
+            forest: {
+              DEFAULT: '#059669',
+              light: '#10b981',
+              dark: '#047857',
+            },
+            parchment: {
+              DEFAULT: '#f5f0e6',
+              card: '#faf7f0',
+              border: '#dcd2bf',
+              muted: '#8c7e6a',
             }
-          },
-          boxShadow: {
-            'neon-green': '0 0 20px rgba(0, 255, 102, 0.35)',
-            'neon-cyan': '0 0 20px rgba(0, 240, 255, 0.35)',
-            'neon-amber': '0 0 20px rgba(255, 170, 0, 0.35)',
-            'neon-red': '0 0 20px rgba(255, 51, 68, 0.35)',
           }
         }
       }
@@ -50,123 +62,101 @@
   </script>
 
   <style>
-    /* Scanline & Tactical HUD overlay */
     body {
-      background-color: #070a0f;
+      background-color: #0b0e14;
       background-image: 
-        radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.08) 0%, transparent 60%),
-        linear-gradient(rgba(18, 26, 39, 0.5) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(18, 26, 39, 0.5) 1px, transparent 1px);
-      background-size: 100% 100%, 32px 32px, 32px 32px;
+        radial-gradient(ellipse at 50% 0%, rgba(217, 119, 6, 0.04) 0%, transparent 60%),
+        linear-gradient(rgba(29, 35, 48, 0.35) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(29, 35, 48, 0.35) 1px, transparent 1px);
+      background-size: 100% 100%, 28px 28px, 28px 28px;
       color: #e2e8f0;
       min-height: 100vh;
     }
 
-    /* Custom tactical scrollbar */
+    /* Custom subtle scrollbar */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
     }
     ::-webkit-scrollbar-track {
-      background: #090e17;
+      background: #0d1118;
     }
     ::-webkit-scrollbar-thumb {
-      background: #1e293b;
+      background: #252e3d;
       border-radius: 3px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: #00ff66;
+      background: #d97706;
     }
 
-    /* Dopamine Task Strikethrough & Completion Transition */
-    .task-item {
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Task completion transition */
+    .task-row {
+      transition: all 0.2s ease;
     }
-    .task-completed {
-      background: rgba(0, 255, 102, 0.04) !important;
-      border-color: rgba(0, 255, 102, 0.4) !important;
+    .task-row.is-completed {
+      background-color: rgba(5, 150, 105, 0.06) !important;
+      border-color: rgba(5, 150, 105, 0.35) !important;
     }
-    .task-completed .task-label {
+    .task-row.is-completed .task-text {
       text-decoration: line-through;
-      text-decoration-thickness: 2px;
-      text-decoration-color: #00ff66;
-      color: #6ee7b7 !important;
-      text-shadow: 0 0 8px rgba(0, 255, 102, 0.3);
+      text-decoration-thickness: 1.5px;
+      text-decoration-color: #10b981;
+      color: #94a3b8 !important;
     }
 
-    /* Pulse radar effect */
-    @keyframes radarSweep {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    .radar-sweep {
-      animation: radarSweep 4s linear infinite;
-    }
-
-    /* Glowing border animation on hover */
-    .tactical-border {
+    /* Subtle paper texture border */
+    .ledger-card {
       position: relative;
-    }
-    .tactical-border::before {
-      content: '';
-      position: absolute;
-      top: -1px; left: -1px; right: -1px; bottom: -1px;
-      border: 1px solid rgba(0, 240, 255, 0.15);
-      pointer-events: none;
-      border-radius: inherit;
+      background: #121722;
+      border: 1px solid #232b3b;
+      box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.4);
     }
   </style>
 </head>
-<body class="font-mono antialiased text-slate-300 selection:bg-neon-green selection:text-black">
+<body class="font-sans antialiased text-slate-300 selection:bg-brass selection:text-black">
 
-  <!-- HUD STATUS BAR -->
-  <header class="border-b border-slate-800 bg-surface/90 backdrop-blur sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+  <!-- HEADER NAVIGATION -->
+  <header class="border-b border-ledger-700 bg-ledger-900/90 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
       
-      <!-- Logo & Metaphor Callout -->
+      <!-- Masthead -->
       <div class="flex items-center gap-3">
-        <div class="relative w-9 h-9 rounded-lg bg-panel border border-neon-cyan/40 flex items-center justify-center shadow-neon-cyan/20">
-          <svg class="w-5 h-5 text-neon-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-          </svg>
-          <span class="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon-green opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-neon-green"></span>
-          </span>
+        <div class="w-10 h-10 rounded-lg bg-ledger-800 border border-brass/40 flex items-center justify-center text-brass font-masthead font-bold text-lg shadow-sm">
+          A
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h1 class="font-display font-black text-lg tracking-wider text-white">OPERATION: AIRLOCK</h1>
-            <span class="text-[10px] uppercase font-bold tracking-widest px-1.5 py-0.5 rounded bg-neon-green/10 text-neon-green border border-neon-green/30">
-              DEFCON 1
+            <h1 class="font-masthead font-bold text-lg text-white tracking-wider">OPERATION: AIRLOCK</h1>
+            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30">
+              Active Protocol
             </span>
           </div>
-          <p class="text-xs text-slate-400">FINANCIAL SEPARATION MATRIX // THE VAULT <span class="text-neon-cyan">â‡„</span> THE TRENCH</p>
+          <p class="text-xs text-slate-400 font-sans">Dual-Account Financial Separation &bull; The Vault &harr; The Trench</p>
         </div>
       </div>
 
-      <!-- Live Quick Stats & Audio Control -->
-      <div class="flex items-center gap-4 text-xs">
+      <!-- Quick Status Badges & Controls -->
+      <div class="flex items-center gap-3 text-xs">
         <!-- Audio Synthesizer Toggle -->
-        <button id="soundToggleBtn" onclick="toggleAudio()" class="px-2.5 py-1.5 rounded border border-slate-700 bg-panel hover:border-slate-500 flex items-center gap-1.5 transition text-slate-300">
-          <span id="soundIcon">ðŸ”Š</span>
-          <span id="soundLabel">SFX ON</span>
+        <button id="soundToggleBtn" onclick="toggleAudio()" class="px-3 py-1.5 rounded-lg border border-ledger-700 bg-ledger-800 hover:border-ledger-600 flex items-center gap-1.5 transition text-slate-300">
+          <span id="soundIcon">&#128266;</span>
+          <span id="soundLabel">Sound On</span>
         </button>
 
         <!-- Current Rank Pill -->
-        <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded border border-slate-800 bg-panel">
-          <span class="text-slate-500 uppercase tracking-wider text-[10px]">RANK:</span>
-          <span id="rankBadge" class="font-bold text-neon-cyan">E-1 RECRUIT</span>
+        <div class="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-ledger-700 bg-ledger-800">
+          <span class="text-slate-500 uppercase tracking-wider text-[10px] font-semibold">Rank:</span>
+          <span id="headerRankBadge" class="font-mono font-bold text-amber-400">Level 1 &bull; Apprentice</span>
         </div>
 
-        <!-- Total XP Pill -->
-        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded border border-slate-800 bg-panel">
-          <span class="text-neon-green font-bold text-sm" id="hudTotalXp">0</span>
-          <span class="text-slate-500 text-[10px] tracking-wider">XP</span>
+        <!-- Total XP -->
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-ledger-700 bg-ledger-800">
+          <span id="headerTotalXp" class="font-mono font-bold text-emerald-400 text-sm">0</span>
+          <span class="text-slate-500 text-[10px] tracking-wider uppercase font-semibold">XP</span>
         </div>
 
-        <!-- Reset & Diagnostic Modal Trigger -->
-        <button onclick="toggleDataModal()" title="System Data Controls" class="p-1.5 rounded border border-slate-800 bg-panel hover:text-white hover:border-slate-600 transition text-slate-400">
+        <!-- Data Backup Button -->
+        <button onclick="toggleDataModal()" title="System Data Controls" class="p-2 rounded-lg border border-ledger-700 bg-ledger-800 hover:text-white hover:border-ledger-600 transition text-slate-400">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -176,317 +166,400 @@
     </div>
   </header>
 
-  <!-- MAIN HUD CONTAINER -->
-  <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
 
-    <!-- TOP TELEMETRY: LEVEL PROGRESSION & 60-DAY STREAK DIAL -->
+    <!-- TOP SECTION: PROGRESSION & 60-DAY HABIT TRACKER -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       
-      <!-- TELEMETRY 1: XP LEVEL ENGINE (2 COLUMNS ON LG) -->
-      <div class="lg:col-span-2 rounded-xl bg-panel/90 border border-slate-800 p-5 tactical-border shadow-lg space-y-4">
-        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+      <!-- XP ENGINE & ARCHITECTURE (2 COLUMNS) -->
+      <div class="lg:col-span-2 rounded-xl ledger-card p-5 sm:p-6 space-y-4">
+        
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-ledger-700 pb-3">
           <div>
-            <div class="text-[10px] text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
-              <span class="inline-block w-2 h-2 rounded-full bg-neon-cyan animate-pulse"></span>
-              PILOT DOSSIER // XP ENGINE
+            <div class="text-[11px] text-slate-400 uppercase tracking-wider font-semibold flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-brass"></span>
+              Experience &amp; Progression
             </div>
-            <div class="text-xl font-display font-black text-white flex items-center gap-2 mt-0.5">
-              <span>LEVEL <span id="currentLevelNumber" class="text-neon-cyan">1</span></span>
-              <span class="text-slate-600">//</span>
-              <span id="rankTitle" class="text-sm font-mono font-bold text-neon-green">E-1 RECRUIT</span>
+            <div class="text-xl font-headline font-bold text-white mt-1 flex items-center gap-2">
+              <span>Level <span id="currentLevelNumber" class="text-amber-400">1</span></span>
+              <span class="text-slate-600">&bull;</span>
+              <span id="rankTitle" class="text-base font-sans font-semibold text-slate-200">Apprentice</span>
             </div>
           </div>
-          <div class="text-right font-mono">
-            <span class="text-xs text-slate-400">TO NEXT RANK:</span>
-            <div class="text-sm font-bold text-slate-200">
-              <span id="xpRemaining">1000</span> <span class="text-slate-500 text-xs">XP NEEDED</span>
+          <div class="text-right">
+            <span class="text-xs text-slate-400 uppercase tracking-wider font-medium">To Next Level:</span>
+            <div class="text-sm font-mono font-bold text-slate-200">
+              <span id="xpRemaining">1000</span> <span class="text-slate-500 text-xs">XP needed</span>
             </div>
           </div>
         </div>
 
-        <!-- PROGRESS BAR -->
+        <!-- XP Progress Bar -->
         <div class="space-y-1.5">
           <div class="flex justify-between text-xs font-mono text-slate-400">
-            <span>LEVEL PROGRESS [<span id="currentLevelXp">0</span> / 1000 XP]</span>
-            <span id="progressPercent" class="text-neon-cyan font-bold">0%</span>
+            <span>Level Progress: <span id="currentLevelXp" class="text-slate-200 font-bold">0</span> / 1,000 XP</span>
+            <span id="progressPercent" class="text-amber-400 font-bold">0%</span>
           </div>
-          <div class="h-4 w-full bg-slate-900 rounded-md border border-slate-700/60 p-0.5 overflow-hidden">
-            <div id="xpProgressBar" class="h-full bg-gradient-to-r from-emerald-500 via-neon-green to-neon-cyan rounded transition-all duration-500 ease-out shadow-neon-green" style="width: 0%"></div>
+          <div class="h-3.5 w-full bg-ledger-900 rounded-full border border-ledger-700 p-0.5 overflow-hidden">
+            <div id="xpProgressBar" class="h-full bg-gradient-to-r from-amber-600 via-amber-500 to-emerald-500 rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
           </div>
-          <div class="flex justify-between text-[10px] text-slate-500 uppercase tracking-wider">
+          <div class="flex justify-between text-[11px] text-slate-500 font-mono">
             <span>Current Floor: <span id="tierFloorXp">0</span> XP</span>
-            <span>Next Tier Milestone: <span id="tierCeilXp">1000</span> XP</span>
+            <span>Next Milestone: <span id="tierCeilXp">1000</span> XP</span>
           </div>
         </div>
 
-        <!-- ARCHITECTURAL METAPHOR CALLOUT -->
+        <!-- Strategy Architecture Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 text-xs">
-          <div class="p-2.5 rounded bg-card/60 border border-slate-800 flex items-start gap-2.5">
-            <span class="text-neon-cyan text-base">ðŸ›¡ï¸</span>
-            <div>
-              <div class="font-bold text-white uppercase text-[11px] tracking-wide">The Vault (Primary / Inflow)</div>
-              <div class="text-[11px] text-slate-400">O-4 Allotment drops here. Fixed bills autopay from here. Debit card shredded. Impenetrable.</div>
+          <div class="p-3 rounded-lg bg-ledger-850 border border-ledger-700/80 space-y-1">
+            <div class="font-bold text-amber-400 uppercase text-[11px] tracking-wider flex items-center gap-1.5">
+              <span>&#128737;</span>
+              <span>The Vault (Inflow &amp; Fixed Bills)</span>
             </div>
+            <p class="text-slate-400 text-xs leading-relaxed">
+              Receives your O-4 W-2 allotment. All fixed debts and household utilities autopay directly from here. Physical debit cards destroyed or locked away.
+            </p>
           </div>
-          <div class="p-2.5 rounded bg-card/60 border border-slate-800 flex items-start gap-2.5">
-            <span class="text-neon-green text-base">âš”ï¸</span>
-            <div>
-              <div class="font-bold text-white uppercase text-[11px] tracking-wide">The Trench (Secondary / Outflow)</div>
-              <div class="text-[11px] text-slate-400">Daily spending allowance only. Operates on the frontlines. Safe to drain to zero.</div>
+          <div class="p-3 rounded-lg bg-ledger-850 border border-ledger-700/80 space-y-1">
+            <div class="font-bold text-emerald-400 uppercase text-[11px] tracking-wider flex items-center gap-1.5">
+              <span>&#9874;</span>
+              <span>The Trench (Daily Operating Account)</span>
             </div>
+            <p class="text-slate-400 text-xs leading-relaxed">
+              Funded strictly via automated discretionary transfer. Safe to spend completely down to zero each cycle without endangering fixed bills or savings.
+            </p>
           </div>
         </div>
+
       </div>
 
-      <!-- TELEMETRY 2: 60-DAY HABIT STREAK & DAILY RECURRING CHECK-IN -->
-      <div class="rounded-xl bg-panel/90 border border-slate-800 p-5 tactical-border shadow-lg flex flex-col justify-between space-y-4">
+      <!-- 60-DAY HABIT TRACKER & DAILY RECURRING CHECK-IN -->
+      <div class="rounded-xl ledger-card p-5 sm:p-6 flex flex-col justify-between space-y-4">
         <div>
-          <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
-            <div class="text-[10px] text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
-              <span class="inline-block w-2 h-2 rounded-full bg-neon-amber animate-pulse"></span>
-              60-DAY HABIT REINFORCER
+          <div class="flex items-center justify-between border-b border-ledger-700 pb-3">
+            <div class="text-[11px] text-slate-400 uppercase tracking-wider font-semibold flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              Habit Reinforcement
             </div>
-            <span class="text-xs px-2 py-0.5 rounded font-bold bg-neon-amber/10 text-neon-amber border border-neon-amber/30">
-              TARGET: 60 DAYS
+            <span class="text-xs px-2.5 py-0.5 rounded-full font-bold bg-emerald-950/60 text-emerald-400 border border-emerald-800">
+              Target: 60 Days
             </span>
           </div>
 
-          <!-- Streak Visualization Dial -->
+          <!-- Dial & Counter -->
           <div class="mt-4 flex items-center justify-around gap-4">
             <div class="relative w-24 h-24 flex items-center justify-center">
               <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                <!-- Background track -->
-                <path class="text-slate-800" stroke-width="3.5" stroke="currentColor" fill="none"
+                <path class="text-ledger-800" stroke-width="3.5" stroke="currentColor" fill="none"
                   d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                <!-- Progress ring -->
-                <path id="streakProgressCircle" class="text-neon-amber transition-all duration-700 ease-out" stroke-dasharray="0, 100" stroke-width="3.5" stroke-linecap="round" stroke="currentColor" fill="none"
+                <path id="streakProgressCircle" class="text-amber-500 transition-all duration-700 ease-out" stroke-dasharray="0, 100" stroke-width="3.5" stroke-linecap="round" stroke="currentColor" fill="none"
                   d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
               </svg>
               <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
-                <span id="streakCount" class="font-display font-black text-2xl text-white">0</span>
-                <span class="text-[9px] uppercase tracking-tighter text-slate-400">DAYS</span>
+                <span id="streakCount" class="font-headline font-bold text-2xl text-white">0</span>
+                <span class="text-[9px] uppercase tracking-wider text-slate-400 font-medium">Days</span>
               </div>
             </div>
 
             <div class="text-xs space-y-1.5">
-              <div class="text-slate-400">Streak Best: <span id="streakBest" class="text-white font-bold">0</span> Days</div>
-              <div class="text-slate-400">Milestone: <span id="streakMilestone" class="text-neon-amber font-bold">Phase 1</span></div>
-              <div class="text-[11px] text-slate-500">Every 7-day streak awards massive milestone fireworks!</div>
+              <div class="text-slate-400">Best Streak: <span id="streakBest" class="text-white font-bold font-mono">0</span> Days</div>
+              <div class="text-slate-400">Milestone: <span id="streakMilestone" class="text-amber-400 font-semibold">Phase 1 (Start)</span></div>
+              <div class="text-[11px] text-slate-500">Weekly streaks award milestone celebration confetti!</div>
             </div>
           </div>
         </div>
 
-        <!-- 60-Day Utilization Check-in Button -->
+        <!-- Daily Utilization Check-in Button -->
         <div class="pt-2">
-          <button id="dailyCheckInBtn" onclick="handleDailyCheckIn()" class="w-full py-3 px-4 rounded-lg font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 border transition-all duration-200 bg-gradient-to-r from-amber-500/20 to-neon-amber/20 hover:from-amber-500/30 hover:to-neon-amber/30 text-neon-amber border-neon-amber/40 shadow-neon-amber/10 active:scale-95">
-            <svg class="w-4 h-4 text-neon-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <button id="dailyCheckInBtn" onclick="handleDailyCheckIn()" class="w-full py-3 px-4 rounded-lg font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 border transition-all duration-200 bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border-amber-500/40 active:scale-98 shadow-sm">
+            <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span id="checkInBtnText">DAILY UTILIZATION CHECK-IN (+50 XP)</span>
+            <span id="checkInBtnText">Daily Utilization Check-in (+50 XP)</span>
           </button>
-          <div id="checkInStatusSubtext" class="text-[10px] text-center text-slate-500 mt-1.5">Daily audit: Verify zero unbudgeted spills from The Vault.</div>
+          <div id="checkInStatusSubtext" class="text-[11px] text-center text-slate-500 mt-2">
+            Audit rule: Confirm zero unbudgeted spending spilled from The Vault today.
+          </div>
         </div>
+
       </div>
     </section>
 
-    <!-- CORE DECK: FRONT-FACE ("THE TRENCH") & BACK-FACE ("THE RADAR") -->
+    <!-- CORE WORKSPACE: MIGRATION LIST + ADMIN BOARD -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
       
-      <!-- FRONT-FACE: THE TRENCH (ACTIVE TARGET LIST) - 8 COLS -->
-      <section class="lg:col-span-8 rounded-xl bg-panel/90 border border-slate-800 p-5 tactical-border shadow-lg space-y-4">
+      <!-- LEFT: MIGRATION CHECKLIST (7 COLUMNS) -->
+      <section class="lg:col-span-7 rounded-xl ledger-card p-5 sm:p-6 space-y-4">
         
-        <!-- Header & Filtering Controls -->
-        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-ledger-700 pb-3">
           <div>
-            <div class="flex items-center gap-2">
-              <span class="text-neon-green text-sm">ðŸŽ¯</span>
-              <h2 class="font-display font-bold text-lg text-white tracking-wide">THE TRENCH // ACTIVE TARGET LIST</h2>
-            </div>
-            <p class="text-xs text-slate-400">Execute tasks to secure the perimeter and harvest XP.</p>
+            <h2 class="font-headline font-bold text-lg text-white">Migration Action Items</h2>
+            <p class="text-xs text-slate-400 mt-0.5">Check off completed migration steps to earn XP and level up.</p>
           </div>
 
-          <!-- Target Filter Tabs -->
-          <div class="flex items-center gap-1 bg-surface p-1 rounded-lg border border-slate-800 text-xs">
-            <button onclick="setFilter('all')" id="filter-all" class="filter-btn px-2.5 py-1 rounded font-medium text-white bg-slate-800">All (<span id="count-all">0</span>)</button>
-            <button onclick="setFilter('active')" id="filter-active" class="filter-btn px-2.5 py-1 rounded font-medium text-slate-400 hover:text-white">Active (<span id="count-active">0</span>)</button>
-            <button onclick="setFilter('completed')" id="filter-completed" class="filter-btn px-2.5 py-1 rounded font-medium text-slate-400 hover:text-white">Secured (<span id="count-completed">0</span>)</button>
+          <!-- Filter Pills -->
+          <div class="flex items-center gap-1 bg-ledger-850 p-1 rounded-lg border border-ledger-700 text-xs">
+            <button onclick="setFilter('all')" id="filter-all" class="filter-btn px-3 py-1 rounded-md font-medium text-white bg-ledger-700">All (<span id="count-all">0</span>)</button>
+            <button onclick="setFilter('active')" id="filter-active" class="filter-btn px-3 py-1 rounded-md font-medium text-slate-400 hover:text-white">Active (<span id="count-active">0</span>)</button>
+            <button onclick="setFilter('completed')" id="filter-completed" class="filter-btn px-3 py-1 rounded-md font-medium text-slate-400 hover:text-white">Completed (<span id="count-completed">0</span>)</button>
           </div>
         </div>
 
-        <!-- Task List Container -->
-        <div id="targetListContainer" class="space-y-2.5 min-h-[300px]">
-          <!-- Target items dynamically rendered here -->
+        <!-- Task List Items -->
+        <div id="targetListContainer" class="space-y-2.5 min-h-[280px]">
+          <!-- Dynamically populated -->
         </div>
 
-        <!-- Target Summary Footnote -->
-        <div class="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-800/80">
-          <span>Secured: <span id="securedCountText" class="text-neon-green font-bold">0</span> / <span id="totalCountText">0</span> Targets</span>
-          <span>Dual-Account Lock Status: <span id="airlockIntegrityText" class="text-neon-cyan font-bold">0%</span></span>
+        <!-- Summary Status -->
+        <div class="flex items-center justify-between text-xs text-slate-400 pt-3 border-t border-ledger-700">
+          <span>Completed: <span id="securedCountText" class="text-emerald-400 font-bold font-mono">0</span> / <span id="totalCountText" class="font-mono">0</span> items</span>
+          <span>System Lock Status: <span id="airlockIntegrityText" class="text-amber-400 font-bold font-mono">0%</span></span>
         </div>
+
       </section>
 
-      <!-- BACK-FACE: THE RADAR (ADMIN RECON & NEW BILL INTAKE) - 4 COLS -->
-      <section class="lg:col-span-4 rounded-xl bg-panel/90 border border-slate-800 p-5 tactical-border shadow-lg space-y-4">
+      <!-- RIGHT: ADMIN BOARD (INTAKE DESK) (5 COLUMNS) -->
+      <section class="lg:col-span-5 rounded-xl ledger-card p-5 sm:p-6 space-y-4">
         
-        <div class="border-b border-slate-800 pb-3">
+        <div class="border-b border-ledger-700 pb-3">
           <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <!-- Radar Icon with rotating sweep -->
-              <div class="relative w-5 h-5 rounded-full border border-neon-cyan/50 overflow-hidden flex items-center justify-center">
-                <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-transparent to-neon-cyan/30 radar-sweep"></div>
-                <div class="w-1 h-1 rounded-full bg-neon-cyan"></div>
-              </div>
-              <h2 class="font-display font-bold text-base text-white tracking-wide">THE RADAR // RECON</h2>
-            </div>
-            <span class="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-neon-cyan/10 text-neon-cyan border border-neon-cyan/30">
-              INTAKE
+            <h2 class="font-headline font-bold text-lg text-white flex items-center gap-2">
+              <span>&#9998;</span>
+              <span>Admin Board</span>
+            </h2>
+            <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/30">
+              New Item Intake
             </span>
           </div>
-          <p class="text-xs text-slate-400 mt-1">Discover a new bill, debt, or autopay? Deploy it directly to the target list.</p>
+          <p class="text-xs text-slate-400 mt-1">Discover a new bill, subscription, or loan? Add it to the migration list immediately.</p>
         </div>
 
-        <!-- Radar Input Form -->
+        <!-- Admin Form -->
         <form id="radarIntakeForm" onsubmit="handleRadarSubmit(event)" class="space-y-3.5 text-xs">
           
-          <!-- Target Title -->
+          <!-- Item Title -->
           <div class="space-y-1">
-            <label class="block uppercase tracking-wider text-[10px] text-slate-400 font-bold">Target Description / Bill Name</label>
-            <input type="text" id="intakeTitle" required placeholder="e.g., Migrate Water & Sewage to Vault Autopay" 
-              class="w-full bg-surface border border-slate-700 rounded-lg px-3 py-2 text-white placeholder-slate-600 focus:outline-none focus:border-neon-cyan focus:ring-1 focus:ring-neon-cyan">
+            <label class="block text-slate-300 font-semibold">Bill Name / Action Item Description</label>
+            <input type="text" id="intakeTitle" required placeholder="e.g., Switch Evergy Electric Bill to Vault Autopay" 
+              class="w-full bg-ledger-850 border border-ledger-700 rounded-lg px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-brass focus:ring-1 focus:ring-brass transition">
           </div>
 
-          <!-- Friction & XP Weight Selector -->
+          <!-- Target Account / Sector -->
           <div class="space-y-1">
-            <label class="block uppercase tracking-wider text-[10px] text-slate-400 font-bold">Friction Class & Bounty</label>
+            <label class="block text-slate-300 font-semibold">Target Account</label>
+            <select id="intakeCategory" class="w-full bg-ledger-850 border border-ledger-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-brass transition">
+              <option value="vault-bill">The Vault &bull; Fixed Household Bill</option>
+              <option value="vault-debt">The Vault &bull; Debt / Loan Payment</option>
+              <option value="trench-ops">The Trench &bull; Discretionary Allowance</option>
+              <option value="allotment">Allotment &bull; Payroll Direct Deposit</option>
+              <option value="vault-ops">Security &bull; Lock Down Debit Cards</option>
+            </select>
+          </div>
+
+          <!-- Difficulty & XP Tier Selector -->
+          <div class="space-y-1">
+            <label class="block text-slate-300 font-semibold">Friction Level &amp; XP Bounty</label>
             <div class="grid grid-cols-3 gap-2">
               <label class="cursor-pointer">
                 <input type="radio" name="frictionTier" value="50" checked class="peer sr-only">
-                <div class="p-2 rounded border border-slate-700 bg-surface text-center peer-checked:border-neon-green peer-checked:bg-neon-green/10 peer-checked:text-neon-green transition">
-                  <div class="font-bold">50 XP</div>
-                  <div class="text-[9px] text-slate-400">Standard Bill</div>
+                <div class="p-2.5 rounded-lg border border-ledger-700 bg-ledger-850 text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-950/30 peer-checked:text-emerald-400 transition">
+                  <div class="font-bold font-mono">50 XP</div>
+                  <div class="text-[10px] text-slate-400">Standard Bill</div>
                 </div>
               </label>
-              
+
               <label class="cursor-pointer">
                 <input type="radio" name="frictionTier" value="200" class="peer sr-only">
-                <div class="p-2 rounded border border-slate-700 bg-surface text-center peer-checked:border-neon-cyan peer-checked:bg-neon-cyan/10 peer-checked:text-neon-cyan transition">
-                  <div class="font-bold">200 XP</div>
-                  <div class="text-[9px] text-slate-400">High 2FA</div>
+                <div class="p-2.5 rounded-lg border border-ledger-700 bg-ledger-850 text-center peer-checked:border-amber-500 peer-checked:bg-amber-950/30 peer-checked:text-amber-400 transition">
+                  <div class="font-bold font-mono">200 XP</div>
+                  <div class="text-[10px] text-slate-400">High 2FA</div>
                 </div>
               </label>
 
               <label class="cursor-pointer">
                 <input type="radio" name="frictionTier" value="500" class="peer sr-only">
-                <div class="p-2 rounded border border-slate-700 bg-surface text-center peer-checked:border-neon-amber peer-checked:bg-neon-amber/10 peer-checked:text-neon-amber transition">
-                  <div class="font-bold">500 XP</div>
-                  <div class="text-[9px] text-slate-400">Critical / W-2</div>
+                <div class="p-2.5 rounded-lg border border-ledger-700 bg-ledger-850 text-center peer-checked:border-purple-500 peer-checked:bg-purple-950/30 peer-checked:text-purple-400 transition">
+                  <div class="font-bold font-mono">500 XP</div>
+                  <div class="text-[10px] text-slate-400">Critical Setup</div>
                 </div>
               </label>
             </div>
           </div>
 
-          <!-- Account Category Tag -->
+          <!-- Custom XP Bounty Override -->
           <div class="space-y-1">
-            <label class="block uppercase tracking-wider text-[10px] text-slate-400 font-bold">Operational Sector</label>
-            <select id="intakeCategory" class="w-full bg-surface border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-neon-cyan">
-              <option value="vault-bill">The Vault // Fixed Autopay Bill</option>
-              <option value="vault-debt">The Vault // Debt / Loan Migration</option>
-              <option value="trench-ops">The Trench // Discretionary Protocol</option>
-              <option value="allotment">Allotment // Payroll & W-2 Routing</option>
-            </select>
-          </div>
-
-          <!-- Custom XP Override (Optional) -->
-          <div class="space-y-1">
-            <label class="block uppercase tracking-wider text-[10px] text-slate-400 font-bold">Custom XP Bounty (Optional)</label>
+            <label class="block text-slate-300 font-semibold">Custom XP Override (Optional)</label>
             <input type="number" id="intakeCustomXp" min="10" max="2500" step="10" placeholder="Leave empty to use tier selected above" 
-              class="w-full bg-surface border border-slate-700 rounded-lg px-3 py-2 text-white placeholder-slate-600 focus:outline-none focus:border-neon-cyan">
+              class="w-full bg-ledger-850 border border-ledger-700 rounded-lg px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-brass transition">
           </div>
 
           <!-- Submit Button -->
-          <button type="submit" class="w-full py-2.5 px-4 rounded-lg font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 border border-neon-cyan/50 bg-neon-cyan/10 hover:bg-neon-cyan/20 text-neon-cyan transition shadow-neon-cyan/10 active:scale-95">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <button type="submit" class="w-full py-2.5 px-4 rounded-lg font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 border border-brass/50 bg-brass/15 hover:bg-brass/25 text-amber-300 transition shadow-sm active:scale-98">
+            <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg>
-            <span>LOCK TARGET TO TRENCH</span>
+            <span>Add Item to Migration List</span>
           </button>
         </form>
 
-        <!-- Quick Metaphor Quick-Reference Card -->
-        <div class="p-3 rounded-lg bg-surface/80 border border-slate-800 text-[11px] space-y-2">
-          <div class="font-bold text-slate-300 flex items-center gap-1.5">
-            <span class="text-neon-cyan">ðŸ’¡</span>
-            <span>BEHAVIORAL PSYCHOLOGY RULE</span>
-          </div>
-          <p class="text-slate-400 leading-relaxed">
-            By migrating all fixed liabilities to <strong class="text-white">The Vault</strong> and cutting its cards, you eliminate decision fatigue. Your brain only ever monitors <strong class="text-white">The Trench</strong> balance.
-          </p>
-        </div>
-
       </section>
     </div>
+
+    <!-- FIELD SCRATCHPAD & OPERATIONAL NOTES (RESTORED LIKE BEFORE) -->
+    <section class="rounded-xl ledger-card p-5 sm:p-6 space-y-4">
+      
+      <!-- Scratchpad Header -->
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-ledger-700 pb-3">
+        <div>
+          <div class="text-[11px] font-mono uppercase tracking-wider text-amber-400 font-semibold flex items-center gap-1.5">
+            <span>&#128221;</span> Field Scratchpad &amp; Migration Log
+          </div>
+          <h3 class="font-headline font-bold text-lg text-white mt-0.5">
+            Operational Observations &amp; Next Steps
+          </h3>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="copyNotesBtn" onclick="copyScratchpadNotes()" class="px-3.5 py-1.5 rounded-lg bg-ledger-800 hover:bg-ledger-700 border border-ledger-600 text-xs font-semibold text-slate-200 transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
+            <span>&#128203;</span> <span id="copyNotesBtnText">Copy Notes</span>
+          </button>
+          <button onclick="clearScratchpadNotes()" class="px-3 py-1.5 rounded-lg hover:bg-ledger-800 text-xs text-slate-400 hover:text-red-400 transition-all">
+            Clear All
+          </button>
+        </div>
+      </div>
+
+      <!-- Helper Notice -->
+      <div class="p-3 rounded-lg bg-ledger-850 border border-ledger-700/80 text-xs text-slate-400 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <span class="text-amber-400">&#128161;</span>
+          <span><b>Note:</b> Entries are stored locally in your browser. Click <b>Copy Notes</b> to copy clean Markdown ready to paste into your AI assistant or personal records.</span>
+        </div>
+      </div>
+
+      <!-- Quick Tag Buttons -->
+      <div class="space-y-1.5">
+        <div class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">
+          Quick Tags (Click to append to note):
+        </div>
+        <div class="flex flex-wrap gap-1.5">
+          <button type="button" onclick="appendScratchpadTag('+ The Vault')" class="px-3 py-1 rounded-full bg-ledger-800 hover:bg-ledger-700 border border-ledger-600 text-xs text-slate-300 transition active:scale-95">
+            + The Vault
+          </button>
+          <button type="button" onclick="appendScratchpadTag('+ The Trench')" class="px-3 py-1 rounded-full bg-ledger-800 hover:bg-ledger-700 border border-ledger-600 text-xs text-slate-300 transition active:scale-95">
+            + The Trench
+          </button>
+          <button type="button" onclick="appendScratchpadTag('+ Coastal CU')" class="px-3 py-1 rounded-full bg-ledger-800 hover:bg-ledger-700 border border-ledger-600 text-xs text-slate-300 transition active:scale-95">
+            + Coastal CU
+          </button>
+          <button type="button" onclick="appendScratchpadTag('+ W-2 Allotment')" class="px-3 py-1 rounded-full bg-ledger-800 hover:bg-ledger-700 border border-ledger-600 text-xs text-slate-300 transition active:scale-95">
+            + W-2 Allotment
+          </button>
+          <button type="button" onclick="appendScratchpadTag('+ Routing Number')" class="px-3 py-1 rounded-full bg-ledger-800 hover:bg-ledger-700 border border-ledger-600 text-xs text-slate-300 transition active:scale-95">
+            + Routing Number
+          </button>
+          <button type="button" onclick="appendScratchpadTag('+ Autopay Switched')" class="px-3 py-1 rounded-full bg-ledger-800 hover:bg-ledger-700 border border-ledger-600 text-xs text-slate-300 transition active:scale-95">
+            + Autopay Switched
+          </button>
+          <button type="button" onclick="appendScratchpadTag('+ Follow Up')" class="px-3 py-1 rounded-full bg-ledger-800 hover:bg-ledger-700 border border-ledger-600 text-xs text-slate-300 transition active:scale-95">
+            + Follow Up
+          </button>
+        </div>
+      </div>
+
+      <!-- Textarea Input & Save Button -->
+      <div class="space-y-2">
+        <textarea id="scratchpadInput" rows="3" class="w-full p-3 rounded-lg bg-ledger-850 border border-ledger-700 focus:border-brass focus:outline-none text-xs text-white placeholder-slate-500 resize-y transition shadow-inner" placeholder="Jot down notes, pending accounts, phone numbers, or reflection on friction points... (Press Ctrl+Enter to save)"></textarea>
+
+        <div class="flex items-center justify-between">
+          <div id="scratchpadSaveConfirmation" class="text-xs font-semibold text-emerald-400 opacity-0 transition-opacity duration-300 flex items-center gap-1.5">
+            <span>&#10003;</span> Note saved to local journal!
+          </div>
+          <button onclick="saveScratchpadNote()" class="px-4 py-2 rounded-lg bg-brass hover:bg-brass-light text-black font-semibold text-xs shadow transition-all flex items-center gap-1.5 active:scale-95">
+            <span>&#128190;</span> Save Note
+          </button>
+        </div>
+      </div>
+
+      <!-- Logged Notes Feed -->
+      <div class="mt-4 pt-4 border-t border-ledger-700">
+        <div class="flex items-center justify-between mb-2.5">
+          <span class="text-xs font-bold text-slate-300 uppercase tracking-wider">
+            Logged Entries (<span id="scratchpadCount">0</span>)
+          </span>
+          <span class="text-[11px] text-slate-500 font-mono">
+            Saved in Browser
+          </span>
+        </div>
+        <div id="scratchpadNotesList" class="space-y-2.5 max-h-72 overflow-y-auto pr-1">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+    </section>
   </main>
 
-  <!-- MODAL: DATA BACKUP / RESTORE / DIAGNOSTICS -->
-  <div id="dataModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-panel border border-slate-800 rounded-xl max-w-md w-full p-6 space-y-4 shadow-2xl tactical-border">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <h3 class="font-display font-bold text-white text-base flex items-center gap-2">
-          <span>âš™ï¸</span>
-          <span>AIRLOCK DATA MATRIX</span>
+  <!-- DATA BACKUP / RESTORE MODAL -->
+  <div id="dataModal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-ledger-900 border border-ledger-700 rounded-xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-ledger-700 pb-3">
+        <h3 class="font-headline font-bold text-white text-base flex items-center gap-2">
+          <span>&#9881;</span>
+          <span>System Data Controls</span>
         </h3>
         <button onclick="toggleDataModal()" class="text-slate-400 hover:text-white text-lg">&times;</button>
       </div>
 
-      <p class="text-xs text-slate-400">All Operation: Airlock data is strictly stored locally on your device via HTML5 LocalStorage. No cloud dependencies.</p>
+      <p class="text-xs text-slate-400">All Operation: Airlock data is stored exclusively in your browser localStorage. No external cloud dependencies.</p>
 
       <div class="space-y-3 pt-2 text-xs">
-        <button onclick="exportData()" class="w-full py-2 px-3 rounded bg-surface border border-slate-700 hover:border-slate-500 text-slate-200 flex items-center justify-between">
-          <span>Export State (JSON Backup)</span>
-          <span>ðŸ’¾</span>
+        <button onclick="exportData()" class="w-full py-2.5 px-3 rounded-lg bg-ledger-800 border border-ledger-700 hover:border-ledger-500 text-slate-200 flex items-center justify-between transition">
+          <span>Export Backup (Download JSON)</span>
+          <span>&#128190;</span>
         </button>
 
-        <label class="w-full py-2 px-3 rounded bg-surface border border-slate-700 hover:border-slate-500 text-slate-200 flex items-center justify-between cursor-pointer">
-          <span>Import State (Restore JSON)</span>
-          <span>ðŸ“¥</span>
+        <label class="w-full py-2.5 px-3 rounded-lg bg-ledger-800 border border-ledger-700 hover:border-ledger-500 text-slate-200 flex items-center justify-between cursor-pointer transition">
+          <span>Import Backup (Restore JSON)</span>
+          <span>&#128229;</span>
           <input type="file" id="importFileInput" accept=".json" onchange="importData(event)" class="sr-only">
         </label>
 
-        <button onclick="resetToDefaultPayload()" class="w-full py-2 px-3 rounded bg-red-950/30 border border-red-800/50 hover:bg-red-900/40 text-red-300 flex items-center justify-between">
-          <span>Reset to Default Mission Payload</span>
-          <span>âš ï¸</span>
+        <button onclick="resetToDefaultPayload()" class="w-full py-2.5 px-3 rounded-lg bg-red-950/30 border border-red-800/50 hover:bg-red-900/40 text-red-300 flex items-center justify-between transition">
+          <span>Reset to Default Mission Items</span>
+          <span>&#9888;</span>
         </button>
       </div>
 
-      <div class="border-t border-slate-800 pt-3 text-right">
-        <button onclick="toggleDataModal()" class="px-4 py-1.5 rounded bg-slate-800 text-slate-300 hover:text-white text-xs">Close</button>
+      <div class="border-t border-ledger-700 pt-3 text-right">
+        <button onclick="toggleDataModal()" class="px-4 py-1.5 rounded-lg bg-ledger-800 text-slate-300 hover:text-white text-xs">Close</button>
       </div>
     </div>
   </div>
 
-  <!-- JAVASCRIPT STATE ENGINE & AUDIO SYNTHESIZER -->
+  <!-- JAVASCRIPT STATE & ENGINE -->
   <script>
     /* ============================================================
        1. STATE MANAGEMENT & STORAGE SCHEMA
        ============================================================ */
-    const STORAGE_KEY = 'OPERATION_AIRLOCK_V1';
+    const STORAGE_KEY = 'OPERATION_AIRLOCK_V2';
+    const SCRATCHPAD_STORAGE_KEY = 'OPERATION_AIRLOCK_SCRATCHPAD_V2';
 
-    // Ranks matching military / O-4 progression
+    // Ranks with clean, prestigious English titles
     const RANKS = [
-      { minXp: 0, title: "E-1 RECRUIT // GROUND ZERO" },
-      { minXp: 1000, title: "E-3 SPECIALIST // AIRLOCK INITIALIZED" },
-      { minXp: 2000, title: "E-5 SERGEANT // TRENCH DEFENDER" },
-      { minXp: 3000, title: "E-7 MASTER SGT // VAULT FORTIFIER" },
-      { minXp: 4000, title: "W-2 CHIEF WARRANT // ROUTING SPECIALIST" },
-      { minXp: 5000, title: "O-1 ENSIGN // AUTOPAY COMMANDER" },
-      { minXp: 6000, title: "O-3 CAPTAIN // SEPARATION ARCHITECT" },
-      { minXp: 7000, title: "O-4 MAJOR // DUAL-ACCOUNT SOVEREIGN" },
-      { minXp: 8000, title: "O-5 LT COLONEL // TACTICAL CAPITALIST" },
-      { minXp: 9000, title: "O-6 COLONEL // AIRLOCK SUPREMACY" },
-      { minXp: 10000, title: "FLAG OFFICER // SOVEREIGN WEALTH MASTER" }
+      { minXp: 0, title: "Level 1 &bull; Apprentice" },
+      { minXp: 1000, title: "Level 2 &bull; Specialist" },
+      { minXp: 2000, title: "Level 3 &bull; Strategist" },
+      { minXp: 3000, title: "Level 4 &bull; Fortress Builder" },
+      { minXp: 4000, title: "Level 5 &bull; System Architect" },
+      { minXp: 5000, title: "Level 6 &bull; Commander" },
+      { minXp: 6000, title: "Level 7 &bull; Separation Master" },
+      { minXp: 7000, title: "Level 8 &bull; Sovereign Overseer" },
+      { minXp: 8000, title: "Level 9 &bull; Capital Strategist" },
+      { minXp: 9000, title: "Level 10 &bull; Financial Titan" },
+      { minXp: 10000, title: "Grandmaster &bull; Wealth Sovereign" }
     ];
 
-    // Default Mission Payload specified by directives
+    // Default Mission Payload in clean English
     const DEFAULT_TASK_PAYLOAD = [
       {
         id: "task-vault-open-trench",
@@ -549,10 +622,11 @@
       }
     };
 
+    let scratchpadNotes = [];
     let activeFilter = 'all';
 
     /* ============================================================
-       2. WEB AUDIO API SYNTHESIZER (ZERO EXTERNAL ASSETS)
+       2. WEB AUDIO API SYNTHESIZER (WARM, PLEASANT ACOUSTIC CHIMES)
        ============================================================ */
     let audioCtx = null;
 
@@ -569,8 +643,7 @@
       return audioCtx;
     }
 
-    // Short tactical click/blip
-    function playBleep(frequency = 800, type = 'sine', duration = 0.08) {
+    function playTone(freq, type = 'sine', duration = 0.08, volume = 0.08) {
       if (!state.settings.soundEnabled) return;
       try {
         const ctx = getAudioContext();
@@ -578,58 +651,54 @@
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = type;
-        osc.frequency.setValueAtTime(frequency, ctx.currentTime);
-        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(volume, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
         osc.connect(gain);
         gain.connect(ctx.destination);
         osc.start();
         osc.stop(ctx.currentTime + duration);
-      } catch (e) {
-        console.warn('Audio synthesis issue:', e);
-      }
+      } catch (e) {}
     }
 
-    // Success chime for standard task completion
-    function playSuccessSound() {
+    function playSuccessChime() {
       if (!state.settings.soundEnabled) return;
       try {
         const ctx = getAudioContext();
         if (!ctx) return;
-        const notes = [587.33, 880, 1174.66]; // D5, A5, D6
+        const notes = [523.25, 659.25, 783.99]; // C5, E5, G5 major triad
         notes.forEach((freq, idx) => {
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(freq, ctx.currentTime + (idx * 0.06));
-          gain.gain.setValueAtTime(0.12, ctx.currentTime + (idx * 0.06));
-          gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + (idx * 0.06) + 0.25);
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, ctx.currentTime + (idx * 0.07));
+          gain.gain.setValueAtTime(0.1, ctx.currentTime + (idx * 0.07));
+          gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + (idx * 0.07) + 0.3);
           osc.connect(gain);
           gain.connect(ctx.destination);
-          osc.start(ctx.currentTime + (idx * 0.06));
-          osc.stop(ctx.currentTime + (idx * 0.06) + 0.25);
+          osc.start(ctx.currentTime + (idx * 0.07));
+          osc.stop(ctx.currentTime + (idx * 0.07) + 0.3);
         });
       } catch (e) {}
     }
 
-    // Massive sci-fi fanfare for Level Up or 7-Day Streaks
-    function playLevelUpFanfare() {
+    function playLevelUpChime() {
       if (!state.settings.soundEnabled) return;
       try {
         const ctx = getAudioContext();
         if (!ctx) return;
-        const notes = [440, 554.37, 659.25, 880, 1108.73, 1318.51]; // A Major arpeggio
+        const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
         notes.forEach((freq, idx) => {
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
-          osc.type = 'square';
-          osc.frequency.setValueAtTime(freq, ctx.currentTime + (idx * 0.08));
-          gain.gain.setValueAtTime(0.15, ctx.currentTime + (idx * 0.08));
-          gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + (idx * 0.08) + 0.4);
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, ctx.currentTime + (idx * 0.09));
+          gain.gain.setValueAtTime(0.14, ctx.currentTime + (idx * 0.09));
+          gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + (idx * 0.09) + 0.45);
           osc.connect(gain);
           gain.connect(ctx.destination);
-          osc.start(ctx.currentTime + (idx * 0.08));
-          osc.stop(ctx.currentTime + (idx * 0.08) + 0.4);
+          osc.start(ctx.currentTime + (idx * 0.09));
+          osc.stop(ctx.currentTime + (idx * 0.09) + 0.45);
         });
       } catch (e) {}
     }
@@ -639,7 +708,7 @@
       saveState();
       updateAudioButtonUI();
       if (state.settings.soundEnabled) {
-        playBleep(1000, 'sine', 0.1);
+        playTone(659.25, 'sine', 0.1, 0.08);
       }
     }
 
@@ -647,38 +716,36 @@
       const icon = document.getElementById('soundIcon');
       const label = document.getElementById('soundLabel');
       if (state.settings.soundEnabled) {
-        icon.textContent = 'ðŸ”Š';
-        label.textContent = 'SFX ON';
+        icon.innerHTML = '&#128266;';
+        label.textContent = 'Sound On';
       } else {
-        icon.textContent = 'ðŸ”‡';
-        label.textContent = 'SFX OFF';
+        icon.innerHTML = '&#128263;';
+        label.textContent = 'Sound Off';
       }
     }
 
     /* ============================================================
-       3. CONFETTI TRIGGERS (CANVAS-CONFETTI)
+       3. CELEBRATION EFFECTS (CANVAS CONFETTI)
        ============================================================ */
-    // Localized burst for single target completion
     function triggerTaskConfetti(xCoord, yCoord) {
       if (typeof confetti !== 'function') return;
       const x = xCoord ? xCoord / window.innerWidth : 0.5;
       const y = yCoord ? yCoord / window.innerHeight : 0.5;
       confetti({
-        particleCount: 50,
-        spread: 70,
+        particleCount: 40,
+        spread: 60,
         origin: { x, y },
-        colors: ['#00ff66', '#00f0ff', '#ffffff', '#38bdf8'],
+        colors: ['#d97706', '#f59e0b', '#10b981', '#ffffff'],
         disableForReducedMotion: true
       });
     }
 
-    // Massive screen-wide celebration for Level-Up or Milestone
     function triggerEpicConfetti() {
       if (typeof confetti !== 'function') return;
-      playLevelUpFanfare();
+      playLevelUpChime();
 
-      const end = Date.now() + 2000;
-      const colors = ['#00ff66', '#00f0ff', '#ffaa00', '#ffffff'];
+      const end = Date.now() + 1800;
+      const colors = ['#d97706', '#f59e0b', '#10b981', '#3b82f6', '#ffffff'];
 
       (function frame() {
         confetti({
@@ -703,14 +770,13 @@
     }
 
     /* ============================================================
-       4. LOCALSTORAGE ENGINE (WITH ROBUST PARSING & FALLBACKS)
+       4. LOCALSTORAGE ENGINE WITH MIGRATION & ERROR HANDLING
        ============================================================ */
     function loadState() {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY);
+        const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('OPERATION_AIRLOCK_V1');
         if (raw) {
           const parsed = JSON.parse(raw);
-          // Sanitize & migrate
           state.xp = typeof parsed.xp === 'number' && !isNaN(parsed.xp) ? Math.max(0, parsed.xp) : 0;
           state.streak = {
             current: parsed.streak?.current || 0,
@@ -721,26 +787,26 @@
           state.settings = {
             soundEnabled: parsed.settings?.soundEnabled !== false
           };
-
-          // Validate tasks array
-          if (Array.isArray(parsed.tasks) && parsed.tasks.length > 0) {
-            state.tasks = parsed.tasks;
-          } else {
-            state.tasks = JSON.parse(JSON.stringify(DEFAULT_TASK_PAYLOAD));
-          }
+          state.tasks = (Array.isArray(parsed.tasks) && parsed.tasks.length > 0) ? parsed.tasks : JSON.parse(JSON.stringify(DEFAULT_TASK_PAYLOAD));
         } else {
-          // Fresh initialization
           state.tasks = JSON.parse(JSON.stringify(DEFAULT_TASK_PAYLOAD));
           state.xp = 0;
           state.streak = { current: 0, best: 0, lastCheckInDate: null, history: [] };
           saveState();
         }
       } catch (err) {
-        console.error('LocalStorage parsing error, initializing defaults:', err);
         state.tasks = JSON.parse(JSON.stringify(DEFAULT_TASK_PAYLOAD));
         state.xp = 0;
         state.streak = { current: 0, best: 0, lastCheckInDate: null, history: [] };
         saveState();
+      }
+
+      // Load scratchpad
+      try {
+        const rawScratch = localStorage.getItem(SCRATCHPAD_STORAGE_KEY);
+        scratchpadNotes = rawScratch ? JSON.parse(rawScratch) : [];
+      } catch (e) {
+        scratchpadNotes = [];
       }
     }
 
@@ -748,12 +814,20 @@
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       } catch (e) {
-        console.error('Failed to write to localStorage:', e);
+        console.error('Failed to write state to localStorage:', e);
+      }
+    }
+
+    function saveScratchpad() {
+      try {
+        localStorage.setItem(SCRATCHPAD_STORAGE_KEY, JSON.stringify(scratchpadNotes));
+      } catch (e) {
+        console.error('Failed to write scratchpad to localStorage:', e);
       }
     }
 
     /* ============================================================
-       5. LEVEL & XP ENGINE
+       5. LEVEL & XP SYSTEM
        ============================================================ */
     function calculateLevelInfo(totalXp) {
       const level = Math.floor(totalXp / 1000) + 1;
@@ -763,7 +837,6 @@
       const floorXp = (level - 1) * 1000;
       const ceilXp = level * 1000;
 
-      // Determine rank title
       let rankTitle = RANKS[0].title;
       for (let i = RANKS.length - 1; i >= 0; i--) {
         if (totalXp >= RANKS[i].minXp) {
@@ -783,14 +856,13 @@
       saveState();
       renderHUD();
 
-      // Check for level up
       if (newLevelInfo.level > oldLevelInfo.level) {
         triggerEpicConfetti();
       } else if (eventOrigin) {
         triggerTaskConfetti(eventOrigin.clientX, eventOrigin.clientY);
-        playSuccessSound();
+        playSuccessChime();
       } else {
-        playSuccessSound();
+        playSuccessChime();
       }
     }
 
@@ -798,7 +870,7 @@
       state.xp = Math.max(0, state.xp - amount);
       saveState();
       renderHUD();
-      playBleep(350, 'sine', 0.15);
+      playTone(350, 'sine', 0.12, 0.08);
     }
 
     /* ============================================================
@@ -825,17 +897,15 @@
     function handleDailyCheckIn() {
       const { isDoneToday, today, last } = checkDailyStreakStatus();
       if (isDoneToday) {
-        playBleep(400, 'sine', 0.1);
+        playTone(400, 'sine', 0.1, 0.06);
         return;
       }
 
       const yesterday = getYesterdayIsoDate();
 
       if (last === yesterday) {
-        // Consecutive streak
         state.streak.current += 1;
       } else {
-        // Streak restart or day 1
         state.streak.current = 1;
       }
 
@@ -848,10 +918,8 @@
         state.streak.history.push(today);
       }
 
-      // Award 50 XP
       addXP(50);
 
-      // Check for milestone streak (7, 14, 21, 28, 60 days)
       if (state.streak.current % 7 === 0 || state.streak.current === 60) {
         triggerEpicConfetti();
       }
@@ -868,49 +936,46 @@
       document.getElementById('streakCount').textContent = streak;
       document.getElementById('streakBest').textContent = best;
 
-      // Circular gauge: percent of 60 days
       const percent = Math.min(100, Math.round((streak / 60) * 100));
       const circle = document.getElementById('streakProgressCircle');
       if (circle) {
         circle.setAttribute('stroke-dasharray', `${percent}, 100`);
       }
 
-      // Milestone text
       const milestoneElem = document.getElementById('streakMilestone');
       if (streak >= 60) {
-        milestoneElem.textContent = 'Airlock Sovereign (60/60)';
-        milestoneElem.className = 'text-neon-green font-bold';
+        milestoneElem.textContent = '60 Days Complete (Sovereign)';
+        milestoneElem.className = 'text-emerald-400 font-bold';
       } else if (streak >= 30) {
         milestoneElem.textContent = 'Vault Fortified (30+ Days)';
-        milestoneElem.className = 'text-neon-cyan font-bold';
+        milestoneElem.className = 'text-amber-400 font-bold';
       } else if (streak >= 7) {
-        milestoneElem.textContent = `Fortification Active (${streak}/60)`;
-        milestoneElem.className = 'text-neon-amber font-bold';
+        milestoneElem.textContent = `Active Momentum (${streak}/60)`;
+        milestoneElem.className = 'text-amber-400 font-bold';
       } else {
         milestoneElem.textContent = `Phase 1 Calibration (${streak}/60)`;
         milestoneElem.className = 'text-slate-400 font-bold';
       }
 
-      // Button status
       const btn = document.getElementById('dailyCheckInBtn');
       const btnText = document.getElementById('checkInBtnText');
       const subtext = document.getElementById('checkInStatusSubtext');
 
       if (isDoneToday) {
         btn.disabled = true;
-        btn.className = 'w-full py-3 px-4 rounded-lg font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 border border-slate-700 bg-panel text-slate-500 cursor-not-allowed opacity-80';
-        btnText.textContent = 'CHECK-IN SECURED FOR TODAY (+50 XP COLLECTED)';
-        subtext.textContent = 'Perimeter locked. Next daily audit unlocks tomorrow at 00:00.';
+        btn.className = 'w-full py-3 px-4 rounded-lg font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 border border-ledger-700 bg-ledger-850 text-slate-500 cursor-not-allowed opacity-80';
+        btnText.textContent = 'Checked In for Today (+50 XP Earned)';
+        subtext.textContent = 'Perimeter verified. Next daily check-in unlocks tomorrow.';
       } else {
         btn.disabled = false;
-        btn.className = 'w-full py-3 px-4 rounded-lg font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 border transition-all duration-200 bg-gradient-to-r from-amber-500/20 to-neon-amber/20 hover:from-amber-500/30 hover:to-neon-amber/30 text-neon-amber border-neon-amber/40 shadow-neon-amber/10 active:scale-95 cursor-pointer';
-        btnText.textContent = 'DAILY UTILIZATION CHECK-IN (+50 XP)';
-        subtext.textContent = 'Daily audit: Verify zero unbudgeted spills from The Vault.';
+        btn.className = 'w-full py-3 px-4 rounded-lg font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 border transition-all duration-200 bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border-amber-500/40 active:scale-98 cursor-pointer shadow-sm';
+        btnText.textContent = 'Daily Utilization Check-in (+50 XP)';
+        subtext.textContent = 'Audit rule: Confirm zero unbudgeted spending spilled from The Vault today.';
       }
     }
 
     /* ============================================================
-       7. TARGET LIST (FRONT-FACE: THE TRENCH)
+       7. MIGRATION TASK LIST (THE CHECKLIST)
        ============================================================ */
     function toggleTask(id, event) {
       const task = state.tasks.find(t => t.id === id);
@@ -921,7 +986,6 @@
         task.completedAt = new Date().toISOString();
         addXP(task.xp, event);
       } else {
-        // Toggle off: deduct XP
         task.completed = false;
         task.completedAt = null;
         deductXP(task.xp);
@@ -936,7 +1000,7 @@
       const task = state.tasks.find(t => t.id === id);
       if (!task) return;
 
-      if (confirm(`Abort target "${task.title}"?`)) {
+      if (confirm(`Remove "${task.title}" from the migration list?`)) {
         if (task.completed) {
           state.xp = Math.max(0, state.xp - task.xp);
         }
@@ -944,22 +1008,22 @@
         saveState();
         renderHUD();
         renderTasks();
-        playBleep(300, 'sine', 0.1);
+        playTone(300, 'sine', 0.1, 0.08);
       }
     }
 
     function setFilter(filter) {
       activeFilter = filter;
       document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.remove('bg-slate-800', 'text-white');
+        btn.classList.remove('bg-ledger-700', 'text-white');
         btn.classList.add('text-slate-400');
       });
       const activeBtn = document.getElementById(`filter-${filter}`);
       if (activeBtn) {
-        activeBtn.classList.add('bg-slate-800', 'text-white');
+        activeBtn.classList.add('bg-ledger-700', 'text-white');
         activeBtn.classList.remove('text-slate-400');
       }
-      playBleep(900, 'sine', 0.05);
+      playTone(600, 'sine', 0.04, 0.06);
       renderTasks();
     }
 
@@ -969,7 +1033,6 @@
       const completedCount = state.tasks.filter(t => t.completed).length;
       const activeCount = allCount - completedCount;
 
-      // Update counters
       document.getElementById('count-all').textContent = allCount;
       document.getElementById('count-active').textContent = activeCount;
       document.getElementById('count-completed').textContent = completedCount;
@@ -979,7 +1042,6 @@
       const integrity = allCount > 0 ? Math.round((completedCount / allCount) * 100) : 0;
       document.getElementById('airlockIntegrityText').textContent = `${integrity}%`;
 
-      // Filter
       let displayed = state.tasks;
       if (activeFilter === 'active') {
         displayed = state.tasks.filter(t => !t.completed);
@@ -989,74 +1051,58 @@
 
       if (displayed.length === 0) {
         container.innerHTML = `
-          <div class="py-12 text-center rounded-lg border border-dashed border-slate-800 p-6 space-y-2">
-            <div class="text-3xl text-slate-600">ðŸ“¡</div>
-            <div class="text-sm font-bold text-slate-400">NO TARGETS IN THIS SECTOR</div>
-            <div class="text-xs text-slate-500">Use "The Radar" on the right to lock in new fixed bills or tasks.</div>
+          <div class="py-12 text-center rounded-lg border border-dashed border-ledger-700 p-6 space-y-2">
+            <div class="text-3xl text-slate-500">&#128203;</div>
+            <div class="text-sm font-semibold text-slate-300">No items in this section</div>
+            <div class="text-xs text-slate-500">Use the Admin Board on the right to add newly discovered bills or tasks.</div>
           </div>
         `;
         return;
       }
 
       container.innerHTML = displayed.map(task => {
-        // Tag badge color
-        let badgeColor = 'bg-slate-800 text-slate-400 border-slate-700';
-        let xpGlow = 'text-neon-cyan';
-        if (task.xp >= 500) {
-          badgeColor = 'bg-neon-amber/10 text-neon-amber border-neon-amber/30';
-          xpGlow = 'text-neon-amber';
-        } else if (task.xp >= 200) {
-          badgeColor = 'bg-neon-cyan/10 text-neon-cyan border-neon-cyan/30';
-          xpGlow = 'text-neon-cyan';
-        } else {
-          badgeColor = 'bg-neon-green/10 text-neon-green border-neon-green/30';
-          xpGlow = 'text-neon-green';
-        }
-
         const categoryLabels = {
-          'vault-bill': 'VAULT // BILL',
-          'vault-debt': 'VAULT // DEBT',
-          'vault-ops': 'VAULT // SECURITY',
-          'trench-ops': 'TRENCH // DISCRETIONARY',
-          'allotment': 'W-2 // ALLOTMENT'
+          'vault-bill': 'Vault &bull; Fixed Bill',
+          'vault-debt': 'Vault &bull; Debt Autopay',
+          'vault-ops': 'Vault &bull; Security',
+          'trench-ops': 'Trench &bull; Operating',
+          'allotment': 'Payroll &bull; W-2 Allotment'
         };
-        const catLabel = categoryLabels[task.category] || 'TARGET';
+        const catLabel = categoryLabels[task.category] || 'General Item';
 
         return `
           <div onclick="toggleTask('${task.id}', event)" 
-            class="task-item group p-3.5 rounded-lg border border-slate-800 bg-surface hover:border-slate-700 cursor-pointer flex items-center justify-between gap-3 ${task.completed ? 'task-completed' : ''}">
+            class="task-row group p-3.5 rounded-lg border border-ledger-700 bg-ledger-850 hover:border-slate-600 cursor-pointer flex items-center justify-between gap-3 ${task.completed ? 'is-completed' : ''}">
             
-            <div class="flex items-center gap-3 min-w-0 flex-1">
-              <!-- Custom Checkbox HUD -->
-              <div class="relative w-5 h-5 flex-shrink-0 rounded border ${task.completed ? 'border-neon-green bg-neon-green/20' : 'border-slate-600 bg-panel group-hover:border-neon-cyan'} flex items-center justify-center transition-all duration-200">
+            <div class="flex items-center gap-3.5 min-w-0 flex-1">
+              <!-- Physical-style tactile checkbox -->
+              <div class="w-5 h-5 flex-shrink-0 rounded border ${task.completed ? 'border-emerald-500 bg-emerald-500 text-black' : 'border-slate-500 bg-ledger-900 group-hover:border-amber-400'} flex items-center justify-center transition-all">
                 ${task.completed ? `
-                  <svg class="w-3.5 h-3.5 text-neon-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                  <svg class="w-3.5 h-3.5 stroke-[3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
                   </svg>
-                ` : `
-                  <span class="w-1.5 h-1.5 rounded-sm bg-transparent group-hover:bg-neon-cyan/40"></span>
-                `}
+                ` : ''}
               </div>
 
-              <!-- Title & Category -->
+              <!-- Title & Category Badge -->
               <div class="min-w-0">
-                <div class="task-label text-sm font-medium text-slate-200 break-words transition-colors">
+                <div class="task-text text-sm font-medium text-slate-200 break-words transition-colors">
                   ${escapeHtml(task.title)}
                 </div>
-                <div class="flex items-center gap-2 mt-0.5 text-[10px]">
-                  <span class="px-1.5 py-0.2 rounded border font-bold uppercase tracking-wider ${badgeColor}">${catLabel}</span>
-                  ${task.completed ? '<span class="text-neon-green uppercase tracking-wider font-bold">â— SECURED</span>' : '<span class="text-slate-500 uppercase tracking-wider">PENDING EXECUTION</span>'}
+                <div class="flex items-center gap-2 mt-1 text-[11px]">
+                  <span class="px-2 py-0.5 rounded bg-ledger-800 border border-ledger-700 text-slate-400 font-medium">${catLabel}</span>
+                  ${task.completed ? '<span class="text-emerald-400 font-semibold">&bull; Completed</span>' : '<span class="text-slate-500">&bull; Pending</span>'}
                 </div>
               </div>
             </div>
 
-            <!-- Bounty & Controls -->
+            <!-- XP Bounty & Delete Button -->
             <div class="flex items-center gap-3 flex-shrink-0">
-              <span class="text-xs font-bold font-mono px-2 py-1 rounded bg-panel border border-slate-800 ${xpGlow}">
+              <span class="text-xs font-mono font-bold px-2.5 py-1 rounded-md bg-ledger-800 border border-ledger-700 ${task.xp >= 500 ? 'text-purple-400' : task.xp >= 200 ? 'text-amber-400' : 'text-emerald-400'}">
                 +${task.xp} XP
               </span>
-              <button onclick="deleteTask('${task.id}', event)" title="Abort Target" 
-                class="opacity-0 group-hover:opacity-100 p-1 text-slate-500 hover:text-neon-red transition">
+              <button onclick="deleteTask('${task.id}', event)" title="Delete item" 
+                class="opacity-0 group-hover:opacity-100 p-1 text-slate-500 hover:text-red-400 transition">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                 </svg>
@@ -1068,7 +1114,7 @@
     }
 
     /* ============================================================
-       8. RADAR INTAKE FORM (BACK-FACE: THE RADAR)
+       8. ADMIN BOARD (INTAKE FORM)
        ============================================================ */
     function handleRadarSubmit(e) {
       e.preventDefault();
@@ -1088,7 +1134,7 @@
       }
 
       const newTask = {
-        id: 'target-' + Date.now() + '-' + Math.random().toString(36).substr(2, 4),
+        id: 'item-' + Date.now() + '-' + Math.random().toString(36).substr(2, 4),
         title: title,
         xp: xp,
         completed: false,
@@ -1100,59 +1146,204 @@
       state.tasks.unshift(newTask);
       saveState();
 
-      // Reset form
       titleInput.value = '';
       document.getElementById('intakeCustomXp').value = '';
       
       renderTasks();
-      playBleep(1200, 'sine', 0.12);
-
-      // Brief visual indicator
-      const radarHeader = document.querySelector('#radarIntakeForm button[type="submit"]');
-      if (radarHeader) {
-        radarHeader.classList.add('bg-neon-green/20', 'text-neon-green', 'border-neon-green');
-        setTimeout(() => {
-          radarHeader.classList.remove('bg-neon-green/20', 'text-neon-green', 'border-neon-green');
-        }, 300);
-      }
+      playTone(750, 'sine', 0.1, 0.08);
     }
 
     /* ============================================================
-       9. HUD & OVERALL TELEMETRY RENDERER
+       9. SCRATCHPAD & FIELD NOTES ENGINE (RESTORED LIKE BEFORE)
+       ============================================================ */
+    function appendScratchpadTag(tag) {
+      const input = document.getElementById('scratchpadInput');
+      const current = input.value.trim();
+      input.value = current ? `${current} ${tag} ` : `${tag} `;
+      input.focus();
+      playTone(700, 'sine', 0.04, 0.05);
+    }
+
+    function saveScratchpadNote() {
+      const input = document.getElementById('scratchpadInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const now = new Date();
+      const formattedTime = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + 
+        ' at ' + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+      const newNote = {
+        id: 'note-' + Date.now(),
+        text: text,
+        timestamp: formattedTime
+      };
+
+      scratchpadNotes.unshift(newNote);
+      saveScratchpad();
+      renderScratchpadNotes();
+
+      input.value = '';
+
+      const confirmNotice = document.getElementById('scratchpadSaveConfirmation');
+      if (confirmNotice) {
+        confirmNotice.style.opacity = '1';
+        setTimeout(() => {
+          confirmNotice.style.opacity = '0';
+        }, 2200);
+      }
+
+      playTone(880, 'sine', 0.08, 0.08);
+    }
+
+    function deleteScratchpadNote(id) {
+      scratchpadNotes = scratchpadNotes.filter(n => n.id !== id);
+      saveScratchpad();
+      renderScratchpadNotes();
+      playTone(350, 'sine', 0.06, 0.06);
+    }
+
+    function clearScratchpadNotes() {
+      if (scratchpadNotes.length === 0) return;
+      if (confirm('Are you sure you want to clear all logged notes?')) {
+        scratchpadNotes = [];
+        saveScratchpad();
+        renderScratchpadNotes();
+        playTone(300, 'sine', 0.08, 0.08);
+      }
+    }
+
+    function copyScratchpadNotes() {
+      if (scratchpadNotes.length === 0) {
+        alert('No notes in the scratchpad to copy.');
+        return;
+      }
+
+      const now = new Date();
+      let md = `# Operation: Airlock â€” Field Scratchpad & Migration Log\n`;
+      md += `*Exported on ${now.toLocaleDateString()} at ${now.toLocaleTimeString()}*\n\n---\n\n`;
+
+      scratchpadNotes.forEach(n => {
+        md += `### [${n.timestamp}]\n${n.text}\n\n`;
+      });
+
+      const copyBtnText = document.getElementById('copyNotesBtnText');
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(md).then(() => {
+          if (copyBtnText) copyBtnText.textContent = 'Copied!';
+          playTone(880, 'sine', 0.1, 0.08);
+          setTimeout(() => {
+            if (copyBtnText) copyBtnText.textContent = 'Copy Notes';
+          }, 2000);
+        }).catch(() => fallbackCopyText(md));
+      } else {
+        fallbackCopyText(md);
+      }
+    }
+
+    function fallbackCopyText(text) {
+      const copyBtnText = document.getElementById('copyNotesBtnText');
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-9999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        if (copyBtnText) copyBtnText.textContent = 'Copied!';
+        playTone(880, 'sine', 0.1, 0.08);
+        setTimeout(() => {
+          if (copyBtnText) copyBtnText.textContent = 'Copy Notes';
+        }, 2000);
+      } catch (e) {
+        alert('Unable to copy automatically. Please copy text manually.');
+      }
+      document.body.removeChild(textArea);
+    }
+
+    function renderScratchpadNotes() {
+      const container = document.getElementById('scratchpadNotesList');
+      const countElem = document.getElementById('scratchpadCount');
+      if (countElem) countElem.textContent = scratchpadNotes.length;
+
+      if (scratchpadNotes.length === 0) {
+        container.innerHTML = `
+          <div class="p-4 text-center rounded-lg border border-dashed border-ledger-700 text-xs text-slate-500">
+            No notes logged yet. Use the box above to record account details, routing notes, or questions.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = scratchpadNotes.map(note => {
+        return `
+          <div class="p-3 rounded-lg bg-ledger-850 border border-ledger-700/80 flex items-start justify-between gap-3 text-xs">
+            <div class="space-y-1 min-w-0 flex-1">
+              <div class="text-[10px] text-amber-400 font-mono font-medium">${escapeHtml(note.timestamp)}</div>
+              <div class="text-slate-200 whitespace-pre-wrap leading-relaxed">${escapeHtml(note.text)}</div>
+            </div>
+            <button onclick="deleteScratchpadNote('${note.id}')" title="Delete note" class="text-slate-500 hover:text-red-400 p-1 transition flex-shrink-0">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Ctrl+Enter keyboard listener for textarea
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        if (document.activeElement && document.activeElement.id === 'scratchpadInput') {
+          saveScratchpadNote();
+        }
+      }
+    });
+
+    /* ============================================================
+       10. HUD TELEMETRY RENDERER
        ============================================================ */
     function renderHUD() {
       const info = calculateLevelInfo(state.xp);
 
-      document.getElementById('hudTotalXp').textContent = state.xp.toLocaleString();
+      document.getElementById('headerTotalXp').textContent = state.xp.toLocaleString();
       document.getElementById('currentLevelNumber').textContent = info.level;
-      document.getElementById('currentLevelXp').textContent = info.currentLevelXp;
-      document.getElementById('xpRemaining').textContent = info.xpNeeded;
+      document.getElementById('currentLevelXp').textContent = info.currentLevelXp.toLocaleString();
+      document.getElementById('xpRemaining').textContent = info.xpNeeded.toLocaleString();
       document.getElementById('progressPercent').textContent = `${info.progressPercent}%`;
       document.getElementById('xpProgressBar').style.width = `${info.progressPercent}%`;
       document.getElementById('tierFloorXp').textContent = info.floorXp.toLocaleString();
       document.getElementById('tierCeilXp').textContent = info.ceilXp.toLocaleString();
-      document.getElementById('rankBadge').textContent = info.rankTitle;
-      document.getElementById('rankTitle').textContent = info.rankTitle;
+      document.getElementById('headerRankBadge').innerHTML = info.rankTitle;
+      document.getElementById('rankTitle').innerHTML = info.rankTitle.replace(/Level \d+ &bull; /, '');
     }
 
     /* ============================================================
-       10. DATA MANAGEMENT MODAL (EXPORT / IMPORT / RESET)
+       11. DATA MODAL & BACKUP CONTROLS
        ============================================================ */
     function toggleDataModal() {
       const modal = document.getElementById('dataModal');
       modal.classList.toggle('hidden');
-      playBleep(700, 'sine', 0.05);
+      playTone(600, 'sine', 0.05, 0.05);
     }
 
     function exportData() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+      const fullBackup = {
+        state: state,
+        scratchpad: scratchpadNotes,
+        exportedAt: new Date().toISOString()
+      };
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fullBackup, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `operation_airlock_save_${getTodayIsoDate()}.json`);
+      downloadAnchor.setAttribute("download", `operation_airlock_backup_${getTodayIsoDate()}.json`);
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
-      playSuccessSound();
+      playSuccessChime();
     }
 
     function importData(e) {
@@ -1163,22 +1354,26 @@
       reader.onload = function(event) {
         try {
           const imported = JSON.parse(event.target.result);
-          if (imported && typeof imported === 'object') {
+          if (imported) {
+            const incomingState = imported.state || imported;
             state = {
-              xp: typeof imported.xp === 'number' ? imported.xp : 0,
-              streak: imported.streak || { current: 0, best: 0, lastCheckInDate: null, history: [] },
-              tasks: Array.isArray(imported.tasks) ? imported.tasks : DEFAULT_TASK_PAYLOAD,
-              settings: imported.settings || { soundEnabled: true }
+              xp: typeof incomingState.xp === 'number' ? incomingState.xp : 0,
+              streak: incomingState.streak || { current: 0, best: 0, lastCheckInDate: null, history: [] },
+              tasks: Array.isArray(incomingState.tasks) ? incomingState.tasks : DEFAULT_TASK_PAYLOAD,
+              settings: incomingState.settings || { soundEnabled: true }
             };
+            if (Array.isArray(imported.scratchpad)) {
+              scratchpadNotes = imported.scratchpad;
+              saveScratchpad();
+            }
             saveState();
             renderHUD();
             renderStreakModule();
             renderTasks();
+            renderScratchpadNotes();
             updateAudioButtonUI();
             toggleDataModal();
             triggerEpicConfetti();
-          } else {
-            alert('Invalid backup payload file.');
           }
         } catch (err) {
           alert('Error parsing JSON backup file.');
@@ -1188,7 +1383,7 @@
     }
 
     function resetToDefaultPayload() {
-      if (confirm('CRITICAL ALERT: Reset mission state and reload initial target dossier? XP and streaks will be wiped.')) {
+      if (confirm('Warning: This will reset all tasks, XP, and streaks back to initial defaults. Continue?')) {
         state.xp = 0;
         state.streak = { current: 0, best: 0, lastCheckInDate: null, history: [] };
         state.tasks = JSON.parse(JSON.stringify(DEFAULT_TASK_PAYLOAD));
@@ -1197,11 +1392,10 @@
         renderStreakModule();
         renderTasks();
         toggleDataModal();
-        playBleep(300, 'sine', 0.2);
+        playTone(300, 'sine', 0.15, 0.08);
       }
     }
 
-    // Utility escape
     function escapeHtml(text) {
       if (!text) return '';
       return text
@@ -1221,6 +1415,7 @@
       renderHUD();
       renderStreakModule();
       renderTasks();
+      renderScratchpadNotes();
     });
   </script>
 </body>
