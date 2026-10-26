@@ -1323,7 +1323,172 @@
     }
     requestAnimationFrame(updateConfetti);
 
-    window.addEventListener('DOMContentLoaded', loadState);
+    
+    // --- EASTON LIVE WEATHER & CLOTHING SELECTOR ---
+    const LOCAL_CORRIDOR_WEATHER_URL = "/api/weather-forecast/";
+    const NWS_HOURLY_DIRECT_URL = "https://api.weather.gov/gridpoints/EAX/34,68/forecast/hourly";
+    const WEATHER_CACHE_KEY = "peacemaker_weather_cache_v1";
+
+    async function loadEastonWeather(forceRefresh = false) {
+      if (!forceRefresh) {
+        try {
+          const cached = localStorage.getItem(WEATHER_CACHE_KEY);
+          if (cached) {
+            const parsed = JSON.parse(cached);
+            if (Date.now() - parsed.timestamp < 15 * 60 * 1000) {
+              renderWeatherUI(parsed.temp, parsed.shortDesc, parsed.pop, parsed.isRain, parsed.lastUpdated);
+              return;
+            }
+          }
+        } catch (e) {}
+      }
+
+      const tempTextEl = document.getElementById('weather-temp-text');
+      if (tempTextEl) tempTextEl.innerText = "Checking Easton weather...";
+
+      let temp = null;
+      let shortDesc = "";
+      let pop = 0;
+      let isRain = false;
+
+      // 1. Primary: Same-Origin Vercel Serverless NWS Endpoint (Zero CORS, 100% Reliable)
+      try {
+        const res = await fetch(LOCAL_CORRIDOR_WEATHER_URL, { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.ok) {
+            temp = Number(data.currentTemp);
+            shortDesc = data.currentForecast || "Fair";
+            pop = Number(data.winterPrecipProb || 0);
+          }
+        }
+      } catch (err) {
+        console.warn("[Weather] Primary corridor API warning:", err);
+      }
+
+      // 2. Secondary Fallback: Direct NWS Grid (Plain GET, No Custom Headers to Avoid Preflight)
+      if (temp === null || isNaN(temp)) {
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 4000);
+          const res2 = await fetch(NWS_HOURLY_DIRECT_URL, { signal: controller.signal });
+          clearTimeout(timeoutId);
+          if (res2.ok) {
+            const data2 = await res2.json();
+            const period = data2.properties?.periods?.[0];
+            if (period) {
+              temp = Number(period.temperature);
+              shortDesc = period.shortForecast || "Fair";
+              pop = Number(period.probabilityOfPrecipitation?.value || 0);
+            }
+          }
+        } catch (err2) {
+          console.warn("[Weather] Direct NWS fallback warning:", err2);
+        }
+      }
+
+      // 3. Ultimate Fallback (If Device Completely Offline)
+      if (temp === null || isNaN(temp)) {
+        temp = 56;
+        shortDesc = "Fair";
+      }
+
+      const rainKeywords = ['rain', 'shower', 'drizzle', 'thunderstorm', 'storm', 'sleet', 'snow'];
+      isRain = pop >= 30 || rainKeywords.some(k => shortDesc.toLowerCase().includes(k));
+
+      const now = new Date();
+      const lastUpdated = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+      try {
+        localStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify({
+          temp,
+          shortDesc,
+          pop,
+          isRain,
+          lastUpdated,
+          timestamp: Date.now()
+        }));
+      } catch (e) {}
+
+      renderWeatherUI(temp, shortDesc, pop, isRain, lastUpdated);
+    }
+
+    function renderWeatherUI(temp, shortDesc, pop, isRain, lastUpdated) {
+      const banner = document.getElementById('outfit-banner');
+      const iconBadge = document.getElementById('outfit-icon');
+      const titleEl = document.getElementById('outfit-title');
+      const taglineEl = document.getElementById('outfit-tagline');
+      const helperEl = document.getElementById('outfit-helper');
+      const tempText = document.getElementById('weather-temp-text');
+      const weatherIcon = document.getElementById('weather-icon');
+      const rainChanceEl = document.getElementById('weather-rain-chance');
+      const updatedEl = document.getElementById('weather-updated-time');
+
+      if (!banner) return;
+
+      if (tempText) tempText.innerText = `${temp}°F • ${shortDesc}`;
+      if (rainChanceEl) rainChanceEl.innerText = `💧 Rain Chance: ${pop}%`;
+      if (updatedEl) updatedEl.innerText = `Easton NWS • ${lastUpdated}`;
+
+      const sLower = shortDesc.toLowerCase();
+      if (weatherIcon) {
+        if (sLower.includes('rain') || sLower.includes('shower')) weatherIcon.innerText = '🌧️';
+        else if (sLower.includes('cloud')) weatherIcon.innerText = '⛅';
+        else if (sLower.includes('snow') || sLower.includes('ice') || sLower.includes('sleet')) weatherIcon.innerText = '❄️';
+        else if (sLower.includes('sun') || sLower.includes('clear')) weatherIcon.innerText = '☀️';
+        else weatherIcon.innerText = '🌤️';
+      }
+
+      banner.className = 'outfit-banner';
+
+      // Rule: Jacket is below 40. Hoodie is below 70, nothing is above. Hoodie if raining or expected rain.
+      if (temp < 40) {
+        banner.classList.add('mode-jacket');
+        if (iconBadge) iconBadge.innerText = '🧥';
+        if (titleEl) titleEl.innerText = 'WEAR A WARM JACKET';
+        if (taglineEl) taglineEl.innerText = `Chilly morning in Easton (${temp}°F) — Below 40°F`;
+        if (helperEl) helperEl.innerText = 'Bundle up with your warm jacket or heavy coat before heading out!';
+        updateJacketChoreDesc('Grab your warm winter jacket today (Below 40°F! 🧥)');
+      } else if (temp < 70 || isRain) {
+        banner.classList.add('mode-hoodie');
+        if (iconBadge) iconBadge.innerText = isRain ? '🌧️' : '🧥';
+        if (titleEl) titleEl.innerText = 'WEAR A HOODIE';
+        if (isRain && temp >= 70) {
+          if (taglineEl) taglineEl.innerText = `Warm (${temp}°F) but rain expected (${pop}%)!`;
+          if (helperEl) helperEl.innerText = 'Rain is in the forecast! Bring a hoodie or rain layer so you stay dry outside.';
+          updateJacketChoreDesc('Grab your hoodie to stay dry in the rain today! 🌧️');
+        } else if (isRain) {
+          if (taglineEl) taglineEl.innerText = `Cool (${temp}°F) & rain expected (${pop}%)!`;
+          if (helperEl) helperEl.innerText = 'Rain is expected! A cozy hoodie will keep you comfortable and dry today.';
+          updateJacketChoreDesc('Grab your cozy hoodie for the rain today! 🧥');
+        } else {
+          if (taglineEl) taglineEl.innerText = `Cool morning in Easton (${temp}°F) — Below 70°F`;
+          if (helperEl) helperEl.innerText = 'A cozy hoodie is the perfect layer for school and playtime today!';
+          updateJacketChoreDesc('Grab your favorite hoodie today (Below 70°F 🧥)');
+        }
+      } else {
+        banner.classList.add('mode-nothing');
+        if (iconBadge) iconBadge.innerText = '👕';
+        if (titleEl) titleEl.innerText = 'NO JACKET NEEDED';
+        if (taglineEl) taglineEl.innerText = `Warm & clear (${temp}°F) — 70°F or above`;
+        if (helperEl) helperEl.innerText = 'Warm and pleasant in Easton! You are good to go in just your regular shirt.';
+        updateJacketChoreDesc('No jacket needed today! Check this off and enjoy the warm day! 👕');
+      }
+    }
+
+    function updateJacketChoreDesc(descText) {
+      if (typeof tasks !== 'undefined' && Array.isArray(tasks)) {
+        const task = tasks.find(t => t.id === 'get_jacket');
+        if (task) task.desc = descText;
+      }
+      const descEl = document.querySelector('[data-id="get_jacket"] .chore-desc');
+      if (descEl) descEl.innerText = descText;
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      loadEastonWeather();
+    });
   </script>
 </body>
 </html>
