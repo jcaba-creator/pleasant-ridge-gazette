@@ -1,1400 +1,1519 @@
 ﻿<!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="robots" content="noindex, nofollow">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Operation: Airlock - Dual-Account Financial Migration System</title>
-  
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Canvas Confetti CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-
-  <!-- Google Fonts: Playfair Display, Cinzel, Inter, JetBrains Mono -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,400;1,700&display=swap" rel="stylesheet">
-
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            headline: ['"Playfair Display"', 'Georgia', 'serif'],
-            masthead: ['Cinzel', '"Playfair Display"', 'serif'],
-            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-            mono: ['"JetBrains Mono"', 'monospace'],
-          },
-          colors: {
-            ledger: {
-              950: '#0a0d13',
-              900: '#11151f',
-              850: '#161b26',
-              800: '#1d2330',
-              750: '#242b3a',
-              700: '#2c3546',
-              600: '#3d485c',
-            },
-            brass: {
-              DEFAULT: '#d97706',
-              light: '#f59e0b',
-              glow: 'rgba(217, 119, 6, 0.25)',
-              dark: '#92400e',
-            },
-            forest: {
-              DEFAULT: '#059669',
-              light: '#10b981',
-              dark: '#047857',
-            },
-            parchment: {
-              DEFAULT: '#f5f0e6',
-              card: '#faf7f0',
-              border: '#dcd2bf',
-              muted: '#8c7e6a',
-            }
-          }
-        }
-      }
-    }
-  </script>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Operation: Airlock â€” Dual-Account Financial Migration System</title>
   <style>
+    /* 100% Self-Contained Styles - Zero External CDNs or Fonts Required */
+    :root {
+      --bg-dark: #090d16;
+      --card-bg: #131b2e;
+      --card-border: #1e293b;
+      --item-bg: #0c1222;
+      --item-border: #1e293b;
+      --gold: #f59e0b;
+      --gold-light: #fbbf24;
+      --green: #10b981;
+      --green-dark: #059669;
+      --indigo: #6366f1;
+      --purple: #a855f7;
+      --blue: #38bdf8;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     body {
-      background-color: #0b0e14;
-      background-image: 
-        radial-gradient(ellipse at 50% 0%, rgba(217, 119, 6, 0.04) 0%, transparent 60%),
-        linear-gradient(rgba(29, 35, 48, 0.35) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(29, 35, 48, 0.35) 1px, transparent 1px);
-      background-size: 100% 100%, 28px 28px, 28px 28px;
-      color: #e2e8f0;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Trebuchet MS", sans-serif;
       min-height: 100vh;
+      padding: 14px;
+      display: flex;
+      justify-content: center;
     }
 
-    /* Custom subtle scrollbar */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #0d1118;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #252e3d;
-      border-radius: 3px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #d97706;
+    .container {
+      width: 100%;
+      max-width: 620px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding-bottom: 60px;
     }
 
-    /* Task completion transition */
-    .task-row {
+    .btn-3d {
+      border: none;
+      cursor: pointer;
+      font-weight: 800;
+      transition: all 0.1s ease;
+      box-shadow: 0 4px 0 rgba(0, 0, 0, 0.4);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-3d:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.4);
+    }
+
+    /* Header Dashboard Card */
+    .header-card {
+      background: linear-gradient(145deg, #131b2e, #0c1220);
+      border: 2px solid rgba(245, 158, 11, 0.45);
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    }
+
+    .hero-profile {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .avatar-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar-badge {
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      border: 3px solid #fef08a;
+      border-radius: 16px;
+      font-size: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 14px rgba(245, 158, 11, 0.4);
+      user-select: none;
+    }
+
+    .hero-title-group h1 {
+      font-size: 19px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      color: #fde047;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .streak-pill {
+      background: rgba(234, 88, 12, 0.25);
+      border: 1px solid #ea580c;
+      color: #fdba74;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .hero-rank {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .action-icons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #fff;
+      font-size: 17px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .icon-btn:hover {
+      background: #334155;
+    }
+
+    /* XP Progress Bar */
+    .xp-section {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .xp-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 800;
+      color: #fde047;
+    }
+
+    .xp-bar-bg {
+      width: 100%;
+      height: 18px;
+      background: #090d16;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 2px solid #334155;
+      padding: 2px;
+    }
+
+    .xp-bar-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #f59e0b, #eab308, #10b981);
+      transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* Dual-Account Metaphor Architecture Strip */
+    .architecture-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid #1e293b;
+    }
+
+    .arch-card {
+      background: #090d16;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .arch-card-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .arch-card-title.vault { color: #f59e0b; }
+    .arch-card-title.trench { color: #10b981; }
+    .arch-card-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+
+    /* Stats Footer */
+    .stats-footer {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #1e293b;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .stats-counts {
+      display: flex;
+      gap: 14px;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--text-muted);
+    }
+    .stats-counts span {
+      color: #fff;
+      font-size: 14px;
+    }
+    .stats-counts .green-val { color: #34d399; }
+    .stats-counts .gold-val { color: #facc15; }
+
+    .daily-checkin-btn {
+      background: linear-gradient(90deg, #f59e0b, #fbbf24);
+      color: #090d16;
+      padding: 7px 14px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .daily-checkin-btn.done {
+      background: #1e293b;
+      color: #64748b;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Quest Zones / Categories */
+    .quest-zone {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    .zone-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .zone-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .zone-tag {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .zone-setup .zone-title { color: #818cf8; }
+    .zone-setup .zone-tag { background: #312e81; color: #c7d2fe; border: 1px solid #4338ca; }
+
+    .zone-payroll .zone-title { color: #c084fc; }
+    .zone-payroll .zone-tag { background: #581c87; color: #e9d5ff; border: 1px solid #7e22ce; }
+
+    .zone-autopay .zone-title { color: #34d399; }
+    .zone-autopay .zone-tag { background: #064e3b; color: #a7f3d0; border: 1px solid #059669; }
+
+    .zone-habit .zone-title { color: #f59e0b; }
+    .zone-habit .zone-tag { background: #78350f; color: #fde68a; border: 1px solid #b45309; }
+
+    .chore-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .chore-item {
+      background: var(--item-bg);
+      border: 1px solid var(--item-border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+      gap: 10px;
+    }
+    .chore-item.done {
+      opacity: 0.55;
+      background: rgba(6, 78, 59, 0.2);
+      border-color: rgba(5, 150, 105, 0.4);
+    }
+    .chore-item.done .chore-name {
+      text-decoration: line-through;
+      color: #94a3b8;
+    }
+
+    .chore-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .chore-checkbox {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: #1e293b;
+      border: 2px solid #64748b;
+      cursor: pointer;
+      display: grid;
+      place-content: center;
+      flex-shrink: 0;
       transition: all 0.2s ease;
     }
-    .task-row.is-completed {
-      background-color: rgba(5, 150, 105, 0.06) !important;
-      border-color: rgba(5, 150, 105, 0.35) !important;
+    .chore-checkbox:checked {
+      background: #10b981;
+      border-color: #059669;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
     }
-    .task-row.is-completed .task-text {
-      text-decoration: line-through;
-      text-decoration-thickness: 1.5px;
-      text-decoration-color: #10b981;
-      color: #94a3b8 !important;
+    .chore-checkbox:checked::before {
+      content: "âœ“";
+      color: #ffffff;
+      font-size: 20px;
+      font-weight: 900;
     }
 
-    /* Subtle paper texture border */
-    .ledger-card {
+    .chore-labels {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .chore-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #f1f5f9;
+      word-break: break-word;
+    }
+    .chore-desc {
+      font-size: 12px;
+      font-weight: 500;
+      color: #94a3b8;
+      margin-top: 1px;
+    }
+
+    .chore-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .xp-badge {
+      font-size: 12px;
+      font-weight: 800;
+      padding: 4px 8px;
+      border-radius: 8px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #facc15;
+    }
+    .xp-badge.critical {
+      color: #c084fc;
+      border-color: rgba(168, 85, 247, 0.4);
+      background: rgba(168, 85, 247, 0.1);
+    }
+    .xp-badge.high {
+      color: #38bdf8;
+      border-color: rgba(56, 189, 248, 0.4);
+      background: rgba(56, 189, 248, 0.1);
+    }
+
+    .delete-item-btn {
+      background: none;
+      border: none;
+      color: #64748b;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 6px;
+      transition: color 0.15s;
+    }
+    .delete-item-btn:hover {
+      color: #ef4444;
+    }
+
+    /* Admin Board Card (Add Items) */
+    .admin-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 14px;
+    }
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #1e293b;
+      padding-bottom: 8px;
+    }
+    .admin-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #fde047;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .admin-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .form-group label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .form-input, .form-select {
+      width: 100%;
+      background: #090d16;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 9px 12px;
+      color: #f8fafc;
+      font-size: 13px;
+      outline: none;
+      font-family: inherit;
+    }
+    .form-input:focus, .form-select:focus {
+      border-color: var(--gold);
+    }
+    .tier-select-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+    .tier-pill {
+      background: #090d16;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 8px 4px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      transition: all 0.15s;
+    }
+    .tier-pill.selected {
+      background: rgba(245, 158, 11, 0.15);
+      border-color: var(--gold);
+      color: #fde047;
+    }
+
+    /* Scratchpad Section at the bottom */
+    .scratchpad-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 14px;
+      margin-top: 4px;
+    }
+    .scratchpad-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      border-bottom: 1px solid #1e293b;
+      padding-bottom: 6px;
+    }
+    .scratchpad-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: #fde047;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .quick-tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 8px;
+    }
+    .tag-btn {
+      background: #090d16;
+      border: 1px solid #334155;
+      color: #cbd5e1;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .tag-btn:hover {
+      background: #1e293b;
+      color: #fff;
+    }
+    .scratchpad-input {
+      width: 100%;
+      background: #090d16;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 9px 12px;
+      color: #f8fafc;
+      font-size: 13px;
+      outline: none;
+      resize: vertical;
+      min-height: 64px;
+      font-family: inherit;
+    }
+    .scratchpad-input:focus {
+      border-color: var(--gold);
+    }
+    .scratchpad-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 6px;
+    }
+    .notes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .note-row {
+      background: #090d16;
+      border: 1px solid #1e293b;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .note-text {
+      flex: 1;
+      color: #e2e8f0;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+    .note-date {
+      font-size: 10px;
+      color: #f59e0b;
+      margin-bottom: 2px;
+    }
+
+    /* Modal Backdrop */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(9, 13, 22, 0.88);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 999;
+    }
+    .modal-overlay.hidden { display: none; }
+
+    .modal-card {
+      background: #131b2e;
+      border: 2px solid #f59e0b;
+      border-radius: 22px;
+      width: 100%;
+      max-width: 400px;
+      padding: 24px;
+      text-align: center;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
       position: relative;
-      background: #121722;
-      border: 1px solid #232b3b;
-      box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-title {
+      color: #fde047;
+      font-size: 20px;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+    .modal-desc {
+      font-size: 12px;
+      color: #cbd5e1;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+    .prize-box {
+      background: #090d16;
+      border: 2px dashed #f59e0b;
+      border-radius: 16px;
+      padding: 16px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #fef08a;
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+    .claim-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      background: linear-gradient(90deg, #10b981, #059669);
+      color: white;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1000;
+      width: 100%;
+      height: 100%;
     }
   </style>
 </head>
-<body class="font-sans antialiased text-slate-300 selection:bg-brass selection:text-black">
+<body>
 
-  <!-- HEADER NAVIGATION -->
-  <header class="border-b border-ledger-700 bg-ledger-900/90 backdrop-blur sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
-      
-      <!-- Masthead -->
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-lg bg-ledger-800 border border-brass/40 flex items-center justify-center text-brass font-masthead font-bold text-lg shadow-sm">
-          A
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <h1 class="font-masthead font-bold text-lg text-white tracking-wider">OPERATION: AIRLOCK</h1>
-            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30">
-              Active Protocol
-            </span>
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="container">
+
+    <!-- Top Dashboard Header -->
+    <header class="header-card">
+      <div class="hero-profile">
+        <div class="avatar-wrapper">
+          <div class="avatar-badge" id="avatar-icon">ðŸ›¡ï¸</div>
+          <div class="hero-title-group">
+            <h1>
+              <span>Operation: Airlock</span>
+              <span class="streak-pill" id="streak-badge">ðŸ”¥ <span id="streak-count">1</span>/60 DAYS</span>
+            </h1>
+            <div class="hero-rank" id="rank-title">Level 1 â€¢ Recruit</div>
           </div>
-          <p class="text-xs text-slate-400 font-sans">Dual-Account Financial Separation &bull; The Vault &harr; The Trench</p>
+        </div>
+
+        <div class="action-icons">
+          <button class="icon-btn" id="sound-btn" onclick="toggleSound()" title="Toggle Sound">ðŸ”Š</button>
+          <button class="icon-btn" onclick="toggleAdminBoard()" title="Toggle Admin Board">âœï¸</button>
         </div>
       </div>
 
-      <!-- Quick Status Badges & Controls -->
-      <div class="flex items-center gap-3 text-xs">
-        <!-- Audio Synthesizer Toggle -->
-        <button id="soundToggleBtn" onclick="toggleAudio()" class="px-3 py-1.5 rounded-lg border border-ledger-700 bg-ledger-800 hover:border-ledger-600 flex items-center gap-1.5 transition text-slate-300">
-          <span id="soundIcon">&#128266;</span>
-          <span id="soundLabel">Sound On</span>
+      <!-- XP Bar -->
+      <div class="xp-section">
+        <div class="xp-labels">
+          <span>MISSION PROGRESSION</span>
+          <span id="xp-text">0 / 1,000 XP</span>
+        </div>
+        <div class="xp-bar-bg">
+          <div class="xp-bar-fill" id="xp-bar"></div>
+        </div>
+      </div>
+
+      <!-- Strategy Architecture Strip -->
+      <div class="architecture-grid">
+        <div class="arch-card">
+          <div class="arch-card-title vault">
+            <span>ðŸ›¡ï¸</span> The Vault (Fortress)
+          </div>
+          <div class="arch-card-desc">
+            Primary Inflow. O-4 W-2 Allotment lands here. Fixed bills autopay from here. Debit cards destroyed.
+          </div>
+        </div>
+        <div class="arch-card">
+          <div class="arch-card-title trench">
+            <span>âš”ï¸</span> The Trench (Frontlines)
+          </div>
+          <div class="arch-card-desc">
+            Secondary Operating. Funded by automated allowance. Only account with a debit card. Safe to drain to zero.
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Footer -->
+      <div class="stats-footer">
+        <div class="stats-counts">
+          <div>TASKS: <span class="green-val" id="completed-count">0/6</span></div>
+          <div>XP: <span class="gold-val" id="total-xp-val">0 XP</span></div>
+        </div>
+
+        <button id="daily-btn" onclick="handleDailyCheckin()" class="btn-3d daily-checkin-btn">
+          60-DAY CHECK-IN (+50 XP)
         </button>
+      </div>
+    </header>
 
-        <!-- Current Rank Pill -->
-        <div class="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-ledger-700 bg-ledger-800">
-          <span class="text-slate-500 uppercase tracking-wider text-[10px] font-semibold">Rank:</span>
-          <span id="headerRankBadge" class="font-mono font-bold text-amber-400">Level 1 &bull; Apprentice</span>
+    <!-- ADMIN BOARD (TOGGLEABLE INTAKE DESK) -->
+    <div id="admin-board-card" class="admin-card" style="display: none;">
+      <div class="admin-header">
+        <div class="admin-title">
+          <span>âœï¸</span> Admin Board â€” Intake New Items
+        </div>
+        <button onclick="toggleAdminBoard()" class="tag-btn" style="border: none;">Close</button>
+      </div>
+
+      <form class="admin-form" onsubmit="handleNewItemSubmit(event)">
+        <div class="form-group">
+          <label>Task / Bill Name</label>
+          <input type="text" id="admin-task-name" required placeholder="e.g. Switch Water Utility to Vault Autopay" class="form-input">
         </div>
 
-        <!-- Total XP -->
-        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-ledger-700 bg-ledger-800">
-          <span id="headerTotalXp" class="font-mono font-bold text-emerald-400 text-sm">0</span>
-          <span class="text-slate-500 text-[10px] tracking-wider uppercase font-semibold">XP</span>
+        <div class="form-group">
+          <label>Description / Notes</label>
+          <input type="text" id="admin-task-desc" placeholder="e.g. Due 1st of month; update routing number" class="form-input">
         </div>
 
-        <!-- Data Backup Button -->
-        <button onclick="toggleDataModal()" title="System Data Controls" class="p-2 rounded-lg border border-ledger-700 bg-ledger-800 hover:text-white hover:border-ledger-600 transition text-slate-400">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-          </svg>
+        <div class="form-group">
+          <label>Operational Category</label>
+          <select id="admin-task-zone" class="form-select">
+            <option value="setup">Account Infrastructure &amp; The Trench</option>
+            <option value="payroll">Payroll &amp; Allotment Routing</option>
+            <option value="autopay" selected>Fixed Debt &amp; Autopay Migration</option>
+            <option value="habit">Daily Operating &amp; Habit</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Friction &amp; Bounty Tier</label>
+          <div class="tier-select-grid">
+            <div class="tier-pill selected" onclick="selectTier(50, this)">50 XP<br><span style="font-size:9px;font-weight:400;">Standard</span></div>
+            <div class="tier-pill" onclick="selectTier(200, this)">200 XP<br><span style="font-size:9px;font-weight:400;">High 2FA</span></div>
+            <div class="tier-pill" onclick="selectTier(500, this)">500 XP<br><span style="font-size:9px;font-weight:400;">Critical W-2</span></div>
+          </div>
+          <input type="hidden" id="admin-task-xp" value="50">
+        </div>
+
+        <button type="submit" class="btn-3d" style="background: linear-gradient(90deg, #f59e0b, #fbbf24); color: #090d16; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 800; margin-top: 4px;">
+          Add Item to Checklist
         </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- MAIN CONTAINER -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
-
-    <!-- TOP SECTION: PROGRESSION & 60-DAY HABIT TRACKER -->
-    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      
-      <!-- XP ENGINE & ARCHITECTURE (2 COLUMNS) -->
-      <div class="lg:col-span-2 rounded-xl ledger-card p-5 sm:p-6 space-y-4">
-        
-        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-ledger-700 pb-3">
-          <div>
-            <div class="text-[11px] text-slate-400 uppercase tracking-wider font-semibold flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-brass"></span>
-              Experience &amp; Progression
-            </div>
-            <div class="text-xl font-headline font-bold text-white mt-1 flex items-center gap-2">
-              <span>Level <span id="currentLevelNumber" class="text-amber-400">1</span></span>
-              <span class="text-slate-600">&bull;</span>
-              <span id="rankTitle" class="text-base font-sans font-semibold text-slate-200">Apprentice</span>
-            </div>
-          </div>
-          <div class="text-right">
-            <span class="text-xs text-slate-400 uppercase tracking-wider font-medium">To Next Level:</span>
-            <div class="text-sm font-mono font-bold text-slate-200">
-              <span id="xpRemaining">1000</span> <span class="text-slate-500 text-xs">XP needed</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- XP Progress Bar -->
-        <div class="space-y-1.5">
-          <div class="flex justify-between text-xs font-mono text-slate-400">
-            <span>Level Progress: <span id="currentLevelXp" class="text-slate-200 font-bold">0</span> / 1,000 XP</span>
-            <span id="progressPercent" class="text-amber-400 font-bold">0%</span>
-          </div>
-          <div class="h-3.5 w-full bg-ledger-900 rounded-full border border-ledger-700 p-0.5 overflow-hidden">
-            <div id="xpProgressBar" class="h-full bg-gradient-to-r from-amber-600 via-amber-500 to-emerald-500 rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
-          </div>
-          <div class="flex justify-between text-[11px] text-slate-500 font-mono">
-            <span>Current Floor: <span id="tierFloorXp">0</span> XP</span>
-            <span>Next Milestone: <span id="tierCeilXp">1000</span> XP</span>
-          </div>
-        </div>
-
-        <!-- Strategy Architecture Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 text-xs">
-          <div class="p-3 rounded-lg bg-ledger-850 border border-ledger-700/80 space-y-1">
-            <div class="font-bold text-amber-400 uppercase text-[11px] tracking-wider flex items-center gap-1.5">
-              <span>&#128737;</span>
-              <span>The Vault (Inflow &amp; Fixed Bills)</span>
-            </div>
-            <p class="text-slate-400 text-xs leading-relaxed">
-              Receives your O-4 W-2 allotment. All fixed debts and household utilities autopay directly from here. Physical debit cards destroyed or locked away.
-            </p>
-          </div>
-          <div class="p-3 rounded-lg bg-ledger-850 border border-ledger-700/80 space-y-1">
-            <div class="font-bold text-emerald-400 uppercase text-[11px] tracking-wider flex items-center gap-1.5">
-              <span>&#9874;</span>
-              <span>The Trench (Daily Operating Account)</span>
-            </div>
-            <p class="text-slate-400 text-xs leading-relaxed">
-              Funded strictly via automated discretionary transfer. Safe to spend completely down to zero each cycle without endangering fixed bills or savings.
-            </p>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- 60-DAY HABIT TRACKER & DAILY RECURRING CHECK-IN -->
-      <div class="rounded-xl ledger-card p-5 sm:p-6 flex flex-col justify-between space-y-4">
-        <div>
-          <div class="flex items-center justify-between border-b border-ledger-700 pb-3">
-            <div class="text-[11px] text-slate-400 uppercase tracking-wider font-semibold flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-              Habit Reinforcement
-            </div>
-            <span class="text-xs px-2.5 py-0.5 rounded-full font-bold bg-emerald-950/60 text-emerald-400 border border-emerald-800">
-              Target: 60 Days
-            </span>
-          </div>
-
-          <!-- Dial & Counter -->
-          <div class="mt-4 flex items-center justify-around gap-4">
-            <div class="relative w-24 h-24 flex items-center justify-center">
-              <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                <path class="text-ledger-800" stroke-width="3.5" stroke="currentColor" fill="none"
-                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                <path id="streakProgressCircle" class="text-amber-500 transition-all duration-700 ease-out" stroke-dasharray="0, 100" stroke-width="3.5" stroke-linecap="round" stroke="currentColor" fill="none"
-                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-              </svg>
-              <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
-                <span id="streakCount" class="font-headline font-bold text-2xl text-white">0</span>
-                <span class="text-[9px] uppercase tracking-wider text-slate-400 font-medium">Days</span>
-              </div>
-            </div>
-
-            <div class="text-xs space-y-1.5">
-              <div class="text-slate-400">Best Streak: <span id="streakBest" class="text-white font-bold font-mono">0</span> Days</div>
-              <div class="text-slate-400">Milestone: <span id="streakMilestone" class="text-amber-400 font-semibold">Phase 1 (Start)</span></div>
-              <div class="text-[11px] text-slate-500">Weekly streaks award milestone celebration confetti!</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Daily Utilization Check-in Button -->
-        <div class="pt-2">
-          <button id="dailyCheckInBtn" onclick="handleDailyCheckIn()" class="w-full py-3 px-4 rounded-lg font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 border transition-all duration-200 bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border-amber-500/40 active:scale-98 shadow-sm">
-            <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span id="checkInBtnText">Daily Utilization Check-in (+50 XP)</span>
-          </button>
-          <div id="checkInStatusSubtext" class="text-[11px] text-center text-slate-500 mt-2">
-            Audit rule: Confirm zero unbudgeted spending spilled from The Vault today.
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- CORE WORKSPACE: MIGRATION LIST + ADMIN BOARD -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-      
-      <!-- LEFT: MIGRATION CHECKLIST (7 COLUMNS) -->
-      <section class="lg:col-span-7 rounded-xl ledger-card p-5 sm:p-6 space-y-4">
-        
-        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-ledger-700 pb-3">
-          <div>
-            <h2 class="font-headline font-bold text-lg text-white">Migration Action Items</h2>
-            <p class="text-xs text-slate-400 mt-0.5">Check off completed migration steps to earn XP and level up.</p>
-          </div>
-
-          <!-- Filter Pills -->
-          <div class="flex items-center gap-1 bg-ledger-850 p-1 rounded-lg border border-ledger-700 text-xs">
-            <button onclick="setFilter('all')" id="filter-all" class="filter-btn px-3 py-1 rounded-md font-medium text-white bg-ledger-700">All (<span id="count-all">0</span>)</button>
-            <button onclick="setFilter('active')" id="filter-active" class="filter-btn px-3 py-1 rounded-md font-medium text-slate-400 hover:text-white">Active (<span id="count-active">0</span>)</button>
-            <button onclick="setFilter('completed')" id="filter-completed" class="filter-btn px-3 py-1 rounded-md font-medium text-slate-400 hover:text-white">Completed (<span id="count-completed">0</span>)</button>
-          </div>
-        </div>
-
-        <!-- Task List Items -->
-        <div id="targetListContainer" class="space-y-2.5 min-h-[280px]">
-          <!-- Dynamically populated -->
-        </div>
-
-        <!-- Summary Status -->
-        <div class="flex items-center justify-between text-xs text-slate-400 pt-3 border-t border-ledger-700">
-          <span>Completed: <span id="securedCountText" class="text-emerald-400 font-bold font-mono">0</span> / <span id="totalCountText" class="font-mono">0</span> items</span>
-          <span>System Lock Status: <span id="airlockIntegrityText" class="text-amber-400 font-bold font-mono">0%</span></span>
-        </div>
-
-      </section>
-
-      <!-- RIGHT: ADMIN BOARD (INTAKE DESK) (5 COLUMNS) -->
-      <section class="lg:col-span-5 rounded-xl ledger-card p-5 sm:p-6 space-y-4">
-        
-        <div class="border-b border-ledger-700 pb-3">
-          <div class="flex items-center justify-between">
-            <h2 class="font-headline font-bold text-lg text-white flex items-center gap-2">
-              <span>&#9998;</span>
-              <span>Admin Board</span>
-            </h2>
-            <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/30">
-              New Item Intake
-            </span>
-          </div>
-          <p class="text-xs text-slate-400 mt-1">Discover a new bill, subscription, or loan? Add it to the migration list immediately.</p>
-        </div>
-
-        <!-- Admin Form -->
-        <form id="radarIntakeForm" onsubmit="handleRadarSubmit(event)" class="space-y-3.5 text-xs">
-          
-          <!-- Item Title -->
-          <div class="space-y-1">
-            <label class="block text-slate-300 font-semibold">Bill Name / Action Item Description</label>
-            <input type="text" id="intakeTitle" required placeholder="e.g., Switch Evergy Electric Bill to Vault Autopay" 
-              class="w-full bg-ledger-850 border border-ledger-700 rounded-lg px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-brass focus:ring-1 focus:ring-brass transition">
-          </div>
-
-          <!-- Target Account / Sector -->
-          <div class="space-y-1">
-            <label class="block text-slate-300 font-semibold">Target Account</label>
-            <select id="intakeCategory" class="w-full bg-ledger-850 border border-ledger-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-brass transition">
-              <option value="vault-bill">The Vault &bull; Fixed Household Bill</option>
-              <option value="vault-debt">The Vault &bull; Debt / Loan Payment</option>
-              <option value="trench-ops">The Trench &bull; Discretionary Allowance</option>
-              <option value="allotment">Allotment &bull; Payroll Direct Deposit</option>
-              <option value="vault-ops">Security &bull; Lock Down Debit Cards</option>
-            </select>
-          </div>
-
-          <!-- Difficulty & XP Tier Selector -->
-          <div class="space-y-1">
-            <label class="block text-slate-300 font-semibold">Friction Level &amp; XP Bounty</label>
-            <div class="grid grid-cols-3 gap-2">
-              <label class="cursor-pointer">
-                <input type="radio" name="frictionTier" value="50" checked class="peer sr-only">
-                <div class="p-2.5 rounded-lg border border-ledger-700 bg-ledger-850 text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-950/30 peer-checked:text-emerald-400 transition">
-                  <div class="font-bold font-mono">50 XP</div>
-                  <div class="text-[10px] text-slate-400">Standard Bill</div>
-                </div>
-              </label>
-
-              <label class="cursor-pointer">
-                <input type="radio" name="frictionTier" value="200" class="peer sr-only">
-                <div class="p-2.5 rounded-lg border border-ledger-700 bg-ledger-850 text-center peer-checked:border-amber-500 peer-checked:bg-amber-950/30 peer-checked:text-amber-400 transition">
-                  <div class="font-bold font-mono">200 XP</div>
-                  <div class="text-[10px] text-slate-400">High 2FA</div>
-                </div>
-              </label>
-
-              <label class="cursor-pointer">
-                <input type="radio" name="frictionTier" value="500" class="peer sr-only">
-                <div class="p-2.5 rounded-lg border border-ledger-700 bg-ledger-850 text-center peer-checked:border-purple-500 peer-checked:bg-purple-950/30 peer-checked:text-purple-400 transition">
-                  <div class="font-bold font-mono">500 XP</div>
-                  <div class="text-[10px] text-slate-400">Critical Setup</div>
-                </div>
-              </label>
-            </div>
-          </div>
-
-          <!-- Custom XP Bounty Override -->
-          <div class="space-y-1">
-            <label class="block text-slate-300 font-semibold">Custom XP Override (Optional)</label>
-            <input type="number" id="intakeCustomXp" min="10" max="2500" step="10" placeholder="Leave empty to use tier selected above" 
-              class="w-full bg-ledger-850 border border-ledger-700 rounded-lg px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-brass transition">
-          </div>
-
-          <!-- Submit Button -->
-          <button type="submit" class="w-full py-2.5 px-4 rounded-lg font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 border border-brass/50 bg-brass/15 hover:bg-brass/25 text-amber-300 transition shadow-sm active:scale-98">
-            <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-            </svg>
-            <span>Add Item to Migration List</span>
-          </button>
-        </form>
-
-      </section>
+      </form>
     </div>
 
-    <!-- FIELD SCRATCHPAD & OPERATIONAL NOTES (RESTORED LIKE BEFORE) -->
-    <section class="rounded-xl ledger-card p-5 sm:p-6 space-y-4">
-      
-      <!-- Scratchpad Header -->
-      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-ledger-700 pb-3">
-        <div>
-          <div class="text-[11px] font-mono uppercase tracking-wider text-amber-400 font-semibold flex items-center gap-1.5">
-            <span>&#128221;</span> Field Scratchpad &amp; Migration Log
-          </div>
-          <h3 class="font-headline font-bold text-lg text-white mt-0.5">
-            Operational Observations &amp; Next Steps
-          </h3>
+    <!-- DYNAMIC QUEST ZONES CONTAINER -->
+    <div id="quest-zones-container" style="display: flex; flex-direction: column; gap: 14px;">
+      <!-- Populated dynamically from storage -->
+    </div>
+
+    <!-- FIELD SCRATCHPAD AT THE BOTTOM -->
+    <div class="scratchpad-card">
+      <div class="scratchpad-header">
+        <div class="scratchpad-title">
+          <span>ðŸ“</span> Scratchpad &amp; Migration Notes
         </div>
-        <div class="flex items-center gap-2">
-          <button id="copyNotesBtn" onclick="copyScratchpadNotes()" class="px-3.5 py-1.5 rounded-lg bg-ledger-800 hover:bg-ledger-700 border border-ledger-600 text-xs font-semibold text-slate-200 transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
-            <span>&#128203;</span> <span id="copyNotesBtnText">Copy Notes</span>
-          </button>
-          <button onclick="clearScratchpadNotes()" class="px-3 py-1.5 rounded-lg hover:bg-ledger-800 text-xs text-slate-400 hover:text-red-400 transition-all">
-            Clear All
-          </button>
+        <div style="display: flex; gap: 6px;">
+          <button onclick="copyScratchpadNotes()" id="copy-notes-btn" class="tag-btn">Copy Notes</button>
+          <button onclick="clearScratchpadNotes()" class="tag-btn" style="color: #ef4444;">Clear</button>
         </div>
       </div>
 
-      <!-- Helper Notice -->
-      <div class="p-3 rounded-lg bg-ledger-850 border border-ledger-700/80 text-xs text-slate-400 flex items-center justify-between gap-3">
-        <div class="flex items-center gap-2">
-          <span class="text-amber-400">&#128161;</span>
-          <span><b>Note:</b> Entries are stored locally in your browser. Click <b>Copy Notes</b> to copy clean Markdown ready to paste into your AI assistant or personal records.</span>
-        </div>
+      <div class="quick-tag-row">
+        <button class="tag-btn" onclick="appendTag('+ The Vault')">+ The Vault</button>
+        <button class="tag-btn" onclick="appendTag('+ The Trench')">+ The Trench</button>
+        <button class="tag-btn" onclick="appendTag('+ Coastal CU')">+ Coastal CU</button>
+        <button class="tag-btn" onclick="appendTag('+ W-2 Allotment')">+ W-2 Allotment</button>
+        <button class="tag-btn" onclick="appendTag('+ Autopay Switched')">+ Autopay Switched</button>
+        <button class="tag-btn" onclick="appendTag('+ Follow Up')">+ Follow Up</button>
       </div>
 
-      <!-- Quick Tag Buttons -->
-      <div class="space-y-1.5">
-        <div class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">
-          Quick Tags (Click to append to note):
-        </div>
-        <div class="flex flex-wrap gap-1.5">
-          <button type="button" onclick="appendScratchpadTag('+ The Vault')" class="px-3 py-1 rounded-full bg-ledger-800 hover:bg-ledger-700 border border-ledger-600 text-xs text-slate-300 transition active:scale-95">
-            + The Vault
-          </button>
-          <button type="button" onclick="appendScratchpadTag('+ The Trench')" class="px-3 py-1 rounded-full bg-ledger-800 hover:bg-ledger-700 border border-ledger-600 text-xs text-slate-300 transition active:scale-95">
-            + The Trench
-          </button>
-          <button type="button" onclick="appendScratchpadTag('+ Coastal CU')" class="px-3 py-1 rounded-full bg-ledger-800 hover:bg-ledger-700 border border-ledger-600 text-xs text-slate-300 transition active:scale-95">
-            + Coastal CU
-          </button>
-          <button type="button" onclick="appendScratchpadTag('+ W-2 Allotment')" class="px-3 py-1 rounded-full bg-ledger-800 hover:bg-ledger-700 border border-ledger-600 text-xs text-slate-300 transition active:scale-95">
-            + W-2 Allotment
-          </button>
-          <button type="button" onclick="appendScratchpadTag('+ Routing Number')" class="px-3 py-1 rounded-full bg-ledger-800 hover:bg-ledger-700 border border-ledger-600 text-xs text-slate-300 transition active:scale-95">
-            + Routing Number
-          </button>
-          <button type="button" onclick="appendScratchpadTag('+ Autopay Switched')" class="px-3 py-1 rounded-full bg-ledger-800 hover:bg-ledger-700 border border-ledger-600 text-xs text-slate-300 transition active:scale-95">
-            + Autopay Switched
-          </button>
-          <button type="button" onclick="appendScratchpadTag('+ Follow Up')" class="px-3 py-1 rounded-full bg-ledger-800 hover:bg-ledger-700 border border-ledger-600 text-xs text-slate-300 transition active:scale-95">
-            + Follow Up
-          </button>
-        </div>
-      </div>
+      <textarea id="scratchpad-input" class="scratchpad-input" placeholder="Record quick notes, account numbers, or thoughts here... (Press Ctrl+Enter to save)"></textarea>
 
-      <!-- Textarea Input & Save Button -->
-      <div class="space-y-2">
-        <textarea id="scratchpadInput" rows="3" class="w-full p-3 rounded-lg bg-ledger-850 border border-ledger-700 focus:border-brass focus:outline-none text-xs text-white placeholder-slate-500 resize-y transition shadow-inner" placeholder="Jot down notes, pending accounts, phone numbers, or reflection on friction points... (Press Ctrl+Enter to save)"></textarea>
-
-        <div class="flex items-center justify-between">
-          <div id="scratchpadSaveConfirmation" class="text-xs font-semibold text-emerald-400 opacity-0 transition-opacity duration-300 flex items-center gap-1.5">
-            <span>&#10003;</span> Note saved to local journal!
-          </div>
-          <button onclick="saveScratchpadNote()" class="px-4 py-2 rounded-lg bg-brass hover:bg-brass-light text-black font-semibold text-xs shadow transition-all flex items-center gap-1.5 active:scale-95">
-            <span>&#128190;</span> Save Note
-          </button>
-        </div>
-      </div>
-
-      <!-- Logged Notes Feed -->
-      <div class="mt-4 pt-4 border-t border-ledger-700">
-        <div class="flex items-center justify-between mb-2.5">
-          <span class="text-xs font-bold text-slate-300 uppercase tracking-wider">
-            Logged Entries (<span id="scratchpadCount">0</span>)
-          </span>
-          <span class="text-[11px] text-slate-500 font-mono">
-            Saved in Browser
-          </span>
-        </div>
-        <div id="scratchpadNotesList" class="space-y-2.5 max-h-72 overflow-y-auto pr-1">
-          <!-- Dynamically populated -->
-        </div>
-      </div>
-
-    </section>
-  </main>
-
-  <!-- DATA BACKUP / RESTORE MODAL -->
-  <div id="dataModal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-ledger-900 border border-ledger-700 rounded-xl max-w-md w-full p-6 space-y-4 shadow-2xl">
-      <div class="flex items-center justify-between border-b border-ledger-700 pb-3">
-        <h3 class="font-headline font-bold text-white text-base flex items-center gap-2">
-          <span>&#9881;</span>
-          <span>System Data Controls</span>
-        </h3>
-        <button onclick="toggleDataModal()" class="text-slate-400 hover:text-white text-lg">&times;</button>
-      </div>
-
-      <p class="text-xs text-slate-400">All Operation: Airlock data is stored exclusively in your browser localStorage. No external cloud dependencies.</p>
-
-      <div class="space-y-3 pt-2 text-xs">
-        <button onclick="exportData()" class="w-full py-2.5 px-3 rounded-lg bg-ledger-800 border border-ledger-700 hover:border-ledger-500 text-slate-200 flex items-center justify-between transition">
-          <span>Export Backup (Download JSON)</span>
-          <span>&#128190;</span>
-        </button>
-
-        <label class="w-full py-2.5 px-3 rounded-lg bg-ledger-800 border border-ledger-700 hover:border-ledger-500 text-slate-200 flex items-center justify-between cursor-pointer transition">
-          <span>Import Backup (Restore JSON)</span>
-          <span>&#128229;</span>
-          <input type="file" id="importFileInput" accept=".json" onchange="importData(event)" class="sr-only">
-        </label>
-
-        <button onclick="resetToDefaultPayload()" class="w-full py-2.5 px-3 rounded-lg bg-red-950/30 border border-red-800/50 hover:bg-red-900/40 text-red-300 flex items-center justify-between transition">
-          <span>Reset to Default Mission Items</span>
-          <span>&#9888;</span>
+      <div class="scratchpad-actions">
+        <div id="scratchpad-status" style="font-size: 11px; color: #10b981; opacity: 0; transition: opacity 0.3s;">Saved to local notes!</div>
+        <button onclick="saveScratchpadNote()" class="btn-3d" style="background: #10b981; color: white; padding: 6px 14px; border-radius: 8px; font-size: 12px;">
+          Save Note
         </button>
       </div>
 
-      <div class="border-t border-ledger-700 pt-3 text-right">
-        <button onclick="toggleDataModal()" class="px-4 py-1.5 rounded-lg bg-ledger-800 text-slate-300 hover:text-white text-xs">Close</button>
-      </div>
+      <div id="notes-display" class="notes-list"></div>
+    </div>
+
+  </div>
+
+  <!-- LEVEL-UP & MILESTONE MODAL -->
+  <div id="loot-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div style="font-size: 48px; margin-bottom: 6px;">ðŸ†</div>
+      <h3 class="modal-title" id="modal-title-text">PROMOTION EARNED!</h3>
+      <p class="modal-desc" id="modal-desc-text">You have advanced to the next operational tier.</p>
+
+      <div class="prize-box" id="reward-result"></div>
+
+      <button class="btn-3d claim-btn" onclick="closeLootModal()">CONTINUE MISSION</button>
     </div>
   </div>
 
-  <!-- JAVASCRIPT STATE & ENGINE -->
   <script>
-    /* ============================================================
-       1. STATE MANAGEMENT & STORAGE SCHEMA
-       ============================================================ */
-    const STORAGE_KEY = 'OPERATION_AIRLOCK_V2';
-    const SCRATCHPAD_STORAGE_KEY = 'OPERATION_AIRLOCK_SCRATCHPAD_V2';
+    // --- AUDIO SYNTHESIZER (ZERO EXTERNAL ASSETS) ---
+    const AudioEngine = {
+      ctx: null,
+      enabled: true,
 
-    // Ranks with clean, prestigious English titles
-    const RANKS = [
-      { minXp: 0, title: "Level 1 &bull; Apprentice" },
-      { minXp: 1000, title: "Level 2 &bull; Specialist" },
-      { minXp: 2000, title: "Level 3 &bull; Strategist" },
-      { minXp: 3000, title: "Level 4 &bull; Fortress Builder" },
-      { minXp: 4000, title: "Level 5 &bull; System Architect" },
-      { minXp: 5000, title: "Level 6 &bull; Commander" },
-      { minXp: 6000, title: "Level 7 &bull; Separation Master" },
-      { minXp: 7000, title: "Level 8 &bull; Sovereign Overseer" },
-      { minXp: 8000, title: "Level 9 &bull; Capital Strategist" },
-      { minXp: 9000, title: "Level 10 &bull; Financial Titan" },
-      { minXp: 10000, title: "Grandmaster &bull; Wealth Sovereign" }
-    ];
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.ctx = new AudioContext();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+      },
 
-    // Default Mission Payload in clean English
-    const DEFAULT_TASK_PAYLOAD = [
-      {
-        id: "task-vault-open-trench",
-        title: 'Open "The Trench" (Secondary Checking Account).',
-        xp: 200,
-        completed: false,
-        completedAt: null,
-        category: "trench-ops",
-        friction: "high"
-      },
-      {
-        id: "task-w2-allotment",
-        title: "Submit O-4 W-2 Allotment targeting The Vault.",
-        xp: 500,
-        completed: false,
-        completedAt: null,
-        category: "allotment",
-        friction: "critical"
-      },
-      {
-        id: "task-destroy-debit",
-        title: "Destroy / Lock away The Vault physical debit cards.",
-        xp: 300,
-        completed: false,
-        completedAt: null,
-        category: "vault-ops",
-        friction: "high"
-      },
-      {
-        id: "task-coastal-cu-loan",
-        title: "Migrate Coastal Credit Union Auto Loan to Vault Autopay.",
-        xp: 150,
-        completed: false,
-        completedAt: null,
-        category: "vault-debt",
-        friction: "standard"
-      },
-      {
-        id: "task-migrate-utilities",
-        title: "Migrate utilities to Vault Autopay.",
-        xp: 150,
-        completed: false,
-        completedAt: null,
-        category: "vault-bill",
-        friction: "standard"
-      }
-    ];
+      playCoin() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
 
-    let state = {
-      xp: 0,
-      streak: {
-        current: 0,
-        best: 0,
-        lastCheckInDate: null,
-        history: []
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(880, now);
+        osc.frequency.setValueAtTime(1320, now + 0.08);
+
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.3);
       },
-      tasks: [],
-      settings: {
-        soundEnabled: true
+
+      playFanfare() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, idx) => {
+          const now = this.ctx.currentTime + (idx * 0.09);
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.35);
+        });
+      },
+
+      playLevelUp() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const notes = [440, 554.37, 659.25, 880, 1108.73, 1318.51];
+        notes.forEach((freq, idx) => {
+          const now = this.ctx.currentTime + (idx * 0.08);
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.4);
+        });
       }
     };
 
-    let scratchpadNotes = [];
-    let activeFilter = 'all';
+    // --- GAME ENGINE & CONFIGURATION ---
+    const TASKS_KEY = "airlock_tasks_config_v3";
+    const DATA_KEY = "airlock_state_data_v3";
+    const NOTES_KEY = "airlock_scratchpad_notes_v3";
 
-    /* ============================================================
-       2. WEB AUDIO API SYNTHESIZER (WARM, PLEASANT ACOUSTIC CHIMES)
-       ============================================================ */
-    let audioCtx = null;
+    const ZONES = {
+      setup: { title: "Account Infrastructure & The Trench", tag: "Infra", class: "zone-setup" },
+      payroll: { title: "Payroll & Allotment Routing", tag: "Payroll", class: "zone-payroll" },
+      autopay: { title: "Fixed Debt & Autopay Migration", tag: "Autopay", class: "zone-autopay" },
+      habit: { title: "Daily Operating & Habit", tag: "Daily", class: "zone-habit" }
+    };
 
-    function getAudioContext() {
-      if (!audioCtx) {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        if (AudioContext) {
-          audioCtx = new AudioContext();
+    const DEFAULT_AIRLOCK_TASKS = [
+      {
+        id: "open_trench",
+        name: 'Open "The Trench" (Secondary Checking Account)',
+        desc: "Set up secondary checking account to isolate daily spending allowance",
+        zone: "setup",
+        xp: 200,
+        emoji: "âš”ï¸"
+      },
+      {
+        id: "destroy_cards",
+        name: "Destroy / Lock away The Vault physical debit cards",
+        desc: "Prevent unbudgeted retail spending spills directly from fixed reserve",
+        zone: "setup",
+        xp: 300,
+        emoji: "ðŸ”’"
+      },
+      {
+        id: "w2_allotment",
+        name: "Submit O-4 W-2 Allotment targeting The Vault",
+        desc: "Route primary payroll inflow directly into The Vault fortress",
+        zone: "payroll",
+        xp: 500,
+        emoji: "ðŸ›ï¸"
+      },
+      {
+        id: "coastal_loan",
+        name: "Migrate Coastal Credit Union Auto Loan to Vault Autopay",
+        desc: "Ensure auto debt payment pulls directly from The Vault",
+        zone: "autopay",
+        xp: 150,
+        emoji: "ðŸš—"
+      },
+      {
+        id: "migrate_utilities",
+        name: "Migrate utilities to Vault Autopay",
+        desc: "Electricity, water, gas, and internet autopay linked to The Vault",
+        zone: "autopay",
+        xp: 150,
+        emoji: "âš¡"
+      },
+      {
+        id: "habit_checkin",
+        name: "60-Day Utilization Check-in",
+        desc: "Daily habit verification: confirm zero unbudgeted spills from The Vault",
+        zone: "habit",
+        xp: 50,
+        emoji: "ðŸŽ¯"
+      }
+    ];
+
+    const RANKS = [
+      { level: 1, title: "Recruit", xpReq: 1000, avatar: "ðŸ›¡ï¸" },
+      { level: 2, title: "Specialist", xpReq: 2000, avatar: "âš”ï¸" },
+      { level: 3, title: "Sergeant", xpReq: 3000, avatar: "ðŸ¦…" },
+      { level: 4, title: "Master Sergeant", xpReq: 4000, avatar: "ðŸ°" },
+      { level: 5, title: "Chief Warrant", xpReq: 5000, avatar: "â­" },
+      { level: 6, title: "Commander", xpReq: 6000, avatar: "ðŸŽ–ï¸" },
+      { level: 7, title: "Captain", xpReq: 7000, avatar: "ðŸ‘‘" },
+      { level: 8, title: "Major â€” Financial Sovereign", xpReq: 10000, avatar: "ðŸŒŸ" }
+    ];
+
+    let tasks = [];
+    let state = {
+      xp: 0,
+      streak: 1,
+      lastCheckinDate: null,
+      completedTasks: {},
+      notes: []
+    };
+
+    function getTodayIso() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+
+    function getYesterdayIso() {
+      const d = new Date();
+      d.setDate(d.getDate() - 1);
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+
+    function getRankInfo(totalXp) {
+      let currentRank = RANKS[0];
+      let nextRank = RANKS[1];
+
+      for (let i = 0; i < RANKS.length; i++) {
+        if (totalXp >= (i === 0 ? 0 : RANKS[i-1].xpReq)) {
+          currentRank = RANKS[i];
+          nextRank = RANKS[i+1] || { xpReq: RANKS[i].xpReq + 1000, title: "Supreme Sovereign" };
         }
       }
-      if (audioCtx && audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-      return audioCtx;
+
+      const floor = currentRank.level === 1 ? 0 : RANKS[currentRank.level - 2].xpReq;
+      const ceil = currentRank.xpReq;
+      const progress = Math.min(100, Math.max(0, Math.round(((totalXp - floor) / (ceil - floor)) * 100)));
+
+      return { currentRank, nextRank, progress, floor, ceil };
     }
 
-    function playTone(freq, type = 'sine', duration = 0.08, volume = 0.08) {
-      if (!state.settings.soundEnabled) return;
-      try {
-        const ctx = getAudioContext();
-        if (!ctx) return;
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, ctx.currentTime);
-        gain.gain.setValueAtTime(volume, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + duration);
-      } catch (e) {}
-    }
-
-    function playSuccessChime() {
-      if (!state.settings.soundEnabled) return;
-      try {
-        const ctx = getAudioContext();
-        if (!ctx) return;
-        const notes = [523.25, 659.25, 783.99]; // C5, E5, G5 major triad
-        notes.forEach((freq, idx) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(freq, ctx.currentTime + (idx * 0.07));
-          gain.gain.setValueAtTime(0.1, ctx.currentTime + (idx * 0.07));
-          gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + (idx * 0.07) + 0.3);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(ctx.currentTime + (idx * 0.07));
-          osc.stop(ctx.currentTime + (idx * 0.07) + 0.3);
-        });
-      } catch (e) {}
-    }
-
-    function playLevelUpChime() {
-      if (!state.settings.soundEnabled) return;
-      try {
-        const ctx = getAudioContext();
-        if (!ctx) return;
-        const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
-        notes.forEach((freq, idx) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(freq, ctx.currentTime + (idx * 0.09));
-          gain.gain.setValueAtTime(0.14, ctx.currentTime + (idx * 0.09));
-          gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + (idx * 0.09) + 0.45);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(ctx.currentTime + (idx * 0.09));
-          osc.stop(ctx.currentTime + (idx * 0.09) + 0.45);
-        });
-      } catch (e) {}
-    }
-
-    function toggleAudio() {
-      state.settings.soundEnabled = !state.settings.soundEnabled;
-      saveState();
-      updateAudioButtonUI();
-      if (state.settings.soundEnabled) {
-        playTone(659.25, 'sine', 0.1, 0.08);
-      }
-    }
-
-    function updateAudioButtonUI() {
-      const icon = document.getElementById('soundIcon');
-      const label = document.getElementById('soundLabel');
-      if (state.settings.soundEnabled) {
-        icon.innerHTML = '&#128266;';
-        label.textContent = 'Sound On';
-      } else {
-        icon.innerHTML = '&#128263;';
-        label.textContent = 'Sound Off';
-      }
-    }
-
-    /* ============================================================
-       3. CELEBRATION EFFECTS (CANVAS CONFETTI)
-       ============================================================ */
-    function triggerTaskConfetti(xCoord, yCoord) {
-      if (typeof confetti !== 'function') return;
-      const x = xCoord ? xCoord / window.innerWidth : 0.5;
-      const y = yCoord ? yCoord / window.innerHeight : 0.5;
-      confetti({
-        particleCount: 40,
-        spread: 60,
-        origin: { x, y },
-        colors: ['#d97706', '#f59e0b', '#10b981', '#ffffff'],
-        disableForReducedMotion: true
-      });
-    }
-
-    function triggerEpicConfetti() {
-      if (typeof confetti !== 'function') return;
-      playLevelUpChime();
-
-      const end = Date.now() + 1800;
-      const colors = ['#d97706', '#f59e0b', '#10b981', '#3b82f6', '#ffffff'];
-
-      (function frame() {
-        confetti({
-          particleCount: 4,
-          angle: 60,
-          spread: 55,
-          origin: { x: 0, y: 0.7 },
-          colors: colors
-        });
-        confetti({
-          particleCount: 4,
-          angle: 120,
-          spread: 55,
-          origin: { x: 1, y: 0.7 },
-          colors: colors
-        });
-
-        if (Date.now() < end) {
-          requestAnimationFrame(frame);
-        }
-      }());
-    }
-
-    /* ============================================================
-       4. LOCALSTORAGE ENGINE WITH MIGRATION & ERROR HANDLING
-       ============================================================ */
     function loadState() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('OPERATION_AIRLOCK_V1');
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          state.xp = typeof parsed.xp === 'number' && !isNaN(parsed.xp) ? Math.max(0, parsed.xp) : 0;
-          state.streak = {
-            current: parsed.streak?.current || 0,
-            best: parsed.streak?.best || 0,
-            lastCheckInDate: parsed.streak?.lastCheckInDate || null,
-            history: Array.isArray(parsed.streak?.history) ? parsed.streak.history : []
-          };
-          state.settings = {
-            soundEnabled: parsed.settings?.soundEnabled !== false
-          };
-          state.tasks = (Array.isArray(parsed.tasks) && parsed.tasks.length > 0) ? parsed.tasks : JSON.parse(JSON.stringify(DEFAULT_TASK_PAYLOAD));
-        } else {
-          state.tasks = JSON.parse(JSON.stringify(DEFAULT_TASK_PAYLOAD));
-          state.xp = 0;
-          state.streak = { current: 0, best: 0, lastCheckInDate: null, history: [] };
-          saveState();
+      const savedTasks = localStorage.getItem(TASKS_KEY);
+      if (savedTasks) {
+        try {
+          const loaded = JSON.parse(savedTasks);
+          const existingIds = new Set(loaded.map(t => t.id));
+          DEFAULT_AIRLOCK_TASKS.forEach(dt => {
+            if (!existingIds.has(dt.id)) loaded.push(dt);
+          });
+          tasks = loaded;
+        } catch(e) {
+          tasks = [...DEFAULT_AIRLOCK_TASKS];
         }
-      } catch (err) {
-        state.tasks = JSON.parse(JSON.stringify(DEFAULT_TASK_PAYLOAD));
-        state.xp = 0;
-        state.streak = { current: 0, best: 0, lastCheckInDate: null, history: [] };
-        saveState();
+      } else {
+        tasks = [...DEFAULT_AIRLOCK_TASKS];
       }
 
-      // Load scratchpad
-      try {
-        const rawScratch = localStorage.getItem(SCRATCHPAD_STORAGE_KEY);
-        scratchpadNotes = rawScratch ? JSON.parse(rawScratch) : [];
-      } catch (e) {
-        scratchpadNotes = [];
+      const savedData = localStorage.getItem(DATA_KEY);
+      if (savedData) {
+        try {
+          const d = JSON.parse(savedData);
+          state.xp = typeof d.xp === 'number' ? d.xp : 0;
+          state.streak = typeof d.streak === 'number' ? d.streak : 1;
+          state.lastCheckinDate = d.lastCheckinDate || null;
+          state.completedTasks = d.completedTasks || {};
+        } catch(e) {}
       }
+
+      const savedNotes = localStorage.getItem(NOTES_KEY);
+      if (savedNotes) {
+        try {
+          state.notes = JSON.parse(savedNotes);
+        } catch(e) {
+          state.notes = [];
+        }
+      }
+
+      renderUI();
+      renderNotes();
     }
 
     function saveState() {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      } catch (e) {
-        console.error('Failed to write state to localStorage:', e);
-      }
+        localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
+        localStorage.setItem(DATA_KEY, JSON.stringify(state));
+      } catch(e) {}
     }
 
-    function saveScratchpad() {
+    function saveNotesState() {
       try {
-        localStorage.setItem(SCRATCHPAD_STORAGE_KEY, JSON.stringify(scratchpadNotes));
-      } catch (e) {
-        console.error('Failed to write scratchpad to localStorage:', e);
-      }
+        localStorage.setItem(NOTES_KEY, JSON.stringify(state.notes));
+      } catch(e) {}
     }
 
-    /* ============================================================
-       5. LEVEL & XP SYSTEM
-       ============================================================ */
-    function calculateLevelInfo(totalXp) {
-      const level = Math.floor(totalXp / 1000) + 1;
-      const currentLevelXp = totalXp % 1000;
-      const xpNeeded = 1000 - currentLevelXp;
-      const progressPercent = Math.min(100, Math.round((currentLevelXp / 1000) * 100));
-      const floorXp = (level - 1) * 1000;
-      const ceilXp = level * 1000;
+    function renderUI() {
+      const rankInfo = getRankInfo(state.xp);
 
-      let rankTitle = RANKS[0].title;
-      for (let i = RANKS.length - 1; i >= 0; i--) {
-        if (totalXp >= RANKS[i].minXp) {
-          rankTitle = RANKS[i].title;
-          break;
-        }
-      }
+      document.getElementById('avatar-icon').innerText = rankInfo.currentRank.avatar;
+      document.getElementById('rank-title').innerText = `Level ${rankInfo.currentRank.level} â€¢ ${rankInfo.currentRank.title}`;
+      document.getElementById('streak-count').innerText = state.streak;
 
-      return { level, currentLevelXp, xpNeeded, progressPercent, floorXp, ceilXp, rankTitle };
-    }
+      document.getElementById('xp-bar').style.width = `${rankInfo.progress}%`;
+      document.getElementById('xp-text').innerText = `${state.xp.toLocaleString()} / ${rankInfo.ceil.toLocaleString()} XP`;
+      document.getElementById('total-xp-val').innerText = `${state.xp.toLocaleString()} XP`;
 
-    function addXP(amount, eventOrigin) {
-      const oldLevelInfo = calculateLevelInfo(state.xp);
-      state.xp += amount;
-      const newLevelInfo = calculateLevelInfo(state.xp);
+      const completedCount = Object.keys(state.completedTasks).filter(k => state.completedTasks[k]).length;
+      document.getElementById('completed-count').innerText = `${completedCount}/${tasks.length}`;
 
-      saveState();
-      renderHUD();
-
-      if (newLevelInfo.level > oldLevelInfo.level) {
-        triggerEpicConfetti();
-      } else if (eventOrigin) {
-        triggerTaskConfetti(eventOrigin.clientX, eventOrigin.clientY);
-        playSuccessChime();
+      // Checkin button state
+      const today = getTodayIso();
+      const dailyBtn = document.getElementById('daily-btn');
+      if (state.lastCheckinDate === today) {
+        dailyBtn.classList.add('done');
+        dailyBtn.innerText = "CHECKED IN TODAY (âœ“)";
       } else {
-        playSuccessChime();
+        dailyBtn.classList.remove('done');
+        dailyBtn.innerText = "60-DAY CHECK-IN (+50 XP)";
       }
+
+      renderQuestZones();
     }
 
-    function deductXP(amount) {
-      state.xp = Math.max(0, state.xp - amount);
-      saveState();
-      renderHUD();
-      playTone(350, 'sine', 0.12, 0.08);
-    }
+    function renderQuestZones() {
+      const container = document.getElementById('quest-zones-container');
+      container.innerHTML = '';
 
-    /* ============================================================
-       6. 60-DAY STREAK & DAILY CHECK-IN SYSTEM
-       ============================================================ */
-    function getTodayIsoDate() {
-      const now = new Date();
-      return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-    }
+      const grouped = {};
+      Object.keys(ZONES).forEach(z => grouped[z] = []);
 
-    function getYesterdayIsoDate() {
-      const d = new Date();
-      d.setDate(d.getDate() - 1);
-      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-    }
-
-    function checkDailyStreakStatus() {
-      const today = getTodayIsoDate();
-      const last = state.streak.lastCheckInDate;
-      const isDoneToday = (last === today);
-      return { isDoneToday, today, last };
-    }
-
-    function handleDailyCheckIn() {
-      const { isDoneToday, today, last } = checkDailyStreakStatus();
-      if (isDoneToday) {
-        playTone(400, 'sine', 0.1, 0.06);
-        return;
-      }
-
-      const yesterday = getYesterdayIsoDate();
-
-      if (last === yesterday) {
-        state.streak.current += 1;
-      } else {
-        state.streak.current = 1;
-      }
-
-      if (state.streak.current > state.streak.best) {
-        state.streak.best = state.streak.current;
-      }
-
-      state.streak.lastCheckInDate = today;
-      if (!state.streak.history.includes(today)) {
-        state.streak.history.push(today);
-      }
-
-      addXP(50);
-
-      if (state.streak.current % 7 === 0 || state.streak.current === 60) {
-        triggerEpicConfetti();
-      }
-
-      saveState();
-      renderStreakModule();
-    }
-
-    function renderStreakModule() {
-      const { isDoneToday } = checkDailyStreakStatus();
-      const streak = state.streak.current;
-      const best = state.streak.best;
-
-      document.getElementById('streakCount').textContent = streak;
-      document.getElementById('streakBest').textContent = best;
-
-      const percent = Math.min(100, Math.round((streak / 60) * 100));
-      const circle = document.getElementById('streakProgressCircle');
-      if (circle) {
-        circle.setAttribute('stroke-dasharray', `${percent}, 100`);
-      }
-
-      const milestoneElem = document.getElementById('streakMilestone');
-      if (streak >= 60) {
-        milestoneElem.textContent = '60 Days Complete (Sovereign)';
-        milestoneElem.className = 'text-emerald-400 font-bold';
-      } else if (streak >= 30) {
-        milestoneElem.textContent = 'Vault Fortified (30+ Days)';
-        milestoneElem.className = 'text-amber-400 font-bold';
-      } else if (streak >= 7) {
-        milestoneElem.textContent = `Active Momentum (${streak}/60)`;
-        milestoneElem.className = 'text-amber-400 font-bold';
-      } else {
-        milestoneElem.textContent = `Phase 1 Calibration (${streak}/60)`;
-        milestoneElem.className = 'text-slate-400 font-bold';
-      }
-
-      const btn = document.getElementById('dailyCheckInBtn');
-      const btnText = document.getElementById('checkInBtnText');
-      const subtext = document.getElementById('checkInStatusSubtext');
-
-      if (isDoneToday) {
-        btn.disabled = true;
-        btn.className = 'w-full py-3 px-4 rounded-lg font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 border border-ledger-700 bg-ledger-850 text-slate-500 cursor-not-allowed opacity-80';
-        btnText.textContent = 'Checked In for Today (+50 XP Earned)';
-        subtext.textContent = 'Perimeter verified. Next daily check-in unlocks tomorrow.';
-      } else {
-        btn.disabled = false;
-        btn.className = 'w-full py-3 px-4 rounded-lg font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 border transition-all duration-200 bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border-amber-500/40 active:scale-98 cursor-pointer shadow-sm';
-        btnText.textContent = 'Daily Utilization Check-in (+50 XP)';
-        subtext.textContent = 'Audit rule: Confirm zero unbudgeted spending spilled from The Vault today.';
-      }
-    }
-
-    /* ============================================================
-       7. MIGRATION TASK LIST (THE CHECKLIST)
-       ============================================================ */
-    function toggleTask(id, event) {
-      const task = state.tasks.find(t => t.id === id);
-      if (!task) return;
-
-      if (!task.completed) {
-        task.completed = true;
-        task.completedAt = new Date().toISOString();
-        addXP(task.xp, event);
-      } else {
-        task.completed = false;
-        task.completedAt = null;
-        deductXP(task.xp);
-      }
-
-      saveState();
-      renderTasks();
-    }
-
-    function deleteTask(id, event) {
-      event.stopPropagation();
-      const task = state.tasks.find(t => t.id === id);
-      if (!task) return;
-
-      if (confirm(`Remove "${task.title}" from the migration list?`)) {
-        if (task.completed) {
-          state.xp = Math.max(0, state.xp - task.xp);
-        }
-        state.tasks = state.tasks.filter(t => t.id !== id);
-        saveState();
-        renderHUD();
-        renderTasks();
-        playTone(300, 'sine', 0.1, 0.08);
-      }
-    }
-
-    function setFilter(filter) {
-      activeFilter = filter;
-      document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.remove('bg-ledger-700', 'text-white');
-        btn.classList.add('text-slate-400');
+      tasks.forEach(task => {
+        const zone = task.zone || 'autopay';
+        if (!grouped[zone]) grouped[zone] = [];
+        grouped[zone].push(task);
       });
-      const activeBtn = document.getElementById(`filter-${filter}`);
-      if (activeBtn) {
-        activeBtn.classList.add('bg-ledger-700', 'text-white');
-        activeBtn.classList.remove('text-slate-400');
-      }
-      playTone(600, 'sine', 0.04, 0.06);
-      renderTasks();
+
+      Object.keys(ZONES).forEach(zoneKey => {
+        const zoneTasks = grouped[zoneKey];
+        if (!zoneTasks || zoneTasks.length === 0) return;
+
+        const zoneConfig = ZONES[zoneKey];
+        const zoneDoneCount = zoneTasks.filter(t => state.completedTasks[t.id]).length;
+
+        const zoneCard = document.createElement('div');
+        zoneCard.className = `quest-zone ${zoneConfig.class}`;
+
+        zoneCard.innerHTML = `
+          <div class="zone-header">
+            <div class="zone-title">
+              <span>${zoneKey === 'setup' ? 'âš”ï¸' : zoneKey === 'payroll' ? 'ðŸ›ï¸' : zoneKey === 'autopay' ? 'âš¡' : 'ðŸŽ¯'}</span>
+              <span>${zoneConfig.title}</span>
+            </div>
+            <span class="zone-tag">${zoneDoneCount}/${zoneTasks.length} Done</span>
+          </div>
+          <div class="chore-list" id="zone-list-${zoneKey}"></div>
+        `;
+
+        container.appendChild(zoneCard);
+
+        const listElem = zoneCard.querySelector(`#zone-list-${zoneKey}`);
+
+        zoneTasks.forEach(task => {
+          const isDone = !!state.completedTasks[task.id];
+          const taskItem = document.createElement('div');
+          taskItem.className = `chore-item ${isDone ? 'done' : ''}`;
+          taskItem.id = `item-${task.id}`;
+
+          let badgeClass = 'xp-badge';
+          if (task.xp >= 500) badgeClass += ' critical';
+          else if (task.xp >= 200) badgeClass += ' high';
+
+          taskItem.innerHTML = `
+            <div class="chore-left" onclick="toggleTask('${task.id}')">
+              <input type="checkbox" class="chore-checkbox" ${isDone ? 'checked' : ''} onclick="event.stopPropagation(); toggleTask('${task.id}')">
+              <div class="chore-labels">
+                <span class="chore-name">${escapeHtml(task.name)}</span>
+                <span class="chore-desc">${escapeHtml(task.desc || '')}</span>
+              </div>
+            </div>
+            <div class="chore-right">
+              <span class="${badgeClass}">+${task.xp} XP</span>
+              <button class="delete-item-btn" onclick="deleteTask('${task.id}', event)" title="Remove item">âœ•</button>
+            </div>
+          `;
+
+          listElem.appendChild(taskItem);
+        });
+      });
     }
 
-    function renderTasks() {
-      const container = document.getElementById('targetListContainer');
-      const allCount = state.tasks.length;
-      const completedCount = state.tasks.filter(t => t.completed).length;
-      const activeCount = allCount - completedCount;
+    function toggleTask(taskId) {
+      const task = tasks.find(t => t.id === taskId);
+      if (!task) return;
 
-      document.getElementById('count-all').textContent = allCount;
-      document.getElementById('count-active').textContent = activeCount;
-      document.getElementById('count-completed').textContent = completedCount;
-      document.getElementById('securedCountText').textContent = completedCount;
-      document.getElementById('totalCountText').textContent = allCount;
+      const oldRank = getRankInfo(state.xp).currentRank.level;
+      const isDone = !state.completedTasks[taskId];
 
-      const integrity = allCount > 0 ? Math.round((completedCount / allCount) * 100) : 0;
-      document.getElementById('airlockIntegrityText').textContent = `${integrity}%`;
+      if (isDone) {
+        state.completedTasks[taskId] = true;
+        state.xp += task.xp;
 
-      let displayed = state.tasks;
-      if (activeFilter === 'active') {
-        displayed = state.tasks.filter(t => !t.completed);
-      } else if (activeFilter === 'completed') {
-        displayed = state.tasks.filter(t => t.completed);
+        const newRank = getRankInfo(state.xp).currentRank.level;
+        if (newRank > oldRank) {
+          AudioEngine.playLevelUp();
+          triggerConfetti(true);
+          showLevelUpModal(newRank);
+        } else {
+          AudioEngine.playCoin();
+          triggerConfetti(false);
+        }
+
+        // Check if all tasks done
+        const completedCount = Object.keys(state.completedTasks).filter(k => state.completedTasks[k]).length;
+        if (completedCount === tasks.length) {
+          setTimeout(() => {
+            AudioEngine.playFanfare();
+            triggerConfetti(true);
+          }, 350);
+        }
+      } else {
+        delete state.completedTasks[taskId];
+        state.xp = Math.max(0, state.xp - task.xp);
       }
 
-      if (displayed.length === 0) {
-        container.innerHTML = `
-          <div class="py-12 text-center rounded-lg border border-dashed border-ledger-700 p-6 space-y-2">
-            <div class="text-3xl text-slate-500">&#128203;</div>
-            <div class="text-sm font-semibold text-slate-300">No items in this section</div>
-            <div class="text-xs text-slate-500">Use the Admin Board on the right to add newly discovered bills or tasks.</div>
-          </div>
-        `;
+      saveState();
+      renderUI();
+    }
+
+    function deleteTask(taskId, event) {
+      event.stopPropagation();
+      const task = tasks.find(t => t.id === taskId);
+      if (!task) return;
+
+      if (confirm(`Remove "${task.name}" from your checklist?`)) {
+        if (state.completedTasks[taskId]) {
+          state.xp = Math.max(0, state.xp - task.xp);
+          delete state.completedTasks[taskId];
+        }
+        tasks = tasks.filter(t => t.id !== taskId);
+        saveState();
+        renderUI();
+      }
+    }
+
+    function handleDailyCheckin() {
+      const today = getTodayIso();
+      if (state.lastCheckinDate === today) {
+        alert("You have already checked in for today! Next check-in opens tomorrow.");
         return;
       }
 
-      container.innerHTML = displayed.map(task => {
-        const categoryLabels = {
-          'vault-bill': 'Vault &bull; Fixed Bill',
-          'vault-debt': 'Vault &bull; Debt Autopay',
-          'vault-ops': 'Vault &bull; Security',
-          'trench-ops': 'Trench &bull; Operating',
-          'allotment': 'Payroll &bull; W-2 Allotment'
-        };
-        const catLabel = categoryLabels[task.category] || 'General Item';
+      const yesterday = getYesterdayIso();
+      if (state.lastCheckinDate === yesterday) {
+        state.streak += 1;
+      } else {
+        state.streak = 1;
+      }
 
-        return `
-          <div onclick="toggleTask('${task.id}', event)" 
-            class="task-row group p-3.5 rounded-lg border border-ledger-700 bg-ledger-850 hover:border-slate-600 cursor-pointer flex items-center justify-between gap-3 ${task.completed ? 'is-completed' : ''}">
-            
-            <div class="flex items-center gap-3.5 min-w-0 flex-1">
-              <!-- Physical-style tactile checkbox -->
-              <div class="w-5 h-5 flex-shrink-0 rounded border ${task.completed ? 'border-emerald-500 bg-emerald-500 text-black' : 'border-slate-500 bg-ledger-900 group-hover:border-amber-400'} flex items-center justify-center transition-all">
-                ${task.completed ? `
-                  <svg class="w-3.5 h-3.5 stroke-[3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
-                  </svg>
-                ` : ''}
-              </div>
+      state.lastCheckinDate = today;
+      state.xp += 50;
 
-              <!-- Title & Category Badge -->
-              <div class="min-w-0">
-                <div class="task-text text-sm font-medium text-slate-200 break-words transition-colors">
-                  ${escapeHtml(task.title)}
-                </div>
-                <div class="flex items-center gap-2 mt-1 text-[11px]">
-                  <span class="px-2 py-0.5 rounded bg-ledger-800 border border-ledger-700 text-slate-400 font-medium">${catLabel}</span>
-                  ${task.completed ? '<span class="text-emerald-400 font-semibold">&bull; Completed</span>' : '<span class="text-slate-500">&bull; Pending</span>'}
-                </div>
-              </div>
-            </div>
+      AudioEngine.playCoin();
+      triggerConfetti(state.streak % 7 === 0 || state.streak === 60);
 
-            <!-- XP Bounty & Delete Button -->
-            <div class="flex items-center gap-3 flex-shrink-0">
-              <span class="text-xs font-mono font-bold px-2.5 py-1 rounded-md bg-ledger-800 border border-ledger-700 ${task.xp >= 500 ? 'text-purple-400' : task.xp >= 200 ? 'text-amber-400' : 'text-emerald-400'}">
-                +${task.xp} XP
-              </span>
-              <button onclick="deleteTask('${task.id}', event)" title="Delete item" 
-                class="opacity-0 group-hover:opacity-100 p-1 text-slate-500 hover:text-red-400 transition">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-        `;
-      }).join('');
+      // Check for milestone modal
+      if (state.streak === 60) {
+        showMilestoneModal("60-DAY AIRLOCK COMPLETE!", "You have established complete dual-account financial separation. Discretionary spending is isolated, and fixed obligations are 100% fortified in The Vault.");
+      } else if (state.streak % 7 === 0) {
+        showMilestoneModal(`${state.streak}-DAY STREAK MILESTONE!`, `Consistency is compounding! ${state.streak} consecutive days of zero unbudgeted spills from The Vault.`);
+      }
+
+      saveState();
+      renderUI();
     }
 
-    /* ============================================================
-       8. ADMIN BOARD (INTAKE FORM)
-       ============================================================ */
-    function handleRadarSubmit(e) {
-      e.preventDefault();
-      const titleInput = document.getElementById('intakeTitle');
-      const title = titleInput.value.trim();
-      if (!title) return;
+    function showLevelUpModal(level) {
+      const rank = RANKS.find(r => r.level === level) || { title: "Commander" };
+      document.getElementById('modal-title-text').innerText = "PROMOTION UNLOCKED!";
+      document.getElementById('modal-desc-text').innerText = `You have advanced to Level ${level} â€¢ ${rank.title}`;
+      document.getElementById('reward-result').innerText = `Your financial airlock is fortifying. Fixed liabilities and lifestyle outflow are cleanly decoupled!`;
+      document.getElementById('loot-modal').classList.remove('hidden');
+    }
 
-      const category = document.getElementById('intakeCategory').value;
-      const customXpVal = document.getElementById('intakeCustomXp').value;
-      
-      let xp = 50;
-      if (customXpVal && !isNaN(parseInt(customXpVal))) {
-        xp = Math.max(10, parseInt(customXpVal));
-      } else {
-        const tier = document.querySelector('input[name="frictionTier"]:checked');
-        if (tier) xp = parseInt(tier.value);
+    function showMilestoneModal(title, msg) {
+      document.getElementById('modal-title-text').innerText = title;
+      document.getElementById('modal-desc-text').innerText = "Milestone Achievement Secured";
+      document.getElementById('reward-result').innerText = msg;
+      document.getElementById('loot-modal').classList.remove('hidden');
+    }
+
+    function closeLootModal() {
+      document.getElementById('loot-modal').classList.add('hidden');
+    }
+
+    function toggleSound() {
+      AudioEngine.enabled = !AudioEngine.enabled;
+      document.getElementById('sound-btn').innerText = AudioEngine.enabled ? 'ðŸ”Š' : 'ðŸ”‡';
+    }
+
+    function toggleAdminBoard() {
+      const card = document.getElementById('admin-board-card');
+      card.style.display = card.style.display === 'none' ? 'block' : 'none';
+      if (card.style.display === 'block') {
+        document.getElementById('admin-task-name').focus();
       }
+    }
+
+    function selectTier(xpVal, element) {
+      document.querySelectorAll('.tier-pill').forEach(p => p.classList.remove('selected'));
+      element.classList.add('selected');
+      document.getElementById('admin-task-xp').value = xpVal;
+    }
+
+    function handleNewItemSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('admin-task-name').value.trim();
+      if (!name) return;
+
+      const desc = document.getElementById('admin-task-desc').value.trim();
+      const zone = document.getElementById('admin-task-zone').value;
+      const xp = parseInt(document.getElementById('admin-task-xp').value) || 50;
 
       const newTask = {
-        id: 'item-' + Date.now() + '-' + Math.random().toString(36).substr(2, 4),
-        title: title,
+        id: 'task_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+        name: name,
+        desc: desc,
+        zone: zone,
         xp: xp,
-        completed: false,
-        completedAt: null,
-        category: category,
-        friction: xp >= 500 ? 'critical' : xp >= 200 ? 'high' : 'standard'
+        emoji: zone === 'setup' ? 'âš”ï¸' : zone === 'payroll' ? 'ðŸ›ï¸' : zone === 'autopay' ? 'âš¡' : 'ðŸŽ¯'
       };
 
-      state.tasks.unshift(newTask);
+      tasks.unshift(newTask);
       saveState();
 
-      titleInput.value = '';
-      document.getElementById('intakeCustomXp').value = '';
-      
-      renderTasks();
-      playTone(750, 'sine', 0.1, 0.08);
+      document.getElementById('admin-task-name').value = '';
+      document.getElementById('admin-task-desc').value = '';
+      toggleAdminBoard();
+      renderUI();
+      AudioEngine.playCoin();
+      triggerConfetti(false);
     }
 
-    /* ============================================================
-       9. SCRATCHPAD & FIELD NOTES ENGINE (RESTORED LIKE BEFORE)
-       ============================================================ */
-    function appendScratchpadTag(tag) {
-      const input = document.getElementById('scratchpadInput');
-      const current = input.value.trim();
-      input.value = current ? `${current} ${tag} ` : `${tag} `;
+    // --- SCRATCHPAD LOGIC ---
+    function appendTag(tag) {
+      const input = document.getElementById('scratchpad-input');
+      const val = input.value.trim();
+      input.value = val ? `${val} ${tag} ` : `${tag} `;
       input.focus();
-      playTone(700, 'sine', 0.04, 0.05);
     }
 
     function saveScratchpadNote() {
-      const input = document.getElementById('scratchpadInput');
+      const input = document.getElementById('scratchpad-input');
       const text = input.value.trim();
       if (!text) return;
 
       const now = new Date();
-      const formattedTime = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + 
-        ' at ' + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+      const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' at ' + 
+        now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
 
-      const newNote = {
-        id: 'note-' + Date.now(),
-        text: text,
-        timestamp: formattedTime
-      };
+      state.notes.unshift({
+        id: 'note_' + Date.now(),
+        date: dateStr,
+        text: text
+      });
 
-      scratchpadNotes.unshift(newNote);
-      saveScratchpad();
-      renderScratchpadNotes();
-
+      saveNotesState();
+      renderNotes();
       input.value = '';
 
-      const confirmNotice = document.getElementById('scratchpadSaveConfirmation');
-      if (confirmNotice) {
-        confirmNotice.style.opacity = '1';
-        setTimeout(() => {
-          confirmNotice.style.opacity = '0';
-        }, 2200);
-      }
+      const status = document.getElementById('scratchpad-status');
+      status.style.opacity = '1';
+      setTimeout(() => status.style.opacity = '0', 2000);
 
-      playTone(880, 'sine', 0.08, 0.08);
+      AudioEngine.playCoin();
     }
 
-    function deleteScratchpadNote(id) {
-      scratchpadNotes = scratchpadNotes.filter(n => n.id !== id);
-      saveScratchpad();
-      renderScratchpadNotes();
-      playTone(350, 'sine', 0.06, 0.06);
+    function deleteNote(id) {
+      state.notes = state.notes.filter(n => n.id !== id);
+      saveNotesState();
+      renderNotes();
     }
 
     function clearScratchpadNotes() {
-      if (scratchpadNotes.length === 0) return;
-      if (confirm('Are you sure you want to clear all logged notes?')) {
-        scratchpadNotes = [];
-        saveScratchpad();
-        renderScratchpadNotes();
-        playTone(300, 'sine', 0.08, 0.08);
+      if (state.notes.length === 0) return;
+      if (confirm("Clear all logged notes?")) {
+        state.notes = [];
+        saveNotesState();
+        renderNotes();
       }
     }
 
     function copyScratchpadNotes() {
-      if (scratchpadNotes.length === 0) {
-        alert('No notes in the scratchpad to copy.');
+      if (state.notes.length === 0) {
+        alert("No notes to copy.");
         return;
       }
-
-      const now = new Date();
-      let md = `# Operation: Airlock - Field Scratchpad & Migration Log\n`;
-      md += `*Exported on ${now.toLocaleDateString()} at ${now.toLocaleTimeString()}*\n\n---\n\n`;
-
-      scratchpadNotes.forEach(n => {
-        md += `### [${n.timestamp}]\n${n.text}\n\n`;
+      let md = "# Operation: Airlock â€” Scratchpad & Daily Notes\n\n";
+      state.notes.forEach(n => {
+        md += `### [${n.date}]\n${n.text}\n\n`;
       });
 
-      const copyBtnText = document.getElementById('copyNotesBtnText');
+      const btn = document.getElementById('copy-notes-btn');
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(md).then(() => {
-          if (copyBtnText) copyBtnText.textContent = 'Copied!';
-          playTone(880, 'sine', 0.1, 0.08);
-          setTimeout(() => {
-            if (copyBtnText) copyBtnText.textContent = 'Copy Notes';
-          }, 2000);
-        }).catch(() => fallbackCopyText(md));
+          btn.innerText = "Copied!";
+          setTimeout(() => btn.innerText = "Copy Notes", 2000);
+        }).catch(() => fallbackCopy(md));
       } else {
-        fallbackCopyText(md);
+        fallbackCopy(md);
       }
     }
 
-    function fallbackCopyText(text) {
-      const copyBtnText = document.getElementById('copyNotesBtnText');
-      const textArea = document.createElement("textarea");
-      textArea.value = text;
-      textArea.style.position = "fixed";
-      textArea.style.left = "-9999px";
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
+    function fallbackCopy(text) {
+      const btn = document.getElementById('copy-notes-btn');
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
       try {
         document.execCommand('copy');
-        if (copyBtnText) copyBtnText.textContent = 'Copied!';
-        playTone(880, 'sine', 0.1, 0.08);
-        setTimeout(() => {
-          if (copyBtnText) copyBtnText.textContent = 'Copy Notes';
-        }, 2000);
-      } catch (e) {
-        alert('Unable to copy automatically. Please copy text manually.');
-      }
-      document.body.removeChild(textArea);
+        btn.innerText = "Copied!";
+        setTimeout(() => btn.innerText = "Copy Notes", 2000);
+      } catch(e) {}
+      document.body.removeChild(ta);
     }
 
-    function renderScratchpadNotes() {
-      const container = document.getElementById('scratchpadNotesList');
-      const countElem = document.getElementById('scratchpadCount');
-      if (countElem) countElem.textContent = scratchpadNotes.length;
+    function renderNotes() {
+      const container = document.getElementById('notes-display');
+      container.innerHTML = '';
 
-      if (scratchpadNotes.length === 0) {
-        container.innerHTML = `
-          <div class="p-4 text-center rounded-lg border border-dashed border-ledger-700 text-xs text-slate-500">
-            No notes logged yet. Use the box above to record account details, routing notes, or questions.
-          </div>
-        `;
+      if (state.notes.length === 0) {
+        container.innerHTML = `<div style="text-align: center; font-size: 11px; color: #64748b; padding: 12px;">No notes yet. Type a note above to record ideas, routing numbers, or follow-ups.</div>`;
         return;
       }
 
-      container.innerHTML = scratchpadNotes.map(note => {
-        return `
-          <div class="p-3 rounded-lg bg-ledger-850 border border-ledger-700/80 flex items-start justify-between gap-3 text-xs">
-            <div class="space-y-1 min-w-0 flex-1">
-              <div class="text-[10px] text-amber-400 font-mono font-medium">${escapeHtml(note.timestamp)}</div>
-              <div class="text-slate-200 whitespace-pre-wrap leading-relaxed">${escapeHtml(note.text)}</div>
-            </div>
-            <button onclick="deleteScratchpadNote('${note.id}')" title="Delete note" class="text-slate-500 hover:text-red-400 p-1 transition flex-shrink-0">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-              </svg>
-            </button>
+      state.notes.forEach(note => {
+        const row = document.createElement('div');
+        row.className = 'note-row';
+        row.innerHTML = `
+          <div class="note-text">
+            <div class="note-date">${escapeHtml(note.date)}</div>
+            <div>${escapeHtml(note.text)}</div>
           </div>
+          <button class="delete-item-btn" onclick="deleteNote('${note.id}')" title="Delete note">âœ•</button>
         `;
-      }).join('');
+        container.appendChild(row);
+      });
     }
 
-    // Ctrl+Enter keyboard listener for textarea
+    // Ctrl+Enter listener
     document.addEventListener('keydown', (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-        if (document.activeElement && document.activeElement.id === 'scratchpadInput') {
+        if (document.activeElement && document.activeElement.id === 'scratchpad-input') {
           saveScratchpadNote();
         }
       }
     });
 
-    /* ============================================================
-       10. HUD TELEMETRY RENDERER
-       ============================================================ */
-    function renderHUD() {
-      const info = calculateLevelInfo(state.xp);
+    // --- CANVAS CONFETTI (ZERO EXTERNAL CDNS) ---
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
 
-      document.getElementById('headerTotalXp').textContent = state.xp.toLocaleString();
-      document.getElementById('currentLevelNumber').textContent = info.level;
-      document.getElementById('currentLevelXp').textContent = info.currentLevelXp.toLocaleString();
-      document.getElementById('xpRemaining').textContent = info.xpNeeded.toLocaleString();
-      document.getElementById('progressPercent').textContent = `${info.progressPercent}%`;
-      document.getElementById('xpProgressBar').style.width = `${info.progressPercent}%`;
-      document.getElementById('tierFloorXp').textContent = info.floorXp.toLocaleString();
-      document.getElementById('tierCeilXp').textContent = info.ceilXp.toLocaleString();
-      document.getElementById('headerRankBadge').innerHTML = info.rankTitle;
-      document.getElementById('rankTitle').innerHTML = info.rankTitle.replace(/Level \d+ &bull; /, '');
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
     }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
 
-    /* ============================================================
-       11. DATA MODAL & BACKUP CONTROLS
-       ============================================================ */
-    function toggleDataModal() {
-      const modal = document.getElementById('dataModal');
-      modal.classList.toggle('hidden');
-      playTone(600, 'sine', 0.05, 0.05);
-    }
+    function triggerConfetti(isGrand = false) {
+      const count = isGrand ? 110 : 40;
+      const colors = ['#f59e0b', '#10b981', '#6366f1', '#38bdf8', '#fbbf24', '#ffffff'];
 
-    function exportData() {
-      const fullBackup = {
-        state: state,
-        scratchpad: scratchpadNotes,
-        exportedAt: new Date().toISOString()
-      };
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fullBackup, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `operation_airlock_backup_${getTodayIsoDate()}.json`);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-      playSuccessChime();
-    }
-
-    function importData(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(event) {
-        try {
-          const imported = JSON.parse(event.target.result);
-          if (imported) {
-            const incomingState = imported.state || imported;
-            state = {
-              xp: typeof incomingState.xp === 'number' ? incomingState.xp : 0,
-              streak: incomingState.streak || { current: 0, best: 0, lastCheckInDate: null, history: [] },
-              tasks: Array.isArray(incomingState.tasks) ? incomingState.tasks : DEFAULT_TASK_PAYLOAD,
-              settings: incomingState.settings || { soundEnabled: true }
-            };
-            if (Array.isArray(imported.scratchpad)) {
-              scratchpadNotes = imported.scratchpad;
-              saveScratchpad();
-            }
-            saveState();
-            renderHUD();
-            renderStreakModule();
-            renderTasks();
-            renderScratchpadNotes();
-            updateAudioButtonUI();
-            toggleDataModal();
-            triggerEpicConfetti();
-          }
-        } catch (err) {
-          alert('Error parsing JSON backup file.');
-        }
-      };
-      reader.readAsText(file);
-    }
-
-    function resetToDefaultPayload() {
-      if (confirm('Warning: This will reset all tasks, XP, and streaks back to initial defaults. Continue?')) {
-        state.xp = 0;
-        state.streak = { current: 0, best: 0, lastCheckInDate: null, history: [] };
-        state.tasks = JSON.parse(JSON.stringify(DEFAULT_TASK_PAYLOAD));
-        saveState();
-        renderHUD();
-        renderStreakModule();
-        renderTasks();
-        toggleDataModal();
-        playTone(300, 'sine', 0.15, 0.08);
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: canvas.width / 2 + (Math.random() - 0.5) * 160,
+          y: canvas.height * 0.4,
+          vx: (Math.random() - 0.5) * (isGrand ? 16 : 9),
+          vy: (Math.random() - 0.8) * (isGrand ? 20 : 12),
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 10,
+          life: 1,
+          decay: Math.random() * 0.02 + 0.015
+        });
       }
     }
+
+    function updateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.45;
+        p.rotation += p.rotSpeed;
+        p.life -= p.decay;
+
+        if (p.life <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = Math.max(0, p.life);
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+        ctx.restore();
+      }
+      requestAnimationFrame(updateConfetti);
+    }
+    requestAnimationFrame(updateConfetti);
 
     function escapeHtml(text) {
       if (!text) return '';
@@ -1406,19 +1525,8 @@
         .replace(/'/g, "&#039;");
     }
 
-    /* ============================================================
-       INITIALIZATION
-       ============================================================ */
-    window.addEventListener('DOMContentLoaded', () => {
-      loadState();
-      updateAudioButtonUI();
-      renderHUD();
-      renderStreakModule();
-      renderTasks();
-      renderScratchpadNotes();
-    });
+    window.addEventListener('DOMContentLoaded', loadState);
   </script>
 </body>
 </html>
-
 
