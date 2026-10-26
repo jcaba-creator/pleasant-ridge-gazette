@@ -85,6 +85,7 @@
       gap: 12px;
     }
 
+    /* Completely static avatar - zero click handlers or portal access */
     .avatar-badge {
       width: 54px;
       height: 54px;
@@ -96,7 +97,8 @@
       align-items: center;
       justify-content: center;
       box-shadow: 0 6px 14px rgba(245, 158, 11, 0.4);
-      cursor: pointer;
+      pointer-events: none;
+      user-select: none;
     }
 
     .hero-title-group h1 {
@@ -336,7 +338,7 @@
       margin-left: 8px;
     }
 
-    /* SCRATCH PAD SECTION AT THE BOTTOM */
+    /* Scratchpad Section at the bottom */
     .scratchpad-card {
       background: #1e293b;
       border: 1px solid #334155;
@@ -425,7 +427,7 @@
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.85);
+      background: rgba(15, 23, 42, 0.88);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -462,14 +464,15 @@
       border: 2px dashed #f59e0b;
       border-radius: 16px;
       padding: 16px;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 800;
       color: #fef08a;
-      min-height: 72px;
+      min-height: 80px;
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 20px;
+      line-height: 1.4;
     }
     .claim-btn {
       width: 100%;
@@ -496,11 +499,11 @@
 
   <div class="container">
 
-    <!-- Top Dashboard Header (Clean, No Settings Button For Trooper) -->
+    <!-- Top Dashboard Header (Clean, Zero Settings Glitch) -->
     <header class="header-card">
       <div class="hero-profile">
         <div class="avatar-wrapper">
-          <div class="avatar-badge" id="avatar-icon" onclick="handleAvatarTap()" title="Trooper">🤠</div>
+          <div class="avatar-badge" id="avatar-icon">🤠</div>
           <div class="hero-title-group">
             <h1>
               <span>Trooper</span>
@@ -534,13 +537,13 @@
         </div>
 
         <button id="chest-btn" onclick="claimLootChest()" class="btn-3d loot-claim-btn" style="display: none;">
-          🎁 UNLOCK LOOT!
+          🌟 HERO BOOST!
         </button>
       </div>
     </header>
 
     <!-- DYNAMIC QUEST ZONES CONTAINER -->
-    <div id="quest-zones-container" class="space-y-4" style="display: flex; flex-direction: column; gap: 14px;">
+    <div id="quest-zones-container" style="display: flex; flex-direction: column; gap: 14px;">
       <!-- Populated dynamically from storage -->
     </div>
 
@@ -575,16 +578,16 @@
 
   </div>
 
-  <!-- LOOT CHEST POPUP MODAL -->
+  <!-- UPLIFTING WORDS OF ENCOURAGEMENT MODAL -->
   <div id="loot-modal" class="modal-overlay hidden">
     <div class="modal-card">
-      <div style="font-size: 52px; margin-bottom: 6px;">🎁</div>
-      <h3 class="modal-title">LOOT BOX UNLOCKED!</h3>
-      <p class="modal-desc">Trooper finished chores and earned a reward!</p>
+      <div style="font-size: 52px; margin-bottom: 6px;">🌟</div>
+      <h3 class="modal-title">HERO BOOST UNLOCKED!</h3>
+      <p class="modal-desc">Trooper took care of business and earned words of power!</p>
 
       <div class="prize-box" id="reward-result"></div>
 
-      <button class="btn-3d claim-btn" onclick="closeLootModal()">CLAIM & CONTINUE!</button>
+      <button class="btn-3d claim-btn" onclick="closeLootModal()">KEEP CRUSHING IT!</button>
     </div>
   </div>
 
@@ -689,12 +692,12 @@
       }
     };
 
-    // --- GAME ENGINE & STATE ---
+    // --- GAME ENGINE & TELEMETRY ---
     const TASKS_KEY = "bb_trooper_tasks_config_v1";
     const DATA_KEY = "bb_trooper_ranch_quest_data";
     const NOTES_KEY = "bb_trooper_scratchpad_notes";
+    const TELEMETRY_KEY = "bb_trooper_telemetry_v1";
 
-    // 100% REAL-WORLD, DIRECT DESCRIPTIONS (NO FANCY WORDS)
     const DEFAULT_REAL_WORLD_TASKS = [
       { id: "get_dressed", name: "Get dressed", desc: "Put on clothes and socks", zone: "am", xp: 25, emoji: "👕" },
       { id: "brush_teeth", name: "Brush teeth", desc: "Brush teeth for 2 minutes", zone: "am", xp: 25, emoji: "🪥" },
@@ -718,14 +721,16 @@
       { level: 6, title: "Ranch Legend", xpReq: 2000, avatar: "👑" }
     ];
 
-    const DEFAULT_REWARDS = [
-      "🎮 20 Minutes Extra Screen / Gaming Time",
-      "🍕 Pick What We Have for Dinner Tonight!",
-      "🍦 Ice Cream / Sweet Treat Run",
-      "🌙 15 Minutes Stay Up Late Pass",
-      "🎟️ Free Pass: Skip Setting the Dinner Table Once",
-      "🚜 Ride-Along on Farm Tractor / Equipment Patrol",
-      "🪙 +50 BONUS XP Deposit in the Hero Bank!"
+    // Uplifting Compliments & Words of Encouragement Pool
+    const DEFAULT_ENCOURAGEMENT_WORDS = [
+      "🌟 You are capable of doing hard things, and you proved it today!",
+      "💪 Proud of your focus and follow-through — you are building real strength!",
+      "🐴 The animals count on you, and you showed up like a true ranch hand!",
+      "❤️ Your hard work and dedication don't go unnoticed. You make us proud!",
+      "🚀 Every good habit you build today makes you unstoppable tomorrow.",
+      "⭐ You stayed on mission and took care of business before having fun. That is true leadership!",
+      "🔥 Small daily wins add up to massive success. Keep crushing it!",
+      "🎯 You have a strong spirit and a great work ethic. Keep your chin high!"
     ];
 
     let tasks = [];
@@ -736,27 +741,32 @@
       lastActiveDate: new Date().toISOString().split('T')[0],
       completedChores: {},
       pendingChests: 0,
-      rewardsPool: [...DEFAULT_REWARDS],
+      rewardsPool: [...DEFAULT_ENCOURAGEMENT_WORDS],
       kidName: "Trooper"
     };
 
-    let avatarTapCount = 0;
-    let avatarTapTimeout = null;
-
-    function handleAvatarTap() {
-      avatarTapCount++;
-      clearTimeout(avatarTapTimeout);
-      avatarTapTimeout = setTimeout(() => { avatarTapCount = 0; }, 2000);
-      if (avatarTapCount >= 5) {
-        avatarTapCount = 0;
-        if (confirm("Open Parent Command Deck?")) {
-          window.location.href = "/trooper-deck/";
-        }
-      }
+    // --- TELEMETRY LOGGING SYSTEM ---
+    function logEvent(action, detail) {
+      try {
+        let log = JSON.parse(localStorage.getItem(TELEMETRY_KEY) || '[]');
+        const now = new Date();
+        const entry = {
+          id: 'evt_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+          timestamp: now.toISOString(),
+          displayTime: now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' }),
+          displayDate: now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+          action: action,
+          detail: detail || '',
+          xp: state.xp,
+          streak: state.streak
+        };
+        log.unshift(entry);
+        if (log.length > 500) log = log.slice(0, 500);
+        localStorage.setItem(TELEMETRY_KEY, JSON.stringify(log));
+      } catch(e) {}
     }
 
     function loadState() {
-      // 1. Load Tasks from Command Deck or Default
       const savedTasks = localStorage.getItem(TASKS_KEY);
       if (savedTasks) {
         try { tasks = JSON.parse(savedTasks); } catch(e) { tasks = [...DEFAULT_REAL_WORLD_TASKS]; }
@@ -765,13 +775,12 @@
         localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
       }
 
-      // 2. Load Hero State
       const saved = localStorage.getItem(DATA_KEY);
       if (saved) {
         try { state = Object.assign(state, JSON.parse(saved)); } catch (e) {}
       }
 
-      // 3. Check Daily Rollover
+      // Check Daily Rollover
       const today = new Date().toISOString().split('T')[0];
       if (state.lastActiveDate !== today) {
         const last = new Date(state.lastActiveDate);
@@ -784,12 +793,15 @@
         state.completedChores = {};
         state.lastActiveDate = today;
         saveState();
+        logEvent("DAY_ROLLOVER", `Rollover to ${today}. Streak: ${state.streak}`);
       }
 
       document.getElementById('date-display').innerText = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
       renderDynamicZones();
       renderUI();
       renderScratchpad();
+
+      logEvent("APP_OPENED", "Trooper page loaded in browser");
     }
 
     function saveState() {
@@ -842,7 +854,7 @@
 
           item.innerHTML = `
             <label class="chore-left" for="cb_${t.id}">
-              <input type="checkbox" id="cb_${t.id}" class="chore-checkbox" ${isDone ? 'checked' : ''} onchange="handleChoreToggle(this, '${t.id}')">
+              <input type="checkbox" id="cb_${t.id}" class="chore-checkbox" ${isDone ? 'checked' : ''} onchange="handleChoreToggle(this, '${t.id}', '${t.name}')">
               <div class="chore-labels">
                 <span class="chore-name">${t.name}</span>
                 <span class="chore-desc">${t.desc || ''}</span>
@@ -892,13 +904,13 @@
       const chestBtn = document.getElementById('chest-btn');
       if (state.pendingChests > 0) {
         chestBtn.style.display = 'inline-flex';
-        chestBtn.innerHTML = `🎁 UNLOCK LOOT (${state.pendingChests})!`;
+        chestBtn.innerHTML = `🌟 HERO BOOST (${state.pendingChests})!`;
       } else {
         chestBtn.style.display = 'none';
       }
     }
 
-    function handleChoreToggle(checkbox, choreId) {
+    function handleChoreToggle(checkbox, choreId, taskName) {
       AudioEngine.init();
       const choreItem = checkbox.closest('.chore-item');
       const xpVal = parseInt(choreItem.getAttribute('data-xp') || '25', 10);
@@ -910,6 +922,8 @@
         state.xp += xpVal;
         state.coins += 5;
 
+        logEvent("TASK_CHECKED", `Checked "${taskName}" (+${xpVal} XP)`);
+
         const completedCount = Object.keys(state.completedChores).length;
         if (completedCount % 3 === 0 || state.xp % 100 < xpVal) {
           state.pendingChests += 1;
@@ -919,6 +933,7 @@
         if (newRank > oldRank) {
           AudioEngine.playLevelUp();
           triggerConfetti(true);
+          logEvent("LEVEL_UP", `Promoted to Level ${newRank}`);
         } else {
           AudioEngine.playCoin();
           triggerConfetti(false);
@@ -930,6 +945,7 @@
             triggerConfetti(true);
             state.pendingChests += 1;
             renderUI();
+            logEvent("ALL_TASKS_COMPLETED", "All chores completed for today!");
           }, 350);
         }
 
@@ -938,6 +954,7 @@
         delete state.completedChores[choreId];
         state.xp = Math.max(0, state.xp - xpVal);
         state.coins = Math.max(0, state.coins - 5);
+        logEvent("TASK_UNCHECKED", `Unchecked "${taskName}"`);
       }
 
       saveState();
@@ -948,7 +965,7 @@
       if (state.pendingChests <= 0) return;
       AudioEngine.playChestOpen();
 
-      const pool = (state.rewardsPool && state.rewardsPool.length > 0) ? state.rewardsPool : DEFAULT_REWARDS;
+      const pool = (state.rewardsPool && state.rewardsPool.length > 0) ? state.rewardsPool : DEFAULT_ENCOURAGEMENT_WORDS;
       const prize = pool[Math.floor(Math.random() * pool.length)];
 
       document.getElementById('reward-result').innerText = prize;
@@ -958,6 +975,8 @@
       saveState();
       renderUI();
       triggerConfetti(false);
+
+      logEvent("HERO_BOOST_OPENED", prize);
     }
 
     function closeLootModal() {
@@ -967,6 +986,7 @@
     function toggleSound() {
       AudioEngine.enabled = !AudioEngine.enabled;
       document.getElementById('sound-btn').innerText = AudioEngine.enabled ? '🔊' : '🔇';
+      logEvent("SOUND_TOGGLED", AudioEngine.enabled ? "Enabled" : "Muted");
     }
 
     // --- SCRATCHPAD LOGIC ---
@@ -995,6 +1015,8 @@
       const timestamp = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
       notes.unshift({ text, timestamp, date: new Date().toISOString().split('T')[0] });
       localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+
+      logEvent("NOTE_SAVED", text);
 
       input.value = '';
       renderScratchpad();

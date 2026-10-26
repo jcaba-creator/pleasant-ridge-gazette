@@ -37,11 +37,11 @@
 
     .container {
       width: 100%;
-      max-width: 640px;
+      max-width: 660px;
       display: flex;
       flex-direction: column;
       gap: 16px;
-      padding-bottom: 40px;
+      padding-bottom: 50px;
     }
 
     .card {
@@ -65,9 +65,7 @@
       gap: 6px;
       transition: all 0.15s ease;
     }
-    .btn:active {
-      transform: scale(0.97);
-    }
+    .btn:active { transform: scale(0.97); }
     .btn-gold { background: var(--gold); color: #090d16; }
     .btn-green { background: var(--green); color: white; }
     .btn-indigo { background: var(--indigo); color: white; }
@@ -104,7 +102,6 @@
       justify-content: space-between;
     }
 
-    /* Task Item Rows */
     .task-item {
       background: #090d16;
       border: 1px solid #1e293b;
@@ -155,7 +152,6 @@
       font-size: 12px;
     }
 
-    /* Form Fields */
     .field-group {
       display: flex;
       flex-direction: column;
@@ -176,9 +172,6 @@
       border-radius: 10px;
       font-size: 13px;
       outline: none;
-    }
-    .input-text:focus, .select-input:focus {
-      border-color: var(--gold);
     }
     .textarea {
       width: 100%;
@@ -212,7 +205,31 @@
       text-transform: uppercase;
     }
 
-    /* Modal */
+    /* Telemetry Audit Log Stream */
+    .telemetry-log-table {
+      width: 100%;
+      font-size: 12px;
+      border-collapse: collapse;
+    }
+    .telemetry-row {
+      border-bottom: 1px solid #1e293b;
+      padding: 8px 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .telemetry-badge {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 5px;
+      text-transform: uppercase;
+    }
+    .badge-check { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .badge-uncheck { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .badge-boost { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .badge-system { background: rgba(99, 102, 241, 0.2); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.4); }
+
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -234,17 +251,8 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.7);
     }
 
-    .nav-links {
-      display: flex;
-      gap: 10px;
-      font-size: 12px;
-    }
-    .nav-link {
-      color: #38bdf8;
-      text-decoration: none;
-      font-weight: 700;
-    }
-    .nav-link:hover { text-decoration: underline; }
+    .nav-links { display: flex; gap: 10px; font-size: 12px; }
+    .nav-link { color: #38bdf8; text-decoration: none; font-weight: 700; }
   </style>
 </head>
 <body>
@@ -262,14 +270,14 @@
         </div>
       </div>
       <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">
-        Private Parent Control Desk for adjusting Trooper's chore manifest, custom mystery loot rewards, XP leveling telemetry, and reviewing scratchpad field observations.
+        Private Parent Control Desk for Trooper: manage chore capture, adjust words of encouragement, and inspect real-time click telemetry.
       </p>
     </div>
 
     <!-- Live Telemetry Quick Adjust -->
     <div class="card">
       <div class="section-title">
-        <span>HERO STATUS & FAST TELEMETRY</span>
+        <span>HERO STATUS & TELEMETRY</span>
       </div>
       <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px;">
         <div class="stat-pill">
@@ -286,15 +294,33 @@
         </div>
         <div class="stat-pill">
           <div class="stat-val" id="stat-chests">0</div>
-          <div class="stat-lbl">Loot Ready</div>
+          <div class="stat-lbl">Boosts Ready</div>
         </div>
       </div>
 
       <div style="display: flex; flex-wrap: wrap; gap: 8px;">
         <button class="btn btn-gold" onclick="adjustXP(50)">+50 Bonus XP</button>
-        <button class="btn btn-green" onclick="adjustChests(1)">+1 Loot Box</button>
+        <button class="btn btn-green" onclick="adjustChests(1)">+1 Hero Boost</button>
         <button class="btn btn-muted" onclick="adjustStreak(1)">+1 Day Streak</button>
         <button class="btn btn-red" onclick="resetDayChecks()">Clear Today's Checks</button>
+      </div>
+    </div>
+
+    <!-- LIVE TELEMETRY & CLICK STREAM AUDIT -->
+    <div class="card">
+      <div class="section-title">
+        <span>CLICK STREAM & ACTIVITY AUDIT (<span id="telemetry-count">0</span> EVENTS)</span>
+        <div style="display: flex; gap: 6px;">
+          <button class="btn btn-muted btn-icon" onclick="exportTelemetry()">Export CSV</button>
+          <button class="btn btn-red btn-icon" onclick="clearTelemetry()">Clear</button>
+        </div>
+      </div>
+      <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">
+        Real-time audit log recording exactly what Trooper clicks and when he completes each chore:
+      </p>
+
+      <div id="telemetry-stream" style="max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px;">
+        <!-- Telemetry items injected dynamically -->
       </div>
     </div>
 
@@ -315,16 +341,16 @@
       </div>
     </div>
 
-    <!-- LOOT BOX REWARDS POOL -->
+    <!-- UPLIFTING COMPLIMENTS & ENCOURAGEMENT POOL -->
     <div class="card">
       <div class="section-title">
-        <span>MYSTERY REWARD POOL</span>
-        <button class="btn btn-indigo" onclick="saveRewardsPool()">Save Prizes</button>
+        <span>WORDS OF ENCOURAGEMENT POOL</span>
+        <button class="btn btn-indigo" onclick="saveRewardsPool()">Save Words</button>
       </div>
       <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">
-        Each line becomes a possible reward drawn when Trooper unlocks a mystery chest:
+        Each line becomes an uplifting compliment or empowering message shown when he unlocks a Hero Boost:
       </p>
-      <textarea id="rewards-input" class="textarea" rows="6"></textarea>
+      <textarea id="rewards-input" class="textarea" rows="7"></textarea>
     </div>
 
     <!-- SCRATCHPAD LOGS REVIEW -->
@@ -337,24 +363,10 @@
         </div>
       </div>
       <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">
-        Field notes recorded at the bottom of Trooper's quest tracker:
+        Field observations recorded at the bottom of Trooper's view:
       </p>
-      <div id="scratchpad-log-list" style="display: flex; flex-direction: column; gap: 6px; max-height: 240px; overflow-y: auto;">
+      <div id="scratchpad-log-list" style="display: flex; flex-direction: column; gap: 6px; max-height: 200px; overflow-y: auto;">
         <!-- Log rows rendered dynamically -->
-      </div>
-    </div>
-
-    <!-- CONFIG BACKUP & SYNC EXPORT -->
-    <div class="card">
-      <div class="section-title">
-        <span>DEVICE SYNC & CONFIG BACKUP</span>
-      </div>
-      <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">
-        To export this configuration to another tablet or browser, copy this JSON snippet:
-      </p>
-      <div style="display: flex; gap: 8px;">
-        <button class="btn btn-muted" onclick="copyFullConfig()">Copy Config JSON</button>
-        <button class="btn btn-muted" onclick="importConfigPrompt()">Import Config JSON</button>
       </div>
     </div>
 
@@ -366,13 +378,13 @@
       <h3 id="modal-title" style="font-size: 16px; font-weight: 800; color: var(--gold-light); margin-bottom: 12px;">Add New Chore</h3>
 
       <div class="field-group">
-        <label class="field-label">Chore Action Title</label>
-        <input type="text" id="m-task-name" class="input-text" placeholder="e.g. Stow Lunchbox in Sink">
+        <label class="field-label">Chore Action Title (Real-world description)</label>
+        <input type="text" id="m-task-name" class="input-text" placeholder="e.g. Put shoes in rack">
       </div>
 
       <div class="field-group">
         <label class="field-label">Description / Guidance</label>
-        <input type="text" id="m-task-desc" class="input-text" placeholder="e.g. Empty bag and leave unzipped for tomorrow">
+        <input type="text" id="m-task-desc" class="input-text" placeholder="e.g. Put pair away neatly">
       </div>
 
       <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px;">
@@ -403,12 +415,12 @@
   </div>
 
   <script>
-    // STORAGE KEYS
     const TASKS_KEY = "bb_trooper_tasks_config_v1";
     const DATA_KEY = "bb_trooper_ranch_quest_data";
     const NOTES_KEY = "bb_trooper_scratchpad_notes";
+    const TELEMETRY_KEY = "bb_trooper_telemetry_v1";
 
-    const DEFAULT_TASKS = [
+    const DEFAULT_REAL_WORLD_TASKS = [
       { id: "get_dressed", name: "Get dressed", desc: "Put on clothes and socks", zone: "am", xp: 25, emoji: "👕" },
       { id: "brush_teeth", name: "Brush teeth", desc: "Brush teeth for 2 minutes", zone: "am", xp: 25, emoji: "🪥" },
       { id: "eat_breakfast", name: "Eat breakfast", desc: "Finish breakfast food and drink", zone: "am", xp: 25, emoji: "🥞" },
@@ -422,14 +434,15 @@
       { id: "chill_reset", name: "Chill and reset for tomorrow", desc: "Put shoes away and relax for tomorrow", zone: "pm", xp: 50, emoji: "🎧" }
     ];
 
-    const DEFAULT_REWARDS = [
-      "🎮 20 Minutes Extra Screen / Gaming Time",
-      "🍕 Pick What We Have for Dinner Tonight!",
-      "🍦 Ice Cream / Sweet Treat Run",
-      "🌙 15 Minutes Stay Up Late Pass",
-      "🎟️ Free Pass: Skip Setting the Dinner Table Once",
-      "🚜 Ride-Along on Farm Tractor / Equipment Patrol",
-      "🪙 +50 BONUS XP Deposit in the Hero Bank!"
+    const DEFAULT_ENCOURAGEMENT_WORDS = [
+      "🌟 You are capable of doing hard things, and you proved it today!",
+      "💪 Proud of your focus and follow-through — you are building real strength!",
+      "🐴 The animals count on you, and you showed up like a true ranch hand!",
+      "❤️ Your hard work and dedication don't go unnoticed. You make us proud!",
+      "🚀 Every good habit you build today makes you unstoppable tomorrow.",
+      "⭐ You stayed on mission and took care of business before having fun. That is true leadership!",
+      "🔥 Small daily wins add up to massive success. Keep crushing it!",
+      "🎯 You have a strong spirit and a great work ethic. Keep your chin high!"
     ];
 
     let tasks = [];
@@ -437,22 +450,21 @@
     let editingTaskId = null;
 
     function init() {
-      // Load tasks
       const savedTasks = localStorage.getItem(TASKS_KEY);
       if (savedTasks) {
-        try { tasks = JSON.parse(savedTasks); } catch(e) { tasks = [...DEFAULT_TASKS]; }
+        try { tasks = JSON.parse(savedTasks); } catch(e) { tasks = [...DEFAULT_REAL_WORLD_TASKS]; }
       } else {
-        tasks = [...DEFAULT_TASKS];
+        tasks = [...DEFAULT_REAL_WORLD_TASKS];
         saveTasks();
       }
 
-      // Load Hero Data
       const savedData = localStorage.getItem(DATA_KEY);
       if (savedData) {
         try { heroData = JSON.parse(savedData); } catch(e) { heroData = {}; }
       }
 
       renderTelemetry();
+      renderTelemetryStream();
       renderTasks();
       renderRewards();
       renderScratchpadNotes();
@@ -483,6 +495,74 @@
       document.getElementById('stat-lvl').innerText = lvl;
     }
 
+    function renderTelemetryStream() {
+      const container = document.getElementById('telemetry-stream');
+      let events = [];
+      try {
+        events = JSON.parse(localStorage.getItem(TELEMETRY_KEY) || '[]');
+      } catch(e) {}
+
+      document.getElementById('telemetry-count').innerText = events.length;
+      container.innerHTML = '';
+
+      if (events.length === 0) {
+        container.innerHTML = '<div style="font-size: 11px; color: var(--text-muted); font-style: italic; padding: 6px;">No telemetry logged yet. Open Trooper\'s page and click chores to test.</div>';
+        return;
+      }
+
+      events.slice(0, 40).forEach(ev => {
+        const row = document.createElement('div');
+        row.style.background = '#090d16';
+        row.style.border = '1px solid #1e293b';
+        row.style.borderRadius = '8px';
+        row.style.padding = '8px 10px';
+        row.style.fontSize = '12px';
+        row.style.display = 'flex';
+        row.style.justifyContent = 'space-between';
+        row.style.alignItems = 'center';
+
+        let badgeClass = 'badge-system';
+        if (ev.action === 'TASK_CHECKED') badgeClass = 'badge-check';
+        else if (ev.action === 'TASK_UNCHECKED') badgeClass = 'badge-uncheck';
+        else if (ev.action === 'HERO_BOOST_OPENED') badgeClass = 'badge-boost';
+
+        row.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="telemetry-badge ${badgeClass}">${ev.action.replace('_', ' ')}</span>
+            <span style="color: #f1f5f9; font-weight: 500;">${ev.detail}</span>
+          </div>
+          <span style="font-size: 10px; color: #64748b; white-space: nowrap; margin-left: 10px;">${ev.displayDate} ${ev.displayTime}</span>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function exportTelemetry() {
+      let events = [];
+      try { events = JSON.parse(localStorage.getItem(TELEMETRY_KEY) || '[]'); } catch(e) {}
+      if (events.length === 0) return alert("No telemetry events to export.");
+
+      let csv = "Timestamp,Date,Time,Action,Detail,XP,Streak\n";
+      events.forEach(e => {
+        const cleanDetail = (e.detail || '').replace(/"/g, '""');
+        csv += `"${e.timestamp}","${e.displayDate}","${e.displayTime}","${e.action}","${cleanDetail}",${e.xp || 0},${e.streak || 1}\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `trooper_telemetry_${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+    }
+
+    function clearTelemetry() {
+      if (confirm("Clear all click telemetry events?")) {
+        localStorage.removeItem(TELEMETRY_KEY);
+        renderTelemetryStream();
+      }
+    }
+
     function adjustXP(amt) {
       heroData.xp = (heroData.xp || 0) + amt;
       saveHeroData();
@@ -499,7 +579,7 @@
     }
 
     function resetDayChecks() {
-      if (confirm("Reset today's chore checkmarks on Trooper's view? (His XP and rank will remain!)")) {
+      if (confirm("Reset today's chore checkmarks on Trooper's view? (XP and rank will remain!)")) {
         heroData.completedChores = {};
         saveHeroData();
         alert("Today's checkmarks cleared!");
@@ -518,7 +598,7 @@
         pm: "🌙 Evening Reset"
       };
 
-      tasks.forEach((t, idx) => {
+      tasks.forEach((t) => {
         const div = document.createElement('div');
         div.className = 'task-item';
         div.innerHTML = `
@@ -604,13 +684,13 @@
 
     function resetTasksToDefault() {
       if (confirm("Reset task list to the default 11 homestead chores?")) {
-        tasks = [...DEFAULT_TASKS];
+        tasks = [...DEFAULT_REAL_WORLD_TASKS];
         saveTasks();
       }
     }
 
     function renderRewards() {
-      const pool = heroData.rewardsPool && heroData.rewardsPool.length > 0 ? heroData.rewardsPool : DEFAULT_REWARDS;
+      const pool = heroData.rewardsPool && heroData.rewardsPool.length > 0 ? heroData.rewardsPool : DEFAULT_ENCOURAGEMENT_WORDS;
       document.getElementById('rewards-input').value = pool.join('\n');
     }
 
@@ -619,11 +699,10 @@
       if (lines.length > 0) {
         heroData.rewardsPool = lines;
         saveHeroData();
-        alert("Rewards pool saved!");
+        alert("Words of encouragement saved!");
       }
     }
 
-    // --- SCRATCHPAD LOGS ---
     function renderScratchpadNotes() {
       const container = document.getElementById('scratchpad-log-list');
       let notes = [];
@@ -682,30 +761,6 @@
       if (notes.length === 0) return alert("No notes to copy.");
       const text = notes.map(n => `[${n.timestamp}] ${n.text}`).join('\n');
       navigator.clipboard.writeText(text).then(() => alert("All notes copied to clipboard!"));
-    }
-
-    function copyFullConfig() {
-      const config = { tasks, heroData };
-      navigator.clipboard.writeText(JSON.stringify(config, null, 2)).then(() => alert("Full configuration JSON copied to clipboard!"));
-    }
-
-    function importConfigPrompt() {
-      const raw = prompt("Paste Configuration JSON here:");
-      if (!raw) return;
-      try {
-        const parsed = JSON.parse(raw);
-        if (parsed.tasks && Array.isArray(parsed.tasks)) {
-          tasks = parsed.tasks;
-          saveTasks();
-        }
-        if (parsed.heroData) {
-          heroData = parsed.heroData;
-          saveHeroData();
-        }
-        alert("Configuration imported successfully!");
-      } catch(e) {
-        alert("Invalid JSON format.");
-      }
     }
 
     window.addEventListener('DOMContentLoaded', init);

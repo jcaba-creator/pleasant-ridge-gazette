@@ -64,7 +64,6 @@
       box-shadow: 0 2px 0 rgba(0, 0, 0, 0.45);
     }
 
-    /* Top Header Card (Lavender & Teal Nature Fusion) */
     .header-card {
       background: linear-gradient(145deg, #18223d, #0f172a);
       border: 2px solid rgba(192, 132, 252, 0.4);
@@ -86,6 +85,7 @@
       gap: 12px;
     }
 
+    /* Completely static avatar - zero click handlers or portal access */
     .avatar-badge {
       width: 54px;
       height: 54px;
@@ -97,7 +97,8 @@
       align-items: center;
       justify-content: center;
       box-shadow: 0 6px 14px rgba(168, 85, 247, 0.4);
-      cursor: pointer;
+      pointer-events: none;
+      user-select: none;
     }
 
     .hero-title-group h1 {
@@ -458,14 +459,15 @@
       border: 2px dashed #2dd4bf;
       border-radius: 16px;
       padding: 16px;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 800;
       color: #2dd4bf;
-      min-height: 72px;
+      min-height: 80px;
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 20px;
+      line-height: 1.4;
     }
     .claim-btn {
       width: 100%;
@@ -492,11 +494,11 @@
 
   <div class="container">
 
-    <!-- Top Dashboard Header (Clean, Lavender & Teal Nature Theme) -->
+    <!-- Top Dashboard Header (Clean, Zero Settings Glitch) -->
     <header class="header-card">
       <div class="hero-profile">
         <div class="avatar-wrapper">
-          <div class="avatar-badge" id="avatar-icon" onclick="handleAvatarTap()" title="Peacemaker 9">🌿</div>
+          <div class="avatar-badge" id="avatar-icon">🌿</div>
           <div class="hero-title-group">
             <h1>
               <span>Peacemaker 9</span>
@@ -530,7 +532,7 @@
         </div>
 
         <button id="chest-btn" onclick="claimLootChest()" class="btn-3d loot-claim-btn" style="display: none;">
-          🎁 UNLOCK LOOT!
+          🌸 DAILY SPARK!
         </button>
       </div>
     </header>
@@ -571,16 +573,16 @@
 
   </div>
 
-  <!-- LOOT CHEST POPUP MODAL -->
+  <!-- WORDS OF ENCOURAGEMENT MODAL -->
   <div id="loot-modal" class="modal-overlay hidden">
     <div class="modal-card">
-      <div style="font-size: 52px; margin-bottom: 6px;">🎁</div>
-      <h3 class="modal-title">LOOT BOX UNLOCKED!</h3>
-      <p class="modal-desc">Peacemaker finished routine tasks and earned a reward drop!</p>
+      <div style="font-size: 52px; margin-bottom: 6px;">🌸</div>
+      <h3 class="modal-title">DAILY SPARK UNLOCKED!</h3>
+      <p class="modal-desc">Peacemaker finished routine tasks and earned words of power!</p>
 
       <div class="prize-box" id="reward-result"></div>
 
-      <button class="btn-3d claim-btn" onclick="closeLootModal()">CLAIM & CONTINUE!</button>
+      <button class="btn-3d claim-btn" onclick="closeLootModal()">FEELING AWESOME!</button>
     </div>
   </div>
 
@@ -684,11 +686,12 @@
       }
     };
 
+    // --- GAME ENGINE & TELEMETRY KEYS ---
     const TASKS_KEY = "bb_peacemaker_tasks_config_v1";
     const DATA_KEY = "bb_peacemaker_ranch_quest_data";
     const NOTES_KEY = "bb_peacemaker_scratchpad_notes";
+    const TELEMETRY_KEY = "bb_peacemaker_telemetry_v1";
 
-    // PEACEMAKER 9: REAL WORLD DESCRIPTIONS
     const DEFAULT_REAL_WORLD_TASKS = [
       { id: "shoes_socks", name: "Shoes and socks", desc: "Put on shoes and socks", zone: "readiness", xp: 25, emoji: "👟" },
       { id: "get_dressed", name: "Get dressed", desc: "Put on day clothes", zone: "readiness", xp: 25, emoji: "👕" },
@@ -712,14 +715,16 @@
       { level: 6, title: "Nature Legend", xpReq: 2000, avatar: "👑" }
     ];
 
-    const DEFAULT_REWARDS = [
-      "🎮 20 Minutes Extra Screen / Free Choice Time",
-      "🍕 Pick What We Have for Dinner Tonight!",
-      "🍦 Ice Cream / Sweet Treat Run",
-      "🌙 15 Minutes Stay Up Late Pass",
-      "🎨 Art / Craft Supplies Project Time",
-      "🎟️ Free Pass: Skip One Evening Tidy Duty",
-      "✨ +50 BONUS XP Deposit in the Hero Bank!"
+    // Uplifting Compliments & Words of Encouragement Pool
+    const DEFAULT_ENCOURAGEMENT_WORDS = [
+      "🌸 You have a calm, kind heart and a creative mind that makes our home brighter!",
+      "🌿 Proud of you for taking care of yourself and getting ready like a champion today!",
+      "✨ You are thoughtful, brave, and capable of amazing things!",
+      "🌱 Every morning habit you finish is a powerful step toward your dreams!",
+      "🦋 Your family loves you so much and we are so proud of your effort today!",
+      "🦊 You bring peace, kindness, and positivity everywhere you go!",
+      "⭐ Taking care of your tasks first shows how strong and responsible you are!",
+      "🎯 Believe in yourself — you are capable, smart, and unstoppable!"
     ];
 
     let tasks = [];
@@ -730,23 +735,28 @@
       lastActiveDate: new Date().toISOString().split('T')[0],
       completedChores: {},
       pendingChests: 0,
-      rewardsPool: [...DEFAULT_REWARDS],
+      rewardsPool: [...DEFAULT_ENCOURAGEMENT_WORDS],
       kidName: "Peacemaker 9"
     };
 
-    let avatarTapCount = 0;
-    let avatarTapTimeout = null;
-
-    function handleAvatarTap() {
-      avatarTapCount++;
-      clearTimeout(avatarTapTimeout);
-      avatarTapTimeout = setTimeout(() => { avatarTapCount = 0; }, 2000);
-      if (avatarTapCount >= 5) {
-        avatarTapCount = 0;
-        if (confirm("Open Parent Command Deck?")) {
-          window.location.href = "/peacemaker-deck/";
-        }
-      }
+    function logEvent(action, detail) {
+      try {
+        let log = JSON.parse(localStorage.getItem(TELEMETRY_KEY) || '[]');
+        const now = new Date();
+        const entry = {
+          id: 'evt_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+          timestamp: now.toISOString(),
+          displayTime: now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' }),
+          displayDate: now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+          action: action,
+          detail: detail || '',
+          xp: state.xp,
+          streak: state.streak
+        };
+        log.unshift(entry);
+        if (log.length > 500) log = log.slice(0, 500);
+        localStorage.setItem(TELEMETRY_KEY, JSON.stringify(log));
+      } catch(e) {}
     }
 
     function loadState() {
@@ -775,12 +785,15 @@
         state.completedChores = {};
         state.lastActiveDate = today;
         saveState();
+        logEvent("DAY_ROLLOVER", `Rollover to ${today}. Streak: ${state.streak}`);
       }
 
       document.getElementById('date-display').innerText = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
       renderDynamicZones();
       renderUI();
       renderScratchpad();
+
+      logEvent("APP_OPENED", "Peacemaker 9 page loaded in browser");
     }
 
     function saveState() {
@@ -832,7 +845,7 @@
 
           item.innerHTML = `
             <label class="chore-left" for="cb_${t.id}">
-              <input type="checkbox" id="cb_${t.id}" class="chore-checkbox" ${isDone ? 'checked' : ''} onchange="handleChoreToggle(this, '${t.id}')">
+              <input type="checkbox" id="cb_${t.id}" class="chore-checkbox" ${isDone ? 'checked' : ''} onchange="handleChoreToggle(this, '${t.id}', '${t.name}')">
               <div class="chore-labels">
                 <span class="chore-name">${t.name}</span>
                 <span class="chore-desc">${t.desc || ''}</span>
@@ -882,13 +895,13 @@
       const chestBtn = document.getElementById('chest-btn');
       if (state.pendingChests > 0) {
         chestBtn.style.display = 'inline-flex';
-        chestBtn.innerHTML = `🎁 UNLOCK LOOT (${state.pendingChests})!`;
+        chestBtn.innerHTML = `🌸 DAILY SPARK (${state.pendingChests})!`;
       } else {
         chestBtn.style.display = 'none';
       }
     }
 
-    function handleChoreToggle(checkbox, choreId) {
+    function handleChoreToggle(checkbox, choreId, taskName) {
       AudioEngine.init();
       const choreItem = checkbox.closest('.chore-item');
       const xpVal = parseInt(choreItem.getAttribute('data-xp') || '25', 10);
@@ -900,6 +913,8 @@
         state.xp += xpVal;
         state.coins += 5;
 
+        logEvent("TASK_CHECKED", `Checked "${taskName}" (+${xpVal} XP)`);
+
         const completedCount = Object.keys(state.completedChores).length;
         if (completedCount % 3 === 0 || state.xp % 100 < xpVal) {
           state.pendingChests += 1;
@@ -909,6 +924,7 @@
         if (newRank > oldRank) {
           AudioEngine.playLevelUp();
           triggerConfetti(true);
+          logEvent("LEVEL_UP", `Promoted to Level ${newRank}`);
         } else {
           AudioEngine.playCoin();
           triggerConfetti(false);
@@ -920,6 +936,7 @@
             triggerConfetti(true);
             state.pendingChests += 1;
             renderUI();
+            logEvent("ALL_TASKS_COMPLETED", "All routine tasks completed for today!");
           }, 350);
         }
 
@@ -928,6 +945,7 @@
         delete state.completedChores[choreId];
         state.xp = Math.max(0, state.xp - xpVal);
         state.coins = Math.max(0, state.coins - 5);
+        logEvent("TASK_UNCHECKED", `Unchecked "${taskName}"`);
       }
 
       saveState();
@@ -938,7 +956,7 @@
       if (state.pendingChests <= 0) return;
       AudioEngine.playChestOpen();
 
-      const pool = (state.rewardsPool && state.rewardsPool.length > 0) ? state.rewardsPool : DEFAULT_REWARDS;
+      const pool = (state.rewardsPool && state.rewardsPool.length > 0) ? state.rewardsPool : DEFAULT_ENCOURAGEMENT_WORDS;
       const prize = pool[Math.floor(Math.random() * pool.length)];
 
       document.getElementById('reward-result').innerText = prize;
@@ -948,6 +966,8 @@
       saveState();
       renderUI();
       triggerConfetti(false);
+
+      logEvent("DAILY_SPARK_OPENED", prize);
     }
 
     function closeLootModal() {
@@ -957,6 +977,7 @@
     function toggleSound() {
       AudioEngine.enabled = !AudioEngine.enabled;
       document.getElementById('sound-btn').innerText = AudioEngine.enabled ? '🔊' : '🔇';
+      logEvent("SOUND_TOGGLED", AudioEngine.enabled ? "Enabled" : "Muted");
     }
 
     function appendTag(tag) {
@@ -984,6 +1005,8 @@
       const timestamp = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
       notes.unshift({ text, timestamp, date: new Date().toISOString().split('T')[0] });
       localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+
+      logEvent("NOTE_SAVED", text);
 
       input.value = '';
       renderScratchpad();
