@@ -1,8 +1,8 @@
 window.GAZETTE_GAS_FEED = {
   "status": "success",
-  "last_updated_iso": "2026-10-25T15:00:05.590236",
-  "last_updated_human": "Sunday, October 25, 2026 - 03:00 PM",
-  "date_header": "Sunday, Oct 25, 2026",
+  "last_updated_iso": "2026-10-26T05:00:05.979027",
+  "last_updated_human": "Monday, October 26, 2026 - 05:00 AM",
+  "date_header": "Monday, Oct 26, 2026",
   "cheapest_station": {
     "name": "Sunoco",
     "loc": "501 Limit St (Leavenworth)",
@@ -16,7 +16,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "501 Limit St (Leavenworth)",
       "address": "501 Limit St (Leavenworth)",
       "price": 3.83,
-      "updated": "2026-10-24T13:03:10.324Z",
+      "updated": "2026-10-26T01:15:48.372Z",
       "is_estimate": false
     },
     {
@@ -25,7 +25,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "10th Ave / Eisenhower (Leavenworth)",
       "address": "1050 Eisenhower Road (Leavenworth)",
       "price": 3.84,
-      "updated": "2026-10-25T19:01:00.637Z",
+      "updated": "2026-10-26T08:31:03.627Z",
       "is_estimate": false
     },
     {
@@ -34,7 +34,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "Metropolitan Ave (Leavenworth)",
       "address": "609 Metropolitan Ave (Leavenworth)",
       "price": 3.85,
-      "updated": "2026-10-24T22:49:19.626Z",
+      "updated": "2026-10-26T05:15:11.347Z",
       "is_estimate": false
     },
     {
@@ -61,7 +61,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "Eisenhower Rd (Leavenworth)",
       "address": "720 Eisenhower Rd (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-25T14:44:39.553Z",
+      "updated": "2026-10-26T08:37:16.511Z",
       "is_estimate": false
     },
     {
@@ -70,7 +70,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "2100 S 4th St (Leavenworth)",
       "address": "2100 S 4th St (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-25T18:45:40.868Z",
+      "updated": "2026-10-26T08:46:35.930Z",
       "is_estimate": false
     },
     {
@@ -79,16 +79,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "2004 Spruce St (Leavenworth)",
       "address": "2004 Spruce St (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-25T19:46:07.926Z",
-      "is_estimate": false
-    },
-    {
-      "id": "147917",
-      "name": "BP / Amoco",
-      "loc": "601 S Main St (Lansing)",
-      "address": "601 S Main St (Lansing)",
-      "price": 3.87,
-      "updated": "2026-10-23T21:42:23.452Z",
+      "updated": "2026-10-26T09:47:56.132Z",
       "is_estimate": false
     },
     {
@@ -105,6 +96,15 @@ window.GAZETTE_GAS_FEED = {
       "name": "AAFES Express",
       "loc": "Main Post (Ft. Leavenworth)",
       "address": "335 Kansas Ave (Fort Leavenworth)",
+      "price": 3.89,
+      "updated": null,
+      "is_estimate": true
+    },
+    {
+      "id": "147917",
+      "name": "BP / Amoco",
+      "loc": "601 S Main St (Lansing)",
+      "address": "601 S Main St (Lansing)",
       "price": 3.89,
       "updated": null,
       "is_estimate": true
