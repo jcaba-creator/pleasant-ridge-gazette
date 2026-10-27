@@ -1,31 +1,31 @@
 window.GAZETTE_GAS_FEED = {
   "status": "success",
-  "last_updated_iso": "2026-10-26T15:00:06.085528",
-  "last_updated_human": "Monday, October 26, 2026 - 03:00 PM",
-  "date_header": "Monday, Oct 26, 2026",
+  "last_updated_iso": "2026-10-27T05:00:06.131567",
+  "last_updated_human": "Tuesday, October 27, 2026 - 05:00 AM",
+  "date_header": "Tuesday, Oct 27, 2026",
   "cheapest_station": {
-    "name": "Sunoco",
-    "loc": "501 Limit St (Leavenworth)",
-    "price": 3.83
+    "name": "Murphy USA (Walmart)",
+    "loc": "10th Ave / Eisenhower (Leavenworth)",
+    "price": 3.84
   },
-  "max_tank_savings": 2.4,
+  "max_tank_savings": 2.25,
   "stations": [
-    {
-      "id": "49808",
-      "name": "Sunoco",
-      "loc": "501 Limit St (Leavenworth)",
-      "address": "501 Limit St (Leavenworth)",
-      "price": 3.83,
-      "updated": "2026-10-26T01:15:48.372Z",
-      "is_estimate": false
-    },
     {
       "id": "186732",
       "name": "Murphy USA (Walmart)",
       "loc": "10th Ave / Eisenhower (Leavenworth)",
       "address": "1050 Eisenhower Road (Leavenworth)",
       "price": 3.84,
-      "updated": "2026-10-26T19:01:23.908Z",
+      "updated": "2026-10-27T08:31:07.042Z",
+      "is_estimate": false
+    },
+    {
+      "id": "49808",
+      "name": "Sunoco",
+      "loc": "501 Limit St (Leavenworth)",
+      "address": "501 Limit St (Leavenworth)",
+      "price": 3.85,
+      "updated": "2026-10-27T04:23:25.691Z",
       "is_estimate": false
     },
     {
@@ -34,16 +34,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "Metropolitan Ave (Leavenworth)",
       "address": "609 Metropolitan Ave (Leavenworth)",
       "price": 3.85,
-      "updated": "2026-10-26T14:50:25.670Z",
-      "is_estimate": false
-    },
-    {
-      "id": "202132",
-      "name": "QuikTrip",
-      "loc": "1205 N Main St (Lansing)",
-      "address": "1205 N Main St (Lansing)",
-      "price": 3.87,
-      "updated": "2026-10-25T14:20:18.778Z",
+      "updated": "2026-10-27T09:37:59.998Z",
       "is_estimate": false
     },
     {
@@ -61,7 +52,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "2100 S 4th St (Leavenworth)",
       "address": "2100 S 4th St (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-26T19:40:27.499Z",
+      "updated": "2026-10-27T08:47:47.419Z",
       "is_estimate": false
     },
     {
@@ -70,7 +61,25 @@ window.GAZETTE_GAS_FEED = {
       "loc": "2004 Spruce St (Leavenworth)",
       "address": "2004 Spruce St (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-26T19:39:41.765Z",
+      "updated": "2026-10-27T08:46:44.749Z",
+      "is_estimate": false
+    },
+    {
+      "id": "129028",
+      "name": "Cenex",
+      "loc": "109 4H Rd (Lansing)",
+      "address": "109 4H Rd (Lansing)",
+      "price": 3.87,
+      "updated": "2026-10-26T21:40:44.579Z",
+      "is_estimate": false
+    },
+    {
+      "id": "155402",
+      "name": "Sam's Club Fuel",
+      "loc": "Parallel Pkwy Corridor",
+      "address": "10580 Parallel Pkwy (Kansas City)",
+      "price": 3.88,
+      "updated": "2026-10-26T22:17:34.143Z",
       "is_estimate": false
     },
     {
@@ -83,19 +92,19 @@ window.GAZETTE_GAS_FEED = {
       "is_estimate": true
     },
     {
+      "id": "202132",
+      "name": "QuikTrip",
+      "loc": "1205 N Main St (Lansing)",
+      "address": "1205 N Main St (Lansing)",
+      "price": 3.89,
+      "updated": "2026-10-26T23:16:40.668Z",
+      "is_estimate": false
+    },
+    {
       "id": "147917",
       "name": "BP / Amoco",
       "loc": "601 S Main St (Lansing)",
       "address": "601 S Main St (Lansing)",
-      "price": 3.89,
-      "updated": null,
-      "is_estimate": true
-    },
-    {
-      "id": "129028",
-      "name": "Cenex",
-      "loc": "109 4H Rd (Lansing)",
-      "address": "109 4H Rd (Lansing)",
       "price": 3.89,
       "updated": null,
       "is_estimate": true
@@ -117,15 +126,6 @@ window.GAZETTE_GAS_FEED = {
       "price": 3.91,
       "updated": null,
       "is_estimate": true
-    },
-    {
-      "id": "155402",
-      "name": "Sam's Club Fuel",
-      "loc": "Parallel Pkwy Corridor",
-      "address": "10580 Parallel Pkwy (Kansas City)",
-      "price": 3.93,
-      "updated": "2026-10-25T03:12:44.247Z",
-      "is_estimate": false
     },
     {
       "id": "132624",
