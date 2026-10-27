@@ -223,6 +223,9 @@
     .badge-check { background: rgba(45, 212, 191, 0.2); color: #2dd4bf; border: 1px solid rgba(45, 212, 191, 0.4); }
     .badge-uncheck { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
     .badge-spark { background: rgba(192, 132, 252, 0.2); color: #c084fc; border: 1px solid rgba(192, 132, 252, 0.4); }
+    
+    .badge-timer { background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4); }
+    .badge-overtime { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
     .badge-system { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); }
 
     .modal-overlay {
@@ -483,6 +486,75 @@
     function saveHeroData() {
       localStorage.setItem(DATA_KEY, JSON.stringify(heroData));
       renderTelemetry();
+    }
+
+    
+    const TIMER_KEY = "bb_peacemaker_timer_v1";
+
+    function resetTimerFromDeck() {
+      if (!confirm("Reset Peacemaker's 45-minute routine timer back to 45:00 Ready?")) return;
+      const today = new Date().toISOString().split('T')[0];
+      const freshTimer = {
+        date: today,
+        status: 'idle',
+        startTime: null,
+        elapsedBeforeCurrent: 0,
+        bankedMinutes: 45,
+        bonusAwarded: false
+      };
+      localStorage.setItem(TIMER_KEY, JSON.stringify(freshTimer));
+
+      // Log telemetry event
+      let log = [];
+      try { log = JSON.parse(localStorage.getItem(TELEMETRY_KEY) || '[]'); } catch(e) {}
+      const now = new Date();
+      log.unshift({
+        id: 'evt_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+        timestamp: now.toISOString(),
+        displayTime: now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' }),
+        displayDate: now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        action: 'TIMER_RESET_BY_PARENT',
+        detail: 'Reset 45m vault from Parent Command Deck',
+        xp: heroData.xp || 0,
+        streak: heroData.streak || 1
+      });
+      localStorage.setItem(TELEMETRY_KEY, JSON.stringify(log));
+
+      renderTelemetry();
+      renderTelemetryStream();
+      alert("Routine timer has been reset to 45:00 Ready.");
+    }
+
+    function renderTimerDeckStatus() {
+      const timerEl = document.getElementById('stat-timer');
+      if (!timerEl) return;
+      try {
+        const raw = localStorage.getItem(TIMER_KEY);
+        if (!raw) {
+          timerEl.innerText = "Ready";
+          timerEl.style.color = "#38bdf8";
+          return;
+        }
+        const state = JSON.parse(raw);
+        if (state.status === 'banked') {
+          timerEl.innerText = "+" + (state.bankedMinutes || 0) + "m Banked";
+          timerEl.style.color = "#2dd4bf";
+        } else if (state.status === 'running') {
+          timerEl.innerText = "Running";
+          timerEl.style.color = "#a855f7";
+        } else if (state.status === 'paused') {
+          timerEl.innerText = "Paused";
+          timerEl.style.color = "#fbbf24";
+        } else if (state.status === 'overtime') {
+          timerEl.innerText = "Overtime";
+          timerEl.style.color = "#f97316";
+        } else {
+          timerEl.innerText = "Ready";
+          timerEl.style.color = "#38bdf8";
+        }
+      } catch(e) {
+        timerEl.innerText = "--";
+      }
     }
 
     function renderTelemetry() {
