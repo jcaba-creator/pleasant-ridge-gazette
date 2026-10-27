@@ -661,197 +661,6 @@
       text-decoration: underline;
     }
 
-  
-    /* FREE CHOICE TIME BANK / 45-MINUTE ROUTINE VAULT */
-    .time-bank-card {
-      background: linear-gradient(145deg, #181d36, #0e1529);
-      border: 2px solid rgba(192, 132, 252, 0.45);
-      border-radius: 20px;
-      padding: 14px 16px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 16px rgba(192, 132, 252, 0.12);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-top: 10px;
-      margin-bottom: 4px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .time-bank-card::before {
-      content: '';
-      position: absolute;
-      top: -30px;
-      right: -30px;
-      width: 110px;
-      height: 110px;
-      background: radial-gradient(circle, rgba(45, 212, 191, 0.16) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .time-bank-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid rgba(192, 132, 252, 0.2);
-      padding-bottom: 8px;
-    }
-
-    .time-bank-header-left {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .vault-icon {
-      font-size: 22px;
-    }
-
-    .time-bank-title {
-      font-size: 13px;
-      font-weight: 900;
-      letter-spacing: 0.5px;
-      color: #e9d5ff;
-      text-transform: uppercase;
-    }
-
-    .time-bank-subtitle {
-      font-size: 10px;
-      font-weight: 600;
-      color: #94a3b8;
-    }
-
-    .time-bank-status-badge {
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-      padding: 4px 9px;
-      border-radius: 999px;
-      text-transform: uppercase;
-      background: rgba(148, 163, 184, 0.2);
-      color: #cbd5e1;
-      border: 1px solid rgba(148, 163, 184, 0.35);
-      transition: all 0.25s ease;
-    }
-
-    .badge-ready { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border-color: rgba(56, 189, 248, 0.4); }
-    .badge-running { background: rgba(45, 212, 191, 0.25); color: #2dd4bf; border-color: rgba(45, 212, 191, 0.5); animation: pulseLive 1.5s infinite; }
-    .badge-paused { background: rgba(251, 191, 36, 0.2); color: #fbbf24; border-color: rgba(251, 191, 36, 0.4); }
-    .badge-banked { background: linear-gradient(135deg, #a855f7, #14b8a6); color: #ffffff; border-color: #c084fc; font-weight: 900; box-shadow: 0 0 10px rgba(192, 132, 252, 0.4); }
-    .badge-overtime { background: rgba(245, 158, 11, 0.25); color: #fbbf24; border-color: rgba(245, 158, 11, 0.5); }
-
-    .time-bank-display-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .time-bank-countdown-box, .time-bank-banked-box {
-      background: rgba(11, 17, 32, 0.7);
-      border: 1px solid rgba(192, 132, 252, 0.25);
-      border-radius: 14px;
-      padding: 10px 12px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .time-label {
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-      color: #94a3b8;
-      text-transform: uppercase;
-      margin-bottom: 3px;
-    }
-
-    .countdown-digits {
-      font-family: 'Courier New', Courier, monospace, monospace;
-      font-size: 28px;
-      font-weight: 900;
-      color: #f8fafc;
-      letter-spacing: 1px;
-      line-height: 1;
-    }
-
-    .banked-digits {
-      font-size: 25px;
-      font-weight: 900;
-      color: #2dd4bf;
-      line-height: 1;
-      text-shadow: 0 0 12px rgba(45, 212, 191, 0.35);
-    }
-
-    .vault-meter-container {
-      width: 100%;
-      height: 10px;
-      background: #0b1120;
-      border-radius: 999px;
-      overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      position: relative;
-    }
-
-    .vault-meter-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #a855f7, #2dd4bf);
-      border-radius: 999px;
-      transition: width 0.4s ease-in-out;
-      box-shadow: 0 0 10px rgba(45, 212, 191, 0.5);
-    }
-
-    .time-bank-callout {
-      background: rgba(30, 41, 59, 0.55);
-      border: 1px solid rgba(192, 132, 252, 0.3);
-      border-radius: 12px;
-      padding: 9px 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      color: #f1f5f9;
-      line-height: 1.35;
-    }
-
-    .callout-emoji {
-      font-size: 18px;
-      flex-shrink: 0;
-    }
-
-    .time-bank-controls {
-      display: flex;
-      gap: 8px;
-    }
-
-    .timer-btn {
-      flex: 1;
-      padding: 9px 12px;
-      border-radius: 10px;
-      font-size: 12px;
-      font-weight: 800;
-      cursor: pointer;
-      border: none;
-      transition: transform 0.1s, opacity 0.2s;
-    }
-
-    .timer-btn:active {
-      transform: scale(0.97);
-    }
-
-    .timer-btn-primary {
-      background: linear-gradient(90deg, #a855f7, #2dd4bf);
-      color: #ffffff;
-      box-shadow: 0 2px 8px rgba(168, 85, 247, 0.3);
-    }
-
-    .timer-btn-subtle {
-      background: rgba(30, 41, 59, 0.8);
-      color: #cbd5e1;
-      border: 1px solid #475569;
-    }
-
   </style>
 </head>
 <body>
@@ -931,53 +740,6 @@
         <span id="weather-updated-time">Updated: Just now</span>
       </div>
     </div>
-
-    <!-- FREE CHOICE TIME BANK / 45-MINUTE ROUTINE VAULT WIDGET -->
-    <div class="time-bank-card" id="time-bank-card">
-      <div class="time-bank-top">
-        <div class="time-bank-header-left">
-          <span class="vault-icon">⏳</span>
-          <div>
-            <div class="time-bank-title">FREE CHOICE TIME BANK</div>
-            <div class="time-bank-subtitle">45-Minute Morning Routine Vault</div>
-          </div>
-        </div>
-        <div class="time-bank-status-badge badge-ready" id="timer-status-badge">⚡ READY</div>
-      </div>
-
-      <div class="time-bank-display-row">
-        <div class="time-bank-countdown-box">
-          <div class="time-label">TIME REMAINING</div>
-          <div class="countdown-digits" id="timer-digits">45:00</div>
-        </div>
-        <div class="time-bank-banked-box">
-          <div class="time-label">FREE CHOICE BANK</div>
-          <div class="banked-digits" id="timer-banked-digits">+45m</div>
-        </div>
-      </div>
-
-      <!-- Progressive Vault Meter -->
-      <div class="vault-meter-container">
-        <div class="vault-meter-fill" id="vault-meter-fill" style="width: 100%;"></div>
-      </div>
-
-      <!-- Dynamic Uplifting Advice / Status -->
-      <div class="time-bank-callout" id="timer-callout">
-        <span class="callout-emoji" id="timer-callout-icon">💡</span>
-        <span class="callout-text" id="timer-callout-text">Check your first chore to start the timer! Any leftover minutes become your free choice & fidget time.</span>
-      </div>
-
-      <!-- Controls Row -->
-      <div class="time-bank-controls">
-        <button class="timer-btn timer-btn-primary" id="timer-toggle-btn" onclick="toggleTimerButton()">
-          ▶ Start Timer
-        </button>
-        <button class="timer-btn timer-btn-subtle" onclick="resetRoutineTimer(false)">
-          ↺ Reset 45m
-        </button>
-      </div>
-    </div>
-
 
 
     <!-- DYNAMIC QUEST ZONES CONTAINER -->
@@ -1368,7 +1130,6 @@
         state.coins += 5;
 
         logEvent("TASK_CHECKED", `Checked "${taskName}" (+${xpVal} XP)`);
-        handleChoreTimerAutoStart();
 
         const completedCount = Object.keys(state.completedChores).length;
         if (completedCount % 3 === 0 || state.xp % 100 < xpVal) {
@@ -1392,7 +1153,6 @@
             state.pendingChests += 1;
             renderUI();
             logEvent("ALL_TASKS_COMPLETED", "All routine tasks completed for today!");
-            handleChoreTimerComplete();
           }, 350);
         }
 
@@ -1726,7 +1486,6 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      loadTimerState();
       loadState();
       loadEastonWeather();
     });
