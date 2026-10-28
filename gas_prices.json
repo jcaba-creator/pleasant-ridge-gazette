@@ -1,40 +1,40 @@
 {
   "status": "success",
-  "last_updated_iso": "2026-10-27T05:00:06.131567",
-  "last_updated_human": "Tuesday, October 27, 2026 - 05:00 AM",
+  "last_updated_iso": "2026-10-27T23:03:43.832305",
+  "last_updated_human": "Tuesday, October 27, 2026 - 11:03 PM",
   "date_header": "Tuesday, Oct 27, 2026",
   "cheapest_station": {
-    "name": "Murphy USA (Walmart)",
-    "loc": "10th Ave / Eisenhower (Leavenworth)",
-    "price": 3.84
+    "name": "Sunoco",
+    "loc": "501 Limit St (Leavenworth)",
+    "price": 3.83
   },
-  "max_tank_savings": 2.25,
+  "max_tank_savings": 2.4,
   "stations": [
+    {
+      "id": "49808",
+      "name": "Sunoco",
+      "loc": "501 Limit St (Leavenworth)",
+      "address": "501 Limit St (Leavenworth)",
+      "price": 3.83,
+      "updated": "2026-10-27T11:48:11.761Z",
+      "is_estimate": false
+    },
     {
       "id": "186732",
       "name": "Murphy USA (Walmart)",
       "loc": "10th Ave / Eisenhower (Leavenworth)",
       "address": "1050 Eisenhower Road (Leavenworth)",
       "price": 3.84,
-      "updated": "2026-10-27T08:31:07.042Z",
+      "updated": "2026-10-28T04:01:33.664Z",
       "is_estimate": false
     },
     {
-      "id": "49808",
-      "name": "Sunoco",
-      "loc": "501 Limit St (Leavenworth)",
-      "address": "501 Limit St (Leavenworth)",
+      "id": "96594",
+      "name": "AAFES Express",
+      "loc": "Main Post (Ft. Leavenworth)",
+      "address": "335 Kansas Ave (Fort Leavenworth)",
       "price": 3.85,
-      "updated": "2026-10-27T04:23:25.691Z",
-      "is_estimate": false
-    },
-    {
-      "id": "204958",
-      "name": "7-Eleven",
-      "loc": "Metropolitan Ave (Leavenworth)",
-      "address": "609 Metropolitan Ave (Leavenworth)",
-      "price": 3.85,
-      "updated": "2026-10-27T09:37:59.998Z",
+      "updated": "2026-10-27T15:17:57.327Z",
       "is_estimate": false
     },
     {
@@ -52,7 +52,7 @@
       "loc": "2100 S 4th St (Leavenworth)",
       "address": "2100 S 4th St (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-27T08:47:47.419Z",
+      "updated": "2026-10-28T02:46:38.214Z",
       "is_estimate": false
     },
     {
@@ -61,7 +61,7 @@
       "loc": "2004 Spruce St (Leavenworth)",
       "address": "2004 Spruce St (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-27T08:46:44.749Z",
+      "updated": "2026-10-28T03:45:59.523Z",
       "is_estimate": false
     },
     {
@@ -83,21 +83,21 @@
       "is_estimate": false
     },
     {
-      "id": "96594",
-      "name": "AAFES Express",
-      "loc": "Main Post (Ft. Leavenworth)",
-      "address": "335 Kansas Ave (Fort Leavenworth)",
-      "price": 3.89,
-      "updated": null,
-      "is_estimate": true
-    },
-    {
       "id": "202132",
       "name": "QuikTrip",
       "loc": "1205 N Main St (Lansing)",
       "address": "1205 N Main St (Lansing)",
       "price": 3.89,
       "updated": "2026-10-26T23:16:40.668Z",
+      "is_estimate": false
+    },
+    {
+      "id": "204958",
+      "name": "7-Eleven",
+      "loc": "Metropolitan Ave (Leavenworth)",
+      "address": "609 Metropolitan Ave (Leavenworth)",
+      "price": 3.89,
+      "updated": "2026-10-27T21:06:27.435Z",
       "is_estimate": false
     },
     {
