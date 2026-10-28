@@ -1,8 +1,8 @@
 window.GAZETTE_GAS_FEED = {
   "status": "success",
-  "last_updated_iso": "2026-10-27T23:03:43.832305",
-  "last_updated_human": "Tuesday, October 27, 2026 - 11:03 PM",
-  "date_header": "Tuesday, Oct 27, 2026",
+  "last_updated_iso": "2026-10-28T05:00:05.389214",
+  "last_updated_human": "Wednesday, October 28, 2026 - 05:00 AM",
+  "date_header": "Wednesday, Oct 28, 2026",
   "cheapest_station": {
     "name": "Sunoco",
     "loc": "501 Limit St (Leavenworth)",
@@ -25,7 +25,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "10th Ave / Eisenhower (Leavenworth)",
       "address": "1050 Eisenhower Road (Leavenworth)",
       "price": 3.84,
-      "updated": "2026-10-28T04:01:33.664Z",
+      "updated": "2026-10-28T08:31:31.004Z",
       "is_estimate": false
     },
     {
@@ -38,21 +38,12 @@ window.GAZETTE_GAS_FEED = {
       "is_estimate": false
     },
     {
-      "id": "132625",
-      "name": "Dillons Fuel Center",
-      "loc": "Eisenhower Rd (Leavenworth)",
-      "address": "720 Eisenhower Rd (Leavenworth)",
-      "price": 3.87,
-      "updated": "2026-10-26T08:37:16.511Z",
-      "is_estimate": false
-    },
-    {
       "id": "124378",
       "name": "Casey's General Store",
       "loc": "2100 S 4th St (Leavenworth)",
       "address": "2100 S 4th St (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-28T02:46:38.214Z",
+      "updated": "2026-10-28T08:46:53.255Z",
       "is_estimate": false
     },
     {
@@ -61,7 +52,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "2004 Spruce St (Leavenworth)",
       "address": "2004 Spruce St (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-28T03:45:59.523Z",
+      "updated": "2026-10-28T08:45:57.300Z",
       "is_estimate": false
     },
     {
@@ -90,6 +81,15 @@ window.GAZETTE_GAS_FEED = {
       "price": 3.89,
       "updated": "2026-10-26T23:16:40.668Z",
       "is_estimate": false
+    },
+    {
+      "id": "132625",
+      "name": "Dillons Fuel Center",
+      "loc": "Eisenhower Rd (Leavenworth)",
+      "address": "720 Eisenhower Rd (Leavenworth)",
+      "price": 3.89,
+      "updated": null,
+      "is_estimate": true
     },
     {
       "id": "204958",
@@ -133,8 +133,8 @@ window.GAZETTE_GAS_FEED = {
       "loc": "Spruce St (Leavenworth)",
       "address": "788 Spruce St (Leavenworth)",
       "price": 3.99,
-      "updated": "2026-10-24T06:09:34.623Z",
-      "is_estimate": false
+      "updated": null,
+      "is_estimate": true
     }
   ]
 };
