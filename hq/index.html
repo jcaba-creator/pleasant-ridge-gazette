@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>449 Family Command HQ | Master Parent Flight Deck</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #07090e;
+      --card-bg: #0f1422;
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --amber: #f59e0b;
+      --teal: #2dd4bf;
+      --purple: #c084fc;
+      --pink: #f472b6;
+      --blue: #38bdf8;
+      --green: #10b981;
+      --red: #f43f5e;
+      --font-display: 'Cinzel', serif;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.07) 0%, transparent 50%),
+        radial-gradient(circle at 100% 0%, rgba(245, 158, 11, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at 50% 100%, rgba(192, 132, 252, 0.05) 0%, transparent 60%);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 14px 60px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* Top Master Header */
+    .master-header {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .title-icon {
+      font-size: 24px;
+    }
+
+    .title-text {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      color: #f1f5f9;
+    }
+
+    .nav-shortcuts {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 9px;
+      border-radius: 8px;
+      text-decoration: none;
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #cbd5e1;
+      transition: all 0.15s;
+    }
+
+    .nav-btn:hover {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: #38bdf8;
+      color: #38bdf8;
+    }
+
+    /* TOP HERO STATUS ROSTER */
+    .roster-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .roster-card {
+      background: #0a0e1a;
+      border: 1.5px solid var(--card-border);
+      border-radius: 14px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .roster-card:hover, .roster-card.active {
+      transform: translateY(-2px);
+    }
+
+    .roster-card.trooper-active {
+      border-color: #f59e0b;
+      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.2);
+    }
+
+    .roster-card.peacemaker-active {
+      border-color: #c084fc;
+      box-shadow: 0 4px 16px rgba(192, 132, 252, 0.2);
+    }
+
+    .roster-card.birdie-active {
+      border-color: #f472b6;
+      box-shadow: 0 4px 16px rgba(244, 114, 182, 0.2);
+    }
+
+    .roster-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .roster-name {
+      font-size: 13px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .roster-badge {
+      font-size: 9px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #94a3b8;
+    }
+
+    .badge-complete {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
+    .roster-metric-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .roster-highlight {
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: #f8fafc;
+    }
+
+    /* MASTER NAVIGATION TABS */
+    .tabs-row {
+      display: flex;
+      background: rgba(15, 20, 34, 0.8);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 4px;
+      gap: 4px;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 800;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: #1e293b;
+      color: #f8fafc;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .tab-btn.trooper.active { color: #f59e0b; border-bottom: 2px solid #f59e0b; }
+    .tab-btn.peacemaker.active { color: #c084fc; border-bottom: 2px solid #c084fc; }
+    .tab-btn.birdie.active { color: #f472b6; border-bottom: 2px solid #f472b6; }
+    .tab-btn.bank.active { color: #34d399; border-bottom: 2px solid #34d399; }
+    .tab-btn.telemetry.active { color: #38bdf8; border-bottom: 2px solid #38bdf8; }
+
+    /* CONTENT PANELS */
+    .panel {
+      display: none;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .panel.active {
+      display: flex;
+    }
+
+    /* Universal Card Style */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #f1f5f9;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+
+    .btn:active { transform: scale(0.97); }
+
+    .btn-amber { background: #d97706; color: #fff; }
+    .btn-teal { background: #0d9488; color: #fff; }
+    .btn-purple { background: #9333ea; color: #fff; }
+    .btn-green { background: #059669; color: #fff; }
+    .btn-red { background: #dc2626; color: #fff; }
+    .btn-muted { background: #1e293b; color: #cbd5e1; border: 1px solid #334155; }
+
+    /* Stats Row Inside Panel */
+    .stats-pills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+      gap: 8px;
+    }
+
+    .stat-pill {
+      background: #0a0e1a;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 9px;
+      text-align: center;
+    }
+
+    .stat-val {
+      font-size: 16px;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      color: #f8fafc;
+    }
+
+    .stat-lbl {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    /* Task Row */
+    .task-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 12px;
+      background: #0b0f19;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      font-size: 12px;
+    }
+
+    .task-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .task-name {
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+
+    .task-zone-badge {
+      font-size: 9px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    /* Telemetry Feed */
+    .telemetry-row {
+      padding: 8px 10px;
+      background: #0a0e1a;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .telemetry-badge {
+      font-size: 9px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .badge-trooper { background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .badge-peacemaker { background: rgba(192, 132, 252, 0.2); color: #c084fc; border: 1px solid rgba(192, 132, 252, 0.4); }
+    .badge-birdie { background: rgba(244, 114, 182, 0.2); color: #f472b6; border: 1px solid rgba(244, 114, 182, 0.4); }
+    .badge-bank { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+
+    /* Modal / Form */
+    .input-field {
+      width: 100%;
+      background: #080c14;
+      border: 1px solid #334155;
+      color: #f8fafc;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Top Master Navigation & Title -->
+    <div class="master-header">
+      <div class="header-top">
+        <div class="title-group">
+          <span class="title-icon">🏰</span>
+          <div>
+            <div class="title-text">449 FAMILY COMMAND HQ</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Unified Parent Control & Treasury Flight Deck</div>
+          </div>
+        </div>
+
+        <div class="nav-shortcuts">
+          <a href="/morning/" class="nav-btn">Morning Hub ↗</a>
+          <a href="/trooper/" class="nav-btn" target="_blank">Trooper ↗</a>
+          <a href="/peacemaker/" class="nav-btn" target="_blank">Peacemaker ↗</a>
+          <a href="/birdie/" class="nav-btn" target="_blank">Birdie ↗</a>
+          <a href="/bank/" class="nav-btn" target="_blank">Bank ↗</a>
+        </div>
+      </div>
+
+      <!-- Live Roster Cards -->
+      <div class="roster-grid">
+        <!-- Trooper Roster -->
+        <div class="roster-card trooper-active" id="roster-card-trooper" onclick="switchTab('trooper')">
+          <div class="roster-top">
+            <span class="roster-name">🤠 Trooper</span>
+            <span class="roster-badge" id="roster-badge-trooper">Ready</span>
+          </div>
+          <div class="roster-metric-line">
+            <span>Chores:</span>
+            <span class="roster-highlight" id="roster-chores-trooper">0/17</span>
+          </div>
+          <div class="roster-metric-line">
+            <span>Bank:</span>
+            <span class="roster-highlight" id="roster-bank-trooper" style="color: #f59e0b;">$0.00</span>
+          </div>
+        </div>
+
+        <!-- Peacemaker Roster -->
+        <div class="roster-card" id="roster-card-peacemaker" onclick="switchTab('peacemaker')">
+          <div class="roster-top">
+            <span class="roster-name">🌸 Peacemaker</span>
+            <span class="roster-badge" id="roster-badge-peacemaker">Ready</span>
+          </div>
+          <div class="roster-metric-line">
+            <span>Chores:</span>
+            <span class="roster-highlight" id="roster-chores-peacemaker">0/11</span>
+          </div>
+          <div class="roster-metric-line">
+            <span>Bank:</span>
+            <span class="roster-highlight" id="roster-bank-peacemaker" style="color: #c084fc;">$0.00</span>
+          </div>
+        </div>
+
+        <!-- Birdie Roster -->
+        <div class="roster-card" id="roster-card-birdie" onclick="switchTab('birdie')">
+          <div class="roster-top">
+            <span class="roster-name">🐣 Birdie</span>
+            <span class="roster-badge" id="roster-badge-birdie">Ready</span>
+          </div>
+          <div class="roster-metric-line">
+            <span>Star Jar:</span>
+            <span class="roster-highlight" id="roster-stars-birdie">⭐ 0</span>
+          </div>
+          <div class="roster-metric-line">
+            <span>Bank:</span>
+            <span class="roster-highlight" id="roster-bank-birdie" style="color: #f472b6;">$0.00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Master Tabs Row -->
+    <div class="tabs-row">
+      <button class="tab-btn trooper active" id="tab-btn-trooper" onclick="switchTab('trooper')">🤠 Trooper</button>
+      <button class="tab-btn peacemaker" id="tab-btn-peacemaker" onclick="switchTab('peacemaker')">🌸 Peacemaker 9</button>
+      <button class="tab-btn birdie" id="tab-btn-birdie" onclick="switchTab('birdie')">🐣 Birdie</button>
+      <button class="tab-btn bank" id="tab-btn-bank" onclick="switchTab('bank')">🏦 Bank & Treasury</button>
+      <button class="tab-btn telemetry" id="tab-btn-telemetry" onclick="switchTab('telemetry')">⚡ Telemetry (<span id="total-telemetry-count">0</span>)</button>
+    </div>
+
+    <!-- ==================== PANEL 1: TROOPER DECK ==================== -->
+    <div class="panel active" id="panel-trooper">
+      <div class="card">
+        <div class="card-title">
+          <span>🤠 TROOPER (L-DOG) STATUS</span>
+          <span style="font-size: 11px; color: #f59e0b;">Level 2 Ranger</span>
+        </div>
+
+        <div class="stats-pills-grid">
+          <div class="stat-pill">
+            <div class="stat-val" id="t-xp" style="color: #f59e0b;">0</div>
+            <div class="stat-lbl">Total XP</div>
+          </div>
+          <div class="stat-pill">
+            <div class="stat-val" id="t-streak">1d</div>
+            <div class="stat-lbl">Streak</div>
+          </div>
+          <div class="stat-pill">
+            <div class="stat-val" id="t-chests">0</div>
+            <div class="stat-lbl">Chests Ready</div>
+          </div>
+          <div class="stat-pill">
+            <div class="stat-val" id="t-bank" style="color: #34d399;">$0.00</div>
+            <div class="stat-lbl">Bank Balance</div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+          <button class="btn btn-amber" onclick="adjustKidXP('trooper', 50)">+50 Bonus XP</button>
+          <button class="btn btn-muted" onclick="adjustKidChests('trooper', 1)">+1 Mystery Chest</button>
+          <button class="btn btn-muted" onclick="adjustKidStreak('trooper', 1)">+1 Day Streak</button>
+          <button class="btn btn-green" onclick="quickCreditKid('op_ldog', 1.00, 'Trooper Morning Chore Bounty')">+$1.00 Chore Bounty</button>
+          <button class="btn btn-red" onclick="resetKidChecks('trooper')">Clear Today's Checks</button>
+        </div>
+      </div>
+
+      <!-- Trooper Chores Manifest -->
+      <div class="card">
+        <div class="card-title">
+          <span>ROUTINE MANIFEST (<span id="t-task-count">17</span> CHORES)</span>
+          <button class="btn btn-muted" onclick="openAddTaskModal('trooper')">+ Add Chore</button>
+        </div>
+        <div id="trooper-tasks-list" style="display: flex; flex-direction: column; gap: 6px;">
+          <!-- Injected dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PANEL 2: PEACEMAKER 9 DECK ==================== -->
+    <div class="panel" id="panel-peacemaker">
+      <div class="card">
+        <div class="card-title">
+          <span>🌸 PEACEMAKER 9 STATUS</span>
+          <span style="font-size: 11px; color: #c084fc;">Woodland Ranger</span>
+        </div>
+
+        <div class="stats-pills-grid">
+          <div class="stat-pill">
+            <div class="stat-val" id="p-xp" style="color: #c084fc;">0</div>
+            <div class="stat-lbl">Total XP</div>
+          </div>
+          <div class="stat-pill">
+            <div class="stat-val" id="p-streak">1d</div>
+            <div class="stat-lbl">Streak</div>
+          </div>
+          <div class="stat-pill">
+            <div class="stat-val" id="p-chests">0</div>
+            <div class="stat-lbl">Sparks Ready</div>
+          </div>
+          <div class="stat-pill">
+            <div class="stat-val" id="p-bank" style="color: #34d399;">$0.00</div>
+            <div class="stat-lbl">Bank Balance</div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+          <button class="btn btn-purple" onclick="adjustKidXP('peacemaker', 50)">+50 Bonus XP</button>
+          <button class="btn btn-muted" onclick="adjustKidChests('peacemaker', 1)">+1 Daily Spark</button>
+          <button class="btn btn-muted" onclick="adjustKidStreak('peacemaker', 1)">+1 Day Streak</button>
+          <button class="btn btn-green" onclick="quickCreditKid('op_peacemaker9', 1.00, 'Peacemaker Morning Chore Bounty')">+$1.00 Chore Bounty</button>
+          <button class="btn btn-red" onclick="resetKidChecks('peacemaker')">Clear Today's Checks</button>
+        </div>
+      </div>
+
+      <!-- Peacemaker Chores Manifest -->
+      <div class="card">
+        <div class="card-title">
+          <span>ROUTINE MANIFEST (<span id="p-task-count">11</span> CHORES)</span>
+          <button class="btn btn-muted" onclick="openAddTaskModal('peacemaker')">+ Add Chore</button>
+        </div>
+        <div id="peacemaker-tasks-list" style="display: flex; flex-direction: column; gap: 6px;">
+          <!-- Injected dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PANEL 3: BIRDIE DECK ==================== -->
+    <div class="panel" id="panel-birdie">
+      <div class="card">
+        <div class="card-title">
+          <span>🐣 BIRDIE (RAINBOW-4) STATUS</span>
+          <span style="font-size: 11px; color: #f472b6;">Preschool Hero (Age 4)</span>
+        </div>
+
+        <div class="stats-pills-grid">
+          <div class="stat-pill">
+            <div class="stat-val" id="b-stars" style="color: #facc15;">⭐ 0</div>
+            <div class="stat-lbl">Star Jar</div>
+          </div>
+          <div class="stat-pill">
+            <div class="stat-val" id="b-cards">0/6</div>
+            <div class="stat-lbl">Missions Done</div>
+          </div>
+          <div class="stat-pill">
+            <div class="stat-val" id="b-streak">1d</div>
+            <div class="stat-lbl">Streak</div>
+          </div>
+          <div class="stat-pill">
+            <div class="stat-val" id="b-bank" style="color: #34d399;">$0.00</div>
+            <div class="stat-lbl">Bank Balance</div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+          <button class="btn btn-amber" onclick="adjustBirdieStars(1)">+1 Star</button>
+          <button class="btn btn-amber" onclick="fillBirdieJar()">⭐ Fill Star Jar (6)</button>
+          <button class="btn btn-muted" onclick="adjustKidStreak('birdie', 1)">+1 Day Streak</button>
+          <button class="btn btn-green" onclick="quickCreditKid('op_rainbow4', 0.50, 'Birdie Star Jar Bounty')">+$0.50 Star Reward</button>
+          <button class="btn btn-red" onclick="resetKidChecks('birdie')">Clear Today's Cards</button>
+        </div>
+      </div>
+
+      <!-- Birdie Cards Manifest -->
+      <div class="card">
+        <div class="card-title">
+          <span>MISSION CARDS (<span id="b-task-count">6</span> CARDS)</span>
+        </div>
+        <div id="birdie-tasks-list" style="display: flex; flex-direction: column; gap: 6px;">
+          <!-- Injected dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PANEL 4: BANK & TREASURY BRIDGE ==================== -->
+    <div class="panel" id="panel-bank">
+      <div class="card">
+        <div class="card-title">
+          <span>🏦 HOUSEHOLD TREASURY BRIDGE</span>
+          <a href="/bank/" target="_blank" class="nav-btn">Open Full Bank ↗</a>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+          <div class="stat-pill">
+            <div class="stat-val" id="bank-op-ldog" style="color: #f59e0b;">$0.00</div>
+            <div class="stat-lbl">🤠 Trooper (L-Dog)</div>
+          </div>
+          <div class="stat-pill">
+            <div class="stat-val" id="bank-op-peacemaker9" style="color: #c084fc;">$0.00</div>
+            <div class="stat-lbl">🌸 Peacemaker 9</div>
+          </div>
+          <div class="stat-pill">
+            <div class="stat-val" id="bank-op-rainbow4" style="color: #f472b6;">$0.00</div>
+            <div class="stat-lbl">🐣 Birdie (Rainbow-4)</div>
+          </div>
+        </div>
+
+        <p style="font-size: 11px; color: var(--text-muted); line-height: 1.4;">
+          Credit chore rewards or weekly allowance directly to each operative's ledger.
+        </p>
+
+        <!-- Quick Transaction Form -->
+        <div style="background: #090d16; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+          <div style="font-size: 11px; font-weight: 800; color: #f1f5f9;">QUICK CREDIT / BOUNTY DISPATCH</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <select id="quick-credit-op" class="input-field">
+              <option value="op_ldog">🤠 Trooper (L-Dog)</option>
+              <option value="op_peacemaker9">🌸 Peacemaker 9</option>
+              <option value="op_rainbow4">🐣 Birdie (Rainbow-4)</option>
+            </select>
+            <input type="number" id="quick-credit-amt" class="input-field" placeholder="Amount ($ e.g. 2.00)" step="0.25" min="0.25">
+          </div>
+          <input type="text" id="quick-credit-memo" class="input-field" placeholder="Memo / Description (e.g. Excellent morning routine)">
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-green" style="flex: 1;" onclick="submitQuickCredit()">+ Credit to Ledger</button>
+            <button class="btn btn-red" style="flex: 1;" onclick="submitQuickDebit()">- Debit Expense</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PANEL 5: UNIFIED TELEMETRY ==================== -->
+    <div class="panel" id="panel-telemetry">
+      <div class="card">
+        <div class="card-title">
+          <span>⚡ UNIFIED CLICK STREAM & TELEMETRY</span>
+          <div style="display: flex; gap: 6px;">
+            <button class="btn btn-muted" onclick="exportCombinedCSV()">Export CSV</button>
+            <button class="btn btn-muted" onclick="refreshHQ()">Refresh</button>
+          </div>
+        </div>
+
+        <!-- Filter chips -->
+        <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px;">
+          <button class="btn btn-muted" id="filter-all" onclick="filterTelemetry('all')">All</button>
+          <button class="btn btn-muted" id="filter-trooper" onclick="filterTelemetry('trooper')">🤠 Trooper</button>
+          <button class="btn btn-muted" id="filter-peacemaker" onclick="filterTelemetry('peacemaker')">🌸 Peacemaker</button>
+          <button class="btn btn-muted" id="filter-birdie" onclick="filterTelemetry('birdie')">🐣 Birdie</button>
+        </div>
+
+        <div id="unified-telemetry-feed" style="max-height: 380px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
+          <!-- Telemetry items injected dynamically -->
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // --- STORAGE KEYS ---
+    const T_TASKS_KEY = "bb_trooper_tasks_config_v1";
+    const T_DATA_KEY = "bb_trooper_ranch_quest_data";
+    const T_TELEMETRY_KEY = "bb_trooper_telemetry_v1";
+
+    const P_TASKS_KEY = "bb_peacemaker_tasks_config_v1";
+    const P_DATA_KEY = "bb_peacemaker_ranch_quest_data";
+    const P_TELEMETRY_KEY = "bb_peacemaker_telemetry_v1";
+
+    const B_TASKS_KEY = "bb_birdie_tasks_config_v1";
+    const B_DATA_KEY = "bb_birdie_star_jar_data";
+    const B_TELEMETRY_KEY = "bb_birdie_telemetry_v1";
+
+    const TREASURY_KEY = "local_household_treasury";
+
+    let activeTab = 'trooper';
+    let currentFilter = 'all';
+    let combinedEvents = [];
+
+    function switchTab(tabId) {
+      activeTab = tabId;
+
+      // Update Roster Card active styles
+      document.getElementById('roster-card-trooper').className = 'roster-card' + (tabId === 'trooper' ? ' trooper-active' : '');
+      document.getElementById('roster-card-peacemaker').className = 'roster-card' + (tabId === 'peacemaker' ? ' peacemaker-active' : '');
+      document.getElementById('roster-card-birdie').className = 'roster-card' + (tabId === 'birdie' ? ' birdie-active' : '');
+
+      // Update Tab buttons
+      ['trooper', 'peacemaker', 'birdie', 'bank', 'telemetry'].forEach(t => {
+        const btn = document.getElementById(`tab-btn-${t}`);
+        const panel = document.getElementById(`panel-${t}`);
+        if (btn) btn.classList.toggle('active', t === tabId);
+        if (panel) panel.classList.toggle('active', t === tabId);
+      });
+    }
+
+    function refreshHQ() {
+      // 1. Trooper Refresh
+      try {
+        const d = JSON.parse(localStorage.getItem(T_DATA_KEY) || '{}');
+        document.getElementById('t-xp').innerText = d.xp || 0;
+        document.getElementById('t-streak').innerText = (d.streak || 1) + 'd';
+        document.getElementById('t-chests').innerText = d.pendingChests || 0;
+        const done = d.completedChores ? Object.keys(d.completedChores).length : 0;
+        document.getElementById('roster-chores-trooper').innerText = `${done}/17`;
+
+        const badge = document.getElementById('roster-badge-trooper');
+        if (done >= 17) { badge.innerText = "⭐ Done!"; badge.className = "roster-badge badge-complete"; }
+        else if (done > 0) { badge.innerText = `${done} Done`; badge.className = "roster-badge"; }
+        else { badge.innerText = "Ready"; badge.className = "roster-badge"; }
+      } catch(e) {}
+
+      // 2. Peacemaker Refresh
+      try {
+        const d = JSON.parse(localStorage.getItem(P_DATA_KEY) || '{}');
+        document.getElementById('p-xp').innerText = d.xp || 0;
+        document.getElementById('p-streak').innerText = (d.streak || 1) + 'd';
+        document.getElementById('p-chests').innerText = d.pendingChests || 0;
+        const done = d.completedChores ? Object.keys(d.completedChores).length : 0;
+        document.getElementById('roster-chores-peacemaker').innerText = `${done}/11`;
+
+        const badge = document.getElementById('roster-badge-peacemaker');
+        if (done >= 11) { badge.innerText = "🌸 Done!"; badge.className = "roster-badge badge-complete"; }
+        else if (done > 0) { badge.innerText = `${done} Done`; badge.className = "roster-badge"; }
+        else { badge.innerText = "Ready"; badge.className = "roster-badge"; }
+      } catch(e) {}
+
+      // 3. Birdie Refresh
+      try {
+        const d = JSON.parse(localStorage.getItem(B_DATA_KEY) || '{}');
+        const stars = d.starsInJar || 0;
+        document.getElementById('b-stars').innerText = `⭐ ${stars}`;
+        document.getElementById('b-streak').innerText = (d.streak || 1) + 'd';
+        const done = d.completedCards ? Object.keys(d.completedCards).length : 0;
+        document.getElementById('b-cards').innerText = `${done}/6`;
+        document.getElementById('roster-stars-birdie').innerText = `⭐ ${stars}`;
+
+        const badge = document.getElementById('roster-badge-birdie');
+        if (done >= 6) { badge.innerText = "🎉 Done!"; badge.className = "roster-badge badge-complete"; }
+        else if (done > 0) { badge.innerText = `${done}/6 Done`; badge.className = "roster-badge"; }
+        else { badge.innerText = "Ready"; badge.className = "roster-badge"; }
+      } catch(e) {}
+
+      // 4. Treasury Refresh
+      try {
+        const t = JSON.parse(localStorage.getItem(TREASURY_KEY) || '{}');
+        const ops = t.operatives || {};
+        const ldog = ops.op_ldog?.balance || 0;
+        const pm9 = ops.op_peacemaker9?.balance || 0;
+        const rain4 = ops.op_rainbow4?.balance || 0;
+
+        document.getElementById('roster-bank-trooper').innerText = `$${ldog.toFixed(2)}`;
+        document.getElementById('t-bank').innerText = `$${ldog.toFixed(2)}`;
+        document.getElementById('bank-op-ldog').innerText = `$${ldog.toFixed(2)}`;
+
+        document.getElementById('roster-bank-peacemaker').innerText = `$${pm9.toFixed(2)}`;
+        document.getElementById('p-bank').innerText = `$${pm9.toFixed(2)}`;
+        document.getElementById('bank-op-peacemaker9').innerText = `$${pm9.toFixed(2)}`;
+
+        document.getElementById('roster-bank-birdie').innerText = `$${rain4.toFixed(2)}`;
+        document.getElementById('b-bank').innerText = `$${rain4.toFixed(2)}`;
+        document.getElementById('bank-op-rainbow4').innerText = `$${rain4.toFixed(2)}`;
+      } catch(e) {}
+
+      renderTaskLists();
+      renderUnifiedTelemetry();
+    }
+
+    function renderTaskLists() {
+      // Trooper Tasks
+      try {
+        const tasks = JSON.parse(localStorage.getItem(T_TASKS_KEY) || '[]');
+        document.getElementById('t-task-count').innerText = tasks.length;
+        const container = document.getElementById('trooper-tasks-list');
+        container.innerHTML = tasks.map(t => `
+          <div class="task-row">
+            <div class="task-left">
+              <span>${t.emoji || '🤠'}</span>
+              <span class="task-name">${t.name}</span>
+            </div>
+            <span class="task-zone-badge" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">+${t.xp || 25} XP</span>
+          </div>
+        `).join('');
+      } catch(e) {}
+
+      // Peacemaker Tasks
+      try {
+        const tasks = JSON.parse(localStorage.getItem(P_TASKS_KEY) || '[]');
+        document.getElementById('p-task-count').innerText = tasks.length;
+        const container = document.getElementById('peacemaker-tasks-list');
+        container.innerHTML = tasks.map(t => `
+          <div class="task-row">
+            <div class="task-left">
+              <span>${t.emoji || '🌸'}</span>
+              <span class="task-name">${t.name}</span>
+            </div>
+            <span class="task-zone-badge" style="background: rgba(192, 132, 252, 0.15); color: #c084fc;">+${t.xp || 25} XP</span>
+          </div>
+        `).join('');
+      } catch(e) {}
+
+      // Birdie Tasks
+      try {
+        const tasks = JSON.parse(localStorage.getItem(B_TASKS_KEY) || '[]');
+        document.getElementById('b-task-count').innerText = tasks.length;
+        const container = document.getElementById('birdie-tasks-list');
+        container.innerHTML = tasks.map(t => `
+          <div class="task-row">
+            <div class="task-left">
+              <span>${t.emoji || '🐣'}</span>
+              <span class="task-name">${t.name}</span>
+            </div>
+            <span class="task-zone-badge" style="background: rgba(244, 114, 182, 0.15); color: #f472b6;">⭐ 1 Star</span>
+          </div>
+        `).join('');
+      } catch(e) {}
+    }
+
+    function renderUnifiedTelemetry() {
+      let tLogs = [], pLogs = [], bLogs = [];
+      try { tLogs = JSON.parse(localStorage.getItem(T_TELEMETRY_KEY) || '[]').map(e => ({ ...e, kid: 'trooper', kidName: '🤠 Trooper' })); } catch(e) {}
+      try { pLogs = JSON.parse(localStorage.getItem(P_TELEMETRY_KEY) || '[]').map(e => ({ ...e, kid: 'peacemaker', kidName: '🌸 Peacemaker' })); } catch(e) {}
+      try { bLogs = JSON.parse(localStorage.getItem(B_TELEMETRY_KEY) || '[]').map(e => ({ ...e, kid: 'birdie', kidName: '🐣 Birdie' })); } catch(e) {}
+
+      combinedEvents = [...tLogs, ...pLogs, ...bLogs].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      document.getElementById('total-telemetry-count').innerText = combinedEvents.length;
+
+      const container = document.getElementById('unified-telemetry-feed');
+      container.innerHTML = '';
+
+      const filtered = currentFilter === 'all' ? combinedEvents : combinedEvents.filter(e => e.kid === currentFilter);
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div style="font-size: 11px; color: var(--text-muted); font-style: italic; padding: 10px;">No telemetry logged yet.</div>';
+        return;
+      }
+
+      filtered.slice(0, 50).forEach(ev => {
+        const row = document.createElement('div');
+        row.className = 'telemetry-row';
+
+        let badgeClass = 'badge-trooper';
+        if (ev.kid === 'peacemaker') badgeClass = 'badge-peacemaker';
+        else if (ev.kid === 'birdie') badgeClass = 'badge-birdie';
+
+        row.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="telemetry-badge ${badgeClass}">${ev.kidName}</span>
+            <span style="font-weight: 700; color: #f1f5f9;">${ev.action?.replace('_', ' ') || 'ACTION'}</span>
+            <span style="color: #cbd5e1;">${ev.detail || ''}</span>
+          </div>
+          <span style="font-size: 10px; color: #64748b; white-space: nowrap; margin-left: 8px;">${ev.displayTime || ''}</span>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function filterTelemetry(kid) {
+      currentFilter = kid;
+      ['all', 'trooper', 'peacemaker', 'birdie'].forEach(k => {
+        const btn = document.getElementById(`filter-${k}`);
+        if (btn) btn.style.borderColor = (k === kid) ? '#38bdf8' : 'rgba(255,255,255,0.1)';
+      });
+      renderUnifiedTelemetry();
+    }
+
+    // --- QUICK ACTION HANDLERS ---
+    function adjustKidXP(kid, delta) {
+      const key = kid === 'trooper' ? T_DATA_KEY : P_DATA_KEY;
+      try {
+        let d = JSON.parse(localStorage.getItem(key) || '{}');
+        d.xp = Math.max(0, (d.xp || 0) + delta);
+        localStorage.setItem(key, JSON.stringify(d));
+        refreshHQ();
+      } catch(e) {}
+    }
+
+    function adjustKidChests(kid, delta) {
+      const key = kid === 'trooper' ? T_DATA_KEY : P_DATA_KEY;
+      try {
+        let d = JSON.parse(localStorage.getItem(key) || '{}');
+        d.pendingChests = Math.max(0, (d.pendingChests || 0) + delta);
+        localStorage.setItem(key, JSON.stringify(d));
+        refreshHQ();
+      } catch(e) {}
+    }
+
+    function adjustKidStreak(kid, delta) {
+      const key = kid === 'trooper' ? T_DATA_KEY : (kid === 'peacemaker' ? P_DATA_KEY : B_DATA_KEY);
+      try {
+        let d = JSON.parse(localStorage.getItem(key) || '{}');
+        d.streak = Math.max(1, (d.streak || 1) + delta);
+        localStorage.setItem(key, JSON.stringify(d));
+        refreshHQ();
+      } catch(e) {}
+    }
+
+    function adjustBirdieStars(delta) {
+      try {
+        let d = JSON.parse(localStorage.getItem(B_DATA_KEY) || '{}');
+        d.starsInJar = Math.max(0, Math.min(6, (d.starsInJar || 0) + delta));
+        localStorage.setItem(B_DATA_KEY, JSON.stringify(d));
+        refreshHQ();
+      } catch(e) {}
+    }
+
+    function fillBirdieJar() {
+      try {
+        let d = JSON.parse(localStorage.getItem(B_DATA_KEY) || '{}');
+        d.starsInJar = 6;
+        localStorage.setItem(B_DATA_KEY, JSON.stringify(d));
+        refreshHQ();
+      } catch(e) {}
+    }
+
+    function resetKidChecks(kid) {
+      if (!confirm(`Clear today's checks for ${kid}?`)) return;
+      const key = kid === 'trooper' ? T_DATA_KEY : (kid === 'peacemaker' ? P_DATA_KEY : B_DATA_KEY);
+      try {
+        let d = JSON.parse(localStorage.getItem(key) || '{}');
+        if (kid === 'birdie') {
+          d.completedCards = {};
+          d.starsInJar = 0;
+        } else {
+          d.completedChores = {};
+        }
+        localStorage.setItem(key, JSON.stringify(d));
+        refreshHQ();
+      } catch(e) {}
+    }
+
+    // --- BANK BRIDGE HANDLERS ---
+    function quickCreditKid(opId, amount, memo) {
+      try {
+        let t = JSON.parse(localStorage.getItem(TREASURY_KEY) || '{}');
+        if (!t.operatives) t.operatives = {};
+        if (!t.operatives[opId]) t.operatives[opId] = { balance: 0 };
+        t.operatives[opId].balance = (t.operatives[opId].balance || 0) + amount;
+
+        if (!t.transactions) t.transactions = [];
+        t.transactions.unshift({
+          id: 'tx_' + Date.now(),
+          type: 'credit',
+          operativeId: opId,
+          amount: amount,
+          description: memo || 'HQ Chore Credit',
+          timestamp: new Date().toISOString()
+        });
+
+        localStorage.setItem(TREASURY_KEY, JSON.stringify(t));
+        refreshHQ();
+        alert(`Successfully credited +$${amount.toFixed(2)} to ${opId}!`);
+      } catch(e) {
+        alert("Error updating treasury: " + e.message);
+      }
+    }
+
+    function submitQuickCredit() {
+      const opId = document.getElementById('quick-credit-op').value;
+      const amt = parseFloat(document.getElementById('quick-credit-amt').value);
+      const memo = document.getElementById('quick-credit-memo').value || 'Manual HQ Bounty';
+
+      if (isNaN(amt) || amt <= 0) return alert("Please enter a valid amount.");
+      quickCreditKid(opId, amt, memo);
+      document.getElementById('quick-credit-amt').value = '';
+      document.getElementById('quick-credit-memo').value = '';
+    }
+
+    function submitQuickDebit() {
+      const opId = document.getElementById('quick-credit-op').value;
+      const amt = parseFloat(document.getElementById('quick-credit-amt').value);
+      const memo = document.getElementById('quick-credit-memo').value || 'HQ Expense Debit';
+
+      if (isNaN(amt) || amt <= 0) return alert("Please enter a valid amount.");
+
+      try {
+        let t = JSON.parse(localStorage.getItem(TREASURY_KEY) || '{}');
+        if (!t.operatives) t.operatives = {};
+        if (!t.operatives[opId]) t.operatives[opId] = { balance: 0 };
+        t.operatives[opId].balance = Math.max(0, (t.operatives[opId].balance || 0) - amt);
+
+        if (!t.transactions) t.transactions = [];
+        t.transactions.unshift({
+          id: 'tx_' + Date.now(),
+          type: 'debit',
+          operativeId: opId,
+          amount: amt,
+          description: memo,
+          timestamp: new Date().toISOString()
+        });
+
+        localStorage.setItem(TREASURY_KEY, JSON.stringify(t));
+        refreshHQ();
+        alert(`Debited -$${amt.toFixed(2)} from ${opId}.`);
+        document.getElementById('quick-credit-amt').value = '';
+        document.getElementById('quick-credit-memo').value = '';
+      } catch(e) {
+        alert("Error: " + e.message);
+      }
+    }
+
+    function exportCombinedCSV() {
+      if (combinedEvents.length === 0) return alert("No events to export.");
+      let csv = "Timestamp,Kid,Action,Detail\n";
+      combinedEvents.forEach(e => {
+        csv += `"${e.timestamp || ''}","${e.kid || ''}","${e.action || ''}","${(e.detail || '').replace(/"/g, '""')}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `449_family_telemetry_${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      refreshHQ();
+    });
+  </script>
+</body>
+</html>

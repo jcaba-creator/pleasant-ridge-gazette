@@ -2,6 +2,78 @@
   "trailingSlash": true,
   "rewrites": [
     {
+      "source": "/trooper",
+      "destination": "/trooper.html"
+    },
+    {
+      "source": "/trooper/",
+      "destination": "/trooper.html"
+    },
+    {
+      "source": "/trooper-deck",
+      "destination": "/trooper_deck.html"
+    },
+    {
+      "source": "/trooper-deck/",
+      "destination": "/trooper_deck.html"
+    },
+    {
+      "source": "/trooper_deck",
+      "destination": "/trooper_deck.html"
+    },
+    {
+      "source": "/trooper_deck/",
+      "destination": "/trooper_deck.html"
+    },
+    {
+      "source": "/peacemaker",
+      "destination": "/peacemaker.html"
+    },
+    {
+      "source": "/peacemaker/",
+      "destination": "/peacemaker.html"
+    },
+    {
+      "source": "/peacemaker-deck",
+      "destination": "/peacemaker_deck.html"
+    },
+    {
+      "source": "/peacemaker-deck/",
+      "destination": "/peacemaker_deck.html"
+    },
+    {
+      "source": "/peacemaker_deck",
+      "destination": "/peacemaker_deck.html"
+    },
+    {
+      "source": "/peacemaker_deck/",
+      "destination": "/peacemaker_deck.html"
+    },
+    {
+      "source": "/birdie",
+      "destination": "/birdie.html"
+    },
+    {
+      "source": "/birdie/",
+      "destination": "/birdie.html"
+    },
+    {
+      "source": "/birdie-deck",
+      "destination": "/birdie_deck.html"
+    },
+    {
+      "source": "/birdie-deck/",
+      "destination": "/birdie_deck.html"
+    },
+    {
+      "source": "/birdie_deck",
+      "destination": "/birdie_deck.html"
+    },
+    {
+      "source": "/birdie_deck/",
+      "destination": "/birdie_deck.html"
+    },
+    {
       "source": "/morning",
       "destination": "/morning.html"
     },

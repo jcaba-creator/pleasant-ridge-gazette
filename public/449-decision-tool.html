@@ -1,0 +1,1838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>449 Decision Tool | Staff Schedule & Compensation Analyzer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090e1a;
+      --surface: #111827;
+      --surface-card: #162032;
+      --surface-hover: #1e2c45;
+      --border: #1f2d47;
+      --border-accent: #2e4369;
+      --primary: #38bdf8;
+      --primary-glow: rgba(56, 189, 248, 0.2);
+      --emerald: #10b981;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --purple: #a855f7;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-sub: #64748b;
+      --radius: 14px;
+      --radius-sm: 8px;
+      --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: radial-gradient(circle at 10% 10%, #111c35, #090e1a 75%);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 24px 16px 60px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    header {
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .badge-pill {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      color: var(--primary);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+    }
+
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      max-width: 780px;
+    }
+
+    /* Fixed Constant Banner */
+    .constant-banner {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .constant-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .icon-box {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: rgba(16, 185, 129, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--emerald);
+      font-size: 1.15rem;
+    }
+
+    .constant-title {
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: #e2e8f0;
+    }
+
+    .constant-detail {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .constant-badge {
+      background: rgba(16, 185, 129, 0.15);
+      color: #6ee7b7;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      font-weight: 700;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    /* Key Metrics Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .metric-card {
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 16px;
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition);
+      box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.3);
+    }
+
+    .metric-card:hover {
+      border-color: var(--border-accent);
+    }
+
+    .metric-card.primary {
+      border-color: rgba(56, 189, 248, 0.35);
+      background: linear-gradient(180deg, #16243d 0%, #111a2d 100%);
+      box-shadow: 0 6px 24px -6px var(--primary-glow);
+    }
+
+    .metric-label {
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .metric-value {
+      font-size: 1.85rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: #ffffff;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+
+    .metric-card.primary .metric-value {
+      color: #38bdf8;
+    }
+
+    .metric-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+
+    /* Interactive Control Section */
+    .control-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      margin-bottom: 20px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .panel-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+
+    .slider-container {
+      margin-bottom: 22px;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 12px;
+    }
+
+    .slider-readout {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .slider-readout span {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-left: 4px;
+    }
+
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 10px;
+      border-radius: 5px;
+      background: #1e293b;
+      outline: none;
+      transition: background 0.2s;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #38bdf8;
+      cursor: pointer;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.5), 0 2px 5px rgba(0,0,0,0.4);
+      border: 3px solid #0b1120;
+      transition: transform 0.15s, background 0.15s;
+    }
+
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.12);
+      background: #7dd3fc;
+    }
+
+    /* Preset Buttons */
+    .presets-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .preset-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+    }
+
+    .preset-btn {
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      color: var(--text-main);
+      cursor: pointer;
+      text-align: left;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .preset-btn:hover {
+      border-color: var(--primary);
+      background: var(--surface-hover);
+    }
+
+    .preset-btn.active {
+      border-color: var(--primary);
+      background: rgba(56, 189, 248, 0.12);
+      box-shadow: 0 0 0 1px var(--primary);
+    }
+
+    .preset-btn .p-name {
+      font-weight: 700;
+      font-size: 0.86rem;
+    }
+
+    .preset-btn .p-desc {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    /* Live Information Callout */
+    .intel-callout {
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin-bottom: 22px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      border: 1px solid;
+      transition: var(--transition);
+    }
+
+    .intel-callout.efficient {
+      background: rgba(16, 185, 129, 0.08);
+      border-color: rgba(16, 185, 129, 0.35);
+    }
+
+    .intel-callout.warning {
+      background: rgba(245, 158, 11, 0.08);
+      border-color: rgba(245, 158, 11, 0.35);
+    }
+
+    .intel-callout.info {
+      background: rgba(56, 189, 248, 0.08);
+      border-color: rgba(56, 189, 248, 0.35);
+    }
+
+    .intel-icon {
+      font-size: 1.3rem;
+      line-height: 1;
+    }
+
+    .intel-content h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 3px;
+      color: #ffffff;
+    }
+
+    .intel-content p {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    /* Two-Column Deep Dive */
+    .deep-dive-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 26px;
+    }
+
+    @media (max-width: 768px) {
+      .deep-dive-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .detail-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+    }
+
+    .detail-card-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+
+    .table-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 0;
+      font-size: 0.84rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .table-row:last-child {
+      border-bottom: none;
+    }
+
+    .table-row.total {
+      font-weight: 700;
+      border-top: 1px solid var(--border);
+      margin-top: 8px;
+      padding-top: 10px;
+      font-size: 0.92rem;
+    }
+
+    .table-label {
+      color: var(--text-muted);
+    }
+
+    .table-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      color: #f1f5f9;
+    }
+
+    .table-value.deduct {
+      color: var(--rose);
+    }
+
+    .table-value.benefit {
+      color: var(--emerald);
+    }
+
+    /* Schedule Timeline */
+    .timeline-strip {
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .timeline-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.81rem;
+    }
+
+    .timeline-tag {
+      font-family: 'JetBrains Mono', monospace;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 0.74rem;
+      font-weight: 700;
+    }
+
+    .tag-pres { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; }
+    .tag-transit { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; }
+    .tag-prms { background: rgba(56, 189, 248, 0.15); color: #7dd3fc; }
+
+    /* Footer FAQ */
+    .faq-section {
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+    }
+
+    .faq-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+      color: #ffffff;
+    }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+    }
+
+    .faq-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+    }
+
+    .faq-q {
+      font-weight: 700;
+      font-size: 0.86rem;
+      color: var(--primary);
+      margin-bottom: 5px;
+    }
+
+    .faq-a {
+      font-size: 0.81rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- Header -->
+    <header>
+      <div class="badge-pill">USD 449 Easton • Classified Staff Operations</div>
+      <h1>449 Decision Tool</h1>
+      <p class="subtitle">
+        Schedule, hours, and compensation modeling utility based on the 2026–2027 USD 449 Non-Licensed Staff Handbook and Board Policies.
+      </p>
+    </header>
+
+    <!-- Locked Constant Banner: Before-School Care -->
+    <div class="constant-banner">
+      <div class="constant-left">
+        <div class="icon-box">☀️</div>
+        <div>
+          <div class="constant-title">LOCKED CONSTANT: PRES Before-School Care</div>
+          <div class="constant-detail">Elementary Morning Care Shift (7:00 AM – 8:15 AM) committed through the end of the school year.</div>
+        </div>
+      </div>
+      <div class="constant-badge">6.25 hrs/wk @ $15.00/hr = $406.25/mo Gross</div>
+    </div>
+
+    <!-- Key Metrics Grid -->
+    <div class="metrics-grid">
+      <div class="metric-card primary">
+        <div class="metric-label">
+          <span>Net Take-Home Cash</span>
+          <span>💳 Bank Account</span>
+        </div>
+        <div class="metric-value" id="val-net-cash">$1,514</div>
+        <div class="metric-sub" id="sub-net-cash">Estimated monthly direct deposit hitting your checking account</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-label">
+          <span>Monthly District Fringe</span>
+          <span>🎁 Allowance</span>
+        </div>
+        <div class="metric-value" id="val-fringe" style="color: #10b981;">+$155</div>
+        <div class="metric-sub" id="sub-fringe">District Section 125 benefit credit (Handbook p. 6)</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-label">
+          <span>Daily Clock-Out Time</span>
+          <span>⏰ Shift End</span>
+        </div>
+        <div class="metric-value" id="val-clockout" style="color: #fbbf24;">1:15 PM</div>
+        <div class="metric-sub" id="sub-clockout">Projected time done with workday</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-label">
+          <span>Mandatory Savings (KPERS)</span>
+          <span>🏦 Escrow</span>
+        </div>
+        <div class="metric-value" id="val-kpers" style="color: #38bdf8;">$119.60</div>
+        <div class="metric-sub">6% taken monthly; gains 4% interest; returned to you upon leaving.</div>
+      </div>
+    </div>
+
+    <!-- Interactive Control Section -->
+    <div class="control-panel">
+      <div class="panel-header">
+        <div class="panel-title">Hours & Shift Dispatcher</div>
+        <div id="status-tag" class="badge-pill" style="border-color: rgba(16, 185, 129, 0.4); color: #10b981; background: rgba(16, 185, 129, 0.1);">
+          Maximum Efficiency (28.75 Hrs)
+        </div>
+      </div>
+
+      <div class="slider-container">
+        <div class="slider-header">
+          <div>
+            <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">TOTAL COMBINED WEEKLY HOURS</div>
+            <div style="font-size: 0.78rem; color: var(--text-sub);">Before-School Care (6.25 hrs) + Middle School Custodial Hours</div>
+          </div>
+          <div class="slider-readout" id="slider-readout">28.75 <span>hrs / week</span></div>
+        </div>
+        <input type="range" id="hours-slider" min="6.25" max="40.0" step="0.25" value="28.75">
+      </div>
+
+      <div class="presets-label">Operational Presets (Click to Inspect)</div>
+      <div class="preset-grid">
+        <button class="preset-btn" onclick="setPreset(6.25)">
+          <span class="p-name">Morning Care Only</span>
+          <span class="p-desc">6.25 hrs • Under KPERS • $0 Fringe</span>
+        </button>
+        <button class="preset-btn" onclick="setPreset(20.0)">
+          <span class="p-name">Fringe Threshold</span>
+          <span class="p-desc">20.0 hrs • Unlocks $140 Fringe & 12 PTO</span>
+        </button>
+        <button class="preset-btn active" id="btn-preset-28" onclick="setPreset(28.75)">
+          <span class="p-name">Maximum Efficiency</span>
+          <span class="p-desc">28.75 hrs • 1:15 PM Clock-Out • Midday</span>
+        </button>
+        <button class="preset-btn" onclick="setPreset(30.0)">
+          <span class="p-name">ACA Health Threshold</span>
+          <span class="p-desc">30.0 hrs • $483/mo Health Voucher Gate</span>
+        </button>
+        <button class="preset-btn" onclick="setPreset(40.0)">
+          <span class="p-name">District 40-Hr Cap</span>
+          <span class="p-desc">40.0 hrs • Max Cash • 3:45 PM Clock-Out</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Live Status Box -->
+    <div class="intel-callout efficient" id="intel-box">
+      <div class="intel-icon" id="intel-icon">⚡</div>
+      <div class="intel-content">
+        <h4 id="intel-title">Maximum Efficiency Tier (28.75 Hours)</h4>
+        <p id="intel-desc">
+          Completes Morning Care (7:00–8:15 AM), followed by a 4.5-hour midday custodial block at PRMS (8:45 AM – 1:15 PM). Clocks out before middle school afternoon dismissal. Unlocks the $155/mo flexible fringe, 12 paid sick days, and yields ~$1,514/mo net cash with open afternoons.
+        </p>
+      </div>
+    </div>
+
+    <!-- Detailed Two-Column Breakdown -->
+    <div class="deep-dive-grid">
+      
+      <!-- Column 1: Financial Ledger -->
+      <div class="detail-card">
+        <div class="detail-card-title">
+          <span>Monthly Payroll Ledger</span>
+          <span style="font-size: 0.74rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">4.333 wks/mo avg</span>
+        </div>
+
+        <div class="table-row">
+          <span class="table-label">PRES Before-School Care (6.25 hrs @ $15/hr)</span>
+          <span class="table-value">$406.25</span>
+        </div>
+        <div class="table-row">
+          <span class="table-label" id="custodial-label">PRMS Custodial (22.50 hrs @ $16/hr)</span>
+          <span class="table-value" id="custodial-val">$1,560.00</span>
+        </div>
+        <div class="table-row total">
+          <span class="table-label" style="color: #fff;">Total Gross Wages</span>
+          <span class="table-value" id="gross-val" style="color: #38bdf8;">$1,966.25</span>
+        </div>
+
+        <div style="margin: 12px 0 6px; font-size: 0.74rem; color: var(--text-sub); text-transform: uppercase; font-weight: 700;">Deductions & Withholdings</div>
+        <div class="table-row">
+          <span class="table-label" id="kpers-label">KPERS Mandatory Savings (6.00%)</span>
+          <span class="table-value deduct" id="kpers-deduct">-$117.98</span>
+        </div>
+        <div class="table-row">
+          <span class="table-label">FICA & Medicare (7.65%)</span>
+          <span class="table-value deduct" id="fica-deduct">-$150.42</span>
+        </div>
+        <div class="table-row">
+          <span class="table-label">Est. Federal & State Taxes (~9%)</span>
+          <span class="table-value deduct" id="tax-deduct">-$176.96</span>
+        </div>
+        <div class="table-row total" style="border-color: rgba(56, 189, 248, 0.4);">
+          <span class="table-label" style="color: #fff;">What Shows Up in Bank Account (Net Pay)</span>
+          <span class="table-value" id="net-takehome-val" style="color: #38bdf8; font-size: 1.15rem;">$1,520.89</span>
+        </div>
+      </div>
+
+      <!-- Column 2: Schedule & District Perks -->
+      <div class="detail-card">
+        <div class="detail-card-title">
+          <span>Schedule & District Benefits</span>
+          <span style="font-size: 0.74rem; color: #10b981; font-weight: 700;">Handbook Standards</span>
+        </div>
+
+        <div class="table-row">
+          <span class="table-label">Monthly Fringe Benefit (Handbook p. 6)</span>
+          <span class="table-value benefit" id="fringe-table-val">+$155.00 / mo</span>
+        </div>
+        <div class="table-row">
+          <span class="table-label">12 Paid Chargeable Leave Days</span>
+          <span class="table-value benefit" id="leave-val">12 Days ($864/yr)</span>
+        </div>
+        <div class="table-row">
+          <span class="table-label">403(b) Employer Retirement Match</span>
+          <span class="table-value benefit" id="match-val">Up to $50.00 / mo</span>
+        </div>
+        <div class="table-row">
+          <span class="table-label">District Health Insurance Subsidy</span>
+          <span class="table-value" id="health-gate-val" style="color: #94a3b8;">Waived (TRICARE)</span>
+        </div>
+
+        <div style="margin: 14px 0 6px; font-size: 0.74rem; color: var(--text-sub); text-transform: uppercase; font-weight: 700;">Projected Shift Sequence</div>
+        <div class="timeline-strip">
+          <div class="timeline-row">
+            <span>07:00 AM – 08:15 AM (1.25 hrs)</span>
+            <span class="timeline-tag tag-pres">PRES Morning Care</span>
+          </div>
+          <div class="timeline-row">
+            <span>08:15 AM – 08:45 AM (30 min)</span>
+            <span class="timeline-tag tag-transit">Transit & Prep</span>
+          </div>
+          <div class="timeline-row">
+            <span id="prms-shift-time">08:45 AM – 01:15 PM (4.50 hrs)</span>
+            <span class="timeline-tag tag-prms">PRMS Custodial</span>
+          </div>
+          <div class="timeline-row" style="border-top: 1px dashed var(--border); padding-top: 6px; margin-top: 4px;">
+            <span style="font-weight: 700; color: #fbbf24;">Clock-Out & Done</span>
+            <span style="font-weight: 800; color: #fbbf24; font-family: 'JetBrains Mono', monospace;" id="timeline-clockout">01:15 PM</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="faq-section">
+      <div class="faq-title">Policy & Benefits FAQ</div>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <div class="faq-q">Can the school require 40 hours?</div>
+          <div class="faq-a">No. Time schedules for classified employees are assigned by administration (Board Policy GCA). Part-time classified roles between 20 and 30 hours are standard across Kansas districts.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">How does the 6% KPERS money work?</div>
+          <div class="faq-a">It is a mandatory savings account: 6% is taken from your monthly paycheck, and it gains 4% interest while it's in the account. When you leave the school, you take it with you as a refund or rollover.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Do part-time employees get paid sick days?</div>
+          <div class="faq-a">Yes. Once contracted for 20 or more hours per week, employees accrue 12 paid chargeable leave days per school year (Handbook p. 8), usable for illness or personal leave.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Is there any penalty for working 32 to 35 hours?</div>
+          <div class="faq-a">No financial penalties. Take-home pay increases slightly (~$11.26/hr net on extra hours) and monthly fringe increases to $185, but the shift extends further into the afternoon.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const slider = document.getElementById('hours-slider');
+    const readout = document.getElementById('slider-readout');
+
+    // Values
+    const valNetCash = document.getElementById('val-net-cash');
+    const valFringe = document.getElementById('val-fringe');
+    const valClockout = document.getElementById('val-clockout');
+    const valKpers = document.getElementById('val-kpers');
+
+    // Labels & Table elements
+    const statusTag = document.getElementById('status-tag');
+    const custodialLabel = document.getElementById('custodial-label');
+    const custodialVal = document.getElementById('custodial-val');
+    const grossVal = document.getElementById('gross-val');
+    const kpersLabel = document.getElementById('kpers-label');
+    const kpersDeduct = document.getElementById('kpers-deduct');
+    const ficaDeduct = document.getElementById('fica-deduct');
+    const taxDeduct = document.getElementById('tax-deduct');
+    const netTakehomeVal = document.getElementById('net-takehome-val');
+    const fringeTableVal = document.getElementById('fringe-table-val');
+    const leaveVal = document.getElementById('leave-val');
+    const matchVal = document.getElementById('match-val');
+    const healthGateVal = document.getElementById('health-gate-val');
+    const prmsShiftTime = document.getElementById('prms-shift-time');
+    const timelineClockout = document.getElementById('timeline-clockout');
+
+    // Intel callout
+    const intelBox = document.getElementById('intel-box');
+    const intelIcon = document.getElementById('intel-icon');
+    const intelTitle = document.getElementById('intel-title');
+    const intelDesc = document.getElementById('intel-desc');
+
+    const WEEKS_PER_MONTH = 4.3333;
+    const MORNING_HOURS = 6.25;
+    const MORNING_RATE = 15.00;
+    const CUSTODIAL_RATE = 16.00;
+
+    function formatMoney(amount) {
+      return '$' + Math.round(amount).toLocaleString();
+    }
+
+    function formatMoneyExact(amount) {
+      return '$' + amount.toFixed(2);
+    }
+
+    function calculateClockOutTime(custodialDailyHours) {
+      let lunchHours = custodialDailyHours > 5.0 ? 0.5 : 0.0;
+      let totalShiftSpan = custodialDailyHours + lunchHours;
+      let endDecimal = 8.75 + totalShiftSpan;
+
+      let endHour = Math.floor(endDecimal);
+      let endMinute = Math.round((endDecimal - endHour) * 60);
+      if (endMinute === 60) {
+        endHour += 1;
+        endMinute = 0;
+      }
+
+      let ampm = endHour >= 12 ? 'PM' : 'AM';
+      let displayHour = endHour > 12 ? endHour - 12 : endHour;
+      let displayMinute = endMinute < 10 ? '0' + endMinute : endMinute;
+
+      return `${displayHour}:${displayMinute} ${ampm}`;
+    }
+
+    function updateCalculations() {
+      const totalHours = parseFloat(slider.value);
+      const custodialWeeklyHours = Math.max(0, totalHours - MORNING_HOURS);
+      const custodialDailyHours = custodialWeeklyHours / 5.0;
+
+      readout.innerHTML = `${totalHours.toFixed(2)} <span>hrs / week</span>`;
+
+      // Gross Wages
+      const morningGrossWeekly = MORNING_HOURS * MORNING_RATE; // $93.75
+      const custodialGrossWeekly = custodialWeeklyHours * CUSTODIAL_RATE;
+      const totalWeeklyGross = morningGrossWeekly + custodialGrossWeekly;
+      const totalMonthlyGross = totalWeeklyGross * WEEKS_PER_MONTH;
+
+      const morningGrossMonthly = morningGrossWeekly * WEEKS_PER_MONTH;
+      const custodialGrossMonthly = custodialGrossWeekly * WEEKS_PER_MONTH;
+
+      // KPERS: 630 hours/year threshold (~17.5 hrs/wk)
+      let kpersRate = totalHours >= 17.5 ? 0.06 : 0.0;
+      let kpersDeductionMonthly = totalMonthlyGross * kpersRate;
+
+      // FICA: 7.65%
+      let ficaDeductionMonthly = totalMonthlyGross * 0.0765;
+
+      // Estimated Federal + Kansas State Taxes (~9% effective)
+      let taxRate = totalHours >= 30 ? 0.10 : 0.09;
+      let taxDeductionMonthly = totalMonthlyGross * taxRate;
+
+      // Fringe Benefit (Handbook p. 6)
+      let dailyTotalHours = totalHours / 5.0;
+      let monthlyFringe = 0;
+      if (totalHours >= 20.0) {
+        if (dailyTotalHours >= 7.25) monthlyFringe = 200;
+        else if (dailyTotalHours >= 6.25) monthlyFringe = 185;
+        else if (dailyTotalHours >= 5.25) monthlyFringe = 170;
+        else if (dailyTotalHours >= 4.25) monthlyFringe = 155;
+        else monthlyFringe = 140;
+      }
+
+      // Net Take-Home Pay
+      let netPaycheckMonthly = totalMonthlyGross - kpersDeductionMonthly - ficaDeductionMonthly - taxDeductionMonthly;
+      let netCashTakeHome = netPaycheckMonthly;
+
+      // Clock-Out Time
+      let clockOutTime = calculateClockOutTime(custodialDailyHours);
+      if (custodialWeeklyHours === 0) {
+        clockOutTime = '08:15 AM (PRES Only)';
+      }
+
+      // Update Metric Cards
+      valNetCash.innerText = formatMoney(netCashTakeHome);
+      valFringe.innerText = monthlyFringe > 0 ? `+$${monthlyFringe}` : '$0';
+      valClockout.innerText = clockOutTime.replace(' (PRES Only)', '');
+      valKpers.innerText = kpersDeductionMonthly > 0 ? formatMoneyExact(kpersDeductionMonthly) : '$0.00';
+
+      // Update Ledger Table
+      custodialLabel.innerText = `PRMS Custodial (${custodialWeeklyHours.toFixed(2)} hrs @ $16/hr)`;
+      custodialVal.innerText = formatMoneyExact(custodialGrossMonthly);
+      grossVal.innerText = formatMoneyExact(totalMonthlyGross);
+
+      if (kpersRate > 0) {
+        kpersLabel.innerText = 'KPERS Mandatory Savings (6.00%)';
+        kpersDeduct.innerText = '-' + formatMoneyExact(kpersDeductionMonthly);
+      } else {
+        kpersLabel.innerText = 'KPERS Savings (Exempt < 17.5 hrs)';
+        kpersDeduct.innerText = '$0.00';
+      }
+
+      ficaDeduct.innerText = '-' + formatMoneyExact(ficaDeductionMonthly);
+      taxDeduct.innerText = '-' + formatMoneyExact(taxDeductionMonthly);
+      netTakehomeVal.innerText = formatMoneyExact(netCashTakeHome);
+
+      // District Perks Table
+      fringeTableVal.innerText = monthlyFringe > 0 ? `+$${monthlyFringe}.00 / mo` : '$0.00 (Requires 20+ hrs)';
+      fringeTableVal.style.color = monthlyFringe > 0 ? 'var(--emerald)' : 'var(--text-sub)';
+
+      if (totalHours >= 20.0) {
+        let sickDayHours = (dailyTotalHours).toFixed(1);
+        let sickDayVal = Math.round(12 * dailyTotalHours * 16);
+        leaveVal.innerText = `12 Days (~${sickDayHours} hrs/day, $${sickDayVal}/yr)`;
+        matchVal.innerText = 'Eligible (Up to $50.00/mo match)';
+      } else {
+        leaveVal.innerText = '$0 / Casual (Requires 20+ hrs)';
+        matchVal.innerText = 'Ineligible (Requires 20+ hrs)';
+      }
+
+      if (totalHours >= 30.0) {
+        healthGateVal.innerText = 'Active (Waived for TRICARE - $0 cash)';
+        healthGateVal.style.color = 'var(--amber)';
+      } else {
+        healthGateVal.innerText = 'Not Triggered (< 30 hrs)';
+        healthGateVal.style.color = 'var(--text-sub)';
+      }
+
+      // Schedule Sequence
+      if (custodialWeeklyHours > 0) {
+        prmsShiftTime.innerText = `08:45 AM – ${clockOutTime} (${custodialDailyHours.toFixed(2)} hrs)`;
+      } else {
+        prmsShiftTime.innerText = 'No PRMS Custodial Shift';
+      }
+      timelineClockout.innerText = clockOutTime;
+
+      // Update Callout & Badges
+      updateStatusCallout(totalHours, monthlyFringe, clockOutTime);
+    }
+
+    function updateStatusCallout(totalHours, monthlyFringe, clockOutTime) {
+      intelBox.className = 'intel-callout';
+      statusTag.className = 'badge-pill';
+
+      if (totalHours < 17.5) {
+        intelBox.classList.add('info');
+        intelIcon.innerText = 'ℹ️';
+        intelTitle.innerText = 'Casual Part-Time (Under 17.5 Hours)';
+        intelDesc.innerText = 'Under the 630-hour threshold: No KPERS deduction is taken, and no monthly district fringe benefits or paid leave are unlocked. Ideal for casual, morning-only commitments.';
+        statusTag.innerText = 'Casual Part-Time';
+        statusTag.style.color = '#38bdf8';
+        statusTag.style.borderColor = 'rgba(56, 189, 248, 0.4)';
+        statusTag.style.background = 'rgba(56, 189, 248, 0.1)';
+      } else if (totalHours < 20.0) {
+        intelBox.classList.add('warning');
+        intelIcon.innerText = '⚠️';
+        intelTitle.innerText = 'KPERS Active / Sub-Fringe (17.5 to 19.9 Hours)';
+        intelDesc.innerText = 'Kansas statute mandates the 6% KPERS deduction once scheduled for 630+ hours/year, but district fringe benefits require 20.0 hours. Working at least 20.0 hours unlocks the $140+ monthly credit to offset KPERS.';
+        statusTag.innerText = 'Sub-Fringe Tier';
+        statusTag.style.color = '#f59e0b';
+        statusTag.style.borderColor = 'rgba(245, 158, 11, 0.4)';
+        statusTag.style.background = 'rgba(245, 158, 11, 0.1)';
+      } else if (totalHours <= 29.5) {
+        intelBox.classList.add('efficient');
+        intelIcon.innerText = '⚡';
+        intelTitle.innerText = `Maximum Efficiency Tier (${totalHours.toFixed(2)} Hours • Off by ${clockOutTime})`;
+        intelDesc.innerText = `Unlocks the +$${monthlyFringe}/mo fringe credit, 12 paid sick days, and 4% interest KPERS savings while finishing the workday by ${clockOutTime}. Leaves afternoons fully open while capturing full part-time benefits.`;
+        statusTag.innerText = 'Maximum Efficiency';
+        statusTag.style.color = '#10b981';
+        statusTag.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+        statusTag.style.background = 'rgba(16, 185, 129, 0.1)';
+      } else if (totalHours < 39.5) {
+        intelBox.classList.add('info');
+        intelIcon.innerText = '📋';
+        intelTitle.innerText = `Extended Schedule Tier (${totalHours.toFixed(2)} Hours • Off by ${clockOutTime})`;
+        intelDesc.innerText = `Take-home cash increases (~$11.26/hr net on additional hours) and monthly fringe moves to $185/mo. Health insurance subsidy activates but is waived for TRICARE. Suitable if additional monthly earnings are desired.`;
+        statusTag.innerText = 'Extended Schedule';
+        statusTag.style.color = '#38bdf8';
+        statusTag.style.borderColor = 'rgba(56, 189, 248, 0.4)';
+        statusTag.style.background = 'rgba(56, 189, 248, 0.1)';
+      } else {
+        intelBox.classList.add('info');
+        intelIcon.innerText = '💼';
+        intelTitle.innerText = `District Full-Time Cap (40.0 Hours • Off by ${clockOutTime})`;
+        intelDesc.innerText = `Maximum allowable schedule under district policy (6.25 hrs PRES + 33.75 hrs PRMS). Delivers ~$1,950/mo net take-home cash + $200 fringe, with daily release at approximately 3:45 PM.`;
+        statusTag.innerText = 'District 40-Hr Cap';
+        statusTag.style.color = '#a855f7';
+        statusTag.style.borderColor = 'rgba(168, 85, 247, 0.4)';
+        statusTag.style.background = 'rgba(168, 85, 247, 0.1)';
+      }
+    }
+
+    function setPreset(val) {
+      slider.value = val;
+      document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      updateCalculations();
+    }
+
+    slider.addEventListener('input', () => {
+      document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+      updateCalculations();
+    });
+
+    // Initial run
+    updateCalculations();
+  </script>
+<script>
+/**
+ * Bold Bovine OS — Universal Field Scratchpad & Sprint Staging Widget
+ * Dual Theme Support: Rural Broadsheet (Cardstock/Letterpress) & Hearth (Warm Espresso)
+ */
+(function() {
+  if (window.__BoldBovineScratchpadLoaded) return;
+  window.__BoldBovineScratchpadLoaded = true;
+
+  const STORAGE_KEY = "bold_bovine_scratchpad_v1";
+  const PRIMARY_ZONES = [
+    "Shop / Garage",
+    "Home / Interior",
+    "Pastures / Land",
+    "Office / Desk",
+    "Mobile / Vehicles"
+  ];
+  const SPRINT_PRESETS = [
+    "🌱 Spring 2027",
+    "⚡ Immediate Sprint",
+    "🌾 Summer Operations",
+    "🍂 Fall Maintenance",
+    "📅 Routine Backlog"
+  ];
+
+  function getObservations() {
+    try {
+      const data = localStorage.getItem(STORAGE_KEY);
+      return data ? JSON.parse(data) : [];
+    } catch(e) {
+      return [];
+    }
+  }
+
+  function saveObservations(list) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+      updateBadge();
+      window.dispatchEvent(new Event("scratchpad_updated"));
+    } catch(e) {}
+  }
+
+  function getPageContext() {
+    const title = document.title || "Bold Bovine OS";
+    const path = window.location.pathname.split("/").pop() || "index.html";
+    return { title, path };
+  }
+
+  // Dual Theme CSS
+  const STYLES = `
+    /* SCRATCHPAD THEME VARIABLES */
+    :root, [data-theme="broadsheet"] {
+      --sp-bg-drawer: #fdfaf5;
+      --sp-bg-card: #ffffff;
+      --sp-bg-input: #f7f3ea;
+      --sp-ink: #111111;
+      --sp-ink-muted: #4b5563;
+      --sp-ink-dim: #6b7280;
+      --sp-border: 1.5px solid #111111;
+      --sp-shadow: 3px 3px 0px #111111;
+      --sp-shadow-hover: 4px 4px 0px #111111;
+      --sp-forest: #1b4332;
+      --sp-amber: #b45309;
+      --sp-oxblood: #991b1b;
+      --sp-navy: #1e3a8a;
+    }
+
+    [data-theme="hearth"] {
+      --sp-bg-drawer: #171412;
+      --sp-bg-card: #221d1a;
+      --sp-bg-input: #1a1613;
+      --sp-ink: #f5f0e8;
+      --sp-ink-muted: #c7beaf;
+      --sp-ink-dim: #8f8576;
+      --sp-border: 1px solid rgba(214, 180, 140, 0.25);
+      --sp-shadow: 3px 3px 0px #0c0a09;
+      --sp-shadow-hover: 4px 4px 0px #0c0a09;
+      --sp-forest: #4ade80;
+      --sp-amber: #f59e0b;
+      --sp-oxblood: #f87171;
+      --sp-navy: #60a5fa;
+    }
+
+    #bb-scratchpad-trigger {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 999990;
+      background: var(--sp-bg-card);
+      border: var(--sp-border);
+      color: var(--sp-ink);
+      padding: 9px 16px;
+      border-radius: 4px;
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      box-shadow: var(--sp-shadow);
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    #bb-scratchpad-trigger:hover {
+      box-shadow: var(--sp-shadow-hover);
+      transform: translate(-1px, -1px);
+    }
+    #bb-scratchpad-trigger .trigger-badge {
+      background: var(--sp-forest);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 3px;
+      min-width: 18px;
+      text-align: center;
+    }
+    #bb-scratchpad-trigger .trigger-badge.has-urgent {
+      background: var(--sp-oxblood);
+      animation: bbPulse 2s infinite;
+    }
+
+    #bb-scratchpad-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(2px);
+      z-index: 999995;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+    #bb-scratchpad-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #bb-scratchpad-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: min(520px, 94vw);
+      height: 100vh;
+      background: var(--sp-bg-drawer);
+      border-left: var(--sp-border);
+      box-shadow: -8px 0 24px rgba(0,0,0,0.3);
+      z-index: 1000000;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      color: var(--sp-ink);
+    }
+    #bb-scratchpad-drawer.active {
+      transform: translateX(0);
+    }
+
+    .bb-drawer-header {
+      padding: 18px 24px;
+      border-bottom: 3px double var(--sp-ink);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--sp-bg-drawer);
+    }
+    .bb-drawer-title-group h2 {
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+    .bb-drawer-title-group .bb-subtitle {
+      font-size: 11px;
+      color: var(--sp-ink-dim);
+      margin-top: 2px;
+      font-family: 'Space Mono', monospace;
+    }
+    .bb-btn-close {
+      background: var(--sp-bg-card);
+      border: var(--sp-border);
+      color: var(--sp-ink);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 4px 10px;
+      box-shadow: 2px 2px 0px var(--sp-ink);
+      transition: all 0.15s ease;
+    }
+    .bb-btn-close:hover {
+      transform: translate(-1px, -1px);
+    }
+
+    .bb-drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .bb-form-card {
+      background: var(--sp-bg-card);
+      border: var(--sp-border);
+      box-shadow: var(--sp-shadow);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      border-radius: 4px;
+    }
+    .bb-textarea {
+      width: 100%;
+      min-height: 80px;
+      background: var(--sp-bg-input);
+      border: var(--sp-border);
+      border-radius: 2px;
+      padding: 12px;
+      color: var(--sp-ink);
+      font-size: 13px;
+      font-family: inherit;
+      resize: vertical;
+      line-height: 1.4;
+      box-sizing: border-box;
+      outline: none;
+    }
+    .bb-form-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .bb-field-group {
+      flex: 1;
+      min-width: 130px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .bb-field-label {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--sp-ink-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .bb-select, .bb-input {
+      background: var(--sp-bg-input);
+      border: var(--sp-border);
+      border-radius: 2px;
+      padding: 7px 10px;
+      color: var(--sp-ink);
+      font-size: 12px;
+      outline: none;
+      box-sizing: border-box;
+      width: 100%;
+    }
+    .bb-btn-submit {
+      background: var(--sp-forest);
+      border: var(--sp-border);
+      box-shadow: 2px 2px 0px var(--sp-ink);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 10px 16px;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      transition: all 0.15s ease;
+    }
+    .bb-btn-submit:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0px var(--sp-ink);
+    }
+
+    .bb-filter-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .bb-tabs {
+      display: flex;
+      border: var(--sp-border);
+      background: var(--sp-bg-input);
+    }
+    .bb-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--sp-ink-muted);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+    .bb-tab-btn.active {
+      background: var(--sp-ink);
+      color: var(--sp-bg-drawer);
+    }
+    .bb-zone-filter {
+      background: var(--sp-bg-card);
+      border: var(--sp-border);
+      color: var(--sp-ink);
+      font-size: 11px;
+      padding: 5px 8px;
+      outline: none;
+    }
+
+    .bb-obs-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .bb-obs-card {
+      background: var(--sp-bg-card);
+      border: var(--sp-border);
+      box-shadow: var(--sp-shadow);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border-radius: 3px;
+      transition: all 0.15s ease;
+    }
+    .bb-obs-card.resolved {
+      opacity: 0.55;
+    }
+    .bb-obs-card.resolved .bb-obs-text {
+      text-decoration: line-through;
+    }
+    .bb-obs-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      font-size: 11px;
+    }
+    .bb-pill {
+      padding: 2px 7px;
+      font-weight: 700;
+      font-size: 10px;
+      font-family: 'Space Mono', monospace;
+      border: var(--sp-border);
+      border-radius: 2px;
+    }
+    .bb-pill-zone { background: rgba(30, 58, 138, 0.08); color: var(--sp-navy); }
+    .bb-pill-sprint { background: rgba(27, 67, 50, 0.08); color: var(--sp-forest); }
+    .bb-pill-urgent { background: rgba(153, 27, 27, 0.1); color: var(--sp-oxblood); }
+    .bb-pill-op { background: rgba(180, 83, 9, 0.08); color: var(--sp-amber); }
+    .bb-pill-page { color: var(--sp-ink-dim); border-color: var(--sp-ink-dim); }
+    .bb-obs-time {
+      color: var(--sp-ink-dim);
+      font-size: 10px;
+      margin-left: auto;
+      font-family: 'Space Mono', monospace;
+    }
+    .bb-obs-text {
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--sp-ink);
+      white-space: pre-wrap;
+    }
+    .bb-obs-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      border-top: 1px solid rgba(17, 17, 17, 0.15);
+      padding-top: 8px;
+    }
+    .bb-btn-action {
+      background: var(--sp-bg-input);
+      border: var(--sp-border);
+      color: var(--sp-ink);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .bb-btn-action:hover {
+      background: var(--sp-ink);
+      color: var(--sp-bg-drawer);
+    }
+
+    .bb-drawer-footer {
+      padding: 14px 24px;
+      border-top: 3px double var(--sp-ink);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--sp-bg-drawer);
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .bb-footer-btn {
+      background: var(--sp-bg-card);
+      border: var(--sp-border);
+      box-shadow: 2px 2px 0px var(--sp-ink);
+      color: var(--sp-ink);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .bb-footer-btn:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0px var(--sp-ink);
+    }
+
+    #bb-toast {
+      position: fixed;
+      bottom: 84px;
+      right: 24px;
+      z-index: 1000005;
+      background: var(--sp-forest);
+      border: var(--sp-border);
+      box-shadow: 3px 3px 0px var(--sp-ink);
+      color: #fff;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 800;
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: all 0.2s ease;
+    }
+    #bb-toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  `;
+
+  const styleEl = document.createElement("style");
+  styleEl.textContent = STYLES;
+  document.head.appendChild(styleEl);
+
+  const triggerBtn = document.createElement("div");
+  triggerBtn.id = "bb-scratchpad-trigger";
+  triggerBtn.innerHTML = `
+    <span>📝 Field Scratchpad</span>
+    <span class="trigger-badge" id="bb-trigger-count">0</span>
+  `;
+
+  const overlayEl = document.createElement("div");
+  overlayEl.id = "bb-scratchpad-overlay";
+
+  const drawerEl = document.createElement("div");
+  drawerEl.id = "bb-scratchpad-drawer";
+  drawerEl.innerHTML = `
+    <div class="bb-drawer-header">
+      <div class="bb-drawer-title-group">
+        <h2>Field Scratchpad & Sprint Staging</h2>
+        <div class="bb-subtitle" id="bb-page-context-sub">Context: Page • Alt+S to toggle</div>
+      </div>
+      <button class="bb-btn-close" id="bb-btn-close-drawer" title="Close (Esc)">✕</button>
+    </div>
+
+    <div class="bb-drawer-body">
+      <div class="bb-form-card">
+        <textarea class="bb-textarea" id="bb-input-text" placeholder="Notice something broken, worn, needed, or staged for next sprint? Type note here... (Ctrl+Enter to save)"></textarea>
+        
+        <div class="bb-form-row">
+          <div class="bb-field-group">
+            <span class="bb-field-label">Primary Operating Zone</span>
+            <select class="bb-select" id="bb-input-zone">
+              ${PRIMARY_ZONES.map(z => `<option value="${z}">${z}</option>`).join("")}
+            </select>
+          </div>
+          <div class="bb-field-group">
+            <span class="bb-field-label">Target Sprint / Horizon</span>
+            <select class="bb-select" id="bb-input-sprint">
+              ${SPRINT_PRESETS.map(s => `<option value="${s}">${s}</option>`).join("")}
+            </select>
+          </div>
+        </div>
+
+        <div class="bb-form-row">
+          <div class="bb-field-group">
+            <span class="bb-field-label">Assigned Operator</span>
+            <select class="bb-select" id="bb-input-op">
+              <option value="Josh">Josh (Physical Execution)</option>
+              <option value="Joint">Joint (Josh + AI Collaborative)</option>
+            </select>
+          </div>
+          <div class="bb-field-group">
+            <span class="bb-field-label">Urgency</span>
+            <select class="bb-select" id="bb-input-urgency">
+              <option value="normal">Routine Observation</option>
+              <option value="urgent">⚠️ Urgent Attention</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="bb-btn-submit" id="bb-btn-save-obs">
+          <span>+ Stage Observation</span>
+        </button>
+      </div>
+
+      <div class="bb-filter-bar">
+        <div class="bb-tabs">
+          <button class="bb-tab-btn active" data-tab="all" id="bb-tab-all">All (<span id="bb-count-all">0</span>)</button>
+          <button class="bb-tab-btn" data-tab="page" id="bb-tab-page">This Page (<span id="bb-count-page">0</span>)</button>
+          <button class="bb-tab-btn" data-tab="resolved" id="bb-tab-resolved">Resolved (<span id="bb-count-resolved">0</span>)</button>
+        </div>
+        <select class="bb-zone-filter" id="bb-filter-zone">
+          <option value="">All Zones</option>
+          ${PRIMARY_ZONES.map(z => `<option value="${z}">${z}</option>`).join("")}
+        </select>
+      </div>
+
+      <div class="bb-obs-list" id="bb-obs-container"></div>
+    </div>
+
+    <div class="bb-drawer-footer">
+      <div style="display:flex; gap:8px;">
+        <button class="bb-footer-btn" id="bb-btn-export-md">📥 Export Markdown</button>
+        <button class="bb-footer-btn" id="bb-btn-copy-all">📋 Copy All</button>
+      </div>
+      <button class="bb-footer-btn" id="bb-btn-clear-resolved" style="color:var(--sp-ink-dim);">Clear Resolved</button>
+    </div>
+  `;
+
+  const toastEl = document.createElement("div");
+  toastEl.id = "bb-toast";
+  toastEl.textContent = "Observation saved!";
+
+  document.body.appendChild(triggerBtn);
+  document.body.appendChild(overlayEl);
+  document.body.appendChild(drawerEl);
+  document.body.appendChild(toastEl);
+
+  let activeTab = "all";
+  let activeZoneFilter = "";
+
+  function showToast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    setTimeout(() => toastEl.classList.remove("show"), 2200);
+  }
+
+  function toggleDrawer(open) {
+    const shouldOpen = open !== undefined ? open : !drawerEl.classList.contains("active");
+    if (shouldOpen) {
+      drawerEl.classList.add("active");
+      overlayEl.classList.add("active");
+      const ctx = getPageContext();
+      document.getElementById("bb-page-context-sub").textContent = `Context: ${ctx.title} (${ctx.path}) • Alt+S`;
+      renderList();
+      setTimeout(() => document.getElementById("bb-input-text").focus(), 150);
+    } else {
+      drawerEl.classList.remove("active");
+      overlayEl.classList.remove("active");
+    }
+  }
+
+  function updateBadge() {
+    const list = getObservations();
+    const openItems = list.filter(i => i.status !== "resolved");
+    const countEl = document.getElementById("bb-trigger-count");
+    if (countEl) {
+      countEl.textContent = openItems.length;
+      const hasUrgent = openItems.some(i => i.urgency === "urgent");
+      if (hasUrgent) {
+        countEl.classList.add("has-urgent");
+      } else {
+        countEl.classList.remove("has-urgent");
+      }
+    }
+  }
+
+  function renderList() {
+    const list = getObservations();
+    const ctx = getPageContext();
+
+    const allCount = list.filter(i => i.status !== "resolved").length;
+    const pageCount = list.filter(i => i.status !== "resolved" && (i.pageTitle === ctx.title || i.pagePath === ctx.path)).length;
+    const resCount = list.filter(i => i.status === "resolved").length;
+
+    document.getElementById("bb-count-all").textContent = allCount;
+    document.getElementById("bb-count-page").textContent = pageCount;
+    document.getElementById("bb-count-resolved").textContent = resCount;
+
+    let filtered = list;
+    if (activeTab === "all") {
+      filtered = filtered.filter(i => i.status !== "resolved");
+    } else if (activeTab === "page") {
+      filtered = filtered.filter(i => i.status !== "resolved" && (i.pageTitle === ctx.title || i.pagePath === ctx.path));
+    } else if (activeTab === "resolved") {
+      filtered = filtered.filter(i => i.status === "resolved");
+    }
+
+    if (activeZoneFilter) {
+      filtered = filtered.filter(i => i.zone === activeZoneFilter);
+    }
+
+    const container = document.getElementById("bb-obs-container");
+    if (filtered.length === 0) {
+      container.innerHTML = `
+        <div style="text-align:center; padding: 40px 10px; color:var(--sp-ink-dim); font-size:13px;">
+          No observations found in this view.<br>Use the dispatch box above to stage field notes.
+        </div>
+      `;
+      return;
+    }
+
+    filtered.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+    container.innerHTML = filtered.map(item => {
+      const isResolved = item.status === "resolved";
+      const dateStr = new Date(item.timestamp).toLocaleString("en-US", {
+        month: "short", day: "numeric", hour: "numeric", minute: "2-digit"
+      });
+
+      return `
+        <div class="bb-obs-card ${isResolved ? 'resolved' : ''}" data-id="${item.id}">
+          <div class="bb-obs-meta">
+            <span class="bb-pill bb-pill-zone">${escapeHtml(item.zone)}</span>
+            <span class="bb-pill bb-pill-sprint">${escapeHtml(item.sprint)}</span>
+            <span class="bb-pill bb-pill-op">👤 ${escapeHtml(item.operator || 'Josh')}</span>
+            ${item.urgency === 'urgent' ? '<span class="bb-pill bb-pill-urgent">⚠️ Urgent</span>' : ''}
+            <span class="bb-pill bb-pill-page" title="${escapeHtml(item.pageTitle)}">${escapeHtml(item.pagePath)}</span>
+            <span class="bb-obs-time">${dateStr}</span>
+          </div>
+
+          <div class="bb-obs-text">${escapeHtml(item.text)}</div>
+
+          <div class="bb-obs-actions">
+            <button class="bb-btn-action btn-copy" onclick="window.__BoldBovineScratchpad.copyItem('${item.id}')" title="Copy as Atomic Task">
+              📋 Copy Task
+            </button>
+            <button class="bb-btn-action btn-done" onclick="window.__BoldBovineScratchpad.toggleDone('${item.id}')">
+              ${isResolved ? '↩ Reopen' : '✓ Resolve'}
+            </button>
+            <button class="bb-btn-action btn-del" onclick="window.__BoldBovineScratchpad.deleteItem('${item.id}')">
+              ✕
+            </button>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  function addObservation() {
+    const textEl = document.getElementById("bb-input-text");
+    const text = textEl.value.trim();
+    if (!text) {
+      textEl.focus();
+      return;
+    }
+
+    const zone = document.getElementById("bb-input-zone").value;
+    const sprint = document.getElementById("bb-input-sprint").value;
+    const op = document.getElementById("bb-input-op").value;
+    const urgency = document.getElementById("bb-input-urgency").value;
+    const ctx = getPageContext();
+
+    const newItem = {
+      id: "obs_" + Date.now(),
+      text: text,
+      zone: zone,
+      sprint: sprint,
+      operator: op,
+      urgency: urgency,
+      pageTitle: ctx.title,
+      pagePath: ctx.path,
+      timestamp: new Date().toISOString(),
+      status: "open"
+    };
+
+    const list = getObservations();
+    list.unshift(newItem);
+    saveObservations(list);
+
+    textEl.value = "";
+    showToast("✓ Observation staged for " + sprint);
+    renderList();
+  }
+
+  function escapeHtml(str) {
+    if (!str) return "";
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  window.__BoldBovineScratchpad = {
+    toggle: toggleDrawer,
+    openWith: function(opts) {
+      toggleDrawer(true);
+      if (opts.text) document.getElementById("bb-input-text").value = opts.text;
+      if (opts.zone) document.getElementById("bb-input-zone").value = opts.zone;
+      if (opts.sprint) document.getElementById("bb-input-sprint").value = opts.sprint;
+      document.getElementById("bb-input-text").focus();
+    },
+    copyItem: function(id) {
+      const list = getObservations();
+      const item = list.find(i => i.id === id);
+      if (!item) return;
+
+      const taskLine = `Inspect / Address: ${item.text} | Zone: ${item.zone} | Assigned: ${item.operator} | Horizon: ${item.sprint} | Source: ${item.pagePath} (${new Date(item.timestamp).toLocaleDateString()})`;
+      navigator.clipboard.writeText(taskLine).then(() => {
+        showToast("📋 Task copied for Master Ledger!");
+      });
+    },
+    toggleDone: function(id) {
+      const list = getObservations();
+      const item = list.find(i => i.id === id);
+      if (!item) return;
+      item.status = item.status === "resolved" ? "open" : "resolved";
+      saveObservations(list);
+      renderList();
+    },
+    deleteItem: function(id) {
+      let list = getObservations();
+      list = list.filter(i => i.id !== id);
+      saveObservations(list);
+      renderList();
+    }
+  };
+
+  triggerBtn.addEventListener("click", () => toggleDrawer());
+  overlayEl.addEventListener("click", () => toggleDrawer(false));
+  document.getElementById("bb-btn-close-drawer").addEventListener("click", () => toggleDrawer(false));
+  document.getElementById("bb-btn-save-obs").addEventListener("click", addObservation);
+
+  document.getElementById("bb-input-text").addEventListener("keydown", (e) => {
+    if (e.ctrlKey && e.key === "Enter") {
+      e.preventDefault();
+      addObservation();
+    }
+  });
+
+  window.addEventListener("keydown", (e) => {
+    if (e.altKey && (e.key === "s" || e.key === "S")) {
+      e.preventDefault();
+      toggleDrawer();
+    } else if (e.key === "Escape" && drawerEl.classList.contains("active")) {
+      toggleDrawer(false);
+    }
+  });
+
+  document.querySelectorAll(".bb-tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".bb-tab-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      activeTab = btn.getAttribute("data-tab");
+      renderList();
+    });
+  });
+
+  document.getElementById("bb-filter-zone").addEventListener("change", (e) => {
+    activeZoneFilter = e.target.value;
+    renderList();
+  });
+
+  document.getElementById("bb-btn-export-md").addEventListener("click", () => {
+    const list = getObservations();
+    if (list.length === 0) {
+      alert("No observations to export.");
+      return;
+    }
+
+    let md = `# Bold Bovine OS — Field Observations & Sprint Staging Log
+`;
+    md += `*Exported on: ${new Date().toLocaleString()}*
+
+`;
+    md += `| Date | Primary Zone | Sprint / Horizon | Operator | Origin Page | Observation / Task | Status |
+`;
+    md += `| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+`;
+
+    list.forEach(i => {
+      const d = new Date(i.timestamp).toLocaleDateString();
+      const cleanText = i.text.replace(/\|/g, "-").replace(/
+/g, " ");
+      md += `| ${d} | **${i.zone}** | ${i.sprint} | ${i.operator} | ${i.pagePath} | ${cleanText} | ${i.status.toUpperCase()} |
+`;
+    });
+
+    md += `
+
+## Formatted Atomic Tasks for Master Ledger
+
+`;
+    list.filter(i => i.status !== "resolved").forEach(i => {
+      md += `* [ ] ${i.text} [Zone: ${i.zone}] [Operator: ${i.operator}] [Sprint: ${i.sprint}]
+`;
+    });
+
+    const blob = new Blob([md], { type: "text/markdown;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `Field_Observations_Spring_Log_${new Date().toISOString().split('T')[0]}.md`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast("📥 Exported Markdown file!");
+  });
+
+  document.getElementById("bb-btn-copy-all").addEventListener("click", () => {
+    const list = getObservations().filter(i => i.status !== "resolved");
+    if (list.length === 0) {
+      showToast("No active observations to copy.");
+      return;
+    }
+    const lines = list.map(i => `* [ ] ${i.text} | Zone: ${i.zone} | Operator: ${i.operator} | Sprint: ${i.sprint} | Logged: ${new Date(i.timestamp).toLocaleDateString()}`);
+    navigator.clipboard.writeText(lines.join("
+")).then(() => {
+      showToast(`📋 Copied ${list.length} tasks to clipboard!`);
+    });
+  });
+
+  document.getElementById("bb-btn-clear-resolved").addEventListener("click", () => {
+    let list = getObservations();
+    const before = list.length;
+    list = list.filter(i => i.status !== "resolved");
+    if (list.length === before) {
+      showToast("No resolved items to clear.");
+      return;
+    }
+    saveObservations(list);
+    renderList();
+    showToast("Cleared resolved items.");
+  });
+
+  window.addEventListener("storage", (e) => {
+    if (e.key === STORAGE_KEY) {
+      updateBadge();
+      if (drawerEl.classList.contains("active")) {
+        renderList();
+      }
+    }
+  });
+
+  updateBadge();
+})();
+
+</script>
+</body>
+</html>

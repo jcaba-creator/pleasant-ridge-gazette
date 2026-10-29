@@ -1,31 +1,31 @@
 window.GAZETTE_GAS_FEED = {
   "status": "success",
-  "last_updated_iso": "2026-10-23T05:00:05.584929",
-  "last_updated_human": "Friday, October 23, 2026 - 05:00 AM",
-  "date_header": "Friday, Oct 23, 2026",
+  "last_updated_iso": "2026-10-29T05:00:06.162689",
+  "last_updated_human": "Thursday, October 29, 2026 - 05:00 AM",
+  "date_header": "Thursday, Oct 29, 2026",
   "cheapest_station": {
-    "name": "Sunoco",
-    "loc": "501 Limit St (Leavenworth)",
-    "price": 3.83
+    "name": "Murphy USA (Walmart)",
+    "loc": "10th Ave / Eisenhower (Leavenworth)",
+    "price": 3.82
   },
-  "max_tank_savings": 2.4,
+  "max_tank_savings": 2.25,
   "stations": [
+    {
+      "id": "186732",
+      "name": "Murphy USA (Walmart)",
+      "loc": "10th Ave / Eisenhower (Leavenworth)",
+      "address": "1050 Eisenhower Road (Leavenworth)",
+      "price": 3.82,
+      "updated": "2026-10-29T08:31:07.432Z",
+      "is_estimate": false
+    },
     {
       "id": "49808",
       "name": "Sunoco",
       "loc": "501 Limit St (Leavenworth)",
       "address": "501 Limit St (Leavenworth)",
       "price": 3.83,
-      "updated": "2026-10-22T21:16:45.944Z",
-      "is_estimate": false
-    },
-    {
-      "id": "186732",
-      "name": "Murphy USA (Walmart)",
-      "loc": "10th Ave / Eisenhower (Leavenworth)",
-      "address": "1050 Eisenhower Road (Leavenworth)",
-      "price": 3.84,
-      "updated": "2026-10-23T09:31:50.661Z",
+      "updated": "2026-10-27T11:48:11.761Z",
       "is_estimate": false
     },
     {
@@ -33,8 +33,17 @@ window.GAZETTE_GAS_FEED = {
       "name": "AAFES Express",
       "loc": "Main Post (Ft. Leavenworth)",
       "address": "335 Kansas Ave (Fort Leavenworth)",
-      "price": 3.87,
-      "updated": "2026-10-21T18:26:56.266Z",
+      "price": 3.85,
+      "updated": "2026-10-27T15:17:57.327Z",
+      "is_estimate": false
+    },
+    {
+      "id": "204958",
+      "name": "7-Eleven",
+      "loc": "Metropolitan Ave (Leavenworth)",
+      "address": "609 Metropolitan Ave (Leavenworth)",
+      "price": 3.85,
+      "updated": "2026-10-28T15:08:26.562Z",
       "is_estimate": false
     },
     {
@@ -43,25 +52,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "1205 N Main St (Lansing)",
       "address": "1205 N Main St (Lansing)",
       "price": 3.87,
-      "updated": "2026-10-22T14:19:12.751Z",
-      "is_estimate": false
-    },
-    {
-      "id": "132625",
-      "name": "Dillons Fuel Center",
-      "loc": "Eisenhower Rd (Leavenworth)",
-      "address": "720 Eisenhower Rd (Leavenworth)",
-      "price": 3.87,
-      "updated": "2026-10-22T02:25:33.111Z",
-      "is_estimate": false
-    },
-    {
-      "id": "204958",
-      "name": "7-Eleven",
-      "loc": "Metropolitan Ave (Leavenworth)",
-      "address": "609 Metropolitan Ave (Leavenworth)",
-      "price": 3.87,
-      "updated": "2026-10-22T04:10:26.136Z",
+      "updated": "2026-10-29T04:18:10.754Z",
       "is_estimate": false
     },
     {
@@ -70,7 +61,7 @@ window.GAZETTE_GAS_FEED = {
       "loc": "2100 S 4th St (Leavenworth)",
       "address": "2100 S 4th St (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-23T08:48:00.796Z",
+      "updated": "2026-10-29T08:46:23.567Z",
       "is_estimate": false
     },
     {
@@ -79,25 +70,34 @@ window.GAZETTE_GAS_FEED = {
       "loc": "2004 Spruce St (Leavenworth)",
       "address": "2004 Spruce St (Leavenworth)",
       "price": 3.87,
-      "updated": "2026-10-23T08:46:35.034Z",
+      "updated": "2026-10-29T09:46:58.468Z",
       "is_estimate": false
+    },
+    {
+      "id": "132625",
+      "name": "Dillons Fuel Center",
+      "loc": "Eisenhower Rd (Leavenworth)",
+      "address": "720 Eisenhower Rd (Leavenworth)",
+      "price": 3.89,
+      "updated": null,
+      "is_estimate": true
     },
     {
       "id": "147917",
       "name": "BP / Amoco",
       "loc": "601 S Main St (Lansing)",
       "address": "601 S Main St (Lansing)",
-      "price": 3.87,
-      "updated": "2026-10-22T16:46:49.412Z",
-      "is_estimate": false
+      "price": 3.89,
+      "updated": null,
+      "is_estimate": true
     },
     {
       "id": "129028",
       "name": "Cenex",
       "loc": "109 4H Rd (Lansing)",
       "address": "109 4H Rd (Lansing)",
-      "price": 3.87,
-      "updated": "2026-10-22T16:46:55.089Z",
+      "price": 3.89,
+      "updated": "2026-10-29T03:11:31.580Z",
       "is_estimate": false
     },
     {
@@ -108,6 +108,15 @@ window.GAZETTE_GAS_FEED = {
       "price": 3.89,
       "updated": null,
       "is_estimate": true
+    },
+    {
+      "id": "132624",
+      "name": "Shell",
+      "loc": "Spruce St (Leavenworth)",
+      "address": "788 Spruce St (Leavenworth)",
+      "price": 3.89,
+      "updated": "2026-10-28T19:10:13.756Z",
+      "is_estimate": false
     },
     {
       "id": "143099",
@@ -123,16 +132,7 @@ window.GAZETTE_GAS_FEED = {
       "name": "Sam's Club Fuel",
       "loc": "Parallel Pkwy Corridor",
       "address": "10580 Parallel Pkwy (Kansas City)",
-      "price": 3.93,
-      "updated": "2026-10-23T01:03:43.591Z",
-      "is_estimate": false
-    },
-    {
-      "id": "132624",
-      "name": "Shell",
-      "loc": "Spruce St (Leavenworth)",
-      "address": "788 Spruce St (Leavenworth)",
-      "price": 3.99,
+      "price": 3.97,
       "updated": null,
       "is_estimate": true
     }

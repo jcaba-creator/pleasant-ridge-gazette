@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Trooper Command Deck • Parent Ops</title>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: #131b2e;
+      --card-border: #1e293b;
+      --gold: #f59e0b;
+      --gold-light: #fbbf24;
+      --green: #10b981;
+      --indigo: #6366f1;
+      --red: #ef4444;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Trebuchet MS", sans-serif;
+      min-height: 100vh;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 660px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding-bottom: 50px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    }
+
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-gold { background: var(--gold); color: #090d16; }
+    .btn-green { background: var(--green); color: white; }
+    .btn-indigo { background: var(--indigo); color: white; }
+    .btn-red { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .btn-muted { background: #1e293b; color: #cbd5e1; border: 1px solid #334155; }
+
+    .header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+    }
+    .header-title {
+      font-size: 17px;
+      font-weight: 900;
+      color: var(--gold-light);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #cbd5e1;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .task-item {
+      background: #090d16;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      gap: 10px;
+    }
+    .task-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+    }
+    .task-emoji {
+      font-size: 22px;
+      width: 32px;
+      text-align: center;
+    }
+    .task-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+    .task-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .task-zone-badge {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: #1e293b;
+      color: #94a3b8;
+      display: inline-block;
+      margin-top: 3px;
+    }
+    .task-actions {
+      display: flex;
+      gap: 6px;
+    }
+    .btn-icon {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+    .field-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: #cbd5e1;
+      text-transform: uppercase;
+    }
+    .input-text, .select-input {
+      background: #090d16;
+      border: 1px solid #334155;
+      color: #f8fafc;
+      padding: 9px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      outline: none;
+    }
+    .textarea {
+      width: 100%;
+      background: #090d16;
+      border: 1px solid #334155;
+      color: #f8fafc;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      min-height: 90px;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    .stat-pill {
+      background: #090d16;
+      border: 1px solid #1e293b;
+      padding: 10px;
+      border-radius: 12px;
+      text-align: center;
+    }
+    .stat-val {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--gold);
+    }
+    .stat-lbl {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    /* Telemetry Audit Log Stream */
+    .telemetry-log-table {
+      width: 100%;
+      font-size: 12px;
+      border-collapse: collapse;
+    }
+    .telemetry-row {
+      border-bottom: 1px solid #1e293b;
+      padding: 8px 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .telemetry-badge {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 5px;
+      text-transform: uppercase;
+    }
+    .badge-check { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .badge-uncheck { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .badge-boost { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .badge-system { background: rgba(99, 102, 241, 0.2); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.4); }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 1000;
+    }
+    .modal-overlay.hidden { display: none; }
+    .modal-card {
+      background: var(--card-bg);
+      border: 2px solid var(--gold);
+      border-radius: 18px;
+      width: 100%;
+      max-width: 440px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+    }
+
+    .nav-links { display: flex; gap: 10px; font-size: 12px; }
+    .nav-link { color: #38bdf8; text-decoration: none; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Top Navigation Header -->
+    <div class="card">
+      <div class="header-bar">
+        <div class="header-title">
+          <span>🛡️</span> TROOPER COMMAND DECK
+        </div>
+        <div class="nav-links">
+          <a href="/trooper/" class="nav-link" target="_blank">Open Trooper View ↗</a>
+        </div>
+      </div>
+      <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">
+        Private Parent Control Desk for Trooper: manage chore capture, adjust words of encouragement, and inspect real-time click telemetry.
+      </p>
+    </div>
+
+    <!-- Live Telemetry Quick Adjust -->
+    <div class="card">
+      <div class="section-title">
+        <span>HERO STATUS & TELEMETRY</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px;">
+        <div class="stat-pill">
+          <div class="stat-val" id="stat-xp">0</div>
+          <div class="stat-lbl">Total XP</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-val" id="stat-lvl">1</div>
+          <div class="stat-lbl">Hero Rank</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-val" id="stat-streak">1</div>
+          <div class="stat-lbl">Streak</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-val" id="stat-chests">0</div>
+          <div class="stat-lbl">Boosts Ready</div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+        <button class="btn btn-gold" onclick="adjustXP(50)">+50 Bonus XP</button>
+        <button class="btn btn-green" onclick="adjustChests(1)">+1 Hero Boost</button>
+        <button class="btn btn-muted" onclick="adjustStreak(1)">+1 Day Streak</button>
+        <button class="btn btn-red" onclick="resetDayChecks()">Clear Today's Checks</button>
+      </div>
+    </div>
+
+    <!-- LIVE TELEMETRY & CLICK STREAM AUDIT -->
+    <div class="card">
+      <div class="section-title">
+        <span>CLICK STREAM & ACTIVITY AUDIT (<span id="telemetry-count">0</span> EVENTS)</span>
+        <div style="display: flex; gap: 6px;">
+          <button class="btn btn-muted btn-icon" onclick="exportTelemetry()">Export CSV</button>
+          <button class="btn btn-red btn-icon" onclick="clearTelemetry()">Clear</button>
+        </div>
+      </div>
+      <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">
+        Real-time audit log recording exactly what Trooper clicks and when he completes each chore:
+      </p>
+
+      <div id="telemetry-stream" style="max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px;">
+        <!-- Telemetry items injected dynamically -->
+      </div>
+    </div>
+
+    <!-- TASK CAPTURE & MANIFEST MANAGER -->
+    <div class="card">
+      <div class="section-title">
+        <span>CHORE MANIFEST (<span id="task-count">0</span> TASKS)</span>
+        <button class="btn btn-green" onclick="openAddTaskModal()">+ Add New Chore</button>
+      </div>
+
+      <div id="tasks-list">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 10px; border-top: 1px solid #1e293b;">
+        <button class="btn btn-muted" onclick="resetTasksToDefault()">Restore Default 11 Tasks</button>
+        <span style="font-size: 11px; color: var(--text-muted);">Syncs live to Trooper's device</span>
+      </div>
+    </div>
+
+    <!-- UPLIFTING COMPLIMENTS & ENCOURAGEMENT POOL -->
+    <div class="card">
+      <div class="section-title">
+        <span>WORDS OF ENCOURAGEMENT POOL</span>
+        <button class="btn btn-indigo" onclick="saveRewardsPool()">Save Words</button>
+      </div>
+      <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">
+        Each line becomes an uplifting compliment or empowering message shown when he unlocks a Hero Boost:
+      </p>
+      <textarea id="rewards-input" class="textarea" rows="7"></textarea>
+    </div>
+
+    <!-- SCRATCHPAD LOGS REVIEW -->
+    <div class="card">
+      <div class="section-title">
+        <span>FIELD SCRATCHPAD OBSERVATIONS</span>
+        <div style="display: flex; gap: 6px;">
+          <button class="btn btn-muted btn-icon" onclick="copyAllNotes()">Copy All</button>
+          <button class="btn btn-red btn-icon" onclick="clearAllNotes()">Clear</button>
+        </div>
+      </div>
+      <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">
+        Field observations recorded at the bottom of Trooper's view:
+      </p>
+      <div id="scratchpad-log-list" style="display: flex; flex-direction: column; gap: 6px; max-height: 200px; overflow-y: auto;">
+        <!-- Log rows rendered dynamically -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ADD / EDIT TASK MODAL -->
+  <div id="task-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <h3 id="modal-title" style="font-size: 16px; font-weight: 800; color: var(--gold-light); margin-bottom: 12px;">Add New Chore</h3>
+
+      <div class="field-group">
+        <label class="field-label">Chore Action Title (Real-world description)</label>
+        <input type="text" id="m-task-name" class="input-text" placeholder="e.g. Put shoes in rack">
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Description / Guidance</label>
+        <input type="text" id="m-task-desc" class="input-text" placeholder="e.g. Put pair away neatly">
+      </div>
+
+      <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px;">
+        <div class="field-group">
+          <label class="field-label">Zone</label>
+          <select id="m-task-zone" class="select-input">
+            <option value="am">🌅 Morning Launch</option>
+            <option value="pasture">🐴 Pasture & Herd</option>
+            <option value="critters">🐾 Critter Squad</option>
+            <option value="pm">🌙 Evening Reset</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">XP</label>
+          <input type="number" id="m-task-xp" class="input-text" value="25" min="5" step="5">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Emoji</label>
+          <input type="text" id="m-task-emoji" class="input-text" value="⭐" style="text-align: center;">
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px;">
+        <button class="btn btn-muted" onclick="closeTaskModal()">Cancel</button>
+        <button class="btn btn-gold" onclick="saveTaskModal()">Save Chore</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const TASKS_KEY = "bb_trooper_tasks_config_v1";
+    const DATA_KEY = "bb_trooper_ranch_quest_data";
+    const NOTES_KEY = "bb_trooper_scratchpad_notes";
+    const TELEMETRY_KEY = "bb_trooper_telemetry_v1";
+
+    const DEFAULT_REAL_WORLD_TASKS = [
+      // Morning Launch
+      { id: "get_dressed", name: "Get dressed", desc: "Put on clothes and socks", zone: "am", xp: 25, emoji: "👕" },
+      { id: "brush_teeth", name: "Brush teeth", desc: "Brush teeth for 2 minutes", zone: "am", xp: 25, emoji: "🪥" },
+      { id: "floss_teeth", name: "Floss teeth", desc: "Floss clean between teeth", zone: "am", xp: 25, emoji: "🦷" },
+      { id: "put_deodorant", name: "Put on Deodorant", desc: "Put on fresh deodorant", zone: "am", xp: 25, emoji: "✨" },
+      { id: "take_medicine", name: "Take medicine", desc: "Take morning medicine", zone: "am", xp: 25, emoji: "💊" },
+      { id: "eat_breakfast", name: "Eat breakfast", desc: "Finish breakfast food and drink", zone: "am", xp: 25, emoji: "🥞" },
+      { id: "get_backpack", name: "Get backpack", desc: "Packed and placed by the door", zone: "am", xp: 25, emoji: "🎒" },
+      { id: "feed_kitten", name: "Feed kitten", desc: "Put food in kitten bowl", zone: "am", xp: 25, emoji: "🐱" },
+      { id: "horse_bowl_garage", name: "Place yesterday’s horse bowl back in garage", desc: "Return empty horse bowl to garage", zone: "am", xp: 25, emoji: "🥣" },
+      { id: "reset_beet_pulp", name: "Reset beet pulp for tomorrow", desc: "Prep and soak beet pulp for tomorrow", zone: "am", xp: 25, emoji: "🌾" },
+
+      // Pasture & Barn Patrol
+      { id: "check_horse_water", name: "Check horse water", desc: "Check trough - make sure it is full and clean", zone: "pasture", xp: 50, emoji: "💧" },
+      { id: "horse_cow_care", name: "Take care of horse and cow", desc: "Feed and check on horse and cow", zone: "pasture", xp: 50, emoji: "🐄" },
+
+      // Critter Squad
+      { id: "feed_dog", name: "Feed dog", desc: "Put food in the dog bowl", zone: "critters", xp: 35, emoji: "🐕" },
+      { id: "feed_cat", name: "Feed cat", desc: "Put food in the cat bowl", zone: "critters", xp: 35, emoji: "🐈" },
+      { id: "water_cat", name: "Water cat", desc: "Give cat fresh clean water", zone: "critters", xp: 35, emoji: "🥛" },
+      { id: "do_litter", name: "Do litter", desc: "Clean the cat litter box", zone: "critters", xp: 35, emoji: "🧹" },
+
+      // Evening Reset
+      { id: "chill_reset", name: "Chill and reset for tomorrow", desc: "Put shoes away and relax for tomorrow", zone: "pm", xp: 50, emoji: "🎧" }
+    ];
+
+    const DEFAULT_ENCOURAGEMENT_WORDS = [
+      "🌟 You are capable of doing hard things, and you proved it today!",
+      "💪 Proud of your focus and follow-through — you are building real strength!",
+      "🐴 The animals count on you, and you showed up like a true ranch hand!",
+      "❤️ Your hard work and dedication don't go unnoticed. You make us proud!",
+      "🚀 Every good habit you build today makes you unstoppable tomorrow.",
+      "⭐ You stayed on mission and took care of business before having fun. That is true leadership!",
+      "🔥 Small daily wins add up to massive success. Keep crushing it!",
+      "🎯 You have a strong spirit and a great work ethic. Keep your chin high!"
+    ];
+
+    let tasks = [];
+    let heroData = {};
+    let editingTaskId = null;
+
+    function init() {
+      const savedTasks = localStorage.getItem(TASKS_KEY);
+      if (savedTasks) {
+        try {
+          const loaded = JSON.parse(savedTasks);
+          const existingIds = new Set(loaded.map(t => t.id));
+          DEFAULT_REAL_WORLD_TASKS.forEach(dt => {
+            if (!existingIds.has(dt.id)) {
+              loaded.push(dt);
+            }
+          });
+          tasks = loaded;
+        } catch(e) {
+          tasks = [...DEFAULT_REAL_WORLD_TASKS];
+        }
+      } else {
+        tasks = [...DEFAULT_REAL_WORLD_TASKS];
+      }
+      saveTasks();
+
+      const savedData = localStorage.getItem(DATA_KEY);
+      if (savedData) {
+        try { heroData = JSON.parse(savedData); } catch(e) { heroData = {}; }
+      }
+
+      renderTelemetry();
+      renderTelemetryStream();
+      renderTasks();
+      renderRewards();
+      renderScratchpadNotes();
+    }
+
+    function saveTasks() {
+      localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
+      renderTasks();
+    }
+
+    function saveHeroData() {
+      localStorage.setItem(DATA_KEY, JSON.stringify(heroData));
+      renderTelemetry();
+    }
+
+    function renderTelemetry() {
+      document.getElementById('stat-xp').innerText = heroData.xp || 0;
+      document.getElementById('stat-streak').innerText = heroData.streak || 1;
+      document.getElementById('stat-chests').innerText = heroData.pendingChests || 0;
+
+      const xp = heroData.xp || 0;
+      let lvl = 1;
+      if (xp >= 2000) lvl = 6;
+      else if (xp >= 1300) lvl = 5;
+      else if (xp >= 850) lvl = 4;
+      else if (xp >= 500) lvl = 3;
+      else if (xp >= 250) lvl = 2;
+      document.getElementById('stat-lvl').innerText = lvl;
+    }
+
+    function renderTelemetryStream() {
+      const container = document.getElementById('telemetry-stream');
+      let events = [];
+      try {
+        events = JSON.parse(localStorage.getItem(TELEMETRY_KEY) || '[]');
+      } catch(e) {}
+
+      document.getElementById('telemetry-count').innerText = events.length;
+      container.innerHTML = '';
+
+      if (events.length === 0) {
+        container.innerHTML = '<div style="font-size: 11px; color: var(--text-muted); font-style: italic; padding: 6px;">No telemetry logged yet. Open Trooper\'s page and click chores to test.</div>';
+        return;
+      }
+
+      events.slice(0, 40).forEach(ev => {
+        const row = document.createElement('div');
+        row.style.background = '#090d16';
+        row.style.border = '1px solid #1e293b';
+        row.style.borderRadius = '8px';
+        row.style.padding = '8px 10px';
+        row.style.fontSize = '12px';
+        row.style.display = 'flex';
+        row.style.justifyContent = 'space-between';
+        row.style.alignItems = 'center';
+
+        let badgeClass = 'badge-system';
+        if (ev.action === 'TASK_CHECKED') badgeClass = 'badge-check';
+        else if (ev.action === 'TASK_UNCHECKED') badgeClass = 'badge-uncheck';
+        else if (ev.action === 'HERO_BOOST_OPENED') badgeClass = 'badge-boost';
+
+        row.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="telemetry-badge ${badgeClass}">${ev.action.replace('_', ' ')}</span>
+            <span style="color: #f1f5f9; font-weight: 500;">${ev.detail}</span>
+          </div>
+          <span style="font-size: 10px; color: #64748b; white-space: nowrap; margin-left: 10px;">${ev.displayDate} ${ev.displayTime}</span>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function exportTelemetry() {
+      let events = [];
+      try { events = JSON.parse(localStorage.getItem(TELEMETRY_KEY) || '[]'); } catch(e) {}
+      if (events.length === 0) return alert("No telemetry events to export.");
+
+      let csv = "Timestamp,Date,Time,Action,Detail,XP,Streak\n";
+      events.forEach(e => {
+        const cleanDetail = (e.detail || '').replace(/"/g, '""');
+        csv += `"${e.timestamp}","${e.displayDate}","${e.displayTime}","${e.action}","${cleanDetail}",${e.xp || 0},${e.streak || 1}\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `trooper_telemetry_${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+    }
+
+    function clearTelemetry() {
+      if (confirm("Clear all click telemetry events?")) {
+        localStorage.removeItem(TELEMETRY_KEY);
+        renderTelemetryStream();
+      }
+    }
+
+    function adjustXP(amt) {
+      heroData.xp = (heroData.xp || 0) + amt;
+      saveHeroData();
+    }
+
+    function adjustChests(amt) {
+      heroData.pendingChests = Math.max(0, (heroData.pendingChests || 0) + amt);
+      saveHeroData();
+    }
+
+    function adjustStreak(amt) {
+      heroData.streak = Math.max(1, (heroData.streak || 1) + amt);
+      saveHeroData();
+    }
+
+    function resetDayChecks() {
+      if (confirm("Reset today's chore checkmarks on Trooper's view? (XP and rank will remain!)")) {
+        heroData.completedChores = {};
+        saveHeroData();
+        alert("Today's checkmarks cleared!");
+      }
+    }
+
+    function renderTasks() {
+      const container = document.getElementById('tasks-list');
+      document.getElementById('task-count').innerText = tasks.length;
+      container.innerHTML = '';
+
+      const zoneNames = {
+        am: "🌅 Morning Launch",
+        pasture: "🐴 Pasture & Herd",
+        critters: "🐾 Critter Squad",
+        pm: "🌙 Evening Reset"
+      };
+
+      tasks.forEach((t) => {
+        const div = document.createElement('div');
+        div.className = 'task-item';
+        div.innerHTML = `
+          <div class="task-info">
+            <span class="task-emoji">${t.emoji || '⭐'}</span>
+            <div>
+              <div class="task-name">${t.name}</div>
+              <div class="task-desc">${t.desc || ''}</div>
+              <span class="task-zone-badge">${zoneNames[t.zone] || t.zone} • +${t.xp} XP</span>
+            </div>
+          </div>
+          <div class="task-actions">
+            <button class="btn btn-muted btn-icon" onclick="editTask('${t.id}')">✏️</button>
+            <button class="btn btn-red btn-icon" onclick="deleteTask('${t.id}')">✕</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function openAddTaskModal() {
+      editingTaskId = null;
+      document.getElementById('modal-title').innerText = "Add New Chore";
+      document.getElementById('m-task-name').value = '';
+      document.getElementById('m-task-desc').value = '';
+      document.getElementById('m-task-zone').value = 'am';
+      document.getElementById('m-task-xp').value = '25';
+      document.getElementById('m-task-emoji').value = '⭐';
+      document.getElementById('task-modal').classList.remove('hidden');
+    }
+
+    function editTask(id) {
+      const t = tasks.find(x => x.id === id);
+      if (!t) return;
+      editingTaskId = id;
+      document.getElementById('modal-title').innerText = "Edit Chore";
+      document.getElementById('m-task-name').value = t.name;
+      document.getElementById('m-task-desc').value = t.desc || '';
+      document.getElementById('m-task-zone').value = t.zone || 'am';
+      document.getElementById('m-task-xp').value = t.xp || 25;
+      document.getElementById('m-task-emoji').value = t.emoji || '⭐';
+      document.getElementById('task-modal').classList.remove('hidden');
+    }
+
+    function closeTaskModal() {
+      document.getElementById('task-modal').classList.add('hidden');
+    }
+
+    function saveTaskModal() {
+      const name = document.getElementById('m-task-name').value.trim();
+      if (!name) return alert("Please enter a chore action name.");
+      const desc = document.getElementById('m-task-desc').value.trim();
+      const zone = document.getElementById('m-task-zone').value;
+      const xp = parseInt(document.getElementById('m-task-xp').value, 10) || 25;
+      const emoji = document.getElementById('m-task-emoji').value.trim() || '⭐';
+
+      if (editingTaskId) {
+        const item = tasks.find(x => x.id === editingTaskId);
+        if (item) {
+          item.name = name;
+          item.desc = desc;
+          item.zone = zone;
+          item.xp = xp;
+          item.emoji = emoji;
+        }
+      } else {
+        const id = 'task_' + Date.now();
+        tasks.push({ id, name, desc, zone, xp, emoji });
+      }
+
+      saveTasks();
+      closeTaskModal();
+    }
+
+    function deleteTask(id) {
+      const item = tasks.find(x => x.id === id);
+      if (!item) return;
+      if (confirm(`Remove chore "${item.name}" from Trooper's routine?`)) {
+        tasks = tasks.filter(x => x.id !== id);
+        saveTasks();
+      }
+    }
+
+    function resetTasksToDefault() {
+      if (confirm("Reset task list to the default 11 homestead chores?")) {
+        tasks = [...DEFAULT_REAL_WORLD_TASKS];
+        saveTasks();
+      }
+    }
+
+    function renderRewards() {
+      const pool = heroData.rewardsPool && heroData.rewardsPool.length > 0 ? heroData.rewardsPool : DEFAULT_ENCOURAGEMENT_WORDS;
+      document.getElementById('rewards-input').value = pool.join('\n');
+    }
+
+    function saveRewardsPool() {
+      const lines = document.getElementById('rewards-input').value.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      if (lines.length > 0) {
+        heroData.rewardsPool = lines;
+        saveHeroData();
+        alert("Words of encouragement saved!");
+      }
+    }
+
+    function renderScratchpadNotes() {
+      const container = document.getElementById('scratchpad-log-list');
+      let notes = [];
+      try {
+        const raw = localStorage.getItem(NOTES_KEY);
+        if (raw) notes = JSON.parse(raw);
+      } catch(e) {}
+
+      container.innerHTML = '';
+      if (notes.length === 0) {
+        container.innerHTML = '<div style="font-size: 12px; color: var(--text-muted); font-style: italic; padding: 6px;">No scratchpad observations logged yet.</div>';
+        return;
+      }
+
+      notes.forEach((n, idx) => {
+        const item = document.createElement('div');
+        item.style.background = '#090d16';
+        item.style.padding = '8px 10px';
+        item.style.borderRadius = '8px';
+        item.style.border = '1px solid #1e293b';
+        item.style.fontSize = '12px';
+        item.style.display = 'flex';
+        item.style.justifyContent = 'space-between';
+        item.style.alignItems = 'center';
+
+        item.innerHTML = `
+          <div>
+            <div style="color: #f1f5f9; font-weight: 600;">${n.text}</div>
+            <div style="font-size: 10px; color: #64748b; margin-top: 2px;">${n.timestamp}</div>
+          </div>
+          <button onclick="deleteSingleNote(${idx})" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 14px;">✕</button>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function deleteSingleNote(idx) {
+      try {
+        let notes = JSON.parse(localStorage.getItem(NOTES_KEY) || '[]');
+        notes.splice(idx, 1);
+        localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+        renderScratchpadNotes();
+      } catch(e) {}
+    }
+
+    function clearAllNotes() {
+      if (confirm("Clear all field scratchpad notes?")) {
+        localStorage.removeItem(NOTES_KEY);
+        renderScratchpadNotes();
+      }
+    }
+
+    function copyAllNotes() {
+      let notes = [];
+      try { notes = JSON.parse(localStorage.getItem(NOTES_KEY) || '[]'); } catch(e) {}
+      if (notes.length === 0) return alert("No notes to copy.");
+      const text = notes.map(n => `[${n.timestamp}] ${n.text}`).join('\n');
+      navigator.clipboard.writeText(text).then(() => alert("All notes copied to clipboard!"));
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

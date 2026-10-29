@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>PastureOps - Testing: Poultry Time-Motion Simulator</title>
+<style>
+  :root {
+    --bg-dark: #121814;
+    --panel-bg: #1c241e;
+    --panel-border: #2e3d33;
+    --text-primary: #e6ede8;
+    --text-muted: #8b9e91;
+    --accent-green: #48bb78;
+    --accent-amber: #ecc94b;
+    --accent-red: #f56565;
+    --accent-blue: #4299e1;
+    --pasture-fresh: #2d4a2d;
+    --pasture-grazed: #594a2b;
+    --farmstead-bg: #2d3748;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+  body {
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* TOP STATUS HUD */
+  #hud {
+    background: var(--panel-bg);
+    border-bottom: 2px solid var(--panel-border);
+    padding: 8px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .hud-stat { display: flex; align-items: center; gap: 6px; }
+  .hud-badge {
+    background: #000;
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--panel-border);
+    color: var(--accent-green);
+  }
+  .hud-tag {
+    background: #742a2a;
+    color: #feb2b2;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+  }
+
+  /* WORKSPACE LAYOUT */
+  #main-viewport {
+    display: flex;
+    flex: 1;
+    height: calc(100vh - 45px - 140px);
+    overflow: hidden;
+  }
+
+  /* MAP VIEW */
+  #canvas-container {
+    flex: 1;
+    position: relative;
+    background: #0d120f;
+    overflow: hidden;
+    touch-action: none;
+  }
+  canvas { display: block; width: 100%; height: 100%; }
+
+  /* SIDE DISPATCH PANE */
+  #sidebar {
+    width: 320px;
+    background: var(--panel-bg);
+    border-left: 2px solid var(--panel-border);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .panel-section {
+    padding: 12px;
+    border-bottom: 1px solid var(--panel-border);
+  }
+  .panel-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* STAMINA METER */
+  .gauge-container {
+    background: #000;
+    border: 1px solid var(--panel-border);
+    height: 18px;
+    border-radius: 9px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 6px;
+  }
+  #stamina-bar {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, var(--accent-green), var(--accent-amber));
+    transition: width 0.2s ease;
+  }
+  .gauge-label {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+    text-shadow: 0 1px 2px #000;
+  }
+
+  /* TICKET LIST */
+  .ticket-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    padding: 3px 0;
+    border-bottom: 1px dashed rgba(255,255,255,0.05);
+  }
+  .ticket-row span:last-child { font-weight: bold; }
+
+  /* BOTTOM RACKS / CONTROL TRAY */
+  #bottom-tray {
+    height: 140px;
+    background: var(--panel-bg);
+    border-top: 2px solid var(--panel-border);
+    display: flex;
+    padding: 10px;
+    gap: 12px;
+  }
+  .tray-card {
+    flex: 1;
+    background: #151c17;
+    border: 1px solid var(--panel-border);
+    border-radius: 4px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .tray-title { font-size: 11px; color: var(--text-muted); font-weight: bold; }
+  .tray-val { font-size: 18px; font-weight: bold; color: var(--text-primary); }
+
+  /* BUTTONS & CONTROLS */
+  .btn {
+    background: #2b382f;
+    border: 1px solid var(--accent-green);
+    color: var(--text-primary);
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn:active { background: var(--accent-green); color: #000; }
+  .btn-accent { background: #22543d; border-color: var(--accent-green); }
+
+  /* VARIABLE INSPECTOR MODAL */
+  #inspector-overlay {
+    display: none;
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 100;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  .inspector-card {
+    background: var(--panel-bg);
+    border: 2px solid var(--panel-border);
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 16px;
+    border-radius: 8px;
+  }
+  .param-group { margin-bottom: 12px; }
+  .param-group label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
+  .param-group input[type="range"] { width: 100%; accent-color: var(--accent-green); }
+
+  @media (max-width: 768px) {
+    #sidebar { width: 100%; height: 180px; border-left: none; border-top: 2px solid var(--panel-border); }
+    #main-viewport { flex-direction: column; }
+    #bottom-tray { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP STATUS HUD -->
+<div id="hud">
+  <div class="hud-stat">
+    <span class="hud-tag">TESTING</span>
+    <span>📅</span> <span id="hud-day">Day 1 (Spring)</span>
+  </div>
+  <div class="hud-stat">🪙 <span id="hud-cash" class="hud-badge">$1,500.00</span></div>
+  <div class="hud-stat">⚡ <span id="hud-labor">120m Budget</span></div>
+  <div style="display:flex; gap:6px;">
+    <a href="index.html" class="btn" style="padding:2px 8px; font-size:11px;">&larr; Arcade</a>
+    <button class="btn" style="padding:2px 8px;" onclick="toggleInspector()">⚙️ Config</button>
+  </div>
+</div>
+
+<!-- MAIN VIEWPORT (MAP + DISPATCH) -->
+<div id="main-viewport">
+  <div id="canvas-container">
+    <canvas id="farmMap"></canvas>
+  </div>
+
+  <div id="sidebar">
+    <div class="panel-section">
+      <div class="panel-title">OPERATOR STAMINA & TIME BURN</div>
+      <div class="gauge-container">
+        <div id="stamina-bar"></div>
+        <div class="gauge-label" id="stamina-label">120m / 120m REMAINING</div>
+      </div>
+    </div>
+
+    <div class="panel-section" style="flex:1;">
+      <div class="panel-title">TODAY'S MOTION STUDY TICKET</div>
+      <div class="ticket-row"><span>Transit Distance</span><span id="tk-dist">0 ft</span></div>
+      <div class="ticket-row"><span>Haul Velocity</span><span id="tk-vel">150 ft/min</span></div>
+      <div class="ticket-row"><span>Transit Burn</span><span id="tk-transit">0.0 mins</span></div>
+      <div class="ticket-row"><span>Water/Feed Service</span><span id="tk-service">12.0 mins</span></div>
+      <div class="ticket-row"><span>Tractor Drag Pull</span><span id="tk-drag">8.0 mins</span></div>
+      <div class="ticket-row" style="color:var(--accent-amber); margin-top:6px; border-top:1px solid #444; padding-top:4px;">
+        <span>Total Chore Time</span><span id="tk-total">20.0 mins</span>
+      </div>
+      <div style="margin-top:12px;">
+        <button class="btn btn-accent" style="width:100%;" onclick="executeChores()">▶ EXECUTE CHORES</button>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-title">TRACTOR 1 [50 CORNISH CROSS]</div>
+      <div class="ticket-row"><span>Current Cell</span><span id="flock-cell">[6, 12]</span></div>
+      <div class="ticket-row"><span>Forage Status</span><span style="color:var(--accent-green);">Prime Grass</span></div>
+      <div class="ticket-row"><span>Days on Tile</span><span id="flock-days">0 Days</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM INVENTORY TRAY -->
+<div id="bottom-tray">
+  <div class="tray-card">
+    <div class="tray-title">FEED DEPOT (50lb SACKS)</div>
+    <div class="tray-val" id="inv-feed">10 Bags</div>
+    <div style="font-size:10px; color:var(--text-muted);">$18.50/bag • Non-GMO</div>
+  </div>
+  <div class="tray-card">
+    <div class="tray-title">WATER SUPPLY INFRASTRUCTURE</div>
+    <div class="tray-val">Manual Haul</div>
+    <div style="font-size:10px; color:var(--text-muted);">Spigot at [0, 1] • No Pipe Run</div>
+  </div>
+  <div class="tray-card">
+    <div class="tray-title">COLD STORAGE / FREEZER</div>
+    <div class="tray-val">0 / 250 lbs</div>
+    <div style="font-size:10px; color:var(--text-muted);">Chest Freezer Cap: 50 Birds</div>
+  </div>
+</div>
+
+<!-- VARIABLE INSPECTOR (MODAL) -->
+<div id="inspector-overlay">
+  <div class="inspector-card">
+    <div class="panel-title" style="font-size:14px; margin-bottom:12px;">LIVE ENGINE CONFIGURATION (TESTING)</div>
+    
+    <div class="param-group">
+      <label>Loaded Haul Walk Speed: <span id="v-speed-val">150</span> ft/min</label>
+      <input type="range" id="v-speed" min="80" max="300" value="150" oninput="updateConfig()">
+    </div>
+    
+    <div class="param-group">
+      <label>Tractor Pull Time: <span id="v-pull-val">8</span> mins</label>
+      <input type="range" id="v-pull" min="2" max="25" value="8" oninput="updateConfig()">
+    </div>
+
+    <div class="param-group">
+      <label>Stationary Service Time (Feed/Water): <span id="v-serv-val">12</span> mins</label>
+      <input type="range" id="v-serv" min="5" max="30" value="12" oninput="updateConfig()">
+    </div>
+
+    <div class="param-group">
+      <label>OPFOR Threat Aggression: <span id="v-opfor-val">25</span>%</label>
+      <input type="range" id="v-opfor" min="0" max="100" value="25" oninput="updateConfig()">
+    </div>
+
+    <button class="btn" style="width:100%; margin-top:12px;" onclick="toggleInspector()">SAVE & CLOSE</button>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+ * PASTUREOPS - TESTING ENGINE - SPRINT 1.0 CORE
+ * ===================================================================== */
+
+const CONFIG = {
+  gridSize: 30,         // 30x30 tiles
+  cellSizeFt: 20,       // 20ft per cell (600ft x 600ft field)
+  farmsteadWidth: 3,    // First 3 columns are base structures
+  walkSpeedFtMin: 150,  // Loaded walking speed
+  tractorPullMins: 8,   // Base friction to move shelter
+  serviceMins: 12,      // Fixed time to service feed/water
+  dailyBudgetMins: 120, // 2-hour part-time homestead baseline
+  opforAggression: 25
+};
+
+const STATE = {
+  day: 1,
+  cash: 1500.00,
+  feedBags: 10,
+  laborRemaining: 120,
+  structures: {
+    garage: { x: 0, y: 14, label: "Garage / Shop", color: "#4a5568" },
+    depot:  { x: 1, y: 13, label: "Feed Depot", color: "#d69e2e" },
+    well:   { x: 0, y: 15, label: "Wellhead Spigot", color: "#3182ce" }
+  },
+  tractor: {
+    x: 6,
+    y: 12,
+    size: 1, // Occupies 1 cell
+    daysOnTile: 0,
+    dragging: false
+  },
+  cellWear: {} // Key: "x,y" -> integer days grazed
+};
+
+const canvas = document.getElementById('farmMap');
+const ctx = canvas.getContext('2d');
+let camera = { x: 0, y: 0, zoom: 24 };
+
+function init() {
+  resize();
+  window.addEventListener('resize', resize);
+  setupTouchAndMouse();
+  recalculateMotion();
+  render();
+}
+
+function resize() {
+  const container = document.getElementById('canvas-container');
+  canvas.width = container.clientWidth;
+  canvas.height = container.clientHeight;
+  // Fit map to screen view
+  camera.zoom = Math.floor(Math.min(canvas.width, canvas.height) / (CONFIG.gridSize + 2));
+  camera.x = Math.floor((canvas.width - CONFIG.gridSize * camera.zoom) / 2);
+  camera.y = Math.floor((canvas.height - CONFIG.gridSize * camera.zoom) / 2);
+  render();
+}
+
+/* TIME MOTION STUDY ENGINE */
+function calculateDistance(x1, y1, x2, y2) {
+  // Euclidean distance converted to feet
+  const dx = (x2 - x1) * CONFIG.cellSizeFt;
+  const dy = (y2 - y1) * CONFIG.cellSizeFt;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+function recalculateMotion() {
+  // Transit route: Depot -> Tractor -> Well -> Tractor -> Garage
+  const d1 = calculateDistance(STATE.structures.depot.x, STATE.structures.depot.y, STATE.tractor.x, STATE.tractor.y);
+  const d2 = calculateDistance(STATE.structures.well.x, STATE.structures.well.y, STATE.tractor.x, STATE.tractor.y);
+  const totalDist = Math.round((d1 + d2) * 2); // Round trip runs
+
+  const transitMins = parseFloat((totalDist / CONFIG.walkSpeedFtMin).toFixed(1));
+  const totalChoreTime = parseFloat((transitMins + CONFIG.serviceMins + CONFIG.tractorPullMins).toFixed(1));
+
+  // Update UI Elements
+  document.getElementById('tk-dist').innerText = `${totalDist} ft`;
+  document.getElementById('tk-vel').innerText = `${CONFIG.walkSpeedFtMin} ft/min`;
+  document.getElementById('tk-transit').innerText = `${transitMins} mins`;
+  document.getElementById('tk-service').innerText = `${CONFIG.serviceMins} mins`;
+  document.getElementById('tk-drag').innerText = `${CONFIG.tractorPullMins} mins`;
+  document.getElementById('tk-total').innerText = `${totalChoreTime} mins`;
+  document.getElementById('flock-cell').innerText = `[${STATE.tractor.x}, ${STATE.tractor.y}]`;
+  document.getElementById('flock-days').innerText = `${STATE.tractor.daysOnTile} Days`;
+
+  // Stamina Bar
+  const pct = Math.max(0, ((CONFIG.dailyBudgetMins - totalChoreTime) / CONFIG.dailyBudgetMins) * 100);
+  document.getElementById('stamina-bar').style.width = `${pct}%`;
+  document.getElementById('stamina-label').innerText = `${(CONFIG.dailyBudgetMins - totalChoreTime).toFixed(1)}m / ${CONFIG.dailyBudgetMins}m REMAINING`;
+  
+  if (pct < 25) {
+    document.getElementById('stamina-bar').style.background = 'var(--accent-red)';
+  } else {
+    document.getElementById('stamina-bar').style.background = 'linear-gradient(90deg, var(--accent-green), var(--accent-amber))';
+  }
+
+  return totalChoreTime;
+}
+
+/* RENDERING LOOP */
+function render() {
+  ctx.fillStyle = '#0d120f';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const z = camera.zoom;
+  const ox = camera.x;
+  const oy = camera.y;
+
+  // Render Grid
+  for (let x = 0; x < CONFIG.gridSize; x++) {
+    for (let y = 0; y < CONFIG.gridSize; y++) {
+      const px = ox + x * z;
+      const py = oy + y * z;
+
+      if (x < CONFIG.farmsteadWidth) {
+        ctx.fillStyle = '#1e2621'; // Base gravel/concrete pad
+      } else {
+        const wear = STATE.cellWear[`${x},${y}`] || 0;
+        ctx.fillStyle = wear > 0 ? '#433722' : '#1e3822'; // Grazed straw vs green grass
+      }
+      ctx.fillRect(px, py, z - 1, z - 1);
+    }
+  }
+
+  // Draw Farmstead Demarcation Line
+  ctx.strokeStyle = '#4a5568';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(ox + CONFIG.farmsteadWidth * z, oy);
+  ctx.lineTo(ox + CONFIG.farmsteadWidth * z, oy + CONFIG.gridSize * z);
+  ctx.stroke();
+
+  // Draw Chore Pathing (Dotted Lines)
+  const tx = ox + (STATE.tractor.x + 0.5) * z;
+  const ty = oy + (STATE.tractor.y + 0.5) * z;
+  const wx = ox + (STATE.structures.well.x + 0.5) * z;
+  const wy = oy + (STATE.structures.well.y + 0.5) * z;
+
+  ctx.strokeStyle = '#ecc94b';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(wx, wy);
+  ctx.lineTo(tx, ty);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Render Base Structures
+  Object.values(STATE.structures).forEach(struct => {
+    ctx.fillStyle = struct.color;
+    ctx.fillRect(ox + struct.x * z, oy + struct.y * z, z - 1, z - 1);
+  });
+
+  // Render Tractor
+  ctx.fillStyle = '#e53e3e';
+  ctx.fillRect(ox + STATE.tractor.x * z, oy + STATE.tractor.y * z, z - 1, z - 1);
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(ox + STATE.tractor.x * z, oy + STATE.tractor.y * z, z - 1, z - 1);
+
+  // Tractor Icon glyph
+  ctx.fillStyle = '#fff';
+  ctx.font = `${Math.floor(z * 0.6)}px sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('🚜', ox + (STATE.tractor.x + 0.5) * z, oy + (STATE.tractor.y + 0.5) * z);
+}
+
+/* INTERACTION & DRAG-AND-DROP */
+function setupTouchAndMouse() {
+  let isDown = false;
+
+  function getTile(evt) {
+    const rect = canvas.getBoundingClientRect();
+    const clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
+    const clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
+    const mx = clientX - rect.left - camera.x;
+    const my = clientY - rect.top - camera.y;
+    return {
+      x: Math.floor(mx / camera.zoom),
+      y: Math.floor(my / camera.zoom)
+    };
+  }
+
+  function handleStart(e) {
+    const tile = getTile(e);
+    if (tile.x === STATE.tractor.x && tile.y === STATE.tractor.y) {
+      isDown = true;
+      STATE.tractor.dragging = true;
+    }
+  }
+
+  function handleMove(e) {
+    if (!isDown) return;
+    const tile = getTile(e);
+    // Boundary checks & restrict to pasture
+    if (tile.x >= CONFIG.farmsteadWidth && tile.x < CONFIG.gridSize &&
+        tile.y >= 0 && tile.y < CONFIG.gridSize) {
+      STATE.tractor.x = tile.x;
+      STATE.tractor.y = tile.y;
+      recalculateMotion();
+      render();
+    }
+  }
+
+  function handleEnd() {
+    isDown = false;
+    STATE.tractor.dragging = false;
+  }
+
+  canvas.addEventListener('mousedown', handleStart);
+  window.addEventListener('mousemove', handleMove);
+  window.addEventListener('mouseup', handleEnd);
+
+  canvas.addEventListener('touchstart', handleStart, { passive: false });
+  window.addEventListener('touchmove', handleMove, { passive: false });
+  window.addEventListener('touchend', handleEnd);
+}
+
+/* DISPATCH & CYCLE TICKS */
+function executeChores() {
+  const timeExpended = recalculateMotion();
+  if (timeExpended > CONFIG.dailyBudgetMins) {
+    alert("CRITICAL WARNING: Chore routine exceeds daily labor budget! High operator fatigue risk.");
+  }
+  
+  // Mark current tile as grazed
+  const key = `${STATE.tractor.x},${STATE.tractor.y}`;
+  STATE.cellWear[key] = 21; // Requires 21 days to recover
+  
+  // Advance day
+  STATE.day++;
+  document.getElementById('hud-day').innerText = `Day ${STATE.day} (Spring)`;
+  STATE.tractor.daysOnTile++;
+  
+  recalculateMotion();
+  render();
+}
+
+function toggleInspector() {
+  const el = document.getElementById('inspector-overlay');
+  el.style.display = el.style.display === 'block' ? 'none' : 'block';
+}
+
+function updateConfig() {
+  CONFIG.walkSpeedFtMin = parseInt(document.getElementById('v-speed').value);
+  CONFIG.tractorPullMins = parseInt(document.getElementById('v-pull').value);
+  CONFIG.serviceMins = parseInt(document.getElementById('v-serv').value);
+  CONFIG.opforAggression = parseInt(document.getElementById('v-opfor').value);
+
+  document.getElementById('v-speed-val').innerText = CONFIG.walkSpeedFtMin;
+  document.getElementById('v-pull-val').innerText = CONFIG.tractorPullMins;
+  document.getElementById('v-serv-val').innerText = CONFIG.serviceMins;
+  document.getElementById('v-opfor-val').innerText = CONFIG.opforAggression;
+
+  recalculateMotion();
+}
+
+window.onload = init;
+</script>
+</body>
+</html>

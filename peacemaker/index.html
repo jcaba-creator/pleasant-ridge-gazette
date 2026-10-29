@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Peacemaker 9's Everyday Routine</title>
+  <style>
+    /* 100% Self-Contained Styles - Nature Theme (Lavender Purple & Teal Blue) */
+    :root {
+      --bg-dark: #0b1120;
+      --card-bg: #131d33;
+      --card-border: #243456;
+      --item-bg: #0b1120;
+      --item-border: #1e293b;
+      --lavender: #c084fc;
+      --lavender-dark: #9333ea;
+      --teal: #2dd4bf;
+      --teal-dark: #0f766e;
+      --green: #10b981;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Trebuchet MS", sans-serif;
+      min-height: 100vh;
+      padding: 14px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 580px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding-bottom: 50px;
+    }
+
+    .btn-3d {
+      border: none;
+      cursor: pointer;
+      font-weight: 800;
+      transition: all 0.1s ease;
+      box-shadow: 0 5px 0 rgba(0, 0, 0, 0.45);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-3d:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.45);
+    }
+
+    .header-card {
+      background: linear-gradient(145deg, #18223d, #0f172a);
+      border: 2px solid rgba(192, 132, 252, 0.4);
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5), 0 0 20px rgba(45, 212, 191, 0.15);
+    }
+
+    .hero-profile {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .avatar-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Completely static avatar - zero click handlers or portal access */
+    .avatar-badge {
+      width: 54px;
+      height: 54px;
+      background: linear-gradient(135deg, #a855f7, #14b8a6);
+      border: 3px solid #e9d5ff;
+      border-radius: 16px;
+      font-size: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 14px rgba(168, 85, 247, 0.4);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .hero-title-group h1 {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      color: #e9d5ff;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .streak-pill {
+      background: rgba(45, 212, 191, 0.2);
+      border: 1px solid #14b8a6;
+      color: #2dd4bf;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .hero-rank {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--teal);
+      margin-top: 2px;
+    }
+
+    .action-icons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #fff;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .xp-section {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .xp-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 800;
+      color: #e9d5ff;
+    }
+
+    .xp-bar-bg {
+      width: 100%;
+      height: 18px;
+      background: #060913;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 2px solid #243456;
+      padding: 2px;
+    }
+
+    .xp-bar-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #a855f7, #c084fc, #2dd4bf);
+      transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .stats-footer {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid #243456;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .stats-counts {
+      display: flex;
+      gap: 14px;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--text-muted);
+    }
+    .stats-counts span {
+      color: #fff;
+      font-size: 14px;
+    }
+    .stats-counts .teal-val { color: #2dd4bf; }
+    .stats-counts .lavender-val { color: #c084fc; }
+
+    .loot-claim-btn {
+      background: linear-gradient(90deg, #c084fc, #2dd4bf);
+      color: #0b1120;
+      padding: 7px 14px;
+      border-radius: 12px;
+      font-size: 12px;
+      animation: chestPulse 1.2s infinite ease-in-out;
+    }
+    @keyframes chestPulse {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 6px #c084fc); }
+      50% { transform: scale(1.06); filter: drop-shadow(0 0 16px #2dd4bf); }
+    }
+
+    .quest-zone {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    }
+
+    .zone-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .zone-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .zone-tag {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .zone-readiness .zone-title { color: #c084fc; }
+    .zone-readiness .zone-tag { background: #3b1d5c; color: #e9d5ff; border: 1px solid #7e22ce; }
+
+    .zone-backpack .zone-title { color: #2dd4bf; }
+    .zone-backpack .zone-tag { background: #0f403c; color: #99f6e4; border: 1px solid #0d9488; }
+
+    .zone-wellness .zone-title { color: #38bdf8; }
+    .zone-wellness .zone-tag { background: #0c3352; color: #bae6fd; border: 1px solid #0284c7; }
+
+    .chore-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .chore-item {
+      background: #0b1120;
+      border: 1px solid #243456;
+      border-radius: 14px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+    }
+    .chore-item.done {
+      opacity: 0.5;
+      background: rgba(13, 148, 136, 0.2);
+      border-color: rgba(45, 212, 191, 0.4);
+    }
+
+    .chore-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .chore-checkbox {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: #18223d;
+      border: 2px solid #475569;
+      cursor: pointer;
+      display: grid;
+      place-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+    }
+    .chore-checkbox:checked {
+      background: #14b8a6;
+      border-color: #2dd4bf;
+      box-shadow: 0 0 12px rgba(45, 212, 191, 0.6);
+    }
+    .chore-checkbox:checked::before {
+      content: "✓";
+      color: #ffffff;
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .chore-labels {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chore-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+    .chore-desc {
+      font-size: 12px;
+      font-weight: 500;
+      color: #94a3b8;
+      margin-top: 1px;
+    }
+
+    .chore-emoji {
+      font-size: 20px;
+      margin-left: 8px;
+    }
+
+    .scratchpad-card {
+      background: #131d33;
+      border: 1px solid #243456;
+      border-radius: 18px;
+      padding: 14px;
+      margin-top: 6px;
+    }
+    .scratchpad-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      border-bottom: 1px solid #243456;
+      padding-bottom: 6px;
+    }
+    .scratchpad-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: #c084fc;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .quick-tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 8px;
+    }
+    .tag-btn {
+      background: #0b1120;
+      border: 1px solid #334155;
+      color: #cbd5e1;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .tag-btn:hover {
+      background: #1e293b;
+      color: #2dd4bf;
+    }
+    .scratchpad-input {
+      width: 100%;
+      background: #0b1120;
+      border: 1px solid #243456;
+      border-radius: 10px;
+      padding: 9px 12px;
+      color: #f8fafc;
+      font-size: 13px;
+      outline: none;
+      resize: vertical;
+      min-height: 60px;
+      font-family: inherit;
+      user-select: text;
+    }
+    .scratchpad-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 6px;
+    }
+    .notes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+    .note-row {
+      background: #0b1120;
+      border: 1px solid #1e293b;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: text;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(11, 17, 32, 0.88);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 999;
+    }
+    .modal-overlay.hidden { display: none; }
+
+    .modal-card {
+      background: #131d33;
+      border: 2px solid #c084fc;
+      border-radius: 22px;
+      width: 100%;
+      max-width: 380px;
+      padding: 24px;
+      text-align: center;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 20px rgba(192, 132, 252, 0.3);
+      position: relative;
+    }
+
+    .modal-title {
+      color: #e9d5ff;
+      font-size: 20px;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+    .modal-desc {
+      font-size: 12px;
+      color: #cbd5e1;
+      margin-bottom: 16px;
+    }
+    .prize-box {
+      background: #0b1120;
+      border: 2px dashed #2dd4bf;
+      border-radius: 16px;
+      padding: 16px;
+      font-size: 15px;
+      font-weight: 800;
+      color: #2dd4bf;
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+    .claim-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      background: linear-gradient(90deg, #a855f7, #14b8a6);
+      color: white;
+      font-size: 14px;
+    }
+
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1000;
+      width: 100%;
+      height: 100%;
+    }
+  
+    /* EASTON LOCAL WEATHER & OUTFIT SELECTOR WIDGET */
+    .weather-widget {
+      background: linear-gradient(145deg, #16203a, #0d1527);
+      border: 2px solid rgba(45, 212, 191, 0.45);
+      border-radius: 20px;
+      padding: 14px 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 16px rgba(45, 212, 191, 0.15);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 4px;
+      margin-bottom: 2px;
+    }
+
+    .weather-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(45, 212, 191, 0.15);
+      padding-bottom: 8px;
+    }
+
+    .weather-location {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #99f6e4;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #2dd4bf;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #2dd4bf;
+      animation: pulseLive 2s infinite;
+      display: inline-block;
+    }
+
+    @keyframes pulseLive {
+      0% { transform: scale(0.95); opacity: 0.7; }
+      50% { transform: scale(1.25); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.7; }
+    }
+
+    .weather-condition-pill {
+      font-size: 12px;
+      font-weight: 700;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .outfit-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      transition: all 0.25s ease;
+    }
+
+    .outfit-icon-badge {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+    }
+
+    .outfit-content {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      flex: 1;
+    }
+
+    .outfit-decision-title {
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+
+    .outfit-tagline {
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .outfit-helper {
+      font-size: 11px;
+      color: #cbd5e1;
+      line-height: 1.25;
+    }
+
+    /* Outfit Modes */
+    /* Mode 1: Jacket (Below 40°F) */
+    .mode-jacket {
+      background: linear-gradient(135deg, rgba(30, 58, 138, 0.7), rgba(15, 23, 42, 0.95));
+      border: 2px solid #38bdf8;
+    }
+    .mode-jacket .outfit-icon-badge {
+      background: linear-gradient(135deg, #0284c7, #38bdf8);
+      border: 2px solid #bae6fd;
+    }
+    .mode-jacket .outfit-decision-title {
+      color: #7dd3fc;
+    }
+    .mode-jacket .outfit-tagline {
+      color: #e0f2fe;
+    }
+
+    /* Mode 2: Hoodie (Below 70°F or Rain Expected) */
+    .mode-hoodie {
+      background: linear-gradient(135deg, rgba(126, 34, 206, 0.55), rgba(13, 148, 136, 0.45));
+      border: 2px solid #c084fc;
+    }
+    .mode-hoodie .outfit-icon-badge {
+      background: linear-gradient(135deg, #a855f7, #14b8a6);
+      border: 2px solid #e9d5ff;
+    }
+    .mode-hoodie .outfit-decision-title {
+      color: #f3e8ff;
+    }
+    .mode-hoodie .outfit-tagline {
+      color: #2dd4bf;
+    }
+
+    /* Mode 3: Nothing / Regular Shirt (70°F+ & Dry) */
+    .mode-nothing {
+      background: linear-gradient(135deg, rgba(20, 83, 45, 0.6), rgba(15, 23, 42, 0.95));
+      border: 2px solid #34d399;
+    }
+    .mode-nothing .outfit-icon-badge {
+      background: linear-gradient(135deg, #059669, #10b981);
+      border: 2px solid #a7f3d0;
+    }
+    .mode-nothing .outfit-decision-title {
+      color: #6ee7b7;
+    }
+    .mode-nothing .outfit-tagline {
+      color: #fef08a;
+    }
+
+    .weather-sub-metrics {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: #94a3b8;
+      padding-top: 4px;
+    }
+
+    .refresh-weather-btn {
+      background: transparent;
+      border: none;
+      color: #2dd4bf;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 0;
+      text-decoration: underline;
+    }
+
+  </style>
+</head>
+<body>
+
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="container">
+
+    <!-- Top Dashboard Header (Clean, Zero Settings Glitch) -->
+    <header class="header-card">
+      <div class="hero-profile">
+        <div class="avatar-wrapper">
+          <div class="avatar-badge" id="avatar-icon">🌿</div>
+          <div class="hero-title-group">
+            <h1>
+              <span>Peacemaker 9</span>
+              <span class="streak-pill" id="streak-badge">🌱 <span id="streak-count">1</span> DAY STREAK</span>
+            </h1>
+            <div class="hero-rank" id="rank-title">Level 1 • Sprout Scout</div>
+          </div>
+        </div>
+
+        <div class="action-icons">
+          <button class="icon-btn" id="sound-btn" onclick="toggleSound()" title="Sound">🔊</button>
+        </div>
+      </div>
+
+      <!-- XP Bar -->
+      <div class="xp-section">
+        <div class="xp-labels">
+          <span>PEACEMAKER'S XP</span>
+          <span id="xp-text">0 / 100 XP</span>
+        </div>
+        <div class="xp-bar-bg">
+          <div class="xp-bar-fill" id="xp-bar"></div>
+        </div>
+      </div>
+
+      <!-- Stats Footer -->
+      <div class="stats-footer">
+        <div class="stats-counts">
+          <div>TASKS: <span class="teal-val" id="completed-count">0/11</span></div>
+          <div>POINTS: <span class="lavender-val" id="coin-count">✨ 0</span></div>
+        </div>
+
+        <button id="chest-btn" onclick="claimLootChest()" class="btn-3d loot-claim-btn" style="display: none;">
+          🌸 DAILY SPARK!
+        </button>
+      </div>
+    </header>
+
+    <!-- EASTON LOCAL WEATHER & OUTFIT SELECTOR WIDGET -->
+    <div class="weather-widget" id="weather-widget">
+      <div class="weather-top-row">
+        <div class="weather-location">
+          <span class="live-dot"></span>
+          <span>Easton, KS Live Weather</span>
+        </div>
+        <div class="weather-condition-pill" id="weather-condition-pill">
+          <span id="weather-icon">⛅</span>
+          <span id="weather-temp-text">Loading NWS data...</span>
+        </div>
+      </div>
+
+      <div class="outfit-banner mode-hoodie" id="outfit-banner">
+        <div class="outfit-icon-badge" id="outfit-icon">🧥</div>
+        <div class="outfit-content">
+          <div class="outfit-decision-title" id="outfit-title">CHECKING WEATHER...</div>
+          <div class="outfit-tagline" id="outfit-tagline">Connecting to National Weather Service...</div>
+          <div class="outfit-helper" id="outfit-helper">Pulls live Easton conditions to tell you whether to wear a jacket, hoodie, or just a shirt!</div>
+        </div>
+      </div>
+
+      <div class="weather-sub-metrics">
+        <span id="weather-rain-chance">💧 Rain Chance: --%</span>
+        <button class="refresh-weather-btn" onclick="loadEastonWeather(true)">🔄 Refresh Weather</button>
+        <span id="weather-updated-time">Updated: Just now</span>
+      </div>
+    </div>
+
+
+    <!-- DYNAMIC QUEST ZONES CONTAINER -->
+    <div id="quest-zones-container" style="display: flex; flex-direction: column; gap: 14px;">
+      <!-- Populated dynamically from storage -->
+    </div>
+
+    <!-- FIELD SCRATCHPAD AT THE BOTTOM -->
+    <div class="scratchpad-card">
+      <div class="scratchpad-header">
+        <div class="scratchpad-title">
+          <span>📝</span> Scratch Pad / Daily Notes
+        </div>
+        <span id="date-display" style="font-size: 11px; color: #94a3b8;">Today</span>
+      </div>
+
+      <div class="quick-tag-row">
+        <button class="tag-btn" onclick="appendTag('+ Did great')">+ Did great</button>
+        <button class="tag-btn" onclick="appendTag('+ Needed help')">+ Needed help</button>
+        <button class="tag-btn" onclick="appendTag('+ Hair done')">+ Hair done</button>
+        <button class="tag-btn" onclick="appendTag('+ Bag packed')">+ Bag packed</button>
+        <button class="tag-btn" onclick="appendTag('+ Feeling good')">+ Feeling good</button>
+      </div>
+
+      <textarea id="scratchpad-input" class="scratchpad-input" placeholder="Type a note or quick observation here..."></textarea>
+
+      <div class="scratchpad-actions">
+        <button onclick="clearScratchpadInput()" class="tag-btn" style="border: none;">Clear</button>
+        <button onclick="saveScratchpadNote()" class="btn-3d" style="background: #14b8a6; color: white; padding: 6px 14px; border-radius: 8px; font-size: 12px;">
+          Save Note
+        </button>
+      </div>
+
+      <div id="notes-display" class="notes-list"></div>
+    </div>
+
+  </div>
+
+  <!-- WORDS OF ENCOURAGEMENT MODAL -->
+  <div id="loot-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div style="font-size: 52px; margin-bottom: 6px;">🌸</div>
+      <h3 class="modal-title">DAILY SPARK UNLOCKED!</h3>
+      <p class="modal-desc">Peacemaker finished routine tasks and earned words of power!</p>
+
+      <div class="prize-box" id="reward-result"></div>
+
+      <button class="btn-3d claim-btn" onclick="closeLootModal()">FEELING AWESOME!</button>
+    </div>
+  </div>
+
+  <script>
+    const AudioEngine = {
+      ctx: null,
+      enabled: true,
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.ctx = new AudioContext();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+      },
+
+      playCoin() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(987.77, now);
+        osc.frequency.setValueAtTime(1318.51, now + 0.08);
+
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.35);
+      },
+
+      playFanfare() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, idx) => {
+          const now = this.ctx.currentTime + (idx * 0.09);
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        });
+      },
+
+      playLevelUp() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const notes = [440, 554.37, 659.25, 880, 1108.73, 1318.51];
+        notes.forEach((freq, idx) => {
+          const now = this.ctx.currentTime + (idx * 0.08);
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.4);
+        });
+      },
+
+      playChestOpen() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(300, now);
+        osc.frequency.exponentialRampToValueAtTime(1200, now + 0.3);
+
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.5);
+      }
+    };
+
+    // --- GAME ENGINE & TELEMETRY KEYS ---
+    const TASKS_KEY = "bb_peacemaker_tasks_config_v1";
+    const DATA_KEY = "bb_peacemaker_ranch_quest_data";
+    const NOTES_KEY = "bb_peacemaker_scratchpad_notes";
+    const TELEMETRY_KEY = "bb_peacemaker_telemetry_v1";
+
+    const DEFAULT_REAL_WORLD_TASKS = [
+      { id: "shoes_socks", name: "Shoes and socks", desc: "Put on shoes and socks", zone: "readiness", xp: 25, emoji: "👟" },
+      { id: "get_dressed", name: "Get dressed", desc: "Put on day clothes", zone: "readiness", xp: 25, emoji: "👕" },
+      { id: "do_hair", name: "Do hair", desc: "Brush and style hair", zone: "readiness", xp: 25, emoji: "🪮" },
+      { id: "brush_floss", name: "Brush and floss teeth", desc: "Brush for 2 minutes and floss", zone: "readiness", xp: 25, emoji: "🪥" },
+      { id: "get_backpack", name: "Get backpack", desc: "Get backpack ready by the door", zone: "backpack", xp: 25, emoji: "🎒" },
+      { id: "get_jacket", name: "Get a jacket", desc: "Grab jacket for the day", zone: "backpack", xp: 25, emoji: "🧥" },
+      { id: "put_fidgets", name: "Put fidgets in backpack", desc: "Pack fidgets into backpack", zone: "backpack", xp: 25, emoji: "🌀" },
+      { id: "water_bottle", name: "Fill and put water bottle in backpack", desc: "Fill water bottle and put inside backpack", zone: "backpack", xp: 25, emoji: "💧" },
+      { id: "eat_breakfast", name: "Eat breakfast", desc: "Eat breakfast food and drink", zone: "wellness", xp: 25, emoji: "🥞" },
+      { id: "take_medicine", name: "Take medicine", desc: "Take morning medicine", zone: "wellness", xp: 25, emoji: "💊" },
+      { id: "rap_toe", name: "Wrap toe", desc: "Wrap and bandage toe", zone: "wellness", xp: 25, emoji: "🩹" }
+    ];
+
+    const RANKS = [
+      { level: 1, title: "Sprout Scout", xpReq: 100, avatar: "🌱" },
+      { level: 2, title: "Woodland Ranger", xpReq: 250, avatar: "🌿" },
+      { level: 3, title: "Meadow Guardian", xpReq: 500, avatar: "🌸" },
+      { level: 4, title: "Forest Explorer", xpReq: 850, avatar: "🦊" },
+      { level: 5, title: "Wildlife Champion", xpReq: 1300, avatar: "🦌" },
+      { level: 6, title: "Nature Legend", xpReq: 2000, avatar: "👑" }
+    ];
+
+    // Uplifting Compliments & Words of Encouragement Pool
+    const DEFAULT_ENCOURAGEMENT_WORDS = [
+      "🌸 You have a calm, kind heart and a creative mind that makes our home brighter!",
+      "🌿 Proud of you for taking care of yourself and getting ready like a champion today!",
+      "✨ You are thoughtful, brave, and capable of amazing things!",
+      "🌱 Every morning habit you finish is a powerful step toward your dreams!",
+      "🦋 Your family loves you so much and we are so proud of your effort today!",
+      "🦊 You bring peace, kindness, and positivity everywhere you go!",
+      "⭐ Taking care of your tasks first shows how strong and responsible you are!",
+      "🎯 Believe in yourself — you are capable, smart, and unstoppable!"
+    ];
+
+    let tasks = [];
+    let state = {
+      xp: 0,
+      coins: 0,
+      streak: 1,
+      lastActiveDate: new Date().toISOString().split('T')[0],
+      completedChores: {},
+      pendingChests: 0,
+      rewardsPool: [...DEFAULT_ENCOURAGEMENT_WORDS],
+      kidName: "Peacemaker 9"
+    };
+
+    function logEvent(action, detail) {
+      try {
+        let log = JSON.parse(localStorage.getItem(TELEMETRY_KEY) || '[]');
+        const now = new Date();
+        const entry = {
+          id: 'evt_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+          timestamp: now.toISOString(),
+          displayTime: now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' }),
+          displayDate: now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+          action: action,
+          detail: detail || '',
+          xp: state.xp,
+          streak: state.streak
+        };
+        log.unshift(entry);
+        if (log.length > 500) log = log.slice(0, 500);
+        localStorage.setItem(TELEMETRY_KEY, JSON.stringify(log));
+      } catch(e) {}
+    }
+
+    function loadState() {
+      const savedTasks = localStorage.getItem(TASKS_KEY);
+      if (savedTasks) {
+        try {
+          const loaded = JSON.parse(savedTasks);
+          const existingIds = new Set(loaded.map(t => t.id));
+          DEFAULT_REAL_WORLD_TASKS.forEach(dt => {
+            if (!existingIds.has(dt.id)) {
+              loaded.push(dt);
+            }
+          });
+          tasks = loaded;
+        } catch(e) {
+          tasks = [...DEFAULT_REAL_WORLD_TASKS];
+        }
+      } else {
+        tasks = [...DEFAULT_REAL_WORLD_TASKS];
+      }
+      localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
+
+      const saved = localStorage.getItem(DATA_KEY);
+      if (saved) {
+        try { state = Object.assign(state, JSON.parse(saved)); } catch (e) {}
+      }
+
+      const today = new Date().toISOString().split('T')[0];
+      if (state.lastActiveDate !== today) {
+        const last = new Date(state.lastActiveDate);
+        const curr = new Date(today);
+        const diffDays = Math.round((curr - last) / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 1) state.streak += 1;
+        else if (diffDays > 1) state.streak = 1;
+
+        state.completedChores = {};
+        state.lastActiveDate = today;
+        saveState();
+        logEvent("DAY_ROLLOVER", `Rollover to ${today}. Streak: ${state.streak}`);
+      }
+
+      document.getElementById('date-display').innerText = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+      renderDynamicZones();
+      renderUI();
+      renderScratchpad();
+
+      logEvent("APP_OPENED", "Peacemaker 9 page loaded in browser");
+    }
+
+    function saveState() {
+      localStorage.setItem(DATA_KEY, JSON.stringify(state));
+    }
+
+    function renderDynamicZones() {
+      const container = document.getElementById('quest-zones-container');
+      container.innerHTML = '';
+
+      const zonesMeta = {
+        readiness: { title: "Morning Readiness", emoji: "🌸", cls: "zone-readiness" },
+        backpack: { title: "Backpack & Gear", emoji: "🎒", cls: "zone-backpack" },
+        wellness: { title: "Breakfast & Health", emoji: "🌿", cls: "zone-wellness" }
+      };
+
+      const grouped = {};
+      tasks.forEach(t => {
+        const z = t.zone || 'readiness';
+        if (!grouped[z]) grouped[z] = [];
+        grouped[z].push(t);
+      });
+
+      ['readiness', 'backpack', 'wellness'].forEach(zoneKey => {
+        const zoneTasks = grouped[zoneKey];
+        if (!zoneTasks || zoneTasks.length === 0) return;
+        const meta = zonesMeta[zoneKey] || { title: zoneKey, emoji: "⭐", cls: "zone-readiness" };
+
+        const sec = document.createElement('section');
+        sec.className = `quest-zone ${meta.cls}`;
+        sec.innerHTML = `
+          <div class="zone-header">
+            <div class="zone-title">
+              <span>${meta.emoji}</span> ${meta.title}
+            </div>
+            <div class="zone-tag">${zoneTasks.length} ${zoneTasks.length === 1 ? 'task' : 'tasks'}</div>
+          </div>
+          <div class="chore-list" id="list_${zoneKey}"></div>
+        `;
+        container.appendChild(sec);
+
+        const listEl = sec.querySelector(`#list_${zoneKey}`);
+        zoneTasks.forEach(t => {
+          const isDone = !!state.completedChores[t.id];
+          const item = document.createElement('div');
+          item.className = `chore-item ${isDone ? 'done' : ''}`;
+          item.setAttribute('data-id', t.id);
+          item.setAttribute('data-xp', t.xp || 25);
+
+          item.innerHTML = `
+            <label class="chore-left" for="cb_${t.id}">
+              <input type="checkbox" id="cb_${t.id}" class="chore-checkbox" ${isDone ? 'checked' : ''} onchange="handleChoreToggle(this, '${t.id}', '${t.name}')">
+              <div class="chore-labels">
+                <span class="chore-name">${t.name}</span>
+                <span class="chore-desc">${t.desc || ''}</span>
+              </div>
+            </label>
+            <span class="chore-emoji">${t.emoji || '🌿'}</span>
+          `;
+          listEl.appendChild(item);
+        });
+      });
+    }
+
+    function getRankInfo(xp) {
+      for (let i = RANKS.length - 1; i >= 0; i--) {
+        if (xp >= (RANKS[i - 1]?.xpReq || 0)) {
+          const currentRank = RANKS[i];
+          const prevXp = RANKS[i - 1] ? RANKS[i - 1].xpReq : 0;
+          const nextXp = currentRank.xpReq;
+          return { currentRank, prevXp, nextXp };
+        }
+      }
+      return { currentRank: RANKS[0], prevXp: 0, nextXp: RANKS[0].xpReq };
+    }
+
+    function renderUI() {
+      let totalCompleted = 0;
+      const allCheckboxes = document.querySelectorAll('.chore-checkbox');
+      allCheckboxes.forEach(cb => {
+        if (cb.checked) totalCompleted++;
+      });
+
+      document.getElementById('completed-count').innerText = `${totalCompleted}/${tasks.length}`;
+      document.getElementById('coin-count').innerText = `✨ ${state.coins}`;
+      document.getElementById('streak-count').innerText = state.streak;
+
+      const { currentRank, prevXp, nextXp } = getRankInfo(state.xp);
+      document.getElementById('rank-title').innerText = `Level ${currentRank.level} • ${currentRank.title}`;
+      document.getElementById('avatar-icon').innerText = currentRank.avatar;
+
+      const xpIntoCurrentLevel = state.xp - prevXp;
+      const levelSpan = nextXp - prevXp;
+      const pct = Math.min(100, Math.max(0, (xpIntoCurrentLevel / levelSpan) * 100));
+
+      document.getElementById('xp-bar').style.width = `${pct}%`;
+      document.getElementById('xp-text').innerText = `${state.xp} / ${nextXp} XP`;
+
+      const chestBtn = document.getElementById('chest-btn');
+      if (state.pendingChests > 0) {
+        chestBtn.style.display = 'inline-flex';
+        chestBtn.innerHTML = `🌸 DAILY SPARK (${state.pendingChests})!`;
+      } else {
+        chestBtn.style.display = 'none';
+      }
+    }
+
+    function handleChoreToggle(checkbox, choreId, taskName) {
+      AudioEngine.init();
+      const choreItem = checkbox.closest('.chore-item');
+      const xpVal = parseInt(choreItem.getAttribute('data-xp') || '25', 10);
+
+      if (checkbox.checked) {
+        choreItem.classList.add('done');
+        state.completedChores[choreId] = true;
+        const oldRank = getRankInfo(state.xp).currentRank.level;
+        state.xp += xpVal;
+        state.coins += 5;
+
+        logEvent("TASK_CHECKED", `Checked "${taskName}" (+${xpVal} XP)`);
+
+        const completedCount = Object.keys(state.completedChores).length;
+        if (completedCount % 3 === 0 || state.xp % 100 < xpVal) {
+          state.pendingChests += 1;
+        }
+
+        const newRank = getRankInfo(state.xp).currentRank.level;
+        if (newRank > oldRank) {
+          AudioEngine.playLevelUp();
+          triggerConfetti(true);
+          logEvent("LEVEL_UP", `Promoted to Level ${newRank}`);
+        } else {
+          AudioEngine.playCoin();
+          triggerConfetti(false);
+        }
+
+        if (completedCount === tasks.length) {
+          setTimeout(() => {
+            AudioEngine.playFanfare();
+            triggerConfetti(true);
+            state.pendingChests += 1;
+            renderUI();
+            logEvent("ALL_TASKS_COMPLETED", "All routine tasks completed for today!");
+          }, 350);
+        }
+
+      } else {
+        choreItem.classList.remove('done');
+        delete state.completedChores[choreId];
+        state.xp = Math.max(0, state.xp - xpVal);
+        state.coins = Math.max(0, state.coins - 5);
+        logEvent("TASK_UNCHECKED", `Unchecked "${taskName}"`);
+      }
+
+      saveState();
+      renderUI();
+    }
+
+    function claimLootChest() {
+      if (state.pendingChests <= 0) return;
+      AudioEngine.playChestOpen();
+
+      const pool = (state.rewardsPool && state.rewardsPool.length > 0) ? state.rewardsPool : DEFAULT_ENCOURAGEMENT_WORDS;
+      const prize = pool[Math.floor(Math.random() * pool.length)];
+
+      document.getElementById('reward-result').innerText = prize;
+      document.getElementById('loot-modal').classList.remove('hidden');
+
+      state.pendingChests = Math.max(0, state.pendingChests - 1);
+      saveState();
+      renderUI();
+      triggerConfetti(false);
+
+      logEvent("DAILY_SPARK_OPENED", prize);
+    }
+
+    function closeLootModal() {
+      document.getElementById('loot-modal').classList.add('hidden');
+    }
+
+    function toggleSound() {
+      AudioEngine.enabled = !AudioEngine.enabled;
+      document.getElementById('sound-btn').innerText = AudioEngine.enabled ? '🔊' : '🔇';
+      logEvent("SOUND_TOGGLED", AudioEngine.enabled ? "Enabled" : "Muted");
+    }
+
+    function appendTag(tag) {
+      const input = document.getElementById('scratchpad-input');
+      const val = input.value.trim();
+      input.value = val ? `${val} ${tag}` : tag;
+      input.focus();
+    }
+
+    function clearScratchpadInput() {
+      document.getElementById('scratchpad-input').value = '';
+    }
+
+    function saveScratchpadNote() {
+      const input = document.getElementById('scratchpad-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      let notes = [];
+      try {
+        const raw = localStorage.getItem(NOTES_KEY);
+        if (raw) notes = JSON.parse(raw);
+      } catch(e) {}
+
+      const timestamp = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+      notes.unshift({ text, timestamp, date: new Date().toISOString().split('T')[0] });
+      localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+
+      logEvent("NOTE_SAVED", text);
+
+      input.value = '';
+      renderScratchpad();
+    }
+
+    function renderScratchpad() {
+      const container = document.getElementById('notes-display');
+      let notes = [];
+      try {
+        const raw = localStorage.getItem(NOTES_KEY);
+        if (raw) notes = JSON.parse(raw);
+      } catch(e) {}
+
+      container.innerHTML = '';
+      if (notes.length === 0) {
+        container.innerHTML = '<div style="font-size: 11px; color: #64748b; font-style: italic; padding: 4px;">No notes yet today.</div>';
+        return;
+      }
+
+      notes.slice(0, 5).forEach((n, idx) => {
+        const div = document.createElement('div');
+        div.className = 'note-row';
+        div.innerHTML = `
+          <div>
+            <span style="color: #f1f5f9; font-weight: 600;">${n.text}</span>
+            <span style="color: #64748b; font-size: 10px; margin-left: 6px;">${n.timestamp}</span>
+          </div>
+          <button onclick="deleteScratchpadNote(${idx})" style="background:none; border:none; color:#94a3b8; cursor:pointer; font-size:12px;">✕</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function deleteScratchpadNote(idx) {
+      try {
+        let notes = JSON.parse(localStorage.getItem(NOTES_KEY) || '[]');
+        notes.splice(idx, 1);
+        localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+        renderScratchpad();
+      } catch(e) {}
+    }
+
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function triggerConfetti(isGrand = false) {
+      const count = isGrand ? 110 : 40;
+      const colors = ['#c084fc', '#a855f7', '#2dd4bf', '#14b8a6', '#38bdf8', '#facc15'];
+
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: canvas.width / 2 + (Math.random() - 0.5) * 160,
+          y: canvas.height * 0.4,
+          vx: (Math.random() - 0.5) * (isGrand ? 16 : 9),
+          vy: (Math.random() - 0.8) * (isGrand ? 20 : 12),
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 10,
+          life: 1,
+          decay: Math.random() * 0.02 + 0.015
+        });
+      }
+    }
+
+    function updateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.45;
+        p.rotation += p.rotSpeed;
+        p.life -= p.decay;
+
+        if (p.life <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        ctx.save();
+        ctx.globalAlpha = p.life;
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+        ctx.restore();
+      }
+      requestAnimationFrame(updateConfetti);
+    }
+    requestAnimationFrame(updateConfetti);
+
+    
+    // --- EASTON LIVE WEATHER & CLOTHING SELECTOR ---
+    const LOCAL_CORRIDOR_WEATHER_URL = "/api/weather-forecast/";
+    const NWS_HOURLY_DIRECT_URL = "https://api.weather.gov/gridpoints/EAX/34,68/forecast/hourly";
+    const WEATHER_CACHE_KEY = "peacemaker_weather_cache_v1";
+
+    async function loadEastonWeather(forceRefresh = false) {
+      if (!forceRefresh) {
+        try {
+          const cached = localStorage.getItem(WEATHER_CACHE_KEY);
+          if (cached) {
+            const parsed = JSON.parse(cached);
+            if (Date.now() - parsed.timestamp < 15 * 60 * 1000) {
+              renderWeatherUI(parsed.temp, parsed.shortDesc, parsed.pop, parsed.isRain, parsed.lastUpdated);
+              return;
+            }
+          }
+        } catch (e) {}
+      }
+
+      const tempTextEl = document.getElementById('weather-temp-text');
+      if (tempTextEl) tempTextEl.innerText = "Checking Easton weather...";
+
+      let temp = null;
+      let shortDesc = "";
+      let pop = 0;
+      let isRain = false;
+
+      // 1. Primary: Same-Origin Vercel Serverless NWS Endpoint (Zero CORS, 100% Reliable)
+      try {
+        const res = await fetch(LOCAL_CORRIDOR_WEATHER_URL, { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.ok) {
+            temp = Number(data.currentTemp);
+            shortDesc = data.currentForecast || "Fair";
+            pop = Number(data.winterPrecipProb || 0);
+          }
+        }
+      } catch (err) {
+        console.warn("[Weather] Primary corridor API warning:", err);
+      }
+
+      // 2. Secondary Fallback: Direct NWS Grid (Plain GET, No Custom Headers to Avoid Preflight)
+      if (temp === null || isNaN(temp)) {
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 4000);
+          const res2 = await fetch(NWS_HOURLY_DIRECT_URL, { signal: controller.signal });
+          clearTimeout(timeoutId);
+          if (res2.ok) {
+            const data2 = await res2.json();
+            const period = data2.properties?.periods?.[0];
+            if (period) {
+              temp = Number(period.temperature);
+              shortDesc = period.shortForecast || "Fair";
+              pop = Number(period.probabilityOfPrecipitation?.value || 0);
+            }
+          }
+        } catch (err2) {
+          console.warn("[Weather] Direct NWS fallback warning:", err2);
+        }
+      }
+
+      // 3. Ultimate Fallback (If Device Completely Offline)
+      if (temp === null || isNaN(temp)) {
+        temp = 56;
+        shortDesc = "Fair";
+      }
+
+      const rainKeywords = ['rain', 'shower', 'drizzle', 'thunderstorm', 'storm', 'sleet', 'snow'];
+      isRain = pop >= 30 || rainKeywords.some(k => shortDesc.toLowerCase().includes(k));
+
+      const now = new Date();
+      const lastUpdated = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+      try {
+        localStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify({
+          temp,
+          shortDesc,
+          pop,
+          isRain,
+          lastUpdated,
+          timestamp: Date.now()
+        }));
+      } catch (e) {}
+
+      renderWeatherUI(temp, shortDesc, pop, isRain, lastUpdated);
+    }
+
+    function renderWeatherUI(temp, shortDesc, pop, isRain, lastUpdated) {
+      const banner = document.getElementById('outfit-banner');
+      const iconBadge = document.getElementById('outfit-icon');
+      const titleEl = document.getElementById('outfit-title');
+      const taglineEl = document.getElementById('outfit-tagline');
+      const helperEl = document.getElementById('outfit-helper');
+      const tempText = document.getElementById('weather-temp-text');
+      const weatherIcon = document.getElementById('weather-icon');
+      const rainChanceEl = document.getElementById('weather-rain-chance');
+      const updatedEl = document.getElementById('weather-updated-time');
+
+      if (!banner) return;
+
+      if (tempText) tempText.innerText = `${temp}°F • ${shortDesc}`;
+      if (rainChanceEl) rainChanceEl.innerText = `💧 Rain Chance: ${pop}%`;
+      if (updatedEl) updatedEl.innerText = `Easton NWS • ${lastUpdated}`;
+
+      const sLower = shortDesc.toLowerCase();
+      if (weatherIcon) {
+        if (sLower.includes('rain') || sLower.includes('shower')) weatherIcon.innerText = '🌧️';
+        else if (sLower.includes('cloud')) weatherIcon.innerText = '⛅';
+        else if (sLower.includes('snow') || sLower.includes('ice') || sLower.includes('sleet')) weatherIcon.innerText = '❄️';
+        else if (sLower.includes('sun') || sLower.includes('clear')) weatherIcon.innerText = '☀️';
+        else weatherIcon.innerText = '🌤️';
+      }
+
+      banner.className = 'outfit-banner';
+
+      // Rule: Jacket is below 40. Hoodie is below 70, nothing is above. Hoodie if raining or expected rain.
+      if (temp < 40) {
+        banner.classList.add('mode-jacket');
+        if (iconBadge) iconBadge.innerText = '🧥';
+        if (titleEl) titleEl.innerText = 'WEAR A WARM JACKET';
+        if (taglineEl) taglineEl.innerText = `Chilly morning in Easton (${temp}°F) — Below 40°F`;
+        if (helperEl) helperEl.innerText = 'Bundle up with your warm jacket or heavy coat before heading out!';
+        updateJacketChoreDesc('Grab your warm winter jacket today (Below 40°F! 🧥)');
+      } else if (temp < 70 || isRain) {
+        banner.classList.add('mode-hoodie');
+        if (iconBadge) iconBadge.innerText = isRain ? '🌧️' : '🧥';
+        if (titleEl) titleEl.innerText = 'WEAR A HOODIE';
+        if (isRain && temp >= 70) {
+          if (taglineEl) taglineEl.innerText = `Warm (${temp}°F) but rain expected (${pop}%)!`;
+          if (helperEl) helperEl.innerText = 'Rain is in the forecast! Bring a hoodie or rain layer so you stay dry outside.';
+          updateJacketChoreDesc('Grab your hoodie to stay dry in the rain today! 🌧️');
+        } else if (isRain) {
+          if (taglineEl) taglineEl.innerText = `Cool (${temp}°F) & rain expected (${pop}%)!`;
+          if (helperEl) helperEl.innerText = 'Rain is expected! A cozy hoodie will keep you comfortable and dry today.';
+          updateJacketChoreDesc('Grab your cozy hoodie for the rain today! 🧥');
+        } else {
+          if (taglineEl) taglineEl.innerText = `Cool morning in Easton (${temp}°F) — Below 70°F`;
+          if (helperEl) helperEl.innerText = 'A cozy hoodie is the perfect layer for school and playtime today!';
+          updateJacketChoreDesc('Grab your favorite hoodie today (Below 70°F 🧥)');
+        }
+      } else {
+        banner.classList.add('mode-nothing');
+        if (iconBadge) iconBadge.innerText = '👕';
+        if (titleEl) titleEl.innerText = 'NO JACKET NEEDED';
+        if (taglineEl) taglineEl.innerText = `Warm & clear (${temp}°F) — 70°F or above`;
+        if (helperEl) helperEl.innerText = 'Warm and pleasant in Easton! You are good to go in just your regular shirt.';
+        updateJacketChoreDesc('No jacket needed today! Check this off and enjoy the warm day! 👕');
+      }
+    }
+
+    function updateJacketChoreDesc(descText) {
+      if (typeof tasks !== 'undefined' && Array.isArray(tasks)) {
+        const task = tasks.find(t => t.id === 'get_jacket');
+        if (task) task.desc = descText;
+      }
+      const descEl = document.querySelector('[data-id="get_jacket"] .chore-desc');
+      if (descEl) descEl.innerText = descText;
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      loadEastonWeather();
+    });
+  </script>
+</body>
+</html>

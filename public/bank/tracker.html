@@ -1,0 +1,3531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Prevent search engine indexing for unlinked page -->
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Homestead Feed & Tank Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Google Fonts: Retro 8-bit / Monospace Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&family=VT323&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ==========================================================================
+       RETRO 8-BIT / 16-BIT HOMESTEAD THEME & SYSTEM STYLES
+       ========================================================================== */
+    :root {
+      --bg-color: #1a1e17;
+      --card-bg: #272f23;
+      --card-inner: #1c2319;
+      --border-color: #0c100a;
+      --text-main: #f5f2e9;
+      --text-muted: #a3ab98;
+      
+      /* Homestead Retro Palette */
+      --straw-gold: #f5be38;
+      --straw-shadow: #b38419;
+      --straw-light: #fef08a;
+      
+      --barn-red: #c53030;
+      --barn-dark: #7b1818;
+      --barn-light: #f56565;
+      
+      --pine-green: #2f855a;
+      --pine-light: #48bb78;
+      
+      --burlap-brown: #a47148;
+      --burlap-dark: #6e4324;
+      --burlap-light: #d69e2e;
+      
+      --tank-steel: #8fa1b3;
+      --tank-dark: #4a5568;
+      --tank-light: #cbd5e0;
+      --water-blue: #3182ce;
+      --water-cyan: #63b3ed;
+      --water-deep: #1a365d;
+      
+      --pet-purple: #9f7aea;
+      --pet-coral: #ed8936;
+      --pet-teal: #38b2ac;
+      
+      --retro-yellow: #ecc94b;
+      --retro-orange: #ed8936;
+      --retro-green: #38a169;
+      --retro-pink: #ed64a6;
+      
+      --pixel-shadow: 4px 4px 0px var(--border-color);
+      --pixel-shadow-sm: 2px 2px 0px var(--border-color);
+      --pixel-shadow-lg: 6px 6px 0px var(--border-color);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      image-rendering: pixelated;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      background-image: 
+        radial-gradient(#2d3725 10%, transparent 11%),
+        radial-gradient(#222b1c 10%, transparent 11%);
+      background-size: 24px 24px;
+      background-position: 0 0, 12px 12px;
+      color: var(--text-main);
+      font-family: 'Space Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 16px 8px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Scanlines applied safely via background gradient overlay on body */
+    body.scanlines {
+      background-image: 
+        linear-gradient(rgba(0, 0, 0, 0.18) 50%, transparent 50%),
+        radial-gradient(#2d3725 10%, transparent 11%),
+        radial-gradient(#222b1c 10%, transparent 11%);
+      background-size: 100% 4px, 24px 24px, 24px 24px;
+      background-position: 0 0, 0 0, 12px 12px;
+    }
+
+    h1, h2, h3, h4, .pixel-title {
+      font-family: 'Press Start 2P', cursive;
+      letter-spacing: -0.5px;
+      line-height: 1.4;
+      text-transform: uppercase;
+    }
+
+    .pixel-label {
+      font-family: 'Silkscreen', cursive;
+      letter-spacing: 0.5px;
+    }
+
+    .digital-num {
+      font-family: 'VT323', monospace;
+      font-size: 2.2rem;
+      letter-spacing: 1px;
+    }
+
+    /* CONTAINER */
+    .app-container {
+      width: 100%;
+      max-width: 1240px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* HEADER */
+    .homestead-header {
+      background: var(--card-bg);
+      border: 4px solid var(--border-color);
+      box-shadow: var(--pixel-shadow-lg);
+      padding: 16px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      position: relative;
+      z-index: 20;
+    }
+
+    .header-branding {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .header-logo-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--barn-red);
+      border: 3px solid var(--border-color);
+      box-shadow: var(--pixel-shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .header-title-box h1 {
+      font-size: 1.15rem;
+      color: var(--straw-gold);
+      text-shadow: 2px 2px 0px #000;
+      margin-bottom: 4px;
+    }
+
+    .header-subtitle {
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .live-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background-color: #48bb78;
+      border: 2px solid #000;
+      animation: pixelBlink 1.2s infinite steps(1);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 30;
+    }
+
+    /* SECTION HEADER BANNER */
+    .section-divider {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #1b2218;
+      border: 4px solid var(--border-color);
+      box-shadow: var(--pixel-shadow);
+      padding: 12px 18px;
+      margin-top: 8px;
+    }
+
+    .section-title {
+      font-size: 0.85rem;
+      color: var(--straw-gold);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-tag {
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.65rem;
+      background: #33402e;
+      color: #cbd5e0;
+      border: 1px solid #000;
+      padding: 3px 8px;
+    }
+
+    /* BUTTONS: RETRO PIXEL STYLE */
+    .btn-pixel {
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 10px 14px;
+      background: #3c4837;
+      color: var(--text-main);
+      border: 3px solid var(--border-color);
+      box-shadow: var(--pixel-shadow);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      user-select: none;
+      transition: none;
+      position: relative;
+      z-index: 2;
+    }
+
+    .btn-pixel:hover {
+      background: #4d5c46;
+      color: #fff;
+    }
+
+    .btn-pixel:active {
+      transform: translate(2px, 2px);
+      box-shadow: var(--pixel-shadow-sm);
+    }
+
+    .btn-pixel.gold { background: var(--straw-gold); color: #000; }
+    .btn-pixel.gold:hover { background: #ffd257; }
+
+    .btn-pixel.red { background: var(--barn-red); color: #fff; }
+    .btn-pixel.red:hover { background: #e53e3e; }
+
+    .btn-pixel.blue { background: var(--water-blue); color: #fff; }
+    .btn-pixel.blue:hover { background: #4299e1; }
+
+    .btn-pixel.green { background: var(--pine-green); color: #fff; }
+    .btn-pixel.green:hover { background: #38a169; }
+
+    .btn-pixel.burlap { background: var(--burlap-brown); color: #fff; }
+    .btn-pixel.burlap:hover { background: #b7791f; }
+
+    .btn-pixel.purple { background: var(--pet-purple); color: #fff; }
+    .btn-pixel.purple:hover { background: #b794f4; }
+
+    .btn-pixel.coral { background: var(--pet-coral); color: #fff; }
+    .btn-pixel.coral:hover { background: #f6ad55; }
+
+    .btn-pixel.teal { background: var(--pet-teal); color: #fff; }
+    .btn-pixel.teal:hover { background: #4fd1c5; }
+
+    .btn-pixel.sm {
+      padding: 6px 10px;
+      font-size: 0.7rem;
+    }
+
+    /* LOW STOCK ALERT BANNER */
+    .alert-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .pixel-alert {
+      background: var(--barn-red);
+      border: 4px solid var(--border-color);
+      box-shadow: var(--pixel-shadow);
+      color: #fff;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      animation: alertPulse 1.4s infinite alternate;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 0.7rem;
+      line-height: 1.5;
+    }
+
+    .alert-icon {
+      font-size: 1.4rem;
+      animation: pixelBlink 0.8s infinite steps(1);
+    }
+
+    @keyframes alertPulse {
+      0% { background: #9b2c2c; }
+      100% { background: #c53030; box-shadow: 4px 4px 0px #000, 0 0 14px rgba(229, 62, 62, 0.6); }
+    }
+
+    @keyframes pixelBlink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0.2; }
+    }
+
+    /* DASHBOARD GRID */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 20px;
+    }
+
+    /* INDIVIDUAL TRACKER CARDS */
+    .tracker-card {
+      background: var(--card-bg);
+      border: 4px solid var(--border-color);
+      box-shadow: var(--pixel-shadow-lg);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .card-header {
+      padding: 14px 16px;
+      border-bottom: 4px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #20271c;
+    }
+
+    .card-title-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .card-title {
+      font-size: 0.82rem;
+      color: var(--text-main);
+    }
+
+    .status-badge {
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.65rem;
+      padding: 4px 8px;
+      border: 2px solid var(--border-color);
+      box-shadow: var(--pixel-shadow-sm);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .status-ok { background: var(--retro-green); color: #000; }
+    .status-caution { background: var(--retro-yellow); color: #000; }
+    .status-critical { background: var(--barn-red); color: #fff; animation: pixelBlink 0.9s infinite steps(1); }
+
+    .card-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex: 1;
+    }
+
+    /* VISUAL PREVIEW BOX */
+    .visual-stage {
+      background: var(--card-inner);
+      border: 3px solid var(--border-color);
+      box-shadow: inset 2px 2px 0px rgba(0,0,0,0.4);
+      min-height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* DIGITAL METRICS ROW */
+    .metrics-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      background: #171d15;
+      border: 3px solid var(--border-color);
+      padding: 10px;
+    }
+
+    .metric-cell {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .metric-title {
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .metric-val {
+      font-family: 'VT323', monospace;
+      font-size: 2.1rem;
+      line-height: 1;
+      color: var(--straw-gold);
+    }
+
+    .metric-val.blue { color: var(--water-cyan); }
+    .metric-val.red { color: #fc8181; }
+    .metric-val.burlap { color: #f6ad55; }
+    .metric-val.purple { color: #d6bcfa; }
+    .metric-val.coral { color: #fbd38d; }
+    .metric-val.teal { color: #81e6d9; }
+
+    .metric-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      color: #cbd5e0;
+      margin-top: 2px;
+    }
+
+    /* RUNWAY BANNER */
+    .runway-banner {
+      background: #121611;
+      border: 2px solid var(--border-color);
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .runway-label {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 0.58rem;
+      color: var(--text-muted);
+    }
+
+    .runway-val {
+      font-family: 'VT323', monospace;
+      font-size: 1.45rem;
+      color: #68d391;
+      letter-spacing: 0.5px;
+    }
+
+    .runway-val.urgent {
+      color: #fc8181;
+      animation: pixelBlink 1s infinite steps(1);
+    }
+
+    /* ACTION BUTTONS GROUP */
+    .action-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: auto;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .true-up-btn {
+      width: 100%;
+    }
+
+    /* 1. HAY BALE STACK */
+    .hay-stack-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .hay-bales-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      max-width: 280px;
+      width: 100%;
+      padding: 8px;
+    }
+
+    .pixel-bale {
+      aspect-ratio: 16 / 10;
+      background: var(--straw-gold);
+      border: 2px solid #000;
+      box-shadow: 2px 2px 0px #000;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+    }
+
+    .pixel-bale::before,
+    .pixel-bale::after {
+      content: "";
+      width: 3px;
+      height: 100%;
+      background: #78350f;
+    }
+
+    .pixel-bale.empty {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px dashed #4a5568;
+      box-shadow: none;
+    }
+    .pixel-bale.empty::before,
+    .pixel-bale.empty::after {
+      display: none;
+    }
+
+    .pixel-bale.partial {
+      background: linear-gradient(to top, var(--straw-gold) 50%, rgba(255, 255, 255, 0.08) 50%);
+    }
+
+    /* 2. SACK STYLES */
+    .bag-visual-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      width: 100%;
+      height: 100%;
+    }
+
+    .pixel-sack {
+      width: 110px;
+      height: 135px;
+      background: var(--burlap-brown);
+      border: 4px solid #000;
+      box-shadow: 4px 4px 0px #000;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 6px;
+      clip-path: polygon(
+        10% 0%, 90% 0%, 
+        100% 12%, 96% 92%, 
+        88% 100%, 12% 100%, 
+        4% 92%, 0% 12%
+      );
+    }
+
+    .pixel-sack.cat-food-sack { background: #319795; }
+    .pixel-sack.dog-food-sack { background: #dd6b20; }
+    .pixel-sack.litter-sack { background: #805ad5; }
+
+    .sack-stitch {
+      width: 100%;
+      height: 6px;
+      border-top: 3px dashed #fff;
+    }
+
+    .sack-label {
+      background: #fbf5e6;
+      color: #000;
+      border: 2px solid #000;
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.55rem;
+      font-weight: 700;
+      padding: 4px 6px;
+      text-align: center;
+      line-height: 1.1;
+      width: 90%;
+    }
+
+    .sack-weight {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.58rem;
+      color: #fef08a;
+      font-weight: 700;
+      background: rgba(0,0,0,0.4);
+      padding: 2px 6px;
+      border: 1px solid #000;
+    }
+
+    .sack-gauge-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .vertical-gauge-track {
+      width: 24px;
+      height: 130px;
+      background: #11150f;
+      border: 3px solid #000;
+      box-shadow: 2px 2px 0px #000;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 2px;
+    }
+
+    .vertical-gauge-fill {
+      width: 100%;
+      background: #ecc94b;
+      border-top: 2px solid #fff;
+      transition: height 0.3s steps(8);
+    }
+
+    .vertical-gauge-markers {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 4px 0;
+    }
+    .v-notch {
+      width: 6px;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    /* 3. STOCK TANK STYLES */
+    .stock-tank-scene {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .galvanized-tank-wrapper {
+      position: relative;
+      width: 250px;
+      height: 120px;
+    }
+
+    .tank-svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    @keyframes waveMove {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-40px); }
+    }
+
+    .animated-water-wave {
+      animation: waveMove 2s infinite linear;
+    }
+
+    .rubber-duck {
+      position: absolute;
+      width: 24px;
+      height: 20px;
+      transition: bottom 0.3s ease;
+      animation: duckBob 1.6s infinite ease-in-out alternate;
+      z-index: 5;
+    }
+
+    @keyframes duckBob {
+      0% { transform: translateY(0px) rotate(-3deg); }
+      100% { transform: translateY(-4px) rotate(3deg); }
+    }
+
+    /* ==========================================================================
+       TELEMETRY & PLANNING HUB
+       ========================================================================== */
+    .telemetry-section {
+      background: var(--card-bg);
+      border: 4px solid var(--border-color);
+      box-shadow: var(--pixel-shadow-lg);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .telemetry-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 3px solid var(--border-color);
+      padding-bottom: 12px;
+    }
+
+    .telemetry-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .telemetry-tabs {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.68rem;
+      padding: 6px 10px;
+      background: #171d15;
+      color: var(--text-muted);
+      border: 2px solid var(--border-color);
+      box-shadow: var(--pixel-shadow-sm);
+      cursor: pointer;
+    }
+    .tab-btn.active {
+      background: var(--straw-gold);
+      color: #000;
+      border-color: #000;
+    }
+
+    .chart-container {
+      background: #11150f;
+      border: 3px solid var(--border-color);
+      box-shadow: inset 2px 2px 0px rgba(0,0,0,0.5);
+      padding: 16px;
+      position: relative;
+      min-height: 240px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    #telemetryCanvas {
+      width: 100%;
+      height: 220px;
+      image-rendering: auto;
+    }
+
+    .chart-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.65rem;
+      justify-content: center;
+      padding-top: 6px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border: 1px solid #000;
+    }
+
+    .planning-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+    }
+
+    .plan-card {
+      background: var(--card-inner);
+      border: 2px solid var(--border-color);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .plan-title {
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .plan-val {
+      font-family: 'VT323', monospace;
+      font-size: 1.8rem;
+      line-height: 1;
+      color: var(--straw-gold);
+    }
+
+    .plan-desc {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      color: #cbd5e0;
+    }
+
+    /* ==========================================================================
+       HOMESTEAD SCRATCH PAD & FIELD NOTES
+       ========================================================================== */
+    .scratchpad-section {
+      background: #252b21;
+      border: 4px solid var(--border-color);
+      box-shadow: var(--pixel-shadow-lg);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .scratchpad-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      border-bottom: 3px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+
+    .scratchpad-status {
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.65rem;
+      color: #68d391;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .scratchpad-quick-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .scratchpad-textarea {
+      width: 100%;
+      min-height: 160px;
+      background: #141912;
+      color: #fef08a;
+      border: 3px solid var(--border-color);
+      box-shadow: inset 2px 2px 0px #000;
+      padding: 14px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      resize: vertical;
+      outline: none;
+    }
+
+    .scratchpad-textarea:focus {
+      border-color: var(--straw-gold);
+      background: #192017;
+    }
+
+    .scratchpad-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+    }
+
+    /* ==========================================================================
+       ACTIVITY LOG
+       ========================================================================== */
+    .activity-section {
+      background: var(--card-bg);
+      border: 4px solid var(--border-color);
+      box-shadow: var(--pixel-shadow-lg);
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .activity-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 10px;
+      border-bottom: 3px solid var(--border-color);
+    }
+
+    .activity-list {
+      max-height: 220px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-right: 6px;
+    }
+
+    .activity-list::-webkit-scrollbar {
+      width: 10px;
+      background: #171d15;
+      border: 2px solid #000;
+    }
+    .activity-list::-webkit-scrollbar-thumb {
+      background: #4a5568;
+      border: 2px solid #000;
+    }
+
+    .log-item {
+      background: var(--card-inner);
+      border: 2px solid var(--border-color);
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 0.8rem;
+    }
+
+    .log-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .log-tag {
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.6rem;
+      padding: 2px 6px;
+      border: 1px solid #000;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .log-tag.hay { background: var(--straw-gold); color: #000; }
+    .log-tag.beet { background: var(--burlap-brown); color: #fff; }
+    .log-tag.water { background: var(--water-blue); color: #fff; }
+    .log-tag.litter { background: var(--pet-purple); color: #fff; }
+    .log-tag.catfood { background: var(--pet-teal); color: #000; }
+    .log-tag.dogfood { background: var(--pet-coral); color: #000; }
+    .log-tag.system { background: #4a5568; color: #fff; }
+
+    .log-text {
+      color: #e2e8f0;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.78rem;
+    }
+
+    .log-time {
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    /* ==========================================================================
+       MODALS: SETTINGS & CALIBRATION / TRUE-UP
+       ========================================================================== */
+    .modal-backdrop {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-backdrop.active {
+      display: flex !important;
+    }
+
+    .pixel-modal {
+      background: var(--card-bg);
+      border: 5px solid var(--border-color);
+      box-shadow: 8px 8px 0px #000;
+      width: 100%;
+      max-width: 580px;
+      max-height: 90vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      z-index: 10001;
+    }
+
+    .modal-header {
+      background: #1b2118;
+      border-bottom: 4px solid var(--border-color);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-size: 0.85rem;
+      color: var(--straw-gold);
+    }
+
+    .modal-close-btn {
+      background: var(--barn-red);
+      color: #fff;
+      border: 2px solid #000;
+      box-shadow: 2px 2px 0px #000;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 0.85rem;
+    }
+
+    .modal-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.72rem;
+      color: var(--text-main);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .form-hint {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      font-family: 'Space Mono', monospace;
+    }
+
+    .pixel-input {
+      font-family: 'VT323', monospace;
+      font-size: 1.6rem;
+      background: #11150f;
+      border: 3px solid var(--border-color);
+      box-shadow: inset 2px 2px 0px #000;
+      color: var(--straw-gold);
+      padding: 6px 12px;
+      outline: none;
+    }
+
+    .pixel-input:focus {
+      border-color: var(--straw-gold);
+      background: #171d15;
+    }
+
+    .modal-footer {
+      background: #1e251b;
+      border-top: 4px solid var(--border-color);
+      padding: 14px 20px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .homestead-footer {
+      margin-top: 10px;
+      text-align: center;
+      font-family: 'Silkscreen', cursive;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      padding: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .homestead-header { flex-direction: column; align-items: flex-start; }
+      .header-actions { width: 100%; justify-content: space-between; }
+      .dashboard-grid { grid-template-columns: 1fr; }
+      .telemetry-header { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body class="scanlines">
+
+  <div class="app-container" id="appContainer">
+
+    <!-- TOP HEADER -->
+    <header class="homestead-header">
+      <div class="header-branding">
+        <div class="header-logo-icon">
+          <svg width="32" height="32" viewBox="0 0 16 16" fill="none">
+            <path d="M8 1L2 6V15H14V6L8 1Z" fill="#a83232" stroke="#000" stroke-width="1"/>
+            <path d="M8 2.5L3.5 6.2V14H12.5V6.2L8 2.5Z" fill="#c53030"/>
+            <path d="M6 9H10V14H6V9Z" fill="#f5f2e9" stroke="#000" stroke-width="1"/>
+            <path d="M6 9L10 14M10 9L6 14" stroke="#7b1818" stroke-width="1"/>
+            <rect x="7" y="4" width="2" height="2" fill="#ecc94b"/>
+          </svg>
+        </div>
+        <div class="header-title-box">
+          <h1>Homestead Feed & Tank Tracker</h1>
+          <div class="header-subtitle">
+            <span class="live-dot"></span>
+            <span>REAL-TIME CONSUMPTION & HISTORICAL TELEMETRY ENGINE</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button id="soundToggleBtn" data-action="toggle-sound" onclick="if(window.homesteadAction){window.homesteadAction('toggle-sound',event);}else{homesteadAction('toggle-sound',event);}" class="btn-pixel sm" title="Toggle 8-Bit Audio SFX">
+          <span id="soundIcon">🔊</span> <span id="soundLabel">SFX ON</span>
+        </button>
+        <button id="scanlineToggleBtn" data-action="toggle-scanlines" onclick="if(window.homesteadAction){window.homesteadAction('toggle-scanlines',event);}else{homesteadAction('toggle-scanlines',event);}" class="btn-pixel sm" title="Toggle Retro CRT Scanlines">
+          📺 CRT FX
+        </button>
+        <button id="openSettingsBtn" data-action="open-settings" onclick="if(window.homesteadAction){window.homesteadAction('open-settings',event);}else{homesteadAction('open-settings',event);}" class="btn-pixel sm gold" title="Open Global Settings">
+          ⚙ SETTINGS
+        </button>
+      </div>
+    </header>
+
+    <!-- ACTION CONFIRMATION TOAST -->
+    <div id="runtimeErrorBox" style="display:none; background:#c53030; color:#fff; border:3px solid #000; box-shadow:4px 4px 0px #000; padding:10px 16px; font-family:'Press Start 2P', cursive; font-size:0.75rem; text-align:center; margin-bottom:12px;"></div>
+    <div id="actionToastBox" style="display:none; background:#2f855a; color:#fff; border:3px solid #000; box-shadow:4px 4px 0px #000; padding:10px 16px; font-family:'Press Start 2P', cursive; font-size:0.75rem; text-align:center; transition:opacity 0.3s;"></div>
+
+    <!-- LOW INVENTORY ALERTS CONTAINER -->
+    <div id="alertsContainer" class="alert-container"></div>
+
+    <!-- =================================================================
+         SECTION 1: LIVESTOCK FEED & WATER (HORSE / COW)
+         ================================================================= -->
+    <div class="section-divider">
+      <div class="section-title">
+        <span>🐴 LIVESTOCK FEED & WATER</span>
+      </div>
+      <span class="section-tag">ZONE: PASTURE & BARN</span>
+    </div>
+
+    <main class="dashboard-grid">
+
+      <!-- CARD 1: HAY BALES TRACKER -->
+      <article class="tracker-card" id="cardHay">
+        <div class="card-header">
+          <div class="card-title-group">
+            <svg width="22" height="22" viewBox="0 0 16 16" fill="none">
+              <rect x="1" y="3" width="14" height="10" rx="1" fill="#f5be38" stroke="#000" stroke-width="1"/>
+              <line x1="5" y1="3" x2="5" y2="13" stroke="#78350f" stroke-width="1"/>
+              <line x1="11" y1="3" x2="11" y2="13" stroke="#78350f" stroke-width="1"/>
+              <line x1="1" y1="8" x2="15" y2="8" stroke="#d97706" stroke-dasharray="2 1"/>
+            </svg>
+            <h2 class="card-title pixel-title">Hay Bales</h2>
+          </div>
+          <span id="badgeHay" class="status-badge status-ok">NORMAL</span>
+        </div>
+
+        <div class="card-body">
+          <div class="visual-stage">
+            <div class="hay-stack-container">
+              <div class="hay-bales-grid" id="hayBalesGrid" title="Visual Bales Stack"></div>
+              <div class="form-hint" id="hayVisualSummary">Visual stack representation</div>
+            </div>
+          </div>
+
+          <div class="metrics-panel">
+            <div class="metric-cell">
+              <span class="metric-title">Remaining Bales</span>
+              <span class="metric-val" id="hayCountVal">--.-</span>
+              <span class="metric-sub" id="hayFractionSub">Decimal balance</span>
+            </div>
+            <div class="metric-cell">
+              <span class="metric-title">Burn Rate</span>
+              <span class="metric-val" id="hayRateVal">0.50</span>
+              <span class="metric-sub">bales / day (1 / 48h)</span>
+            </div>
+          </div>
+
+          <div class="runway-banner">
+            <span class="runway-label">RUNWAY LEFT:</span>
+            <span class="runway-val" id="hayRunwayVal">--d --h</span>
+          </div>
+
+          <div class="action-group">
+            <div class="quick-actions">
+              <button class="btn-pixel gold sm" id="btnDeliverHay" data-action="deliver-hay" onclick="if(window.homesteadAction){window.homesteadAction('deliver-hay',event);}else{homesteadAction('deliver-hay',event);}" title="Add 10 Bales to Inventory">
+                +10 BALES
+              </button>
+              <button class="btn-pixel sm" id="btnFeedHay" data-action="feed-hay" onclick="if(window.homesteadAction){window.homesteadAction('feed-hay',event);}else{homesteadAction('feed-hay',event);}" title="Deduct 1 Bale fed right now">
+                -1 BALE FED
+              </button>
+            </div>
+            <button class="btn-pixel true-up-btn sm" id="btnCalibrateHay" data-action="calibrate-hay" onclick="if(window.homesteadAction){window.homesteadAction('calibrate-hay',event);}else{homesteadAction('calibrate-hay',event);}">
+              🎯 CALIBRATE / TRUE-UP
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD 2: BEET PULP (BAGS PRIMARY) -->
+      <article class="tracker-card" id="cardBeet">
+        <div class="card-header">
+          <div class="card-title-group">
+            <svg width="22" height="22" viewBox="0 0 16 16" fill="none">
+              <path d="M3 2H13L14 14H2L3 2Z" fill="#a47148" stroke="#000" stroke-width="1"/>
+              <line x1="3" y1="4" x2="13" y2="4" stroke="#fff" stroke-dasharray="2 1"/>
+              <rect x="4" y="6" width="8" height="5" fill="#fbf5e6"/>
+              <text x="5" y="10" font-size="3" fill="#000" font-family="monospace">PULP</text>
+            </svg>
+            <h2 class="card-title pixel-title">Beet Pulp</h2>
+          </div>
+          <span id="badgeBeet" class="status-badge status-ok">NORMAL</span>
+        </div>
+
+        <div class="card-body">
+          <div class="visual-stage">
+            <div class="bag-visual-wrapper">
+              <div class="pixel-sack">
+                <div class="sack-stitch"></div>
+                <div class="sack-label">
+                  BEET PULP<br><span style="font-size:0.45rem;">50 LB SACK</span>
+                </div>
+                <div class="sack-weight" id="bagScoopsLeftText">-- / 40 SC</div>
+              </div>
+
+              <div class="sack-gauge-container">
+                <span class="metric-title" style="font-size:0.55rem;">ACTIVE BAG</span>
+                <div class="vertical-gauge-track">
+                  <div class="vertical-gauge-fill" id="bagFillBar" style="height: 100%;"></div>
+                  <div class="vertical-gauge-markers">
+                    <div class="v-notch"></div><div class="v-notch"></div><div class="v-notch"></div><div class="v-notch"></div>
+                  </div>
+                </div>
+                <span class="metric-title" id="bagPercentText" style="font-size:0.55rem;">100%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="metrics-panel">
+            <div class="metric-cell">
+              <span class="metric-title">Bags Balance</span>
+              <span class="metric-val burlap" id="beetBagsVal">--.-</span>
+              <span class="metric-sub" id="beetScoopsEstVal">Est. ~-- scoops</span>
+            </div>
+            <div class="metric-cell">
+              <span class="metric-title">Burn Rate</span>
+              <span class="metric-val burlap" id="beetRateVal">2.0</span>
+              <span class="metric-sub" id="beetRateSubVal">scoops/day</span>
+            </div>
+          </div>
+
+          <div class="runway-banner">
+            <span class="runway-label">RUNWAY LEFT:</span>
+            <span class="runway-val" id="beetRunwayVal">--d --h</span>
+          </div>
+
+          <div class="action-group">
+            <div class="quick-actions">
+              <button class="btn-pixel burlap sm" id="btnDeliverBagBeet" data-action="deliver-beet" onclick="if(window.homesteadAction){window.homesteadAction('deliver-beet',event);}else{homesteadAction('deliver-beet',event);}" title="Add 1 Bag to Inventory">
+                +1 BAG (SACK)
+              </button>
+              <button class="btn-pixel sm" id="btnFeedScoopBeet" data-action="feed-beet" onclick="if(window.homesteadAction){window.homesteadAction('feed-beet',event);}else{homesteadAction('feed-beet',event);}" title="Deduct 1 scoop fed">
+                -1 SCOOP GIVEN
+              </button>
+            </div>
+            <button class="btn-pixel true-up-btn sm" id="btnCalibrateBeet" data-action="calibrate-beet" onclick="if(window.homesteadAction){window.homesteadAction('calibrate-beet',event);}else{homesteadAction('calibrate-beet',event);}">
+              🎯 CALIBRATE / TRUE-UP BAGS
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD 3: STOCK TANK WATER -->
+      <article class="tracker-card" id="cardWater">
+        <div class="card-header">
+          <div class="card-title-group">
+            <svg width="22" height="22" viewBox="0 0 16 16" fill="none">
+              <ellipse cx="8" cy="8" rx="7" ry="5" fill="#4a5568" stroke="#000" stroke-width="1"/>
+              <ellipse cx="8" cy="7" rx="6" ry="4" fill="#3182ce"/>
+              <path d="M5 7Q8 8.5 11 7" stroke="#63b3ed" stroke-width="1"/>
+            </svg>
+            <h2 class="card-title pixel-title">Stock Tank</h2>
+          </div>
+          <span id="badgeWater" class="status-badge status-ok">NORMAL</span>
+        </div>
+
+        <div class="card-body">
+          <div class="visual-stage">
+            <div class="stock-tank-scene">
+              <div class="rubber-duck" id="stockTankDuck" style="bottom: 70px;">
+                <svg width="24" height="20" viewBox="0 0 16 14" fill="none">
+                  <path d="M2 7C2 5 4 4 7 4C10 4 12 5 13 8C14 11 12 12 8 12C4 12 2 10 2 7Z" fill="#ecc94b" stroke="#000" stroke-width="1"/>
+                  <circle cx="10" cy="5" r="3" fill="#ecc94b" stroke="#000" stroke-width="1"/>
+                  <rect x="12" y="5" width="3" height="2" fill="#ed8936" stroke="#000" stroke-width="1"/>
+                  <circle cx="10" cy="4" r="0.8" fill="#000"/>
+                </svg>
+              </div>
+
+              <div class="galvanized-tank-wrapper">
+                <svg class="tank-svg" viewBox="0 0 240 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <clipPath id="tankWaterMask">
+                      <rect id="svgWaterRect" x="16" y="24" width="208" height="74" rx="10"/>
+                    </clipPath>
+                  </defs>
+                  <ellipse cx="120" cy="24" rx="104" ry="14" fill="#334155" stroke="#0c100a" stroke-width="3"/>
+                  <ellipse cx="120" cy="25" rx="100" ry="12" fill="#1e293b"/>
+                  <g clip-path="url(#tankWaterMask)">
+                    <rect id="waterBackdrop" x="14" y="20" width="212" height="85" fill="#1a365d"/>
+                    <g id="dynamicWaterGroup" transform="translate(0, 0)">
+                      <rect id="waterBodyRect" x="14" y="30" width="212" height="85" fill="#3182ce"/>
+                      <g class="animated-water-wave">
+                        <path d="M 0 30 Q 15 26, 30 30 T 60 30 T 90 30 T 120 30 T 150 30 T 180 30 T 210 30 T 240 30 T 270 30 T 300 30 V 45 H 0 Z" fill="#63b3ed" opacity="0.85"/>
+                      </g>
+                    </g>
+                  </g>
+                  <path d="M 16 24 V 90 C 16 106, 224 106, 224 90 V 24" fill="none" stroke="#0c100a" stroke-width="5"/>
+                  <path d="M 16 24 C 16 38, 224 38, 224 24 V 90 C 224 106, 16 106, 16 90 Z" fill="#64748b" opacity="0.35"/>
+                  <path d="M 18 50 C 40 60, 200 60, 222 50" stroke="#94a3b8" stroke-width="3" fill="none"/>
+                  <path d="M 18 52 C 40 62, 200 62, 222 52" stroke="#1e293b" stroke-width="2" fill="none"/>
+                  <path d="M 18 72 C 40 82, 200 82, 222 72" stroke="#94a3b8" stroke-width="3" fill="none"/>
+                  <path d="M 18 74 C 40 84, 200 84, 222 74" stroke="#1e293b" stroke-width="2" fill="none"/>
+                  <path d="M 16 24 C 16 38, 224 38, 224 24" fill="none" stroke="#cbd5e1" stroke-width="4"/>
+                  <path d="M 16 25 C 16 39, 224 39, 224 25" fill="none" stroke="#0c100a" stroke-width="2"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="metrics-panel">
+            <div class="metric-cell">
+              <span class="metric-title">Tank Level</span>
+              <span class="metric-val blue" id="waterPercentVal">100%</span>
+              <span class="metric-sub" id="waterLevelSub">Capacity status</span>
+            </div>
+            <div class="metric-cell">
+              <span class="metric-title">Depletion Speed</span>
+              <span class="metric-val blue" id="waterDepletionVal">96.0h</span>
+              <span class="metric-sub">~1.04% drop / hour</span>
+            </div>
+          </div>
+
+          <div class="runway-banner">
+            <span class="runway-label">TIME UNTIL DRY:</span>
+            <span class="runway-val" id="waterRunwayVal">--d --h --m --s</span>
+          </div>
+
+          <div class="action-group">
+            <button class="btn-pixel blue" id="btnFillTank" data-action="fill-water" onclick="if(window.homesteadAction){window.homesteadAction('fill-water',event);}else{homesteadAction('fill-water',event);}" style="font-size:0.9rem; padding: 12px 14px;" title="Reset Tank to 100% Full">
+              🚰 FILLED TO TOP (100%)
+            </button>
+            <button class="btn-pixel true-up-btn sm" id="btnCalibrateWater" data-action="calibrate-water" onclick="if(window.homesteadAction){window.homesteadAction('calibrate-water',event);}else{homesteadAction('calibrate-water',event);}">
+              🎯 CALIBRATE / TRUE-UP
+            </button>
+          </div>
+        </div>
+      </article>
+
+    </main>
+
+    <!-- =================================================================
+         SECTION 2: HOUSE & KENNEL SUPPLIES (CAT LITTER, CAT FOOD, DOG FOOD)
+         ================================================================= -->
+    <div class="section-divider">
+      <div class="section-title">
+        <span>🐾 HOUSE & KENNEL SUPPLIES</span>
+      </div>
+      <span class="section-tag">ZONE: HOMESTEAD HOUSE & PANTRY</span>
+    </div>
+
+    <section class="dashboard-grid">
+
+      <!-- CARD 4: CAT LITTER -->
+      <article class="tracker-card" id="cardLitter">
+        <div class="card-header">
+          <div class="card-title-group">
+            <svg width="22" height="22" viewBox="0 0 16 16" fill="none">
+              <rect x="2" y="4" width="12" height="10" rx="1" fill="#805ad5" stroke="#000" stroke-width="1"/>
+              <ellipse cx="8" cy="9" rx="3.5" ry="2" fill="#d6bcfa"/>
+              <circle cx="6" cy="6" r="0.8" fill="#d6bcfa"/>
+              <circle cx="8" cy="5.2" r="0.8" fill="#d6bcfa"/>
+              <circle cx="10" cy="6" r="0.8" fill="#d6bcfa"/>
+            </svg>
+            <h2 class="card-title pixel-title">Cat Litter</h2>
+          </div>
+          <span id="badgeLitter" class="status-badge status-ok">NORMAL</span>
+        </div>
+
+        <div class="card-body">
+          <div class="visual-stage">
+            <div class="bag-visual-wrapper">
+              <div class="pixel-sack litter-sack">
+                <div class="sack-stitch"></div>
+                <div class="sack-label">
+                  CAT LITTER<br><span style="font-size:0.45rem;">CLUMPING</span>
+                </div>
+                <div class="sack-weight" id="litterFractionText">--/-- BOX</div>
+              </div>
+              <div class="sack-gauge-container">
+                <span class="metric-title" style="font-size:0.55rem;">ACTIVE BOX</span>
+                <div class="vertical-gauge-track">
+                  <div class="vertical-gauge-fill" id="litterFillBar" style="height: 100%; background: var(--pet-purple);"></div>
+                  <div class="vertical-gauge-markers">
+                    <div class="v-notch"></div><div class="v-notch"></div><div class="v-notch"></div><div class="v-notch"></div>
+                  </div>
+                </div>
+                <span class="metric-title" id="litterPercentText" style="font-size:0.55rem;">100%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="metrics-panel">
+            <div class="metric-cell">
+              <span class="metric-title">Boxes Balance</span>
+              <span class="metric-val purple" id="litterCountVal">--.-</span>
+              <span class="metric-sub" id="litterDaysPerBoxSub">~10 days / box</span>
+            </div>
+            <div class="metric-cell">
+              <span class="metric-title">Burn Rate</span>
+              <span class="metric-val purple" id="litterRateVal">0.10</span>
+              <span class="metric-sub">boxes / day</span>
+            </div>
+          </div>
+
+          <div class="runway-banner">
+            <span class="runway-label">RUNWAY LEFT:</span>
+            <span class="runway-val" id="litterRunwayVal">--d --h</span>
+          </div>
+
+          <div class="action-group">
+            <div class="quick-actions">
+              <button class="btn-pixel purple sm" id="btnDeliverLitter" data-action="deliver-litter" onclick="if(window.homesteadAction){window.homesteadAction('deliver-litter',event);}else{homesteadAction('deliver-litter',event);}" title="Add 2 boxes to stock">
+                +2 BOXES IN
+              </button>
+              <button class="btn-pixel sm" id="btnUseLitter" data-action="use-litter" onclick="if(window.homesteadAction){window.homesteadAction('use-litter',event);}else{homesteadAction('use-litter',event);}" title="Log 1 box opened/used">
+                -1 BOX OPENED
+              </button>
+            </div>
+            <button class="btn-pixel true-up-btn sm" id="btnCalibrateLitter" data-action="calibrate-litter" onclick="if(window.homesteadAction){window.homesteadAction('calibrate-litter',event);}else{homesteadAction('calibrate-litter',event);}">
+              🎯 CALIBRATE / TRUE-UP
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD 5: CAT FOOD -->
+      <article class="tracker-card" id="cardCatFood">
+        <div class="card-header">
+          <div class="card-title-group">
+            <svg width="22" height="22" viewBox="0 0 16 16" fill="none">
+              <path d="M2 3L5 1L8 3L11 1L14 3V14H2V3Z" fill="#319795" stroke="#000" stroke-width="1"/>
+              <ellipse cx="8" cy="8" rx="3" ry="1.5" fill="#fef08a"/>
+            </svg>
+            <h2 class="card-title pixel-title">Cat Food</h2>
+          </div>
+          <span id="badgeCatFood" class="status-badge status-ok">NORMAL</span>
+        </div>
+
+        <div class="card-body">
+          <div class="visual-stage">
+            <div class="bag-visual-wrapper">
+              <div class="pixel-sack cat-food-sack">
+                <div class="sack-stitch"></div>
+                <div class="sack-label">
+                  FELINE CHOW<br><span style="font-size:0.45rem;">SALMON RECIPE</span>
+                </div>
+                <div class="sack-weight" id="catFoodCupsLeftText">-- / 40 CU</div>
+              </div>
+              <div class="sack-gauge-container">
+                <span class="metric-title" style="font-size:0.55rem;">ACTIVE BAG</span>
+                <div class="vertical-gauge-track">
+                  <div class="vertical-gauge-fill" id="catFoodFillBar" style="height: 100%; background: var(--pet-teal);"></div>
+                  <div class="vertical-gauge-markers">
+                    <div class="v-notch"></div><div class="v-notch"></div><div class="v-notch"></div><div class="v-notch"></div>
+                  </div>
+                </div>
+                <span class="metric-title" id="catFoodPercentText" style="font-size:0.55rem;">100%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="metrics-panel">
+            <div class="metric-cell">
+              <span class="metric-title">Bags Balance</span>
+              <span class="metric-val teal" id="catFoodBagsVal">--.-</span>
+              <span class="metric-sub" id="catFoodCupsEstVal">Est. ~-- cups</span>
+            </div>
+            <div class="metric-cell">
+              <span class="metric-title">Burn Rate</span>
+              <span class="metric-val teal" id="catFoodRateVal">1.0</span>
+              <span class="metric-sub">cups / day</span>
+            </div>
+          </div>
+
+          <div class="runway-banner">
+            <span class="runway-label">RUNWAY LEFT:</span>
+            <span class="runway-val" id="catFoodRunwayVal">--d --h</span>
+          </div>
+
+          <div class="action-group">
+            <div class="quick-actions">
+              <button class="btn-pixel teal sm" id="btnDeliverCatFood" data-action="deliver-catfood" onclick="if(window.homesteadAction){window.homesteadAction('deliver-catfood',event);}else{homesteadAction('deliver-catfood',event);}" title="Add 1 Bag to Inventory">
+                +1 BAG (SACK)
+              </button>
+              <button class="btn-pixel sm" id="btnFeedCupCatFood" data-action="feed-catfood" onclick="if(window.homesteadAction){window.homesteadAction('feed-catfood',event);}else{homesteadAction('feed-catfood',event);}" title="Deduct 1 cup fed">
+                -1 CUP FED
+              </button>
+            </div>
+            <button class="btn-pixel true-up-btn sm" id="btnCalibrateCatFood" data-action="calibrate-catfood" onclick="if(window.homesteadAction){window.homesteadAction('calibrate-catfood',event);}else{homesteadAction('calibrate-catfood',event);}">
+              🎯 CALIBRATE / TRUE-UP
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD 6: DOG FOOD -->
+      <article class="tracker-card" id="cardDogFood">
+        <div class="card-header">
+          <div class="card-title-group">
+            <svg width="22" height="22" viewBox="0 0 16 16" fill="none">
+              <path d="M3 2H13L14 14H2L3 2Z" fill="#dd6b20" stroke="#000" stroke-width="1"/>
+              <ellipse cx="8" cy="8" rx="3.5" ry="2" fill="#fff"/>
+              <circle cx="5" cy="8" r="1.2" fill="#fff"/>
+              <circle cx="11" cy="8" r="1.2" fill="#fff"/>
+            </svg>
+            <h2 class="card-title pixel-title">Dog Food</h2>
+          </div>
+          <span id="badgeDogFood" class="status-badge status-ok">NORMAL</span>
+        </div>
+
+        <div class="card-body">
+          <div class="visual-stage">
+            <div class="bag-visual-wrapper">
+              <div class="pixel-sack dog-food-sack">
+                <div class="sack-stitch"></div>
+                <div class="sack-label">
+                  CANINE CHOW<br><span style="font-size:0.45rem;">40 LB BAG</span>
+                </div>
+                <div class="sack-weight" id="dogFoodScoopsLeftText">-- / 80 SC</div>
+              </div>
+              <div class="sack-gauge-container">
+                <span class="metric-title" style="font-size:0.55rem;">ACTIVE BAG</span>
+                <div class="vertical-gauge-track">
+                  <div class="vertical-gauge-fill" id="dogFoodFillBar" style="height: 100%; background: var(--pet-coral);"></div>
+                  <div class="vertical-gauge-markers">
+                    <div class="v-notch"></div><div class="v-notch"></div><div class="v-notch"></div><div class="v-notch"></div>
+                  </div>
+                </div>
+                <span class="metric-title" id="dogFoodPercentText" style="font-size:0.55rem;">100%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="metrics-panel">
+            <div class="metric-cell">
+              <span class="metric-title">Bags Balance</span>
+              <span class="metric-val coral" id="dogFoodBagsVal">--.-</span>
+              <span class="metric-sub" id="dogFoodScoopsEstVal">Est. ~-- scoops</span>
+            </div>
+            <div class="metric-cell">
+              <span class="metric-title">Burn Rate</span>
+              <span class="metric-val coral" id="dogFoodRateVal">4.0</span>
+              <span class="metric-sub">scoops / day</span>
+            </div>
+          </div>
+
+          <div class="runway-banner">
+            <span class="runway-label">RUNWAY LEFT:</span>
+            <span class="runway-val" id="dogFoodRunwayVal">--d --h</span>
+          </div>
+
+          <div class="action-group">
+            <div class="quick-actions">
+              <button class="btn-pixel coral sm" id="btnDeliverDogFood" data-action="deliver-dogfood" onclick="if(window.homesteadAction){window.homesteadAction('deliver-dogfood',event);}else{homesteadAction('deliver-dogfood',event);}" title="Add 1 Bag to Inventory">
+                +1 BAG (40LB)
+              </button>
+              <button class="btn-pixel sm" id="btnFeedScoopDogFood" data-action="feed-dogfood" onclick="if(window.homesteadAction){window.homesteadAction('feed-dogfood',event);}else{homesteadAction('feed-dogfood',event);}" title="Deduct 2 scoops fed">
+                -2 SCOOPS FED
+              </button>
+            </div>
+            <button class="btn-pixel true-up-btn sm" id="btnCalibrateDogFood" data-action="calibrate-dogfood" onclick="if(window.homesteadAction){window.homesteadAction('calibrate-dogfood',event);}else{homesteadAction('calibrate-dogfood',event);}">
+              🎯 CALIBRATE / TRUE-UP
+            </button>
+          </div>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- ==========================================================================
+         SECTION 3: TELEMETRY & 30-DAY PLANNING INTELLIGENCE
+         ========================================================================== -->
+    <div class="section-divider">
+      <div class="section-title">
+        <span>📈 TELEMETRY & 30-DAY PLANNING INTELLIGENCE</span>
+      </div>
+      <span class="section-tag">ANALYTICS & DISPATCH</span>
+    </div>
+
+    <section class="telemetry-section">
+      <div class="telemetry-header">
+        <div class="telemetry-tabs" id="telemetryFilterTabs">
+          <button class="tab-btn active" data-res="hay" onclick="selectTelemetryTab('hay', this)">🌾 HAY BALES</button>
+          <button class="tab-btn" data-res="beet" onclick="selectTelemetryTab('beet', this)">👜 BEET PULP</button>
+          <button class="tab-btn" data-res="water" onclick="selectTelemetryTab('water', this)">🚰 WATER TANK</button>
+          <button class="tab-btn" data-res="litter" onclick="selectTelemetryTab('litter', this)">📦 CAT LITTER</button>
+          <button class="tab-btn" data-res="catfood" onclick="selectTelemetryTab('catfood', this)">🐟 CAT FOOD</button>
+          <button class="tab-btn" data-res="dogfood" onclick="selectTelemetryTab('dogfood', this)">🥩 DOG FOOD</button>
+        </div>
+
+        <div class="telemetry-controls">
+          <button class="btn-pixel sm" id="btnExportCSV" data-action="export-csv" onclick="if(window.homesteadAction){window.homesteadAction('export-csv',event);}else{homesteadAction('export-csv',event);}" title="Download telemetry history as CSV">
+            📥 EXPORT CSV
+          </button>
+          <button class="btn-pixel sm" id="btnSnapTelemetry" data-action="snap-telemetry" onclick="if(window.homesteadAction){window.homesteadAction('snap-telemetry',event);}else{homesteadAction('snap-telemetry',event);}" title="Record manual telemetry checkpoint">
+            📌 RECORD SNAPSHOT
+          </button>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <canvas id="telemetryCanvas"></canvas>
+        <div class="chart-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#f5be38;"></div><span>Recorded Depletion Level</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#48bb78;"></div><span>Ground-Truth Calibrations</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#fc8181; border:1px dashed #fff;"></div><span>Projected Run-Out Path</span></div>
+        </div>
+      </div>
+
+      <div class="planning-grid" id="planningProjectionsGrid"></div>
+    </section>
+
+    <!-- ==========================================================================
+         SECTION 4: HOMESTEAD AUDIT & ACTIVITY LOG
+         ========================================================================== -->
+    <section class="activity-section">
+      <div class="activity-header">
+        <h3 class="pixel-title" style="font-size:0.8rem; color:var(--straw-gold);">Homestead Activity & True-Up Log</h3>
+        <button class="btn-pixel sm" id="btnClearLogBtn" data-action="clear-log" onclick="if(window.homesteadAction){window.homesteadAction('clear-log',event);}else{homesteadAction('clear-log',event);}" title="Clear non-system log entries">
+          CLEAR LOG
+        </button>
+      </div>
+      <div class="activity-list" id="activityList"></div>
+    </section>
+
+    <!-- ==========================================================================
+         SECTION 5: HOMESTEAD SCRATCH PAD & FIELD NOTES (BOTTOM SCRATCHPAD)
+         ========================================================================== -->
+    <div class="section-divider">
+      <div class="section-title">
+        <span>📝 HOMESTEAD SCRATCH PAD & FIELD NOTES</span>
+      </div>
+      <span class="section-tag">OFFLINE PERSISTENT CLIPBOARD</span>
+    </div>
+
+    <section class="scratchpad-section">
+      <div class="scratchpad-header">
+        <div class="scratchpad-status">
+          <span class="live-dot" style="background:#48bb78;"></span>
+          <span id="scratchPadStatusText">AUTOSAVED TO LOCALSTORAGE</span>
+        </div>
+        <div class="scratchpad-quick-bar">
+          <button class="btn-pixel sm" id="btnPadInsertDate" data-action="pad-insert-date" onclick="if(window.homesteadAction){window.homesteadAction('pad-insert-date',event);}else{homesteadAction('pad-insert-date',event);}" title="Insert Timestamp">
+            + TIMESTAMP
+          </button>
+          <button class="btn-pixel sm" id="btnPadInsertDelivery" data-action="pad-insert-delivery" onclick="if(window.homesteadAction){window.homesteadAction('pad-insert-delivery',event);}else{homesteadAction('pad-insert-delivery',event);}" title="Insert Feed Delivery Checklist Template">
+            + FEED ORDER
+          </button>
+          <button class="btn-pixel sm" id="btnPadCopy" data-action="pad-copy" onclick="if(window.homesteadAction){window.homesteadAction('pad-copy',event);}else{homesteadAction('pad-copy',event);}" title="Copy notes to clipboard">
+            📋 COPY NOTES
+          </button>
+          <button class="btn-pixel red sm" id="btnPadClear" data-action="pad-clear" onclick="if(window.homesteadAction){window.homesteadAction('pad-clear',event);}else{homesteadAction('pad-clear',event);}" title="Clear Scratch Pad">
+            🗑 CLEAR PAD
+          </button>
+        </div>
+      </div>
+
+      <textarea id="homesteadScratchPad" class="scratchpad-textarea" placeholder="Type quick homestead notes, grain supplier invoices, delivery estimates, or pasture observations here... Everything typed here persists automatically across reloads."></textarea>
+
+      <div class="scratchpad-footer">
+        <span id="scratchPadStats">0 characters • 0 words</span>
+        <span id="scratchPadLastSaved">Ready</span>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="homestead-footer">
+      <span>HOMESTEAD FEED & TANK TRACKER • RUNNING OFFLINE VIA LOCALSTORAGE ENGINE • v3.1 RESILIENT EDITION</span>
+    </footer>
+
+  </div>
+
+  <!-- =================================================================
+       MODAL: CALIBRATION / TRUE-UP GROUND TRUTH
+       ================================================================= -->
+  <div class="modal-backdrop" id="trueUpModal">
+    <div class="pixel-modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="trueUpModalTitle">🎯 Ground Truth Calibration</h3>
+        <button class="modal-close-btn" id="closeTrueUpModal" data-action="close-trueup" onclick="if(window.homesteadAction){window.homesteadAction('close-trueup',event);}else{homesteadAction('close-trueup',event);}">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="form-hint" style="color:var(--text-main); font-size: 0.75rem;">
+          Enter the observed physical count right now. The engine sets this as the new mathematical baseline and logs a ground-truth calibration point in telemetry.
+        </p>
+
+        <div class="form-group" id="groupTrueUpVal">
+          <label class="form-label" for="inputTrueUpVal">
+            <span id="trueUpInputLabel">Current Count</span>
+            <span class="form-hint" id="trueUpUnitHint">Units</span>
+          </label>
+          <input type="number" step="any" min="0" class="pixel-input" id="inputTrueUpVal">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-pixel sm" id="cancelTrueUpModal" data-action="close-trueup" onclick="if(window.homesteadAction){window.homesteadAction('close-trueup',event);}else{homesteadAction('close-trueup',event);}">CANCEL</button>
+        <button class="btn-pixel sm gold" id="saveTrueUpModal" data-action="save-trueup" onclick="if(window.homesteadAction){window.homesteadAction('save-trueup',event);}else{homesteadAction('save-trueup',event);}">APPLY TRUE-UP</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =================================================================
+       MODAL: GLOBAL HOMESTEAD SETTINGS & INITIAL SETUP
+       ================================================================= -->
+  <div class="modal-backdrop" id="settingsModal">
+    <div class="pixel-modal">
+      <div class="modal-header">
+        <h3 class="modal-title">⚙ Homestead Configuration</h3>
+        <button class="modal-close-btn" id="closeSettingsModal" data-action="close-settings" onclick="if(window.homesteadAction){window.homesteadAction('close-settings',event);}else{homesteadAction('close-settings',event);}">&times;</button>
+      </div>
+      <div class="modal-body">
+        
+        <!-- Hay Settings -->
+        <h4 class="pixel-label" style="color:var(--straw-gold); border-bottom:2px solid var(--border-color); padding-bottom:4px;">
+          🌾 HAY BALE PARAMETERS
+        </h4>
+        <div class="form-group">
+          <label class="form-label" for="settingHayAmount">
+            <span>Starting Bales Count</span>
+            <span class="form-hint">bales in barn</span>
+          </label>
+          <input type="number" step="0.1" min="0" class="pixel-input" id="settingHayAmount">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="settingHayRate">
+            <span>Hay Burn Rate (Bales / Day)</span>
+            <span class="form-hint">default: 0.50</span>
+          </label>
+          <input type="number" step="0.05" min="0.01" class="pixel-input" id="settingHayRate">
+        </div>
+
+        <!-- Beet Pulp Settings -->
+        <h4 class="pixel-label" style="color:#f6ad55; border-bottom:2px solid var(--border-color); padding-bottom:4px; margin-top:10px;">
+          👜 BEET PULP (BAGS & ESTIMATED SCOOPS)
+        </h4>
+        <div class="form-group">
+          <label class="form-label" for="settingBeetBags">
+            <span>Current Bags Balance</span>
+            <span class="form-hint">measured in bags (e.g. 3.5)</span>
+          </label>
+          <input type="number" step="0.1" min="0" class="pixel-input" id="settingBeetBags">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="settingBeetScoopsPerBag">
+            <span>Scoops Per Bag Specification</span>
+            <span class="form-hint">default: 40 scoops / bag</span>
+          </label>
+          <input type="number" step="1" min="1" class="pixel-input" id="settingBeetScoopsPerBag">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="settingBeetRateScoops">
+            <span>Daily Burn Rate (Scoops / Day)</span>
+            <span class="form-hint">default: 2.0 scoops/day</span>
+          </label>
+          <input type="number" step="0.1" min="0.1" class="pixel-input" id="settingBeetRateScoops">
+        </div>
+
+        <!-- Water Tank Settings -->
+        <h4 class="pixel-label" style="color:var(--water-cyan); border-bottom:2px solid var(--border-color); padding-bottom:4px; margin-top:10px;">
+          🚰 STOCK TANK WATER
+        </h4>
+        <div class="form-group">
+          <label class="form-label" for="settingWaterHoursEmpty">
+            <span>Full Depletion Time (Hours)</span>
+            <span class="form-hint">default: 96h (4 days)</span>
+          </label>
+          <input type="number" step="1" min="1" class="pixel-input" id="settingWaterHoursEmpty">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="settingWaterHoursSinceFill">
+            <span>Hours Elapsed Since Last Fill</span>
+            <span class="form-hint">0 = full right now</span>
+          </label>
+          <input type="number" step="0.5" min="0" class="pixel-input" id="settingWaterHoursSinceFill">
+        </div>
+
+        <!-- Cat Litter Settings -->
+        <h4 class="pixel-label" style="color:var(--pet-purple); border-bottom:2px solid var(--border-color); padding-bottom:4px; margin-top:10px;">
+          📦 CAT LITTER PARAMETERS
+        </h4>
+        <div class="form-group">
+          <label class="form-label" for="settingLitterBoxes">
+            <span>Current Boxes Count</span>
+          </label>
+          <input type="number" step="0.1" min="0" class="pixel-input" id="settingLitterBoxes">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="settingLitterRate">
+            <span>Burn Rate (Boxes / Day)</span>
+            <span class="form-hint">default: 0.10</span>
+          </label>
+          <input type="number" step="0.01" min="0.01" class="pixel-input" id="settingLitterRate">
+        </div>
+
+        <!-- Cat Food Settings -->
+        <h4 class="pixel-label" style="color:var(--pet-teal); border-bottom:2px solid var(--border-color); padding-bottom:4px; margin-top:10px;">
+          🐟 CAT FOOD PARAMETERS
+        </h4>
+        <div class="form-group">
+          <label class="form-label" for="settingCatFoodBags">
+            <span>Current Bags Count</span>
+          </label>
+          <input type="number" step="0.1" min="0" class="pixel-input" id="settingCatFoodBags">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="settingCatFoodCupsPerBag">
+            <span>Cups Per Bag</span>
+            <span class="form-hint">default: 40</span>
+          </label>
+          <input type="number" step="1" min="1" class="pixel-input" id="settingCatFoodCupsPerBag">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="settingCatFoodRateCups">
+            <span>Burn Rate (Cups / Day)</span>
+            <span class="form-hint">default: 1.0</span>
+          </label>
+          <input type="number" step="0.1" min="0.1" class="pixel-input" id="settingCatFoodRateCups">
+        </div>
+
+        <!-- Dog Food Settings -->
+        <h4 class="pixel-label" style="color:var(--pet-coral); border-bottom:2px solid var(--border-color); padding-bottom:4px; margin-top:10px;">
+          🥩 DOG FOOD PARAMETERS
+        </h4>
+        <div class="form-group">
+          <label class="form-label" for="settingDogFoodBags">
+            <span>Current Bags Count</span>
+          </label>
+          <input type="number" step="0.1" min="0" class="pixel-input" id="settingDogFoodBags">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="settingDogFoodScoopsPerBag">
+            <span>Scoops Per Bag</span>
+            <span class="form-hint">default: 80</span>
+          </label>
+          <input type="number" step="1" min="1" class="pixel-input" id="settingDogFoodScoopsPerBag">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="settingDogFoodRateScoops">
+            <span>Burn Rate (Scoops / Day)</span>
+            <span class="form-hint">default: 4.0</span>
+          </label>
+          <input type="number" step="0.5" min="0.1" class="pixel-input" id="settingDogFoodRateScoops">
+        </div>
+
+        <!-- Data Backup -->
+        <h4 class="pixel-label" style="color:var(--barn-red); border-bottom:2px solid var(--border-color); padding-bottom:4px; margin-top:10px;">
+          💾 DATA BACKUP & RESTORE
+        </h4>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn-pixel sm" id="btnExportData" data-action="export-json" onclick="if(window.homesteadAction){window.homesteadAction('export-json',event);}else{homesteadAction('export-json',event);}">EXPORT JSON</button>
+          <button class="btn-pixel sm" id="btnImportData" data-action="import-json" onclick="if(window.homesteadAction){window.homesteadAction('import-json',event);}else{homesteadAction('import-json',event);}">IMPORT JSON</button>
+          <button class="btn-pixel red sm" id="btnFactoryReset" data-action="factory-reset" onclick="if(window.homesteadAction){window.homesteadAction('factory-reset',event);}else{homesteadAction('factory-reset',event);}">FACTORY RESET</button>
+          <input type="file" id="importFileInput" accept=".json" style="display:none;">
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn-pixel sm" id="closeSettingsModalBtn" data-action="close-settings" onclick="if(window.homesteadAction){window.homesteadAction('close-settings',event);}else{homesteadAction('close-settings',event);}">CLOSE</button>
+        <button class="btn-pixel sm gold" id="saveSettingsBtn" data-action="save-settings" onclick="if(window.homesteadAction){window.homesteadAction('save-settings',event);}else{homesteadAction('save-settings',event);}">SAVE & RECALCULATE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       VANILLA JAVASCRIPT: BULLETPROOF SYSTEM ENGINE
+       ========================================================================== -->
+  <script>
+
+    let toastTimeout = null;
+    function showActionToast(msg) {
+      const box = document.getElementById('actionToastBox');
+      if (!box) return;
+      box.textContent = '✓ ' + msg;
+      box.style.display = 'block';
+      box.style.opacity = '1';
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        box.style.display = 'none';
+      }, 2500);
+    }
+
+    function homesteadAction(action, e) {
+      try {
+        if (e) {
+          if (typeof e.preventDefault === 'function') e.preventDefault();
+          if (typeof e.stopPropagation === 'function') e.stopPropagation();
+          if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+        }
+        console.log('[Homestead Action Triggered]:', action);
+        handleHomesteadAction(action, e);
+      } catch (err) {
+        console.error('Action error caught:', err);
+        const errBox = document.getElementById('runtimeErrorBox');
+        if (errBox) {
+          errBox.style.display = 'block';
+          errBox.textContent = 'ACTION ERROR (' + action + '): ' + (err.message || String(err));
+        }
+        alert('Action error: ' + (err.message || String(err)));
+      }
+    }
+    window.homesteadAction = homesteadAction;
+
+    // Visible On-Screen Diagnostics
+    window.addEventListener('error', (err) => {
+      console.error('Homestead Error:', err);
+      const errBox = document.getElementById('runtimeErrorBox');
+      if (errBox) {
+        errBox.style.display = 'block';
+        errBox.textContent = 'SYSTEM NOTICE: ' + (err.message || 'Script error');
+      }
+    });
+
+    /**
+     * HOMESTEAD FEED & TANK TRACKER - BULLETPROOF RESILIENT ENGINE (v3.1)
+     * -------------------------------------------------------------
+     * Resiliency Guarantee:
+     * - Every numeric operation is wrapped with safeNumber() to prevent undefined.toFixed()
+     * - Every interactive action has both direct listeners AND global event delegation
+     * - Scratch Pad at bottom with debounced auto-save to localStorage
+     * - Modals close on click outside (backdrop click) and on ESC key
+     */
+
+    const STORAGE_KEY = 'homestead_feed_tank_tracker_v3';
+    const SCRATCHPAD_KEY = 'homestead_scratchpad_v3';
+
+    function safeNum(val, fallback = 0) {
+      const n = Number(val);
+      return (typeof n === 'number' && !isNaN(n) && isFinite(n)) ? n : fallback;
+    }
+
+    const DEFAULT_STATE = {
+      soundEnabled: true,
+      scanlines: true,
+      hay: { amount: 20.0, ratePerDay: 0.5, lastUpdated: Date.now() },
+      beet: { bags: 3.0, scoopsPerBag: 40, ratePerDayScoops: 2.0, lastUpdated: Date.now() },
+      water: { percent: 100.0, hoursToEmpty: 96.0, lastUpdated: Date.now() },
+      litter: { boxes: 4.0, ratePerDay: 0.10, lastUpdated: Date.now() },
+      catFood: { bags: 2.0, cupsPerBag: 40, ratePerDayCups: 1.0, lastUpdated: Date.now() },
+      dogFood: { bags: 3.0, scoopsPerBag: 80, ratePerDayScoops: 4.0, lastUpdated: Date.now() },
+      telemetry: [],
+      logs: [
+        {
+          id: 1,
+          type: 'system',
+          message: 'Homestead Tracker Engine v3.1 Resilient Edition initialized',
+          timestamp: Date.now()
+        }
+      ]
+    };
+
+    let state = loadState();
+
+    /* ==========================================================================
+       AUDIO SYNTHESIZER (8-BIT SOUND EFFECTS VIA WEB AUDIO API)
+       ========================================================================== */
+    class RetroAudio {
+      constructor() {
+        this.ctx = null;
+      }
+
+      init() {
+        try {
+          if (!this.ctx) {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (AudioContext) this.ctx = new AudioContext();
+          }
+          if (this.ctx && this.ctx.state === 'suspended') {
+            this.ctx.resume().catch(() => {});
+          }
+        } catch (e) {}
+      }
+
+      playBlip(freq = 440, type = 'square', duration = 0.08) {
+        if (!state.soundEnabled) return;
+        this.init();
+        if (!this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + duration);
+        } catch (e) {}
+      }
+
+      playPositive() {
+        if (!state.soundEnabled) return;
+        this.init();
+        if (!this.ctx) return;
+        try {
+          const now = this.ctx.currentTime;
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(freq, now + i * 0.06);
+            gain.gain.setValueAtTime(0.08, now + i * 0.06);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.06 + 0.09);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now + i * 0.06);
+            osc.stop(now + i * 0.06 + 0.09);
+          });
+        } catch (e) {}
+      }
+
+      playSplash() {
+        if (!state.soundEnabled) return;
+        this.init();
+        if (!this.ctx) return;
+        try {
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(320, now);
+          osc.frequency.exponentialRampToValueAtTime(140, now + 0.25);
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        } catch (e) {}
+      }
+
+      playAlert() {
+        if (!state.soundEnabled) return;
+        this.init();
+        if (!this.ctx) return;
+        try {
+          const now = this.ctx.currentTime;
+          [400, 280, 400].forEach((freq, i) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(freq, now + i * 0.09);
+            gain.gain.setValueAtTime(0.1, now + i * 0.09);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.09 + 0.08);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now + i * 0.09);
+            osc.stop(now + i * 0.09 + 0.08);
+          });
+        } catch (e) {}
+      }
+    }
+
+    const sound = new RetroAudio();
+
+    /* ==========================================================================
+       STORAGE & RESILIENT MERGE
+       ========================================================================== */
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          const s = JSON.parse(JSON.stringify(DEFAULT_STATE));
+
+          if (parsed.hay) {
+            s.hay.amount = safeNum(parsed.hay.amount, s.hay.amount);
+            s.hay.ratePerDay = safeNum(parsed.hay.ratePerDay, s.hay.ratePerDay);
+            s.hay.lastUpdated = safeNum(parsed.hay.lastUpdated, Date.now());
+          }
+
+          if (parsed.beet) {
+            const scoopsPerBag = safeNum(parsed.beet.scoopsPerBag, 40);
+            let bags = parsed.beet.bags !== undefined ? safeNum(parsed.beet.bags, 3) : (safeNum(parsed.beet.amount, 120) / scoopsPerBag);
+            let rate = safeNum(parsed.beet.ratePerDayScoops, safeNum(parsed.beet.ratePerDay, 2.0));
+            s.beet.bags = bags;
+            s.beet.scoopsPerBag = scoopsPerBag;
+            s.beet.ratePerDayScoops = rate;
+            s.beet.lastUpdated = safeNum(parsed.beet.lastUpdated, Date.now());
+          }
+
+          if (parsed.water) {
+            s.water.percent = safeNum(parsed.water.percent, 100);
+            s.water.hoursToEmpty = safeNum(parsed.water.hoursToEmpty, 96);
+            s.water.lastUpdated = safeNum(parsed.water.lastUpdated, Date.now());
+          }
+
+          if (parsed.litter) {
+            s.litter.boxes = safeNum(parsed.litter.boxes, 4.0);
+            s.litter.ratePerDay = safeNum(parsed.litter.ratePerDay, 0.10);
+            s.litter.lastUpdated = safeNum(parsed.litter.lastUpdated, Date.now());
+          }
+
+          if (parsed.catFood) {
+            s.catFood.bags = safeNum(parsed.catFood.bags, 2.0);
+            s.catFood.cupsPerBag = safeNum(parsed.catFood.cupsPerBag, 40);
+            s.catFood.ratePerDayCups = safeNum(parsed.catFood.ratePerDayCups, 1.0);
+            s.catFood.lastUpdated = safeNum(parsed.catFood.lastUpdated, Date.now());
+          }
+
+          if (parsed.dogFood) {
+            s.dogFood.bags = safeNum(parsed.dogFood.bags, 3.0);
+            s.dogFood.scoopsPerBag = safeNum(parsed.dogFood.scoopsPerBag, 80);
+            s.dogFood.ratePerDayScoops = safeNum(parsed.dogFood.ratePerDayScoops, 4.0);
+            s.dogFood.lastUpdated = safeNum(parsed.dogFood.lastUpdated, Date.now());
+          }
+
+          s.soundEnabled = parsed.soundEnabled !== undefined ? Boolean(parsed.soundEnabled) : true;
+          s.scanlines = parsed.scanlines !== undefined ? Boolean(parsed.scanlines) : true;
+          s.telemetry = Array.isArray(parsed.telemetry) ? parsed.telemetry : [];
+          s.logs = Array.isArray(parsed.logs) ? parsed.logs : DEFAULT_STATE.logs;
+
+          return s;
+        }
+      } catch (err) {
+        console.warn('Error reading localStorage, reverting to defaults:', err);
+      }
+      return JSON.parse(JSON.stringify(DEFAULT_STATE));
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (err) {
+        console.error('Failed to save state to localStorage:', err);
+      }
+    }
+
+    function addLog(type, message) {
+      state.logs.unshift({
+        id: Date.now() + Math.random(),
+        type,
+        message,
+        timestamp: Date.now()
+      });
+      if (state.logs.length > 50) state.logs.pop();
+      saveState();
+      renderLogs();
+    }
+
+    function recordTelemetrySnapshot(reason = 'periodic') {
+      try {
+        const now = Date.now();
+        const snapshot = {
+          timestamp: now,
+          reason,
+          hay: Number(getHayCurrent(now).toFixed(2)),
+          beetBags: Number(getBeetCurrent(now).toFixed(2)),
+          beetScoopsEst: Number(getBeetScoopsEstimated(now).toFixed(1)),
+          waterPercent: Number(getWaterCurrent(now).toFixed(1)),
+          litterBoxes: Number(getLitterCurrent(now).toFixed(2)),
+          catFoodBags: Number(getCatFoodCurrent(now).toFixed(2)),
+          catFoodCupsEst: Number(getCatFoodCupsEstimated(now).toFixed(1)),
+          dogFoodBags: Number(getDogFoodCurrent(now).toFixed(2)),
+          dogFoodScoopsEst: Number(getDogFoodScoopsEstimated(now).toFixed(1))
+        };
+
+        state.telemetry.push(snapshot);
+        if (state.telemetry.length > 300) state.telemetry.shift();
+        saveState();
+        renderTelemetryChart();
+      } catch (e) {
+        console.warn('Snapshot error:', e);
+      }
+    }
+
+    /* ==========================================================================
+       DEPLETION MATHEMATICAL ENGINE
+       ========================================================================== */
+    function getHayCurrent(now = Date.now()) {
+      const elapsedDays = Math.max(0, now - safeNum(state.hay.lastUpdated, now)) / (1000 * 60 * 60 * 24);
+      return Math.max(0, safeNum(state.hay.amount, 0) - (elapsedDays * safeNum(state.hay.ratePerDay, 0.5)));
+    }
+
+    function getBeetCurrent(now = Date.now()) {
+      const elapsedDays = Math.max(0, now - safeNum(state.beet.lastUpdated, now)) / (1000 * 60 * 60 * 24);
+      const bagsPerDay = safeNum(state.beet.ratePerDayScoops, 2.0) / Math.max(1, safeNum(state.beet.scoopsPerBag, 40));
+      return Math.max(0, safeNum(state.beet.bags, 0) - (elapsedDays * bagsPerDay));
+    }
+
+    function getBeetScoopsEstimated(now = Date.now()) {
+      return getBeetCurrent(now) * safeNum(state.beet.scoopsPerBag, 40);
+    }
+
+    function getWaterCurrent(now = Date.now()) {
+      const elapsedHours = Math.max(0, now - safeNum(state.water.lastUpdated, now)) / (1000 * 60 * 60);
+      const percentPerHour = 100 / Math.max(0.1, safeNum(state.water.hoursToEmpty, 96));
+      return Math.max(0, safeNum(state.water.percent, 100) - (elapsedHours * percentPerHour));
+    }
+
+    function getLitterCurrent(now = Date.now()) {
+      const elapsedDays = Math.max(0, now - safeNum(state.litter.lastUpdated, now)) / (1000 * 60 * 60 * 24);
+      return Math.max(0, safeNum(state.litter.boxes, 0) - (elapsedDays * safeNum(state.litter.ratePerDay, 0.1)));
+    }
+
+    function getCatFoodCurrent(now = Date.now()) {
+      const elapsedDays = Math.max(0, now - safeNum(state.catFood.lastUpdated, now)) / (1000 * 60 * 60 * 24);
+      const bagsPerDay = safeNum(state.catFood.ratePerDayCups, 1.0) / Math.max(1, safeNum(state.catFood.cupsPerBag, 40));
+      return Math.max(0, safeNum(state.catFood.bags, 0) - (elapsedDays * bagsPerDay));
+    }
+
+    function getCatFoodCupsEstimated(now = Date.now()) {
+      return getCatFoodCurrent(now) * safeNum(state.catFood.cupsPerBag, 40);
+    }
+
+    function getDogFoodCurrent(now = Date.now()) {
+      const elapsedDays = Math.max(0, now - safeNum(state.dogFood.lastUpdated, now)) / (1000 * 60 * 60 * 24);
+      const bagsPerDay = safeNum(state.dogFood.ratePerDayScoops, 4.0) / Math.max(1, safeNum(state.dogFood.scoopsPerBag, 80));
+      return Math.max(0, safeNum(state.dogFood.bags, 0) - (elapsedDays * bagsPerDay));
+    }
+
+    function getDogFoodScoopsEstimated(now = Date.now()) {
+      return getDogFoodCurrent(now) * safeNum(state.dogFood.scoopsPerBag, 80);
+    }
+
+    function commitDrainedBaselines(now = Date.now()) {
+      state.hay.amount = getHayCurrent(now);
+      state.hay.lastUpdated = now;
+
+      state.beet.bags = getBeetCurrent(now);
+      state.beet.lastUpdated = now;
+
+      state.water.percent = getWaterCurrent(now);
+      state.water.lastUpdated = now;
+
+      state.litter.boxes = getLitterCurrent(now);
+      state.litter.lastUpdated = now;
+
+      state.catFood.bags = getCatFoodCurrent(now);
+      state.catFood.lastUpdated = now;
+
+      state.dogFood.bags = getDogFoodCurrent(now);
+      state.dogFood.lastUpdated = now;
+
+      saveState();
+    }
+
+    function formatRunway(daysRemaining) {
+      if (daysRemaining <= 0 || !isFinite(daysRemaining)) {
+        return 'DEPLETED (0h)';
+      }
+      const totalSeconds = Math.floor(daysRemaining * 86400);
+      const days = Math.floor(totalSeconds / 86400);
+      const hours = Math.floor((totalSeconds % 86400) / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+      if (days > 0) return `${days}d ${hours}h`;
+      return `${hours}h ${minutes}m`;
+    }
+
+    function formatWaterRunway(hoursRemaining) {
+      if (hoursRemaining <= 0 || !isFinite(hoursRemaining)) {
+        return 'DRY (00:00:00)';
+      }
+      const totalSeconds = Math.floor(hoursRemaining * 3600);
+      const days = Math.floor(totalSeconds / 86400);
+      const hours = Math.floor((totalSeconds % 86400) / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      const pad = (n) => String(n).padStart(2, '0');
+
+      if (days > 0) return `${days}d ${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
+      return `${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
+    }
+
+    /* ==========================================================================
+       DOM CACHE
+       ========================================================================== */
+    const dom = {
+      soundToggleBtn: document.getElementById('soundToggleBtn'),
+      soundIcon: document.getElementById('soundIcon'),
+      soundLabel: document.getElementById('soundLabel'),
+      scanlineToggleBtn: document.getElementById('scanlineToggleBtn'),
+      alertsContainer: document.getElementById('alertsContainer'),
+
+      // 1. Hay
+      badgeHay: document.getElementById('badgeHay'),
+      hayBalesGrid: document.getElementById('hayBalesGrid'),
+      hayVisualSummary: document.getElementById('hayVisualSummary'),
+      hayCountVal: document.getElementById('hayCountVal'),
+      hayRateVal: document.getElementById('hayRateVal'),
+      hayRunwayVal: document.getElementById('hayRunwayVal'),
+
+      // 2. Beet Pulp
+      badgeBeet: document.getElementById('badgeBeet'),
+      bagFillBar: document.getElementById('bagFillBar'),
+      bagPercentText: document.getElementById('bagPercentText'),
+      bagScoopsLeftText: document.getElementById('bagScoopsLeftText'),
+      beetBagsVal: document.getElementById('beetBagsVal'),
+      beetScoopsEstVal: document.getElementById('beetScoopsEstVal'),
+      beetRateVal: document.getElementById('beetRateVal'),
+      beetRateSubVal: document.getElementById('beetRateSubVal'),
+      beetRunwayVal: document.getElementById('beetRunwayVal'),
+
+      // 3. Water Tank
+      badgeWater: document.getElementById('badgeWater'),
+      dynamicWaterGroup: document.getElementById('dynamicWaterGroup'),
+      stockTankDuck: document.getElementById('stockTankDuck'),
+      waterPercentVal: document.getElementById('waterPercentVal'),
+      waterDepletionVal: document.getElementById('waterDepletionVal'),
+      waterRunwayVal: document.getElementById('waterRunwayVal'),
+
+      // 4. Cat Litter
+      badgeLitter: document.getElementById('badgeLitter'),
+      litterFillBar: document.getElementById('litterFillBar'),
+      litterPercentText: document.getElementById('litterPercentText'),
+      litterFractionText: document.getElementById('litterFractionText'),
+      litterCountVal: document.getElementById('litterCountVal'),
+      litterDaysPerBoxSub: document.getElementById('litterDaysPerBoxSub'),
+      litterRateVal: document.getElementById('litterRateVal'),
+      litterRunwayVal: document.getElementById('litterRunwayVal'),
+
+      // 5. Cat Food
+      badgeCatFood: document.getElementById('badgeCatFood'),
+      catFoodFillBar: document.getElementById('catFoodFillBar'),
+      catFoodPercentText: document.getElementById('catFoodPercentText'),
+      catFoodCupsLeftText: document.getElementById('catFoodCupsLeftText'),
+      catFoodBagsVal: document.getElementById('catFoodBagsVal'),
+      catFoodCupsEstVal: document.getElementById('catFoodCupsEstVal'),
+      catFoodRateVal: document.getElementById('catFoodRateVal'),
+      catFoodRunwayVal: document.getElementById('catFoodRunwayVal'),
+
+      // 6. Dog Food
+      badgeDogFood: document.getElementById('badgeDogFood'),
+      dogFoodFillBar: document.getElementById('dogFoodFillBar'),
+      dogFoodPercentText: document.getElementById('dogFoodPercentText'),
+      dogFoodScoopsLeftText: document.getElementById('dogFoodScoopsLeftText'),
+      dogFoodBagsVal: document.getElementById('dogFoodBagsVal'),
+      dogFoodScoopsEstVal: document.getElementById('dogFoodScoopsEstVal'),
+      dogFoodRateVal: document.getElementById('dogFoodRateVal'),
+      dogFoodRunwayVal: document.getElementById('dogFoodRunwayVal'),
+
+      // Telemetry & Planning Hub
+      telemetryCanvas: document.getElementById('telemetryCanvas'),
+      telemetryFilterTabs: document.getElementById('telemetryFilterTabs'),
+      planningProjectionsGrid: document.getElementById('planningProjectionsGrid'),
+
+      // Scratch Pad
+      homesteadScratchPad: document.getElementById('homesteadScratchPad'),
+      scratchPadStatusText: document.getElementById('scratchPadStatusText'),
+      scratchPadStats: document.getElementById('scratchPadStats'),
+      scratchPadLastSaved: document.getElementById('scratchPadLastSaved'),
+
+      // Activity Log
+      activityList: document.getElementById('activityList'),
+
+      // True-Up Modal
+      trueUpModal: document.getElementById('trueUpModal'),
+      trueUpModalTitle: document.getElementById('trueUpModalTitle'),
+      trueUpInputLabel: document.getElementById('trueUpInputLabel'),
+      trueUpUnitHint: document.getElementById('trueUpUnitHint'),
+      inputTrueUpVal: document.getElementById('inputTrueUpVal'),
+
+      // Settings Modal
+      settingsModal: document.getElementById('settingsModal'),
+      settingHayAmount: document.getElementById('settingHayAmount'),
+      settingHayRate: document.getElementById('settingHayRate'),
+      settingBeetBags: document.getElementById('settingBeetBags'),
+      settingBeetScoopsPerBag: document.getElementById('settingBeetScoopsPerBag'),
+      settingBeetRateScoops: document.getElementById('settingBeetRateScoops'),
+      settingWaterHoursEmpty: document.getElementById('settingWaterHoursEmpty'),
+      settingWaterHoursSinceFill: document.getElementById('settingWaterHoursSinceFill'),
+      settingLitterBoxes: document.getElementById('settingLitterBoxes'),
+      settingLitterRate: document.getElementById('settingLitterRate'),
+      settingCatFoodBags: document.getElementById('settingCatFoodBags'),
+      settingCatFoodCupsPerBag: document.getElementById('settingCatFoodCupsPerBag'),
+      settingCatFoodRateCups: document.getElementById('settingCatFoodRateCups'),
+      settingDogFoodBags: document.getElementById('settingDogFoodBags'),
+      settingDogFoodScoopsPerBag: document.getElementById('settingDogFoodScoopsPerBag'),
+      settingDogFoodRateScoops: document.getElementById('settingDogFoodRateScoops'),
+      importFileInput: document.getElementById('importFileInput')
+    };
+
+    let currentTrueUpTarget = null;
+    let currentTelemetryResource = 'hay';
+
+    window.selectTelemetryTab = function(res, btnEl) {
+      currentTelemetryResource = res || 'hay';
+      document.querySelectorAll('#telemetryFilterTabs .tab-btn').forEach(b => b.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+      if (typeof sound !== 'undefined') sound.playBlip(420, 'square');
+      renderTelemetryChart();
+    };
+
+    /* ==========================================================================
+       RENDER FUNCTIONS
+       ========================================================================== */
+    function render() {
+      try {
+        const now = Date.now();
+
+        const hayCur = getHayCurrent(now);
+        const beetBagsCur = getBeetCurrent(now);
+        const beetScoopsEst = getBeetScoopsEstimated(now);
+        const waterCur = getWaterCurrent(now);
+        const litterCur = getLitterCurrent(now);
+        const catFoodBagsCur = getCatFoodCurrent(now);
+        const catFoodCupsEst = getCatFoodCupsEstimated(now);
+        const dogFoodBagsCur = getDogFoodCurrent(now);
+        const dogFoodScoopsEst = getDogFoodScoopsEstimated(now);
+
+        // 1. HAY
+        if (dom.hayCountVal) dom.hayCountVal.textContent = hayCur.toFixed(1);
+        if (dom.hayRateVal) dom.hayRateVal.textContent = safeNum(state.hay.ratePerDay, 0.5).toFixed(2);
+        const hayDaysLeft = hayCur / Math.max(0.0001, safeNum(state.hay.ratePerDay, 0.5));
+        if (dom.hayRunwayVal) dom.hayRunwayVal.textContent = formatRunway(hayDaysLeft);
+
+        if (dom.badgeHay) {
+          if (hayCur <= 0) {
+            dom.badgeHay.className = 'status-badge status-critical';
+            dom.badgeHay.textContent = 'EMPTY';
+            dom.hayRunwayVal.className = 'runway-val urgent';
+          } else if (hayDaysLeft < 3.0) {
+            dom.badgeHay.className = 'status-badge status-caution';
+            dom.badgeHay.textContent = 'LOW RUNWAY';
+            dom.hayRunwayVal.className = 'runway-val urgent';
+          } else {
+            dom.badgeHay.className = 'status-badge status-ok';
+            dom.badgeHay.textContent = 'STOCKED';
+            dom.hayRunwayVal.className = 'runway-val';
+          }
+        }
+        renderHayVisualStack(hayCur);
+
+        // 2. BEET PULP
+        if (dom.beetBagsVal) dom.beetBagsVal.textContent = beetBagsCur.toFixed(2);
+        if (dom.beetScoopsEstVal) dom.beetScoopsEstVal.textContent = `Est. ~${Math.round(beetScoopsEst)} scoops`;
+        if (dom.beetRateVal) dom.beetRateVal.textContent = safeNum(state.beet.ratePerDayScoops, 2.0).toFixed(1);
+        const beetBagsPerDay = safeNum(state.beet.ratePerDayScoops, 2.0) / Math.max(1, safeNum(state.beet.scoopsPerBag, 40));
+        if (dom.beetRateSubVal) dom.beetRateSubVal.textContent = `scoops/d (~${beetBagsPerDay.toFixed(2)} b/d)`;
+
+        const beetDaysLeft = beetBagsCur / Math.max(0.0001, beetBagsPerDay);
+        if (dom.beetRunwayVal) dom.beetRunwayVal.textContent = formatRunway(beetDaysLeft);
+
+        const beetBagFraction = (beetBagsCur % 1);
+        const activeBagPercent = Math.min(100, Math.round(((beetBagFraction === 0 && beetBagsCur > 0) ? 1.0 : beetBagFraction) * 100));
+        const activeBagScoops = Math.round((activeBagPercent / 100) * safeNum(state.beet.scoopsPerBag, 40));
+
+        if (dom.bagFillBar) dom.bagFillBar.style.height = `${activeBagPercent}%`;
+        if (dom.bagPercentText) dom.bagPercentText.textContent = `${activeBagPercent}%`;
+        if (dom.bagScoopsLeftText) dom.bagScoopsLeftText.textContent = `${activeBagScoops}/${safeNum(state.beet.scoopsPerBag, 40)} SC`;
+
+        if (dom.badgeBeet) {
+          if (beetBagsCur <= 0) {
+            dom.badgeBeet.className = 'status-badge status-critical';
+            dom.badgeBeet.textContent = 'EMPTY';
+            dom.beetRunwayVal.className = 'runway-val urgent';
+          } else if (beetScoopsEst < 4.0 || beetDaysLeft < 2.0) {
+            dom.badgeBeet.className = 'status-badge status-caution';
+            dom.badgeBeet.textContent = 'CRITICAL';
+            dom.beetRunwayVal.className = 'runway-val urgent';
+          } else {
+            dom.badgeBeet.className = 'status-badge status-ok';
+            dom.badgeBeet.textContent = 'STOCKED';
+            dom.beetRunwayVal.className = 'runway-val';
+          }
+        }
+
+        // 3. WATER TANK
+        const waterPercent = Math.max(0, Math.min(100, waterCur));
+        const hoursToEmpty = safeNum(state.water.hoursToEmpty, 96);
+        const waterHoursLeft = (waterPercent / 100) * hoursToEmpty;
+
+        if (dom.waterPercentVal) dom.waterPercentVal.textContent = `${waterPercent.toFixed(1)}%`;
+        if (dom.waterDepletionVal) dom.waterDepletionVal.textContent = `${hoursToEmpty.toFixed(0)}h cycle`;
+        if (dom.waterRunwayVal) dom.waterRunwayVal.textContent = formatWaterRunway(waterHoursLeft);
+
+        const translateY = (1 - (waterPercent / 100)) * 65;
+        if (dom.dynamicWaterGroup) dom.dynamicWaterGroup.setAttribute('transform', `translate(0, ${translateY})`);
+        const duckBottom = 35 + ((waterPercent / 100) * 45);
+        if (dom.stockTankDuck) dom.stockTankDuck.style.bottom = `${duckBottom}px`;
+
+        if (dom.badgeWater) {
+          if (waterPercent <= 0) {
+            dom.badgeWater.className = 'status-badge status-critical';
+            dom.badgeWater.textContent = 'DRY TANK';
+            dom.waterRunwayVal.className = 'runway-val urgent';
+          } else if (waterHoursLeft < 12.0) {
+            dom.badgeWater.className = 'status-badge status-critical';
+            dom.badgeWater.textContent = 'REFILL NOW';
+            dom.waterRunwayVal.className = 'runway-val urgent';
+          } else if (waterHoursLeft < 24.0) {
+            dom.badgeWater.className = 'status-badge status-caution';
+            dom.badgeWater.textContent = 'TOP-UP';
+            dom.waterRunwayVal.className = 'runway-val';
+          } else {
+            dom.badgeWater.className = 'status-badge status-ok';
+            dom.badgeWater.textContent = 'NORMAL';
+            dom.waterRunwayVal.className = 'runway-val';
+          }
+        }
+
+        // 4. CAT LITTER
+        if (dom.litterCountVal) dom.litterCountVal.textContent = litterCur.toFixed(2);
+        if (dom.litterRateVal) dom.litterRateVal.textContent = safeNum(state.litter.ratePerDay, 0.1).toFixed(2);
+        const daysPerBox = (1 / Math.max(0.01, safeNum(state.litter.ratePerDay, 0.1))).toFixed(0);
+        if (dom.litterDaysPerBoxSub) dom.litterDaysPerBoxSub.textContent = `~${daysPerBox} days / box`;
+        const litterDaysLeft = litterCur / Math.max(0.0001, safeNum(state.litter.ratePerDay, 0.1));
+        if (dom.litterRunwayVal) dom.litterRunwayVal.textContent = formatRunway(litterDaysLeft);
+
+        const litterFraction = (litterCur % 1);
+        const litterBoxPercent = Math.min(100, Math.round(((litterFraction === 0 && litterCur > 0) ? 1.0 : litterFraction) * 100));
+        if (dom.litterFillBar) dom.litterFillBar.style.height = `${litterBoxPercent}%`;
+        if (dom.litterPercentText) dom.litterPercentText.textContent = `${litterBoxPercent}%`;
+        if (dom.litterFractionText) dom.litterFractionText.textContent = `${litterCur.toFixed(1)} BOXES`;
+
+        if (dom.badgeLitter) {
+          if (litterCur <= 0) {
+            dom.badgeLitter.className = 'status-badge status-critical';
+            dom.badgeLitter.textContent = 'OUT';
+            dom.litterRunwayVal.className = 'runway-val urgent';
+          } else if (litterDaysLeft < 4.0) {
+            dom.badgeLitter.className = 'status-badge status-caution';
+            dom.badgeLitter.textContent = 'LOW RUNWAY';
+            dom.litterRunwayVal.className = 'runway-val urgent';
+          } else {
+            dom.badgeLitter.className = 'status-badge status-ok';
+            dom.badgeLitter.textContent = 'STOCKED';
+            dom.litterRunwayVal.className = 'runway-val';
+          }
+        }
+
+        // 5. CAT FOOD
+        if (dom.catFoodBagsVal) dom.catFoodBagsVal.textContent = catFoodBagsCur.toFixed(2);
+        if (dom.catFoodCupsEstVal) dom.catFoodCupsEstVal.textContent = `Est. ~${Math.round(catFoodCupsEst)} cups`;
+        if (dom.catFoodRateVal) dom.catFoodRateVal.textContent = safeNum(state.catFood.ratePerDayCups, 1.0).toFixed(1);
+
+        const catFoodBagsPerDay = safeNum(state.catFood.ratePerDayCups, 1.0) / Math.max(1, safeNum(state.catFood.cupsPerBag, 40));
+        const catFoodDaysLeft = catFoodBagsCur / Math.max(0.0001, catFoodBagsPerDay);
+        if (dom.catFoodRunwayVal) dom.catFoodRunwayVal.textContent = formatRunway(catFoodDaysLeft);
+
+        const catFoodFraction = (catFoodBagsCur % 1);
+        const catFoodBagPercent = Math.min(100, Math.round(((catFoodFraction === 0 && catFoodBagsCur > 0) ? 1.0 : catFoodFraction) * 100));
+        const catFoodActiveCups = Math.round((catFoodBagPercent / 100) * safeNum(state.catFood.cupsPerBag, 40));
+
+        if (dom.catFoodFillBar) dom.catFoodFillBar.style.height = `${catFoodBagPercent}%`;
+        if (dom.catFoodPercentText) dom.catFoodPercentText.textContent = `${catFoodBagPercent}%`;
+        if (dom.catFoodCupsLeftText) dom.catFoodCupsLeftText.textContent = `${catFoodActiveCups}/${safeNum(state.catFood.cupsPerBag, 40)} CU`;
+
+        if (dom.badgeCatFood) {
+          if (catFoodBagsCur <= 0) {
+            dom.badgeCatFood.className = 'status-badge status-critical';
+            dom.badgeCatFood.textContent = 'EMPTY';
+            dom.catFoodRunwayVal.className = 'runway-val urgent';
+          } else if (catFoodDaysLeft < 5.0) {
+            dom.badgeCatFood.className = 'status-badge status-caution';
+            dom.badgeCatFood.textContent = 'LOW FOOD';
+            dom.catFoodRunwayVal.className = 'runway-val urgent';
+          } else {
+            dom.badgeCatFood.className = 'status-badge status-ok';
+            dom.badgeCatFood.textContent = 'STOCKED';
+            dom.catFoodRunwayVal.className = 'runway-val';
+          }
+        }
+
+        // 6. DOG FOOD
+        if (dom.dogFoodBagsVal) dom.dogFoodBagsVal.textContent = dogFoodBagsCur.toFixed(2);
+        if (dom.dogFoodScoopsEstVal) dom.dogFoodScoopsEstVal.textContent = `Est. ~${Math.round(dogFoodScoopsEst)} scoops`;
+        if (dom.dogFoodRateVal) dom.dogFoodRateVal.textContent = safeNum(state.dogFood.ratePerDayScoops, 4.0).toFixed(1);
+
+        const dogFoodBagsPerDay = safeNum(state.dogFood.ratePerDayScoops, 4.0) / Math.max(1, safeNum(state.dogFood.scoopsPerBag, 80));
+        const dogFoodDaysLeft = dogFoodBagsCur / Math.max(0.0001, dogFoodBagsPerDay);
+        if (dom.dogFoodRunwayVal) dom.dogFoodRunwayVal.textContent = formatRunway(dogFoodDaysLeft);
+
+        const dogFoodFraction = (dogFoodBagsCur % 1);
+        const dogFoodBagPercent = Math.min(100, Math.round(((dogFoodFraction === 0 && dogFoodBagsCur > 0) ? 1.0 : dogFoodFraction) * 100));
+        const dogFoodActiveScoops = Math.round((dogFoodBagPercent / 100) * safeNum(state.dogFood.scoopsPerBag, 80));
+
+        if (dom.dogFoodFillBar) dom.dogFoodFillBar.style.height = `${dogFoodBagPercent}%`;
+        if (dom.dogFoodPercentText) dom.dogFoodPercentText.textContent = `${dogFoodBagPercent}%`;
+        if (dom.dogFoodScoopsLeftText) dom.dogFoodScoopsLeftText.textContent = `${dogFoodActiveScoops}/${safeNum(state.dogFood.scoopsPerBag, 80)} SC`;
+
+        if (dom.badgeDogFood) {
+          if (dogFoodBagsCur <= 0) {
+            dom.badgeDogFood.className = 'status-badge status-critical';
+            dom.badgeDogFood.textContent = 'EMPTY';
+            dom.dogFoodRunwayVal.className = 'runway-val urgent';
+          } else if (dogFoodDaysLeft < 5.0) {
+            dom.badgeDogFood.className = 'status-badge status-caution';
+            dom.badgeDogFood.textContent = 'LOW FOOD';
+            dom.dogFoodRunwayVal.className = 'runway-val urgent';
+          } else {
+            dom.badgeDogFood.className = 'status-badge status-ok';
+            dom.badgeDogFood.textContent = 'STOCKED';
+            dom.dogFoodRunwayVal.className = 'runway-val';
+          }
+        }
+
+        renderAlerts(waterHoursLeft, hayCur, hayDaysLeft, beetScoopsEst, litterDaysLeft, catFoodDaysLeft, dogFoodDaysLeft);
+      } catch (err) {
+        console.error('Render loop error caught safely:', err);
+      }
+    }
+
+    function renderHayVisualStack(count) {
+      if (!dom.hayBalesGrid) return;
+      dom.hayBalesGrid.innerHTML = '';
+      const displaySlots = 20;
+      const fullCount = Math.floor(count);
+      const remainder = count - fullCount;
+
+      for (let i = 0; i < displaySlots; i++) {
+        const baleEl = document.createElement('div');
+        baleEl.className = 'pixel-bale';
+        if (i < fullCount) {
+          baleEl.title = `Full Bale #${i + 1}`;
+        } else if (i === fullCount && remainder > 0.05) {
+          baleEl.classList.add('partial');
+          baleEl.title = `Partial Bale (${(remainder * 100).toFixed(0)}%)`;
+        } else {
+          baleEl.classList.add('empty');
+          baleEl.title = 'Empty Slot';
+        }
+        dom.hayBalesGrid.appendChild(baleEl);
+      }
+      if (dom.hayVisualSummary) {
+        dom.hayVisualSummary.textContent = `${count.toFixed(1)} bales in barn (${count > 20 ? '+ extra stored' : 'stack view'})`;
+      }
+    }
+
+    function renderAlerts(waterHoursLeft, hayCur, hayDaysLeft, beetScoopsEst, litterDaysLeft, catFoodDaysLeft, dogFoodDaysLeft) {
+      if (!dom.alertsContainer) return;
+      const activeAlerts = [];
+
+      if (waterHoursLeft < 12.0) {
+        activeAlerts.push({
+          type: 'water',
+          message: `CRITICAL WATER LEVEL: Stock tank has only ${formatWaterRunway(waterHoursLeft)} remaining! Refill immediately.`
+        });
+      }
+      if (hayDaysLeft < 3.0) {
+        activeAlerts.push({
+          type: 'hay',
+          message: `LOW HAY ALERT: ${hayCur.toFixed(1)} bales remaining (${formatRunway(hayDaysLeft)} runway). Order delivery!`
+        });
+      }
+      if (beetScoopsEst < 4.0) {
+        activeAlerts.push({
+          type: 'beet',
+          message: `LOW FEED ALERT: Only ~${Math.round(beetScoopsEst)} beet pulp scoops remaining! Restock sacks.`
+        });
+      }
+      if (litterDaysLeft < 4.0) {
+        activeAlerts.push({
+          type: 'litter',
+          message: `CAT LITTER LOW: Only ${formatRunway(litterDaysLeft)} of litter left in pantry.`
+        });
+      }
+      if (catFoodDaysLeft < 5.0) {
+        activeAlerts.push({
+          type: 'catfood',
+          message: `CAT FOOD LOW: Only ${formatRunway(catFoodDaysLeft)} of cat food remaining.`
+        });
+      }
+      if (dogFoodDaysLeft < 5.0) {
+        activeAlerts.push({
+          type: 'dogfood',
+          message: `DOG FOOD LOW: Only ${formatRunway(dogFoodDaysLeft)} of canine kibble remaining.`
+        });
+      }
+
+      dom.alertsContainer.innerHTML = '';
+      activeAlerts.forEach(alert => {
+        const alertEl = document.createElement('div');
+        alertEl.className = 'pixel-alert';
+        alertEl.innerHTML = `<span class="alert-icon">⚠️</span><span>${alert.message}</span>`;
+        dom.alertsContainer.appendChild(alertEl);
+      });
+    }
+
+    /* ==========================================================================
+       TELEMETRY CANVAS CHART & 30-DAY PLANNING
+       ========================================================================== */
+    function renderTelemetryChart() {
+      const canvas = dom.telemetryCanvas;
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      const w = Math.max(300, rect.width || 600);
+      const h = 220;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      ctx.scale(dpr, dpr);
+
+      ctx.fillStyle = '#0f140d';
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.strokeStyle = '#1e281b';
+      ctx.lineWidth = 1;
+      for (let y = 20; y < h - 20; y += 40) {
+        ctx.beginPath();
+        ctx.moveTo(40, y);
+        ctx.lineTo(w - 20, y);
+        ctx.stroke();
+      }
+
+      const history = state.telemetry || [];
+      const keyMap = {
+        hay: 'hay',
+        beet: 'beetBags',
+        water: 'waterPercent',
+        litter: 'litterBoxes',
+        catfood: 'catFoodBags',
+        dogfood: 'dogFoodBags'
+      };
+
+      const key = keyMap[currentTelemetryResource] || 'hay';
+      const points = history.map(h => ({
+        t: safeNum(h.timestamp, Date.now()),
+        val: safeNum(h[key], 0),
+        reason: h.reason
+      }));
+
+      const now = Date.now();
+      let liveVal = 0;
+      if (currentTelemetryResource === 'hay') liveVal = getHayCurrent(now);
+      else if (currentTelemetryResource === 'beet') liveVal = getBeetCurrent(now);
+      else if (currentTelemetryResource === 'water') liveVal = getWaterCurrent(now);
+      else if (currentTelemetryResource === 'litter') liveVal = getLitterCurrent(now);
+      else if (currentTelemetryResource === 'catfood') liveVal = getCatFoodCurrent(now);
+      else if (currentTelemetryResource === 'dogfood') liveVal = getDogFoodCurrent(now);
+
+      points.push({ t: now, val: liveVal, reason: 'live' });
+
+      if (points.length < 2) {
+        ctx.fillStyle = '#64748b';
+        ctx.font = '12px "Press Start 2P", monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('COLLECTING TELEMETRY DATA...', w / 2, h / 2);
+        renderPlanningProjections();
+        return;
+      }
+
+      const minT = points[0].t;
+      const maxT = points[points.length - 1].t;
+      const tSpan = Math.max(1000 * 60, maxT - minT);
+
+      const maxVal = Math.max(...points.map(p => safeNum(p.val, 0)), 5) * 1.15;
+      const minVal = 0;
+
+      const scaleX = (t) => 50 + ((t - minT) / tSpan) * (w - 80);
+      const scaleY = (v) => (h - 30) - ((v - minVal) / Math.max(0.001, (maxVal - minVal))) * (h - 60);
+
+      ctx.strokeStyle = '#4a5568';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(50, 10);
+      ctx.lineTo(50, h - 30);
+      ctx.lineTo(w - 20, h - 30);
+      ctx.stroke();
+
+      ctx.fillStyle = '#a3ab98';
+      ctx.font = '10px "VT323", monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText(maxVal.toFixed(0), 44, 25);
+      ctx.fillText((maxVal / 2).toFixed(0), 44, h / 2);
+      ctx.fillText('0', 44, h - 28);
+
+      ctx.strokeStyle = '#f5be38';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      points.forEach((p, idx) => {
+        const x = scaleX(p.t);
+        const y = scaleY(p.val);
+        if (idx === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      points.forEach(p => {
+        const x = scaleX(p.t);
+        const y = scaleY(p.val);
+        ctx.fillStyle = p.reason === 'true-up' ? '#48bb78' : '#e2e8f0';
+        ctx.fillRect(x - 3, y - 3, 6, 6);
+      });
+
+      renderPlanningProjections();
+    }
+
+    function renderPlanningProjections() {
+      const planGrid = dom.planningProjectionsGrid;
+      if (!planGrid) return;
+      planGrid.innerHTML = '';
+
+      const beetBagsPerDay = safeNum(state.beet.ratePerDayScoops, 2) / Math.max(1, safeNum(state.beet.scoopsPerBag, 40));
+      const catFoodBagsPerDay = safeNum(state.catFood.ratePerDayCups, 1) / Math.max(1, safeNum(state.catFood.cupsPerBag, 40));
+      const dogFoodBagsPerDay = safeNum(state.dogFood.ratePerDayScoops, 4) / Math.max(1, safeNum(state.dogFood.scoopsPerBag, 80));
+
+      const items = [
+        {
+          name: 'Hay Bales',
+          cur: getHayCurrent().toFixed(1),
+          unit: 'bales',
+          burn30: (safeNum(state.hay.ratePerDay, 0.5) * 30).toFixed(1),
+          runway: formatRunway(getHayCurrent() / Math.max(0.0001, safeNum(state.hay.ratePerDay, 0.5))),
+          color: 'var(--straw-gold)'
+        },
+        {
+          name: 'Beet Pulp',
+          cur: getBeetCurrent().toFixed(2),
+          unit: 'bags',
+          burn30: (beetBagsPerDay * 30).toFixed(2),
+          runway: formatRunway(getBeetCurrent() / Math.max(0.0001, beetBagsPerDay)),
+          color: 'var(--burlap-brown)'
+        },
+        {
+          name: 'Cat Litter',
+          cur: getLitterCurrent().toFixed(1),
+          unit: 'boxes',
+          burn30: (safeNum(state.litter.ratePerDay, 0.1) * 30).toFixed(1),
+          runway: formatRunway(getLitterCurrent() / Math.max(0.0001, safeNum(state.litter.ratePerDay, 0.1))),
+          color: 'var(--pet-purple)'
+        },
+        {
+          name: 'Cat Food',
+          cur: getCatFoodCurrent().toFixed(2),
+          unit: 'bags',
+          burn30: (catFoodBagsPerDay * 30).toFixed(2),
+          runway: formatRunway(getCatFoodCurrent() / Math.max(0.0001, catFoodBagsPerDay)),
+          color: 'var(--pet-teal)'
+        },
+        {
+          name: 'Dog Food',
+          cur: getDogFoodCurrent().toFixed(2),
+          unit: 'bags',
+          burn30: (dogFoodBagsPerDay * 30).toFixed(2),
+          runway: formatRunway(getDogFoodCurrent() / Math.max(0.0001, dogFoodBagsPerDay)),
+          color: 'var(--pet-coral)'
+        }
+      ];
+
+      items.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'plan-card';
+        card.innerHTML = `
+          <div class="plan-title" style="color:${item.color}">${item.name} Planning</div>
+          <div class="plan-val">${item.burn30} ${item.unit}</div>
+          <div class="plan-desc">Needed for next 30 days</div>
+          <div class="plan-desc" style="color:#a3ab98; margin-top:2px;">Current: <b>${item.cur}</b> • Runway: <b>${item.runway}</b></div>
+        `;
+        planGrid.appendChild(card);
+      });
+    }
+
+    function renderLogs() {
+      if (!dom.activityList) return;
+      dom.activityList.innerHTML = '';
+      if (!state.logs || state.logs.length === 0) {
+        dom.activityList.innerHTML = `<div class="log-item" style="justify-content:center; color:var(--text-muted);">No activity logged yet.</div>`;
+        return;
+      }
+      state.logs.forEach(log => {
+        const item = document.createElement('div');
+        item.className = 'log-item';
+        const d = new Date(safeNum(log.timestamp, Date.now()));
+        const timeStr = `${d.toLocaleDateString(undefined, {month:'short', day:'numeric'})} ${d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+        item.innerHTML = `
+          <div class="log-left">
+            <span class="log-tag ${log.type}">${log.type}</span>
+            <span class="log-text">${log.message}</span>
+          </div>
+          <span class="log-time">${timeStr}</span>
+        `;
+        dom.activityList.appendChild(item);
+      });
+    }
+
+    /* ==========================================================================
+       SCRATCH PAD LOGIC
+       ========================================================================== */
+    function initScratchPad() {
+      if (!dom.homesteadScratchPad) return;
+      try {
+        const savedNotes = localStorage.getItem(SCRATCHPAD_KEY) || '';
+        dom.homesteadScratchPad.value = savedNotes;
+        updateScratchPadStats();
+      } catch (e) {}
+
+      dom.homesteadScratchPad.addEventListener('input', () => {
+        try {
+          localStorage.setItem(SCRATCHPAD_KEY, dom.homesteadScratchPad.value);
+          dom.scratchPadStatusText.textContent = 'AUTOSAVED TO LOCALSTORAGE';
+          dom.scratchPadLastSaved.textContent = `Last saved ${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
+          updateScratchPadStats();
+        } catch (e) {}
+      });
+    }
+
+    function updateScratchPadStats() {
+      if (!dom.homesteadScratchPad || !dom.scratchPadStats) return;
+      const text = dom.homesteadScratchPad.value || '';
+      const chars = text.length;
+      const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+      dom.scratchPadStats.textContent = `${chars} chars • ${words} words`;
+    }
+
+    function insertScratchPadText(snippet) {
+      if (!dom.homesteadScratchPad) return;
+      const pad = dom.homesteadScratchPad;
+      const start = pad.selectionStart;
+      const end = pad.selectionEnd;
+      const prev = pad.value;
+      pad.value = prev.substring(0, start) + snippet + prev.substring(end);
+      pad.selectionStart = pad.selectionEnd = start + snippet.length;
+      pad.focus();
+      pad.dispatchEvent(new Event('input'));
+      sound.playPositive();
+    }
+
+    /* ==========================================================================
+       MODAL CONTROLS (OPEN & CLOSE)
+       ========================================================================== */
+    function openModal(el) {
+      if (!el) return;
+      el.classList.add('active');
+      el.style.display = 'flex';
+    }
+
+    function closeModal(el) {
+      if (!el) return;
+      el.classList.remove('active');
+      el.style.display = 'none';
+    }
+
+    function closeAllModals() {
+      closeModal(dom.trueUpModal);
+      closeModal(dom.settingsModal);
+      currentTrueUpTarget = null;
+    }
+
+    function openTrueUp(target, title, label, hint, initialVal) {
+      sound.playBlip(480, 'triangle');
+      currentTrueUpTarget = target;
+      if (dom.trueUpModalTitle) dom.trueUpModalTitle.textContent = title;
+      if (dom.trueUpInputLabel) dom.trueUpInputLabel.textContent = label;
+      if (dom.trueUpUnitHint) dom.trueUpUnitHint.textContent = hint;
+      if (dom.inputTrueUpVal) {
+        dom.inputTrueUpVal.value = initialVal;
+      }
+      openModal(dom.trueUpModal);
+      if (dom.inputTrueUpVal) dom.inputTrueUpVal.focus();
+    }
+
+    function openSettings() {
+      sound.playBlip(520, 'triangle');
+      const now = Date.now();
+      if (dom.settingHayAmount) dom.settingHayAmount.value = getHayCurrent(now).toFixed(1);
+      if (dom.settingHayRate) dom.settingHayRate.value = safeNum(state.hay.ratePerDay, 0.5).toFixed(2);
+
+      if (dom.settingBeetBags) dom.settingBeetBags.value = getBeetCurrent(now).toFixed(2);
+      if (dom.settingBeetScoopsPerBag) dom.settingBeetScoopsPerBag.value = safeNum(state.beet.scoopsPerBag, 40);
+      if (dom.settingBeetRateScoops) dom.settingBeetRateScoops.value = safeNum(state.beet.ratePerDayScoops, 2.0).toFixed(1);
+
+      if (dom.settingWaterHoursEmpty) dom.settingWaterHoursEmpty.value = safeNum(state.water.hoursToEmpty, 96);
+      const currentWater = getWaterCurrent(now);
+      const hoursConsumed = ((100 - currentWater) / 100) * safeNum(state.water.hoursToEmpty, 96);
+      if (dom.settingWaterHoursSinceFill) dom.settingWaterHoursSinceFill.value = hoursConsumed.toFixed(1);
+
+      if (dom.settingLitterBoxes) dom.settingLitterBoxes.value = getLitterCurrent(now).toFixed(1);
+      if (dom.settingLitterRate) dom.settingLitterRate.value = safeNum(state.litter.ratePerDay, 0.1).toFixed(2);
+
+      if (dom.settingCatFoodBags) dom.settingCatFoodBags.value = getCatFoodCurrent(now).toFixed(2);
+      if (dom.settingCatFoodCupsPerBag) dom.settingCatFoodCupsPerBag.value = safeNum(state.catFood.cupsPerBag, 40);
+      if (dom.settingCatFoodRateCups) dom.settingCatFoodRateCups.value = safeNum(state.catFood.ratePerDayCups, 1.0).toFixed(1);
+
+      if (dom.settingDogFoodBags) dom.settingDogFoodBags.value = getDogFoodCurrent(now).toFixed(2);
+      if (dom.settingDogFoodScoopsPerBag) dom.settingDogFoodScoopsPerBag.value = safeNum(state.dogFood.scoopsPerBag, 80);
+      if (dom.settingDogFoodRateScoops) dom.settingDogFoodRateScoops.value = safeNum(state.dogFood.ratePerDayScoops, 4.0).toFixed(1);
+
+      openModal(dom.settingsModal);
+    }
+
+    /* ==========================================================================
+       UNIFIED DISPATCHER (EVENT DELEGATION & DIRECT ACTION CALLS)
+       ========================================================================== */
+    window.homesteadAction = homesteadAction;
+
+    function handleHomesteadAction(action, e) {
+      const now = Date.now();
+
+      switch (action) {
+        // --- Header Actions ---
+        case 'open-settings':
+          showActionToast('OPENING SETTINGS');
+          openSettings();
+          break;
+
+        case 'close-settings':
+          closeModal(dom.settingsModal);
+          break;
+
+        case 'close-trueup':
+          closeModal(dom.trueUpModal);
+          currentTrueUpTarget = null;
+          break;
+
+        case 'toggle-sound':
+          state.soundEnabled = !state.soundEnabled;
+          dom.soundIcon.textContent = state.soundEnabled ? '🔊' : '🔇';
+          dom.soundLabel.textContent = state.soundEnabled ? 'SFX ON' : 'SFX MUTED';
+          if (state.soundEnabled) sound.playBlip(600, 'square');
+          saveState();
+          break;
+
+        case 'toggle-scanlines':
+          document.body.classList.toggle('scanlines');
+          state.scanlines = document.body.classList.contains('scanlines');
+          sound.playBlip(320, 'triangle');
+          saveState();
+          break;
+
+        // --- Hay Actions ---
+        case 'deliver-hay':
+          sound.playPositive();
+          commitDrainedBaselines();
+          state.hay.amount += 10.0;
+          saveState();
+          addLog('hay', `Delivered +10 Hay Bales (New count: ${state.hay.amount.toFixed(1)})`); showActionToast('DELIVERED +10 HAY BALES');
+          recordTelemetrySnapshot('restock');
+          render();
+          break;
+
+        case 'feed-hay':
+          sound.playBlip(300, 'square');
+          commitDrainedBaselines();
+          state.hay.amount = Math.max(0, state.hay.amount - 1.0);
+          saveState();
+          addLog('hay', `Fed 1 Bale to livestock (New count: ${state.hay.amount.toFixed(1)})`); showActionToast('FED 1 HAY BALE');
+          render();
+          break;
+
+        case 'calibrate-hay':
+          openTrueUp('hay', '🎯 Calibrate Hay Bales', 'Observed Bales in Barn:', 'bales', getHayCurrent().toFixed(1));
+          break;
+
+        // --- Beet Pulp Actions ---
+        case 'deliver-beet':
+          sound.playPositive();
+          commitDrainedBaselines();
+          state.beet.bags += 1.0;
+          saveState();
+          addLog('beet', `Delivered +1 Sack Beet Pulp (Total: ${state.beet.bags.toFixed(2)} bags, ~${Math.round(getBeetScoopsEstimated())} scoops)`); showActionToast('DELIVERED +1 BAG BEET PULP');
+          recordTelemetrySnapshot('restock');
+          render();
+          break;
+
+        case 'feed-beet':
+          sound.playBlip(360, 'square');
+          commitDrainedBaselines();
+          const bagDelta = 1.0 / Math.max(1, safeNum(state.beet.scoopsPerBag, 40));
+          state.beet.bags = Math.max(0, state.beet.bags - bagDelta);
+          saveState();
+          addLog('beet', `Fed 1 scoop Beet Pulp (Remaining: ${state.beet.bags.toFixed(2)} bags, ~${Math.round(getBeetScoopsEstimated())} sc)`); showActionToast('FED 1 SCOOP BEET PULP');
+          render();
+          break;
+
+        case 'calibrate-beet':
+          openTrueUp('beet', '🎯 Calibrate Beet Pulp Bags', 'Observed Bags (Full + Partial):', 'bags (e.g. 3.25)', getBeetCurrent().toFixed(2));
+          break;
+
+        // --- Water Tank Actions ---
+        case 'fill-water':
+          sound.playSplash();
+          state.water.percent = 100.0;
+          state.water.lastUpdated = Date.now();
+          saveState();
+          addLog('water', `Stock Tank filled to top (100% capacity reset)`); showActionToast('WATER TANK FILLED TO 100%');
+          recordTelemetrySnapshot('fill');
+          render();
+          break;
+
+        case 'calibrate-water':
+          openTrueUp('water', '🎯 Calibrate Stock Tank Water', 'Observed Fill Percentage:', '% (0 - 100)', getWaterCurrent().toFixed(0));
+          break;
+
+        // --- Cat Litter Actions ---
+        case 'deliver-litter':
+          sound.playPositive();
+          commitDrainedBaselines();
+          state.litter.boxes += 2.0;
+          saveState();
+          addLog('litter', `Restocked +2 Boxes Cat Litter (Total: ${state.litter.boxes.toFixed(1)} boxes)`);
+          recordTelemetrySnapshot('restock');
+          render();
+          break;
+
+        case 'use-litter':
+          sound.playBlip(320, 'square');
+          commitDrainedBaselines();
+          state.litter.boxes = Math.max(0, state.litter.boxes - 1.0);
+          saveState();
+          addLog('litter', `Opened 1 Box Cat Litter (Remaining: ${state.litter.boxes.toFixed(1)} boxes)`);
+          render();
+          break;
+
+        case 'calibrate-litter':
+          openTrueUp('litter', '🎯 Calibrate Cat Litter', 'Observed Boxes / Bags:', 'boxes', getLitterCurrent().toFixed(1));
+          break;
+
+        // --- Cat Food Actions ---
+        case 'deliver-catfood':
+          sound.playPositive();
+          commitDrainedBaselines();
+          state.catFood.bags += 1.0;
+          saveState();
+          addLog('catfood', `Restocked +1 Bag Cat Food (Total: ${state.catFood.bags.toFixed(1)} bags, ~${Math.round(getCatFoodCupsEstimated())} cups)`);
+          recordTelemetrySnapshot('restock');
+          render();
+          break;
+
+        case 'feed-catfood':
+          sound.playBlip(380, 'square');
+          commitDrainedBaselines();
+          const catBagDelta = 1.0 / Math.max(1, safeNum(state.catFood.cupsPerBag, 40));
+          state.catFood.bags = Math.max(0, state.catFood.bags - catBagDelta);
+          saveState();
+          addLog('catfood', `Fed 1 cup Cat Food (Remaining: ~${Math.round(getCatFoodCupsEstimated())} cups)`);
+          render();
+          break;
+
+        case 'calibrate-catfood':
+          openTrueUp('catfood', '🎯 Calibrate Cat Food Bags', 'Observed Bags Count:', 'bags', getCatFoodCurrent().toFixed(2));
+          break;
+
+        // --- Dog Food Actions ---
+        case 'deliver-dogfood':
+          sound.playPositive();
+          commitDrainedBaselines();
+          state.dogFood.bags += 1.0;
+          saveState();
+          addLog('dogfood', `Restocked +1 Bag Dog Food (Total: ${state.dogFood.bags.toFixed(1)} bags, ~${Math.round(getDogFoodScoopsEstimated())} scoops)`);
+          recordTelemetrySnapshot('restock');
+          render();
+          break;
+
+        case 'feed-dogfood':
+          sound.playBlip(340, 'square');
+          commitDrainedBaselines();
+          const dogBagDelta = 2.0 / Math.max(1, safeNum(state.dogFood.scoopsPerBag, 80));
+          state.dogFood.bags = Math.max(0, state.dogFood.bags - dogBagDelta);
+          saveState();
+          addLog('dogfood', `Fed 2 scoops Dog Food (Remaining: ~${Math.round(getDogFoodScoopsEstimated())} scoops)`);
+          render();
+          break;
+
+        case 'calibrate-dogfood':
+          openTrueUp('dogfood', '🎯 Calibrate Dog Food Bags', 'Observed Bags Count:', 'bags', getDogFoodCurrent().toFixed(2));
+          break;
+
+        // --- Save True-Up Apply ---
+        case 'save-trueup': {
+          const val = parseFloat(dom.inputTrueUpVal ? dom.inputTrueUpVal.value : '0');
+          if (isNaN(val) || val < 0) {
+            alert('Please enter a valid non-negative number.');
+            return;
+          }
+          if (currentTrueUpTarget === 'hay') {
+            const old = getHayCurrent(now);
+            state.hay.amount = val;
+            state.hay.lastUpdated = now;
+            addLog('hay', `True-Up Hay Bales: calibrated from ${old.toFixed(1)} to ${val.toFixed(1)} bales`);
+          } else if (currentTrueUpTarget === 'beet') {
+            const old = getBeetCurrent(now);
+            state.beet.bags = val;
+            state.beet.lastUpdated = now;
+            addLog('beet', `True-Up Beet Pulp: calibrated from ${old.toFixed(2)} to ${val.toFixed(2)} bags (~${Math.round(val * safeNum(state.beet.scoopsPerBag, 40))} sc)`);
+          } else if (currentTrueUpTarget === 'water') {
+            const capped = Math.min(100, Math.max(0, val));
+            const old = getWaterCurrent(now);
+            state.water.percent = capped;
+            state.water.lastUpdated = now;
+            addLog('water', `True-Up Stock Tank: calibrated from ${old.toFixed(1)}% to ${capped.toFixed(1)}%`);
+          } else if (currentTrueUpTarget === 'litter') {
+            const old = getLitterCurrent(now);
+            state.litter.boxes = val;
+            state.litter.lastUpdated = now;
+            addLog('litter', `True-Up Cat Litter: calibrated from ${old.toFixed(1)} to ${val.toFixed(1)} boxes`);
+          } else if (currentTrueUpTarget === 'catfood') {
+            const old = getCatFoodCurrent(now);
+            state.catFood.bags = val;
+            state.catFood.lastUpdated = now;
+            addLog('catfood', `True-Up Cat Food: calibrated from ${old.toFixed(2)} to ${val.toFixed(2)} bags`);
+          } else if (currentTrueUpTarget === 'dogfood') {
+            const old = getDogFoodCurrent(now);
+            state.dogFood.bags = val;
+            state.dogFood.lastUpdated = now;
+            addLog('dogfood', `True-Up Dog Food: calibrated from ${old.toFixed(2)} to ${val.toFixed(2)} bags`);
+          }
+
+          sound.playPositive();
+          saveState();
+          recordTelemetrySnapshot('true-up');
+          closeModal(dom.trueUpModal);
+          currentTrueUpTarget = null;
+          render();
+          break;
+        }
+
+        // --- Save Settings Apply ---
+        case 'save-settings': {
+          const hayAmt = parseFloat(dom.settingHayAmount ? dom.settingHayAmount.value : '0');
+          const hayRate = parseFloat(dom.settingHayRate ? dom.settingHayRate.value : '0.5');
+          const beetBags = parseFloat(dom.settingBeetBags ? dom.settingBeetBags.value : '0');
+          const beetPerBag = parseInt(dom.settingBeetScoopsPerBag ? dom.settingBeetScoopsPerBag.value : '40', 10);
+          const beetRate = parseFloat(dom.settingBeetRateScoops ? dom.settingBeetRateScoops.value : '2');
+          const waterHoursEmpty = parseFloat(dom.settingWaterHoursEmpty ? dom.settingWaterHoursEmpty.value : '96');
+          const waterHoursAgo = parseFloat(dom.settingWaterHoursSinceFill ? dom.settingWaterHoursSinceFill.value : '0');
+          const litterBoxes = parseFloat(dom.settingLitterBoxes ? dom.settingLitterBoxes.value : '0');
+          const litterRate = parseFloat(dom.settingLitterRate ? dom.settingLitterRate.value : '0.1');
+          const catFoodBags = parseFloat(dom.settingCatFoodBags ? dom.settingCatFoodBags.value : '0');
+          const catFoodCupsPerBag = parseInt(dom.settingCatFoodCupsPerBag ? dom.settingCatFoodCupsPerBag.value : '40', 10);
+          const catFoodRateCups = parseFloat(dom.settingCatFoodRateCups ? dom.settingCatFoodRateCups.value : '1');
+          const dogFoodBags = parseFloat(dom.settingDogFoodBags ? dom.settingDogFoodBags.value : '0');
+          const dogFoodScoopsPerBag = parseInt(dom.settingDogFoodScoopsPerBag ? dom.settingDogFoodScoopsPerBag.value : '80', 10);
+          const dogFoodRateScoops = parseFloat(dom.settingDogFoodRateScoops ? dom.settingDogFoodRateScoops.value : '4');
+
+          state.hay.amount = safeNum(hayAmt, 0);
+          state.hay.ratePerDay = safeNum(hayRate, 0.5);
+          state.hay.lastUpdated = now;
+
+          state.beet.bags = safeNum(beetBags, 0);
+          state.beet.scoopsPerBag = safeNum(beetPerBag, 40);
+          state.beet.ratePerDayScoops = safeNum(beetRate, 2.0);
+          state.beet.lastUpdated = now;
+
+          state.water.hoursToEmpty = safeNum(waterHoursEmpty, 96);
+          const calculatedWaterPercent = Math.max(0, Math.min(100, 100 - ((waterHoursAgo / waterHoursEmpty) * 100)));
+          state.water.percent = safeNum(calculatedWaterPercent, 100);
+          state.water.lastUpdated = now;
+
+          state.litter.boxes = safeNum(litterBoxes, 0);
+          state.litter.ratePerDay = safeNum(litterRate, 0.1);
+          state.litter.lastUpdated = now;
+
+          state.catFood.bags = safeNum(catFoodBags, 0);
+          state.catFood.cupsPerBag = safeNum(catFoodCupsPerBag, 40);
+          state.catFood.ratePerDayCups = safeNum(catFoodRateCups, 1.0);
+          state.catFood.lastUpdated = now;
+
+          state.dogFood.bags = safeNum(dogFoodBags, 0);
+          state.dogFood.scoopsPerBag = safeNum(dogFoodScoopsPerBag, 80);
+          state.dogFood.ratePerDayScoops = safeNum(dogFoodRateScoops, 4.0);
+          state.dogFood.lastUpdated = now;
+
+          addLog('system', 'Global parameters saved and recalculated');
+          sound.playPositive();
+          saveState();
+          recordTelemetrySnapshot('settings-update');
+          closeModal(dom.settingsModal);
+          render();
+          break;
+        }
+
+        // --- Telemetry & Analytics ---
+        case 'export-csv': {
+          sound.playPositive();
+          let csv = 'Timestamp,ISO_Date,Reason,Hay_Bales,Beet_Pulp_Bags,Beet_Pulp_Est_Scoops,Water_Percent,Cat_Litter_Boxes,Cat_Food_Bags,Cat_Food_Est_Cups,Dog_Food_Bags,Dog_Food_Est_Scoops\n';
+          (state.telemetry || []).forEach(row => {
+            const iso = new Date(safeNum(row.timestamp, Date.now())).toISOString();
+            csv += `${row.timestamp},${iso},${row.reason || 'snapshot'},${row.hay},${row.beetBags},${row.beetScoopsEst},${row.waterPercent},${row.litterBoxes},${row.catFoodBags},${row.catFoodCupsEst},${row.dogFoodBags},${row.dogFoodScoopsEst}\n`;
+          });
+          const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `homestead_telemetry_${new Date().toISOString().slice(0,10)}.csv`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          break;
+        }
+
+        case 'snap-telemetry':
+          sound.playPositive();
+          recordTelemetrySnapshot('manual-snap');
+          addLog('system', 'Manual telemetry checkpoint snapshot recorded');
+          break;
+
+        case 'clear-log':
+          if (confirm('Clear the Homestead Activity Log?')) {
+            sound.playBlip(240, 'square');
+            state.logs = [{
+              id: Date.now(),
+              type: 'system',
+              message: 'Activity log cleared by user',
+              timestamp: Date.now()
+            }];
+            saveState();
+            renderLogs();
+          }
+          break;
+
+        // --- Data Backup / Restore ---
+        case 'export-json': {
+          sound.playPositive();
+          commitDrainedBaselines();
+          const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+          const a = document.createElement('a');
+          a.href = dataStr;
+          a.download = `homestead_backup_${new Date().toISOString().slice(0,10)}.json`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          break;
+        }
+
+        case 'import-json':
+          if (dom.importFileInput) dom.importFileInput.click();
+          break;
+
+        case 'factory-reset':
+          if (confirm('CAUTION: Reset all inventory counts and settings to defaults?')) {
+            sound.playAlert();
+            state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+            saveState();
+            closeAllModals();
+            render();
+            renderLogs();
+            renderTelemetryChart();
+          }
+          break;
+
+        // --- Scratch Pad Actions ---
+        case 'pad-insert-date': {
+          const d = new Date();
+          const stamp = `\n--- [${d.toLocaleDateString()} ${d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}] ---\n`;
+          insertScratchPadText(stamp);
+          break;
+        }
+
+        case 'pad-insert-delivery': {
+          const template = `\n[FEED ORDER LIST]\n• Hay Bales Needed: ____\n• Beet Pulp Sacks: ____\n• Cat Litter Boxes: ____\n• Pet Kibble Sacks: ____\n• Supplier Phone / Notes: ____\n`;
+          insertScratchPadText(template);
+          break;
+        }
+
+        case 'pad-copy': {
+          if (dom.homesteadScratchPad) {
+            navigator.clipboard.writeText(dom.homesteadScratchPad.value || '').then(() => {
+              sound.playPositive();
+              alert('Homestead notes copied to clipboard!');
+            }).catch(() => {
+              dom.homesteadScratchPad.select();
+              document.execCommand('copy');
+              alert('Homestead notes copied!');
+            });
+          }
+          break;
+        }
+
+        case 'pad-clear': {
+          if (confirm('Clear the Homestead Scratch Pad?')) {
+            if (dom.homesteadScratchPad) {
+              dom.homesteadScratchPad.value = '';
+              dom.homesteadScratchPad.dispatchEvent(new Event('input'));
+              sound.playBlip(240, 'square');
+            }
+          }
+          break;
+        }
+
+        default:
+          break;
+      }
+    }
+
+    /* ==========================================================================
+       GLOBAL EVENT DELEGATION: BULLETPROOF CLICK LISTENER
+       ========================================================================== */
+    document.addEventListener('click', (e) => {
+      // 1. Check for backdrop clicks to dismiss modals immediately
+      if (e.target && e.target.classList && e.target.classList.contains('modal-backdrop')) {
+        closeAllModals();
+        sound.playBlip(280, 'triangle');
+        return;
+      }
+
+      // 2. Check for button or element with data-action attribute
+      const actionEl = e.target.closest('[data-action]');
+      if (actionEl) {
+        // Prevent double execution: if button has inline onclick calling homesteadAction,
+        // it already executed via onclick.
+        const onclickAttr = actionEl.getAttribute('onclick') || '';
+        if (!onclickAttr.includes('homesteadAction')) {
+          const action = actionEl.getAttribute('data-action');
+          if (action) {
+            homesteadAction(action, e);
+          }
+        }
+        return;
+      }
+
+      // 3. Telemetry tab clicks
+      const tabEl = e.target.closest('#telemetryFilterTabs .tab-btn');
+      if (tabEl) {
+        document.querySelectorAll('#telemetryFilterTabs .tab-btn').forEach(b => b.classList.remove('active'));
+        tabEl.classList.add('active');
+        currentTelemetryResource = tabEl.dataset.res || 'hay';
+        sound.playBlip(420, 'square');
+        renderTelemetryChart();
+        return;
+      }
+    });
+
+    // Close on Escape Key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeAllModals();
+      }
+    });
+
+    // Handle File Import change
+    if (dom.importFileInput) {
+      dom.importFileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const parsed = JSON.parse(event.target.result);
+            if (parsed.hay && parsed.water) {
+              state = {
+                ...DEFAULT_STATE,
+                ...parsed,
+                hay: { ...DEFAULT_STATE.hay, ...(parsed.hay || {}) },
+                beet: { ...DEFAULT_STATE.beet, ...(parsed.beet || {}) },
+                water: { ...DEFAULT_STATE.water, ...(parsed.water || {}) },
+                litter: { ...DEFAULT_STATE.litter, ...(parsed.litter || {}) },
+                catFood: { ...DEFAULT_STATE.catFood, ...(parsed.catFood || {}) },
+                dogFood: { ...DEFAULT_STATE.dogFood, ...(parsed.dogFood || {}) }
+              };
+              saveState();
+              addLog('system', 'Imported data from JSON backup file');
+              sound.playPositive();
+              closeAllModals();
+              render();
+              renderLogs();
+              renderTelemetryChart();
+              alert('Homestead state restored successfully!');
+            }
+          } catch (err) {
+            alert('Failed to parse backup JSON.');
+          }
+        };
+        reader.readAsText(file);
+      });
+    }
+
+    /* ==========================================================================
+       STARTUP SEQUENCE
+       ========================================================================== */
+    if (state.soundEnabled === false && dom.soundIcon && dom.soundLabel) {
+      dom.soundIcon.textContent = '🔇';
+      dom.soundLabel.textContent = 'SFX MUTED';
+    }
+    if (state.scanlines === false) {
+      document.body.classList.remove('scanlines');
+    }
+
+    initScratchPad();
+
+    if (!state.telemetry || state.telemetry.length === 0) {
+      recordTelemetrySnapshot('init');
+    }
+
+    render();
+    renderLogs();
+    renderTelemetryChart();
+
+    // High frequency update loop (1s)
+    setInterval(() => {
+      render();
+    }, 1000);
+
+    // Baseline commit loop (60s)
+    setInterval(() => {
+      commitDrainedBaselines();
+    }, 60000);
+
+    // Hourly telemetry snapshot loop (1h)
+    setInterval(() => {
+      recordTelemetrySnapshot('hourly');
+    }, 3600000);
+
+    window.addEventListener('resize', () => {
+      renderTelemetryChart();
+    });
+
+  </script>
+</body>
+</html>
