@@ -665,6 +665,51 @@
       text-decoration: underline;
     }
 
+  
+    /* THEME / PERSONA SWITCHER STYLES */
+    .theme-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 6px 2px;
+      margin-bottom: 2px;
+    }
+
+    .theme-bar-label {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .theme-chip {
+      background: rgba(30, 41, 59, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #cbd5e1;
+      padding: 5px 11px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .theme-chip:hover {
+      border-color: var(--gold);
+      color: #fff;
+    }
+
+    .theme-chip.active {
+      background: var(--gold);
+      color: #0b0f19;
+      border-color: var(--gold);
+      font-weight: 900;
+      box-shadow: 0 0 12px var(--gold);
+    }
+
   </style>
 </head>
 <body>
@@ -674,13 +719,22 @@
   <div class="container">
 
     <!-- Top Dashboard Header (Clean, Zero Settings Glitch) -->
+        <!-- DYNAMIC THEME SELECTOR BAR -->
+    <div class="theme-bar" id="theme-selector-bar">
+      <span class="theme-bar-label">🎨 THEME:</span>
+      <button class="theme-chip active" id="chip-cyber-western" onclick="switchTheme('cyber-western')">🤠 Ranch Quest</button>
+      <button class="theme-chip" id="chip-space-starfleet" onclick="switchTheme('space-starfleet')">🚀 Starfleet</button>
+      <button class="theme-chip" id="chip-pixel-miner" onclick="switchTheme('pixel-miner')">⛏️ Pixel Miner</button>
+      <button class="theme-chip" id="chip-woodland-scout" onclick="switchTheme('woodland-scout')">🦊 Woodland</button>
+    </div>
+
     <header class="header-card">
       <div class="hero-profile">
         <div class="avatar-wrapper">
           <div class="avatar-badge" id="avatar-icon">🤠</div>
           <div class="hero-title-group">
             <h1>
-              <span>Trooper</span>
+              <span id="hero-display-name">Lincoln (Trooper)</span>
               <span class="streak-pill" id="streak-badge">🔥 <span id="streak-count">1</span> DAY STREAK</span>
             </h1>
             <div class="hero-rank" id="rank-title">Level 1 • Barn Scout</div>
@@ -695,7 +749,7 @@
       <!-- XP Bar -->
       <div class="xp-section">
         <div class="xp-labels">
-          <span>TROOPER'S XP</span>
+          <span id="hero-xp-label">LINCOLN'S XP</span>
           <span id="xp-text">0 / 100 XP</span>
         </div>
         <div class="xp-bar-bg">
@@ -929,7 +983,143 @@
       { id: "chill_reset", name: "Chill and reset for tomorrow", desc: "Put shoes away and relax for tomorrow", zone: "pm", xp: 50, emoji: "🎧" }
     ];
 
-    const RANKS = [
+    
+    // --- DYNAMIC THEME REGISTRY & HEADLESS ADAPTER ---
+    const THEME_STORAGE_KEY = "bb_lincoln_active_theme";
+
+    const THEME_REGISTRY = {
+      "cyber-western": {
+        id: "cyber-western",
+        name: "Cyber-Western (Ranch Quest)",
+        heroName: "Lincoln (Trooper)",
+        xpLabel: "TROOPER'S XP",
+        avatar: "🤠",
+        primaryColor: "#f59e0b",
+        secondaryColor: "#38bdf8",
+        accentGlow: "rgba(245, 158, 11, 0.45)",
+        cardBg: "#1e293b",
+        bodyBg: "#0f172a",
+        ranks: [
+          { level: 1, title: "Barn Scout", xpReq: 100, avatar: "🌱" },
+          { level: 2, title: "Trail Wrangler", xpReq: 250, avatar: "🤠" },
+          { level: 3, title: "Herd Guardian", xpReq: 500, avatar: "🐎" },
+          { level: 4, title: "Homestead Ranger", xpReq: 850, avatar: "🛡️" },
+          { level: 5, title: "Master of Beasts", xpReq: 1300, avatar: "🦅" },
+          { level: 6, title: "Ranch Legend", xpReq: 2000, avatar: "👑" }
+        ]
+      },
+      "space-starfleet": {
+        id: "space-starfleet",
+        name: "Starfleet Cadet (Deep Space)",
+        heroName: "Lincoln (Star Cadet)",
+        xpLabel: "MISSION XP",
+        avatar: "🚀",
+        primaryColor: "#38bdf8",
+        secondaryColor: "#a855f7",
+        accentGlow: "rgba(56, 189, 248, 0.45)",
+        cardBg: "#0f172a",
+        bodyBg: "#030712",
+        ranks: [
+          { level: 1, title: "Star Cadet 3rd Class", xpReq: 100, avatar: "🛰️" },
+          { level: 2, title: "Flight Officer", xpReq: 250, avatar: "🚀" },
+          { level: 3, title: "Station Specialist", xpReq: 500, avatar: "🛸" },
+          { level: 4, title: "Starfleet Lieutenant", xpReq: 850, avatar: "⚡" },
+          { level: 5, title: "Cosmic Commander", xpReq: 1300, avatar: "🌌" },
+          { level: 6, title: "Fleet Admiral", xpReq: 2000, avatar: "👑" }
+        ]
+      },
+      "pixel-miner": {
+        id: "pixel-miner",
+        name: "Pixel Miner (Craft Quest)",
+        heroName: "Lincoln (Crafter)",
+        xpLabel: "MINING XP",
+        avatar: "⛏️",
+        primaryColor: "#10b981",
+        secondaryColor: "#f59e0b",
+        accentGlow: "rgba(16, 185, 129, 0.45)",
+        cardBg: "#1c1917",
+        bodyBg: "#0c0a09",
+        ranks: [
+          { level: 1, title: "Wooden Pickaxe", xpReq: 100, avatar: "🪵" },
+          { level: 2, title: "Stone Forger", xpReq: 250, avatar: "🪨" },
+          { level: 3, title: "Iron Crafter", xpReq: 500, avatar: "⚔️" },
+          { level: 4, title: "Redstone Engineer", xpReq: 850, avatar: "🔋" },
+          { level: 5, title: "Diamond Knight", xpReq: 1300, avatar: "💎" },
+          { level: 6, title: "Netherite Master", xpReq: 2000, avatar: "👑" }
+        ]
+      },
+      "woodland-scout": {
+        id: "woodland-scout",
+        name: "Woodland Scout (Nature Ranger)",
+        heroName: "Lincoln (Ranger)",
+        xpLabel: "FOREST XP",
+        avatar: "🦊",
+        primaryColor: "#c084fc",
+        secondaryColor: "#2dd4bf",
+        accentGlow: "rgba(192, 132, 252, 0.45)",
+        cardBg: "#181d36",
+        bodyBg: "#0e1529",
+        ranks: [
+          { level: 1, title: "Sprout Scout", xpReq: 100, avatar: "🌱" },
+          { level: 2, title: "Woodland Ranger", xpReq: 250, avatar: "🌿" },
+          { level: 3, title: "Meadow Guardian", xpReq: 500, avatar: "🌸" },
+          { level: 4, title: "Forest Explorer", xpReq: 850, avatar: "🦊" },
+          { level: 5, title: "Wildlife Champion", xpReq: 1300, avatar: "🦌" },
+          { level: 6, title: "Nature Legend", xpReq: 2000, avatar: "👑" }
+        ]
+      }
+    };
+
+    let activeThemeKey = "cyber-western";
+    let activeRanks = THEME_REGISTRY["cyber-western"].ranks;
+
+    function applyTheme(themeKey, silent = true) {
+      const theme = THEME_REGISTRY[themeKey] || THEME_REGISTRY["cyber-western"];
+      activeThemeKey = theme.id;
+      activeRanks = theme.ranks;
+
+      // 1. Update CSS variables dynamically on root
+      const root = document.documentElement;
+      root.style.setProperty('--gold', theme.primaryColor);
+      root.style.setProperty('--indigo', theme.secondaryColor);
+      root.style.setProperty('--card-border', theme.accentGlow);
+      root.style.setProperty('--card-bg', theme.cardBg);
+      root.style.setProperty('--bg-dark', theme.bodyBg);
+
+      // 2. Update Header DOM elements
+      const avatarEl = document.getElementById('avatar-icon');
+      if (avatarEl) avatarEl.innerText = theme.avatar;
+
+      const heroNameEl = document.getElementById('hero-display-name');
+      if (heroNameEl) heroNameEl.innerText = theme.heroName;
+
+      const xpLabelEl = document.getElementById('hero-xp-label');
+      if (xpLabelEl) xpLabelEl.innerText = theme.xpLabel;
+
+      // 3. Update theme chips active state
+      ['cyber-western', 'space-starfleet', 'pixel-miner', 'woodland-scout'].forEach(k => {
+        const chip = document.getElementById(`chip-${k}`);
+        if (chip) chip.classList.toggle('active', k === activeThemeKey);
+      });
+
+      // 4. Re-render UI to update ranks
+      if (typeof renderUI === 'function') {
+        renderUI();
+      }
+
+      if (!silent) {
+        AudioEngine.playCoin();
+      }
+    }
+
+    function switchTheme(themeKey) {
+      if (themeKey === activeThemeKey) return;
+      localStorage.setItem(THEME_STORAGE_KEY, themeKey);
+      applyTheme(themeKey, false);
+      logEvent("THEME_CHANGED", `Switched Lincoln theme to ${themeKey}`);
+    }
+
+    const LEGACY_RANKS = [
       { level: 1, title: "Barn Scout", xpReq: 100, avatar: "🤠" },
       { level: 2, title: "Trail Wrangler", xpReq: 250, avatar: "🐎" },
       { level: 3, title: "Herd Guardian", xpReq: 500, avatar: "🛡️" },
@@ -1026,6 +1216,8 @@
       }
 
       document.getElementById('date-display').innerText = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || "cyber-western";
+      applyTheme(savedTheme, true);
       renderDynamicZones();
       renderUI();
       renderScratchpad();
@@ -1097,15 +1289,16 @@
     }
 
     function getRankInfo(xp) {
-      for (let i = RANKS.length - 1; i >= 0; i--) {
-        if (xp >= (RANKS[i - 1]?.xpReq || 0)) {
-          const currentRank = RANKS[i];
-          const prevXp = RANKS[i - 1] ? RANKS[i - 1].xpReq : 0;
+      const currentRanks = activeRanks || LEGACY_RANKS;
+      for (let i = currentRanks.length - 1; i >= 0; i--) {
+        if (xp >= (currentRanks[i - 1]?.xpReq || 0)) {
+          const currentRank = currentRanks[i];
+          const prevXp = currentRanks[i - 1] ? currentRanks[i - 1].xpReq : 0;
           const nextXp = currentRank.xpReq;
           return { currentRank, prevXp, nextXp };
         }
       }
-      return { currentRank: RANKS[0], prevXp: 0, nextXp: RANKS[0].xpReq };
+      return { currentRank: currentRanks[0], prevXp: 0, nextXp: currentRanks[0].xpReq };
     }
 
     function renderUI() {

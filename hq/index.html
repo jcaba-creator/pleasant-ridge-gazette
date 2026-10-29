@@ -515,6 +515,33 @@
         </div>
       </div>
 
+      
+      <!-- Lincoln / Trooper Active Theme Control -->
+      <div class="card" style="background: linear-gradient(145deg, #161c2d, #0d121f); border-color: rgba(56, 189, 248, 0.3);">
+        <div class="card-title">
+          <span>🎨 LINCOLN'S ACTIVE FRONTEND THEME</span>
+          <span style="font-size: 10px; color: #38bdf8; font-weight: 700;">Live Skin Adapter</span>
+        </div>
+        <p style="font-size: 11px; color: var(--text-muted); line-height: 1.4;">
+          Instantly switches Lincoln's visual presentation, rank titles, and audio cues across devices without altering his 17 chores, XP, streaks, or bank balance.
+        </p>
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #090d18; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08);">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span id="hq-theme-avatar-preview" style="font-size: 22px;">🤠</span>
+            <div>
+              <div id="hq-theme-name-preview" style="font-size: 12px; font-weight: 800; color: #f1f5f9;">Cyber-Western (Ranch Quest)</div>
+              <div id="hq-theme-subtitle-preview" style="font-size: 10px; color: var(--text-muted);">Current Active Presentation</div>
+            </div>
+          </div>
+          <select id="hq-lincoln-theme-select" class="input-field" style="width: auto; max-width: 220px;" onchange="changeLincolnThemeFromHQ(this.value)">
+            <option value="cyber-western">🤠 Cyber-Western (Ranch Quest)</option>
+            <option value="space-starfleet">🚀 Starfleet Cadet (Deep Space)</option>
+            <option value="pixel-miner">⛏️ Pixel Miner (Craft Quest)</option>
+            <option value="woodland-scout">🦊 Woodland Scout (Nature)</option>
+          </select>
+        </div>
+      </div>
+
       <!-- Trooper Chores Manifest -->
       <div class="card">
         <div class="card-title">
@@ -731,6 +758,50 @@
         if (btn) btn.classList.toggle('active', t === tabId);
         if (panel) panel.classList.toggle('active', t === tabId);
       });
+    }
+
+    
+    const THEME_STORAGE_KEY = "bb_lincoln_active_theme";
+
+    function refreshLincolnThemeHQ() {
+      const current = localStorage.getItem(THEME_STORAGE_KEY) || "cyber-western";
+      const sel = document.getElementById('hq-lincoln-theme-select');
+      if (sel) sel.value = current;
+
+      const previews = {
+        "cyber-western": { icon: "🤠", name: "Cyber-Western (Ranch Quest)", desc: "Ranch Readiness & Homestead Habits" },
+        "space-starfleet": { icon: "🚀", name: "Starfleet Cadet (Deep Space)", desc: "Orbit Readiness & Space Protocol" },
+        "pixel-miner": { icon: "⛏️", name: "Pixel Miner (Craft Quest)", desc: "Block Forging & Resource Gathering" },
+        "woodland-scout": { icon: "🦊", name: "Woodland Scout (Nature Ranger)", desc: "Forest Habits & Nature Lore" }
+      };
+
+      const p = previews[current] || previews["cyber-western"];
+      const avEl = document.getElementById('hq-theme-avatar-preview');
+      const nameEl = document.getElementById('hq-theme-name-preview');
+      const subEl = document.getElementById('hq-theme-subtitle-preview');
+      if (avEl) avEl.innerText = p.icon;
+      if (nameEl) nameEl.innerText = p.name;
+      if (subEl) subEl.innerText = p.desc;
+    }
+
+    function changeLincolnThemeFromHQ(themeKey) {
+      localStorage.setItem(THEME_STORAGE_KEY, themeKey);
+      refreshLincolnThemeHQ();
+
+      try {
+        let log = JSON.parse(localStorage.getItem(T_TELEMETRY_KEY) || '[]');
+        log.unshift({
+          id: 'evt_' + Date.now(),
+          timestamp: new Date().toISOString(),
+          displayTime: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+          action: 'THEME_CHANGED_BY_PARENT',
+          detail: `Switched Lincoln active theme to ${themeKey}`
+        });
+        localStorage.setItem(T_TELEMETRY_KEY, JSON.stringify(log));
+      } catch(e) {}
+
+      renderUnifiedTelemetry();
+      alert(`Lincoln's active theme is now set to ${themeKey}! His app will display this theme on next load.`);
     }
 
     function refreshHQ() {

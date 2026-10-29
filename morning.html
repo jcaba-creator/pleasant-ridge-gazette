@@ -533,10 +533,10 @@
       <!-- 1. TROOPER (L-Dog) -->
       <a href="/trooper/" class="kid-card card-trooper" id="card-trooper">
         <div class="kid-card-header">
-          <div class="avatar-circle">🤠</div>
+          <div class="avatar-circle" id="trooper-card-avatar">🤠</div>
           <div class="kid-details">
-            <div class="kid-name">Trooper (L-Dog)</div>
-            <div class="kid-subtitle">Ranch Quest • Cyber-Western • Level 2 Ranger</div>
+            <div class="kid-name" id="trooper-card-name">Trooper (L-Dog)</div>
+            <div class="kid-subtitle" id="trooper-card-sub">Ranch Quest • Cyber-Western • Level 2 Ranger</div>
           </div>
           <div class="status-badge" id="trooper-status-badge">Ready</div>
         </div>
@@ -655,6 +655,25 @@
       document.getElementById('today-date-display').innerText = today;
 
       // 1. Trooper Data
+
+      // Update Trooper / Lincoln dynamic theme styling
+      try {
+        const activeTheme = localStorage.getItem("bb_lincoln_active_theme") || "cyber-western";
+        const themeMeta = {
+          "cyber-western": { icon: "🤠", title: "Lincoln (Trooper)", subtitle: "Ranch Quest • Cyber-Western • Level 2 Ranger", btn: "▶ Launch Trooper's Quest" },
+          "space-starfleet": { icon: "🚀", title: "Lincoln (Star Cadet)", subtitle: "Starfleet Cadet • Deep Space Mission", btn: "▶ Launch Starfleet Mission" },
+          "pixel-miner": { icon: "⛏️", title: "Lincoln (Pixel Miner)", subtitle: "Craft Quest • Block Forging & Resource XP", btn: "▶ Launch Pixel Quest" },
+          "woodland-scout": { icon: "🦊", title: "Lincoln (Woodland Scout)", subtitle: "Nature Ranger • Forest Habit Explorer", btn: "▶ Launch Woodland Quest" }
+        };
+        const tm = themeMeta[activeTheme] || themeMeta["cyber-western"];
+        const av = document.getElementById('trooper-card-avatar');
+        const nm = document.getElementById('trooper-card-name');
+        const sb = document.getElementById('trooper-card-sub');
+        if (av) av.innerText = tm.icon;
+        if (nm) nm.innerText = tm.title;
+        if (sb) sb.innerText = tm.subtitle;
+      } catch(e) {}
+
       try {
         const raw = localStorage.getItem(TROOPER_DATA_KEY);
         if (raw) {
