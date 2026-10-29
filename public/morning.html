@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>449 Morning Field HQ | Family Routine Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #07090e;
+      --card-bg: #0f1422;
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --amber: #f59e0b;
+      --teal: #2dd4bf;
+      --purple: #c084fc;
+      --pink: #f472b6;
+      --blue: #38bdf8;
+      --font-display: 'Cinzel', serif;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 100% 100%, rgba(192, 132, 252, 0.06) 0%, transparent 60%);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 14px 60px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 580px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Top Navigation / Header */
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 4px 10px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .brand-title {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: #f1f5f9;
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    .hq-link-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #cbd5e1;
+      padding: 7px 11px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .hq-link-btn:hover {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: #38bdf8;
+      color: #38bdf8;
+    }
+
+    /* EASTON LOCAL WEATHER & OUTFIT SELECTOR WIDGET */
+    .weather-widget {
+      background: linear-gradient(145deg, #131a2e, #0a101f);
+      border: 1.5px solid rgba(56, 189, 248, 0.3);
+      border-radius: 18px;
+      padding: 12px 14px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .weather-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 6px;
+    }
+
+    .weather-location {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #7dd3fc;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #38bdf8;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #38bdf8;
+      animation: pulseLive 2s infinite;
+      display: inline-block;
+    }
+
+    @keyframes pulseLive {
+      0% { transform: scale(0.95); opacity: 0.7; }
+      50% { transform: scale(1.25); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.7; }
+    }
+
+    .weather-condition-pill {
+      font-size: 12px;
+      font-weight: 700;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .outfit-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      transition: all 0.25s ease;
+    }
+
+    .outfit-icon-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+    }
+
+    .outfit-content {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+    }
+
+    .outfit-decision-title {
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+
+    .outfit-tagline {
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    /* Outfit Modes */
+    .mode-jacket {
+      background: linear-gradient(135deg, rgba(30, 58, 138, 0.7), rgba(15, 23, 42, 0.95));
+      border: 1.5px solid #38bdf8;
+    }
+    .mode-jacket .outfit-icon-badge {
+      background: linear-gradient(135deg, #0284c7, #38bdf8);
+      border: 2px solid #bae6fd;
+    }
+    .mode-jacket .outfit-decision-title { color: #7dd3fc; }
+    .mode-jacket .outfit-tagline { color: #e0f2fe; }
+
+    .mode-hoodie {
+      background: linear-gradient(135deg, rgba(126, 34, 206, 0.55), rgba(13, 148, 136, 0.45));
+      border: 1.5px solid #c084fc;
+    }
+    .mode-hoodie .outfit-icon-badge {
+      background: linear-gradient(135deg, #a855f7, #14b8a6);
+      border: 2px solid #e9d5ff;
+    }
+    .mode-hoodie .outfit-decision-title { color: #f3e8ff; }
+    .mode-hoodie .outfit-tagline { color: #2dd4bf; }
+
+    .mode-nothing {
+      background: linear-gradient(135deg, rgba(20, 83, 45, 0.6), rgba(15, 23, 42, 0.95));
+      border: 1.5px solid #34d399;
+    }
+    .mode-nothing .outfit-icon-badge {
+      background: linear-gradient(135deg, #059669, #10b981);
+      border: 2px solid #a7f3d0;
+    }
+    .mode-nothing .outfit-decision-title { color: #6ee7b7; }
+    .mode-nothing .outfit-tagline { color: #fef08a; }
+
+    /* KID MISSION LAUNCHER CARDS */
+    .section-title {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .kid-cards-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .kid-card {
+      background: var(--card-bg);
+      border: 1.5px solid var(--card-border);
+      border-radius: 20px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.15s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .kid-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    }
+
+    .kid-card:active {
+      transform: scale(0.99);
+    }
+
+    /* Persona Themes */
+    /* Trooper: Cyber-Western Amber & Blue */
+    .card-trooper {
+      border-color: rgba(245, 158, 11, 0.35);
+      background: linear-gradient(145deg, #161a29, #0f121d);
+    }
+    .card-trooper:hover {
+      border-color: #f59e0b;
+      box-shadow: 0 10px 25px rgba(245, 158, 11, 0.15);
+    }
+    .card-trooper .avatar-circle {
+      background: linear-gradient(135deg, #b45309, #f59e0b);
+      border: 2px solid #fef3c7;
+    }
+    .card-trooper .kid-btn {
+      background: linear-gradient(90deg, #f59e0b, #d97706);
+      color: #000000;
+    }
+
+    /* Peacemaker 9: Woodland Lavender & Teal */
+    .card-peacemaker {
+      border-color: rgba(192, 132, 252, 0.35);
+      background: linear-gradient(145deg, #19142b, #0f111f);
+    }
+    .card-peacemaker:hover {
+      border-color: #c084fc;
+      box-shadow: 0 10px 25px rgba(192, 132, 252, 0.15);
+    }
+    .card-peacemaker .avatar-circle {
+      background: linear-gradient(135deg, #a855f7, #2dd4bf);
+      border: 2px solid #e9d5ff;
+    }
+    .card-peacemaker .kid-btn {
+      background: linear-gradient(90deg, #a855f7, #14b8a6);
+      color: #ffffff;
+    }
+
+    /* Birdie: Sunshine Pink & Gold */
+    .card-birdie {
+      border-color: rgba(244, 114, 182, 0.35);
+      background: linear-gradient(145deg, #231221, #120d18);
+    }
+    .card-birdie:hover {
+      border-color: #f472b6;
+      box-shadow: 0 10px 25px rgba(244, 114, 182, 0.15);
+    }
+    .card-birdie .avatar-circle {
+      background: linear-gradient(135deg, #ec4899, #fbbf24);
+      border: 2px solid #fdf2f8;
+    }
+    .card-birdie .kid-btn {
+      background: linear-gradient(90deg, #ec4899, #fbbf24);
+      color: #ffffff;
+      font-weight: 900;
+    }
+
+    /* Card Top Layout */
+    .kid-card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .avatar-circle {
+      width: 54px;
+      height: 54px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .kid-details {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+    }
+
+    .kid-name {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 0.3px;
+      color: #f8fafc;
+    }
+
+    .kid-subtitle {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .status-badge {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      white-space: nowrap;
+    }
+
+    .badge-done {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      border-color: rgba(16, 185, 129, 0.4);
+    }
+
+    /* Card Metrics Row */
+    .kid-metrics-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 8px 10px;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 12px;
+    }
+
+    .metric-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .metric-val {
+      font-size: 14px;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      color: #f1f5f9;
+    }
+
+    .metric-lbl {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .kid-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Quick Treasury Footnote */
+    .treasury-card {
+      background: rgba(18, 22, 31, 0.7);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .treasury-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .treasury-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: #f1f5f9;
+    }
+
+    .treasury-desc {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .treasury-link {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--amber);
+      text-decoration: none;
+      padding: 5px 9px;
+      border-radius: 8px;
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Top Header -->
+    <div class="header-bar">
+      <div class="brand-group">
+        <span class="brand-icon">🤠🌸🐣</span>
+        <div>
+          <div class="brand-title">449 MORNING FIELD HQ</div>
+          <div class="brand-sub">Daily Family Readiness & Routine Command</div>
+        </div>
+      </div>
+      <a href="/hq/" class="hq-link-btn" title="Open Parent Flight Deck">
+        <span>🔒</span> Command HQ
+      </a>
+    </div>
+
+    <!-- Live Easton Weather & Outfit Guide -->
+    <div class="weather-widget" id="weather-widget">
+      <div class="weather-top-row">
+        <div class="weather-location">
+          <span class="live-dot"></span>
+          <span>Easton, KS</span>
+        </div>
+        <div class="weather-condition-pill" id="weather-temp-cond">
+          <span id="weather-icon">⏳</span>
+          <span id="weather-temp">--°F</span>
+          <span style="color: #64748b;">•</span>
+          <span id="weather-desc" style="font-size: 11px; color: #94a3b8;">Checking NWS...</span>
+        </div>
+      </div>
+
+      <div class="outfit-banner mode-hoodie" id="outfit-banner">
+        <div class="outfit-icon-badge" id="outfit-icon">🧥</div>
+        <div class="outfit-content">
+          <div class="outfit-decision-title" id="outfit-title">CHECKING WEATHER...</div>
+          <div class="outfit-tagline" id="outfit-tagline">Connecting to live National Weather Service...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kid Mission Launcher -->
+    <div class="section-title">
+      <span>SELECT OPERATIVE MISSION</span>
+      <span style="font-size: 10px; color: #64748b;" id="today-date-display">Today</span>
+    </div>
+
+    <div class="kid-cards-grid">
+
+      <!-- 1. TROOPER (L-Dog) -->
+      <a href="/trooper/" class="kid-card card-trooper" id="card-trooper">
+        <div class="kid-card-header">
+          <div class="avatar-circle">🤠</div>
+          <div class="kid-details">
+            <div class="kid-name">Trooper (L-Dog)</div>
+            <div class="kid-subtitle">Ranch Quest • Cyber-Western • Level 2 Ranger</div>
+          </div>
+          <div class="status-badge" id="trooper-status-badge">Ready</div>
+        </div>
+
+        <div class="kid-metrics-row">
+          <div class="metric-col">
+            <div class="metric-val" id="trooper-xp-val" style="color: #f59e0b;">0</div>
+            <div class="metric-lbl">Total XP</div>
+          </div>
+          <div class="metric-col">
+            <div class="metric-val" id="trooper-streak-val">1d</div>
+            <div class="metric-lbl">Streak</div>
+          </div>
+          <div class="metric-col">
+            <div class="metric-val" id="trooper-chores-val">0/17</div>
+            <div class="metric-lbl">Chores Done</div>
+          </div>
+        </div>
+
+        <div class="kid-btn">
+          <span>▶ Launch Trooper's Quest</span>
+          <span>➔</span>
+        </div>
+      </a>
+
+      <!-- 2. PEACEMAKER 9 -->
+      <a href="/peacemaker/" class="kid-card card-peacemaker" id="card-peacemaker">
+        <div class="kid-card-header">
+          <div class="avatar-circle">🌸</div>
+          <div class="kid-details">
+            <div class="kid-name">Peacemaker 9</div>
+            <div class="kid-subtitle">Woodland Ranger • Daily Encouragement Sparks</div>
+          </div>
+          <div class="status-badge" id="peacemaker-status-badge">Ready</div>
+        </div>
+
+        <div class="kid-metrics-row">
+          <div class="metric-col">
+            <div class="metric-val" id="peacemaker-xp-val" style="color: #2dd4bf;">0</div>
+            <div class="metric-lbl">Total XP</div>
+          </div>
+          <div class="metric-col">
+            <div class="metric-val" id="peacemaker-streak-val">1d</div>
+            <div class="metric-lbl">Streak</div>
+          </div>
+          <div class="metric-col">
+            <div class="metric-val" id="peacemaker-chores-val">0/11</div>
+            <div class="metric-lbl">Chores Done</div>
+          </div>
+        </div>
+
+        <div class="kid-btn">
+          <span>▶ Launch Peacemaker's Tracker</span>
+          <span>➔</span>
+        </div>
+      </a>
+
+      <!-- 3. BIRDIE (Rainbow-4) -->
+      <a href="/birdie/" class="kid-card card-birdie" id="card-birdie">
+        <div class="kid-card-header">
+          <div class="avatar-circle">🐣</div>
+          <div class="kid-details">
+            <div class="kid-name">Birdie (Rainbow-4)</div>
+            <div class="kid-subtitle">Preschool Hero • Audio Prompts & Star Jar</div>
+          </div>
+          <div class="status-badge" id="birdie-status-badge">Ready</div>
+        </div>
+
+        <div class="kid-metrics-row">
+          <div class="metric-col">
+            <div class="metric-val" id="birdie-stars-val" style="color: #facc15;">⭐ 0</div>
+            <div class="metric-lbl">Star Jar</div>
+          </div>
+          <div class="metric-col">
+            <div class="metric-val" id="birdie-streak-val">1d</div>
+            <div class="metric-lbl">Streak</div>
+          </div>
+          <div class="metric-col">
+            <div class="metric-val" id="birdie-cards-val">0/6</div>
+            <div class="metric-lbl">Missions Done</div>
+          </div>
+        </div>
+
+        <div class="kid-btn">
+          <span>▶ Launch Birdie's Star Jar</span>
+          <span>➔</span>
+        </div>
+      </a>
+
+    </div>
+
+    <!-- Companion Treasury Link -->
+    <div class="treasury-card">
+      <div class="treasury-left">
+        <span style="font-size: 20px;">🏦</span>
+        <div>
+          <div class="treasury-title">Household Treasury & Bounty Bank</div>
+          <div class="treasury-desc" id="bank-quick-summary">Allowance, Savings & Completed Chore Bounties</div>
+        </div>
+      </div>
+      <a href="/bank/" class="treasury-link">Open Bank ↗</a>
+    </div>
+
+  </div>
+
+  <script>
+    // --- STORAGE KEYS ---
+    const TROOPER_DATA_KEY = "bb_trooper_ranch_quest_data";
+    const PEACEMAKER_DATA_KEY = "bb_peacemaker_ranch_quest_data";
+    const BIRDIE_DATA_KEY = "bb_birdie_star_jar_data";
+    const TREASURY_KEY = "local_household_treasury";
+
+    function refreshHubMetrics() {
+      // Date Display
+      const today = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+      document.getElementById('today-date-display').innerText = today;
+
+      // 1. Trooper Data
+      try {
+        const raw = localStorage.getItem(TROOPER_DATA_KEY);
+        if (raw) {
+          const d = JSON.parse(raw);
+          document.getElementById('trooper-xp-val').innerText = d.xp || 0;
+          document.getElementById('trooper-streak-val').innerText = (d.streak || 1) + 'd';
+          const completedCount = d.completedChores ? Object.keys(d.completedChores).length : 0;
+          document.getElementById('trooper-chores-val').innerText = `${completedCount}/17`;
+
+          const badge = document.getElementById('trooper-status-badge');
+          if (completedCount >= 17) {
+            badge.innerText = "⭐ Completed!";
+            badge.className = "status-badge badge-done";
+          } else if (completedCount > 0) {
+            badge.innerText = `${completedCount} Done`;
+            badge.className = "status-badge";
+          } else {
+            badge.innerText = "Ready";
+            badge.className = "status-badge";
+          }
+        }
+      } catch(e) {}
+
+      // 2. Peacemaker 9 Data
+      try {
+        const raw = localStorage.getItem(PEACEMAKER_DATA_KEY);
+        if (raw) {
+          const d = JSON.parse(raw);
+          document.getElementById('peacemaker-xp-val').innerText = d.xp || 0;
+          document.getElementById('peacemaker-streak-val').innerText = (d.streak || 1) + 'd';
+          const completedCount = d.completedChores ? Object.keys(d.completedChores).length : 0;
+          document.getElementById('peacemaker-chores-val').innerText = `${completedCount}/11`;
+
+          const badge = document.getElementById('peacemaker-status-badge');
+          if (completedCount >= 11) {
+            badge.innerText = "🌸 Completed!";
+            badge.className = "status-badge badge-done";
+          } else if (completedCount > 0) {
+            badge.innerText = `${completedCount} Done`;
+            badge.className = "status-badge";
+          } else {
+            badge.innerText = "Ready";
+            badge.className = "status-badge";
+          }
+        }
+      } catch(e) {}
+
+      // 3. Birdie Data
+      try {
+        const raw = localStorage.getItem(BIRDIE_DATA_KEY);
+        if (raw) {
+          const d = JSON.parse(raw);
+          const stars = d.starsInJar || 0;
+          document.getElementById('birdie-stars-val').innerText = `⭐ ${stars}`;
+          document.getElementById('birdie-streak-val').innerText = (d.streak || 1) + 'd';
+          const completedCount = d.completedCards ? Object.keys(d.completedCards).length : 0;
+          document.getElementById('birdie-cards-val').innerText = `${completedCount}/6`;
+
+          const badge = document.getElementById('birdie-status-badge');
+          if (completedCount >= 6) {
+            badge.innerText = "🎉 All Done!";
+            badge.className = "status-badge badge-done";
+          } else if (completedCount > 0) {
+            badge.innerText = `${completedCount}/6 Done`;
+            badge.className = "status-badge";
+          } else {
+            badge.innerText = "Ready";
+            badge.className = "status-badge";
+          }
+        }
+      } catch(e) {}
+
+      // 4. Treasury Quick Balances
+      try {
+        const raw = localStorage.getItem(TREASURY_KEY);
+        if (raw) {
+          const t = JSON.parse(raw);
+          if (t && t.operatives) {
+            const ops = Object.values(t.operatives);
+            const total = ops.reduce((acc, o) => acc + (o.balance || 0), 0);
+            document.getElementById('bank-quick-summary').innerText = `Family Treasury: $${total.toFixed(2)} Across Operatives`;
+          }
+        }
+      } catch(e) {}
+    }
+
+    // --- EASTON NWS LIVE WEATHER INTEGRATION ---
+    async function loadEastonWeather() {
+      try {
+        const res = await fetch('/api/weather-forecast/');
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json();
+        const period = data.properties?.periods?.[0];
+        if (period) {
+          applyWeatherUI(period.temperature, period.shortForecast, period.probabilityOfPrecipitation?.value || 0);
+        }
+      } catch(e) {
+        // Fallback default
+        applyWeatherUI(62, "Partly Cloudy", 0);
+      }
+    }
+
+    function applyWeatherUI(temp, shortDesc, pop) {
+      document.getElementById('weather-temp').innerText = `${temp}°F`;
+      document.getElementById('weather-desc').innerText = shortDesc;
+
+      const banner = document.getElementById('outfit-banner');
+      const iconBadge = document.getElementById('outfit-icon');
+      const titleEl = document.getElementById('outfit-title');
+      const taglineEl = document.getElementById('outfit-tagline');
+      const weatherIcon = document.getElementById('weather-icon');
+
+      const isRain = pop >= 30 || /rain|shower|drizzle/i.test(shortDesc);
+
+      if (weatherIcon) {
+        if (/rain|shower/i.test(shortDesc)) weatherIcon.innerText = '🌧️';
+        else if (/cloud/i.test(shortDesc)) weatherIcon.innerText = '⛅';
+        else if (/sun|clear/i.test(shortDesc)) weatherIcon.innerText = '☀️';
+        else weatherIcon.innerText = '🌤️';
+      }
+
+      banner.className = 'outfit-banner';
+      if (temp < 40) {
+        banner.classList.add('mode-jacket');
+        iconBadge.innerText = '🧥';
+        titleEl.innerText = 'WEAR A WARM JACKET';
+        taglineEl.innerText = `Chilly morning in Easton (${temp}°F) — Heavy coat or jacket needed!`;
+      } else if (temp < 70 || isRain) {
+        banner.classList.add('mode-hoodie');
+        iconBadge.innerText = isRain ? '🌧️' : '🧥';
+        titleEl.innerText = 'WEAR A HOODIE';
+        taglineEl.innerText = isRain
+          ? `Rain in forecast (${pop}%)! Grab your cozy hoodie to stay dry.`
+          : `Cool morning (${temp}°F) — A cozy hoodie is the perfect layer!`;
+      } else {
+        banner.classList.add('mode-nothing');
+        iconBadge.innerText = '👕';
+        titleEl.innerText = 'NO JACKET NEEDED';
+        taglineEl.innerText = `Warm & clear in Easton (${temp}°F) — Ready to go in regular shirts!`;
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      refreshHubMetrics();
+      loadEastonWeather();
+    });
+  </script>
+</body>
+</html>
