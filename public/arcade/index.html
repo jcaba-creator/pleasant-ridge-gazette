@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="/arcade/">
+  
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The 449 Field Arcade | The Pleasant Ridge Gazette</title>
+  <style>
+    :root {
+      --paper: #fdfaf5;
+      --cardstock: #ffffff;
+      --ink: #111111;
+      --muted: #4b5563;
+      --forest: #1b4332;
+      --forest-light: #eef5f1;
+      --terracotta: #cc5500;
+      --terracotta-light: #fdf2eb;
+      --gold: #b45309;
+      --gold-light: #fefce8;
+      --navy: #1e3a8a;
+      --navy-light: #eff6ff;
+      --purple: #6b21a8;
+      --purple-light: #faf5ff;
+      --sand: #f4eee1;
+      --border-thick: 2px solid #111111;
+      --border-double: 4px double #111111;
+      --shadow-hard: 5px 5px 0px #111111;
+      --shadow-hover: 7px 7px 0px #111111;
+      --font-serif: Georgia, 'Times New Roman', Times, serif;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      padding: 32px 16px 60px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 960px;
+    }
+
+    /* Top Administrative Banner */
+    .top-banner {
+      border: var(--border-thick);
+      background: var(--sand);
+      padding: 6px 14px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .top-banner .station-tag {
+      background: var(--ink);
+      color: var(--paper);
+      padding: 2px 8px;
+      font-size: 10px;
+      letter-spacing: 1px;
+    }
+
+    /* Masthead */
+    header.masthead {
+      text-align: center;
+      border-bottom: var(--border-double);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+
+    .masthead-sub {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--forest);
+      margin-bottom: 6px;
+    }
+
+    h1.masthead-title {
+      font-family: var(--font-serif);
+      font-size: clamp(34px, 5.5vw, 58px);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.5px;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+
+    p.masthead-tagline {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: clamp(16px, 2.5vw, 21px);
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .masthead-rules {
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid var(--ink);
+      padding-top: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--ink);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    /* 2-Column Responsive Flashcard Grid */
+    .flashcard-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 740px) {
+      .flashcard-grid {
+        grid-template-columns: 1fr;
+        gap: 22px;
+      }
+    }
+
+    /* Physical Flashcard / Cartridge Card */
+    .flashcard {
+      background: var(--cardstock);
+      border: var(--border-thick);
+      box-shadow: var(--shadow-hard);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      position: relative;
+    }
+
+    .flashcard:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    /* Card Header Strip */
+    .card-header-strip {
+      border-bottom: var(--border-thick);
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #faf8f5;
+    }
+
+    .card-plate-no {
+      font-family: var(--font-serif);
+      font-weight: 900;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .card-category {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 2px 8px;
+      border: 1px solid var(--ink);
+      background: #fff;
+    }
+
+    /* Flashcard Visual Plate */
+    .card-plate {
+      height: 135px;
+      border-bottom: var(--border-thick);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .plate-sparkle {
+      background-color: var(--purple-light);
+      background-image: radial-gradient(var(--purple) 0.75px, transparent 0.75px);
+      background-size: 12px 12px;
+    }
+
+    .plate-unicorn {
+      background-color: var(--terracotta-light);
+      background-image: radial-gradient(var(--terracotta) 0.75px, transparent 0.75px);
+      background-size: 12px 12px;
+    }
+
+    .plate-pokemon {
+      background-color: var(--forest-light);
+      background-image: radial-gradient(var(--forest) 0.75px, transparent 0.75px);
+      background-size: 12px 12px;
+    }
+
+    .plate-starfall {
+      background-color: var(--navy-light);
+      background-image: radial-gradient(var(--navy) 0.75px, transparent 0.75px);
+      background-size: 12px 12px;
+    }
+
+    .plate-phonics {
+      background-color: #f5f5f4;
+      background-image: radial-gradient(#78716c 0.75px, transparent 0.75px);
+      background-size: 12px 12px;
+    }
+
+    .plate-homestead {
+      background-color: var(--sand);
+      background-image: radial-gradient(#b45309 0.75px, transparent 0.75px);
+      background-size: 12px 12px;
+    }
+
+    .plate-stamp {
+      border: 2px solid var(--ink);
+      padding: 8px 18px;
+      background: #ffffff;
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 800;
+      box-shadow: 3px 3px 0px var(--ink);
+      user-select: none;
+    }
+
+    /* Flashcard Body */
+    .card-body {
+      padding: 20px 18px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      justify-content: space-between;
+    }
+
+    .card-info {
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      font-weight: 900;
+      line-height: 1.15;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+
+    .card-desc {
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    /* Harsh Tactile Buttons */
+    .btn-action {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 13px 18px;
+      border: var(--border-thick);
+      text-decoration: none;
+      font-family: var(--font-sans);
+      font-weight: 800;
+      font-size: 13px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 3px 3px 0px #111111;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+
+    .btn-action:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0px #111111;
+    }
+
+    .btn-terracotta {
+      background: var(--terracotta);
+      color: #ffffff;
+    }
+    .btn-terracotta:hover {
+      background: #b54900;
+    }
+
+    .btn-forest {
+      background: var(--forest);
+      color: #ffffff;
+    }
+    .btn-forest:hover {
+      background: #143527;
+    }
+
+    .btn-purple {
+      background: var(--purple);
+      color: #ffffff;
+    }
+    .btn-purple:hover {
+      background: #581c87;
+    }
+
+    .btn-navy {
+      background: var(--navy);
+      color: #ffffff;
+    }
+    .btn-navy:hover {
+      background: #172554;
+    }
+    .plate-vault {
+      background-color: #0b0f19;
+      background-image: radial-gradient(#ef4444 0.85px, transparent 0.85px);
+      background-size: 12px 12px;
+    }
+    .plate-stamp-vault {
+      border: 2px solid #ef4444;
+      padding: 8px 18px;
+      background: #14161a;
+      color: #f59e0b;
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 800;
+      box-shadow: 3px 3px 0px #000;
+      user-select: none;
+    }
+    .btn-vault {
+      background: #991b1b;
+      color: #ffffff;
+    }
+    .btn-vault:hover {
+      background: #7f1d1d;
+    }
+    .plate-k9 {
+      background-color: #060e17;
+      background-image: radial-gradient(#00f0ff 0.85px, transparent 0.85px);
+      background-size: 12px 12px;
+    }
+    .plate-stamp-k9 {
+      border: 2px solid #00f0ff;
+      padding: 8px 18px;
+      background: #0a192f;
+      color: #00f0ff;
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 800;
+      box-shadow: 3px 3px 0px #000;
+      user-select: none;
+      letter-spacing: 1px;
+    }
+    .btn-k9 {
+      background: #0284c7;
+      color: #ffffff;
+      border: 2px solid #111111;
+    }
+    .btn-k9:hover {
+      background: #0369a1;
+    }
+
+
+    /* Footer Covenant */
+    footer.covenant {
+      border-top: var(--border-double);
+      padding-top: 20px;
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--ink);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    footer.covenant strong {
+      font-size: 11.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .back-gazette-link {
+      display: inline-block;
+      margin-top: 8px;
+      font-weight: 800;
+      color: var(--forest);
+      text-decoration: underline;
+    }
+      .plate-unravel {
+      background-color: #fefae0;
+      background-image: radial-gradient(#d4a373 0.85px, transparent 0.85px);
+      background-size: 12px 12px;
+    }
+    .plate-stamp-unravel {
+      border: 2px solid #111111;
+      color: #3e271a;
+      background: #ffffff;
+      padding: 6px 16px;
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: 1px;
+      box-shadow: 3px 3px 0px #111111;
+      user-select: none;
+    }
+    .btn-unravel {
+      background: #ff5964;
+      color: #ffffff;
+      border: 2px solid #111111;
+    }
+    .btn-unravel:hover {
+      background: #f72585;
+      color: #ffffff;
+    }
+<<<<<<< HEAD
+    .plate-pastureops {
+      background-color: #1a2e22;
+      background-image: radial-gradient(#2d4a2d 1.5px, transparent 1.5px);
+      background-size: 16px 16px;
+    }
+    .plate-stamp-pastureops {
+      background: #121814;
+      color: #48bb78;
+      border: 2px solid #48bb78;
+      font-weight: bold;
+      font-size: 15px;
+      letter-spacing: 1px;
+      padding: 6px 14px;
+      box-shadow: 3px 3px 0px #111111;
+      user-select: none;
+    }
+=======
+>>>>>>> origin/main
+  </style>
+  <script src="telemetry.js"></script>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Top Institutional Banner -->
+    <div class="top-banner">
+      <div>USD 449 &bull; Easton &bull; Rural Educational Commons</div>
+      <div class="station-tag">No Ads &bull; No Logins &bull; Free Forever</div>
+    </div>
+
+    <!-- Heritage Gazette Masthead -->
+    <header class="masthead">
+      <div class="masthead-sub">The Pleasant Ridge Gazette &bull; Youth &amp; Student Division</div>
+      <h1 class="masthead-title">The 449 Field Arcade</h1>
+      <p class="masthead-tagline">"Free educational games for the 449."</p>
+      <div class="masthead-rules">
+        <span>Catalog Series No. 1</span>
+        <span>Independent &bull; Open Access</span>
+        <span>Easton, Kansas 66020</span>
+      </div>
+    </header>
+
+    <!-- 2-Column Responsive Flashcard Grid -->
+    <main class="flashcard-grid">
+
+      <!-- Card 1: Starfall Sparkle Rescue (NEW PRE-K/K FEATURE) -->
+      <article class="flashcard">
+        <div class="card-header-strip">
+          <span class="card-plate-no">Plate I &bull; Pre-K / Kindergarten</span>
+          <span class="card-category" style="color: var(--purple);">Voice &amp; Touch</span>
+        </div>
+        <div class="card-plate plate-sparkle">
+          <div class="plate-stamp">âœ¨ SPARKLE</div>
+        </div>
+        <div class="card-body">
+          <div class="card-info">
+            <h2 class="card-title">Starfall Sparkle Rescue</h2>
+            <p class="card-desc">Zero reading required! Spoken audio guides young learners through animal sorting, castle shapes, bridge patterns, and alphabet balloon matching.</p>
+          </div>
+          <a href="/arcade/sparkle.html" onclick="if(window.GazetteTelemetry)window.GazetteTelemetry.track('game_launch',{game:'sparkle_rescue'});" class="btn-action btn-purple">
+            Play Game Now &rarr;
+          </a>
+        </div>
+      </article>
+
+      <!-- Card 2: Rainbow Unicorn Rescue -->
+      <article class="flashcard">
+        <div class="card-header-strip">
+          <span class="card-plate-no">Plate II &bull; Puzzles &amp; Spatial</span>
+          <span class="card-category" style="color: var(--terracotta);">Ready to Play</span>
+        </div>
+        <div class="card-plate plate-unicorn">
+          <div class="plate-stamp">ðŸ¦„ RESCUE</div>
+        </div>
+        <div class="card-body">
+          <div class="card-info">
+            <h2 class="card-title">Rainbow Unicorn Rescue</h2>
+            <p class="card-desc">Navigate enchanted crystal mazes and solve spatial color puzzles to guide mystical unicorns safely home.</p>
+          </div>
+          <a href="/arcade/unicorn.html" onclick="if(window.GazetteTelemetry)window.GazetteTelemetry.track('game_launch',{game:'unicorn_rescue'});" class="btn-action btn-terracotta">
+            Play Game Now &rarr;
+          </a>
+        </div>
+      </article>
+
+      <!-- Card 3: PokÃ©Guess: Dex Challenge -->
+      <article class="flashcard">
+        <div class="card-header-strip">
+          <span class="card-plate-no">Plate III &bull; Number Sense</span>
+          <span class="card-category" style="color: var(--forest);">Ready to Play</span>
+        </div>
+        <div class="card-plate plate-pokemon">
+          <div class="plate-stamp">âš¡ DEX #</div>
+        </div>
+        <div class="card-body">
+          <div class="card-info">
+            <h2 class="card-title">PokÃ©Guess: Dex Challenge</h2>
+            <p class="card-desc">Practice mental arithmetic and numerical estimation by zeroing in on secret numbers between 1 and 151.</p>
+          </div>
+          <a href="/arcade/pokeguess.html" onclick="if(window.GazetteTelemetry)window.GazetteTelemetry.track('game_launch',{game:'pokeguess'});" class="btn-action btn-forest">
+            Play Game Now &rarr;
+          </a>
+        </div>
+      </article>
+
+      <!-- Card 4: Starfall Math Galaxy -->
+      <article class="flashcard">
+        <div class="card-header-strip">
+          <span class="card-plate-no">Plate IV &bull; Arithmetic Arcade</span>
+          <span class="card-category" style="color: var(--navy);">Ready to Play</span>
+        </div>
+        <div class="card-plate plate-starfall">
+          <div class="plate-stamp">ðŸš€ MATH</div>
+        </div>
+        <div class="card-body">
+          <div class="card-info">
+            <h2 class="card-title">Starfall Math Galaxy</h2>
+            <p class="card-desc">Blast cosmic equation bubbles across addition, subtraction, and multiplication star clusters before time runs out.</p>
+          </div>
+          <a href="/arcade/starfall.html" onclick="if(window.GazetteTelemetry)window.GazetteTelemetry.track('game_launch',{game:'starfall_math'});" class="btn-action btn-navy">
+            Play Game Now &rarr;
+          </a>
+        </div>
+      </article>
+
+      <!-- Card 5: Enchanted Phonics Safari -->
+      <article class="flashcard">
+        <div class="card-header-strip">
+          <span class="card-plate-no">Plate V &bull; Reading &amp; Phonics</span>
+          <span class="card-category" style="color: var(--forest);">Ready to Play</span>
+        </div>
+        <div class="card-plate plate-phonics">
+          <div class="plate-stamp">ðŸ¦ PHONICS</div>
+        </div>
+        <div class="card-body">
+          <div class="card-info">
+            <h2 class="card-title">Enchanted Phonics Safari</h2>
+            <p class="card-desc">Master phonics sounds, animal names, and sight reading while exploring rural wildlife preserves and animal tracks.</p>
+          </div>
+          <a href="/arcade/phonics.html" onclick="if(window.GazetteTelemetry)window.GazetteTelemetry.track('game_launch',{game:'phonics_safari'});" class="btn-action btn-forest">
+            Play Game Now &rarr;
+          </a>
+        </div>
+      </article>
+
+      <!-- Card 6: Homestead Critter Match -->
+      <article class="flashcard">
+        <div class="card-header-strip">
+          <span class="card-plate-no">Plate VI &bull; Science &amp; Nature</span>
+          <span class="card-category" style="color: var(--terracotta);">Ready to Play</span>
+        </div>
+        <div class="card-plate plate-homestead">
+          <div class="plate-stamp">ðŸšœ CRITTERS</div>
+        </div>
+        <div class="card-body">
+          <div class="card-info">
+            <h2 class="card-title">Homestead Critter Match</h2>
+            <p class="card-desc">Identify domestic livestock, wild Kansas fauna, and habitat traits across regional farmsteads.</p>
+          </div>
+          <a href="/arcade/homestead.html" onclick="if(window.GazetteTelemetry)window.GazetteTelemetry.track('game_launch',{game:'homestead_match'});" class="btn-action btn-terracotta">
+            Play Game Now &rarr;
+          </a>
+        </div>
+      </article>
+
+      <!-- Card 7: The Breaker Vault (Horror Escape Cabinet) -->
+      <article class="flashcard">
+        <div class="card-header-strip">
+          <span class="card-plate-no">Plate VII &bull; Horror Escape Cabinet</span>
+          <span class="card-category" style="color: #ef4444; border-color: #ef4444;">Hardware &amp; Acoustics</span>
+        </div>
+        <div class="card-plate plate-vault">
+          <div class="plate-stamp plate-stamp-vault">âš¡ BREAKER</div>
+        </div>
+        <div class="card-body">
+          <div class="card-info">
+            <h2 class="card-title">The Breaker Vault: Sector 4</h2>
+            <p class="card-desc">High-tension escape cabinet simulation. Pick mechanical drawer tumblers, decode resonant C-E-G-B chimes, control stealth pull decibels, and divert the prowler before emergency blast lockdown.</p>
+          </div>
+          <a href="/arcade/breaker_vault.html" onclick="if(window.GazetteTelemetry)window.GazetteTelemetry.track('game_launch',{game:'breaker_vault'});" class="btn-action btn-vault">
+            Enter Vault &rarr;
+          </a>
+        </div>
+      </article>
+
+      <!-- Card 8: Project K9-Volt (16-Level Cyber-Corgi Platformer) -->
+      <article class="flashcard">
+        <div class="card-header-strip">
+          <span class="card-plate-no">Plate VIII &bull; 16-Level Platformer</span>
+          <span class="card-category" style="color: #0284c7; border-color: #0284c7;">Mach-Bark Active</span>
+        </div>
+        <div class="card-plate plate-k9">
+          <div class="plate-stamp plate-stamp-k9">âš¡ K9-VOLT</div>
+        </div>
+        <div class="card-body">
+          <div class="card-info">
+            <h2 class="card-title">Project K9-Volt: De-Mutation Campaign</h2>
+            <p class="card-desc">16-sector cybernetic platformer. Build 3.0s Sonic Zoomies momentum, master the Pyre-Hydro-Flora elemental triad, cure 16 distinct mutant breeds into purebred puppies, and unleash the screen-clearing Super Mega Power Poot!</p>
+          </div>
+          <a href="project-k9-volt.html" onclick="if(window.GazetteTelemetry)window.GazetteTelemetry.track('game_launch',{game:'k9_volt'});" class="btn-action btn-k9">
+            Launch Mission (16 Levels) &rarr;
+          </a>
+        </div>
+      </article>
+
+          <!-- Card: Unravel It: Cozy Yarn Art Puzzle -->
+      <article class="flashcard">
+        <div class="card-header-strip">
+          <span class="card-plate-no">Plate XI &bull; Thread Jam: Untangle 3D Ropes</span>
+          <span class="card-category" style="color: #ff5964; border-color: #ff5964;">8 Levels &bull; Cozy ASMR</span>
+        </div>
+        <div class="card-plate plate-unravel">
+          <div class="plate-stamp plate-stamp-unravel">🧶 THREAD JAM 3D</div>
+        </div>
+        <div class="card-body">
+          <div class="card-info">
+            <h2 class="card-title">Thread Jam: Untangle 3D Ropes</h2>
+            <p class="card-desc">Tactile 3D rope untangling puzzle inspired by Thread Jam. Analyze overlapping tangled ropes on the wooden pegboard, tap free cords to untangle them into matching spools, and watch the embroidery canvas at the top stitch your artwork into reality!</p>
+          </div>
+          <a href="unravel.html" onclick="if(window.GazetteTelemetry)window.GazetteTelemetry.track('game_launch',{game:'unravel'});" class="btn-action btn-unravel">
+            Untangle Ropes Now &rarr;
+          </a>
+        </div>
+      </article>
+      <!-- Card: PastureOps - Testing -->
+      <article class="flashcard">
+        <div class="card-header-strip">
+          <span class="card-plate-no">Plate XII &bull; PastureOps - Testing</span>
+          <span class="card-category" style="color: var(--forest); border-color: var(--forest);">Homestead Sim &bull; Time-Motion</span>
+        </div>
+        <div class="card-plate plate-pastureops">
+          <div class="plate-stamp plate-stamp-pastureops">🚜 PASTUREOPS - TESTING</div>
+        </div>
+        <div class="card-body">
+          <div class="card-info">
+            <h2 class="card-title">PastureOps - Testing</h2>
+            <p class="card-desc">Interactive pastured poultry time-motion simulator. Drag chicken tractors across an 8.2-acre 30x30 Cartesian pasture grid, monitor operator labor transit burn against a 120-minute daily budget, track rotational forage recovery, and inspect live physical parameters.</p>
+          </div>
+<<<<<<< HEAD
+          <a href="pastureops - testing.html" onclick="if(window.GazetteTelemetry)window.GazetteTelemetry.track('game_launch',{game:'pastureops_testing'});" class="btn-action btn-forest">
+            Launch PastureOps - Testing &rarr;
+          </a>
+        </div>
+      </article>
+=======
+          <a href="/arcade/black_sky.html?v=3.0" onclick="if(window.GazetteTelemetry)window.GazetteTelemetry.track('game_launch',{game:'black_sky'});" class="btn-action btn-black-sky">
+            Launch Operation Black Sky &rarr;
+          </a>
+        </div>
+      </article>
+
+          <!-- Card: Unravel It: Cozy Yarn Art Puzzle -->
+      <article class="flashcard">
+        <div class="card-header-strip">
+          <span class="card-plate-no">Plate XI &bull; Tactile Logic &amp; Spatial</span>
+          <span class="card-category" style="color: #ff5964; border-color: #ff5964;">8 Levels &bull; Cozy ASMR</span>
+        </div>
+        <div class="card-plate plate-unravel">
+          <div class="plate-stamp plate-stamp-unravel">🧶 UNRAVEL IT</div>
+        </div>
+        <div class="card-body">
+          <div class="card-info">
+            <h2 class="card-title">Unravel It! Cozy Yarn Art Puzzle</h2>
+            <p class="card-desc">Tactile mobile yarn puzzle. Unravel 8 handcrafted knitted textile art pieces (Heart, Strawberry, Avocado, Duckling, Sunflower, Donut, Owl, and Mandala) layer-by-layer, fill spinning spools, trigger Cozy Combos, and deploy tactical Scissors and Rainbow Wilds with turn-based cooldowns.</p>
+          </div>
+          <a href="unravel.html" onclick="if(window.GazetteTelemetry)window.GazetteTelemetry.track('game_launch',{game:'unravel'});" class="btn-action btn-unravel">
+            Play Unravel It Now &rarr;
+          </a>
+        </div>
+      </article>
+>>>>>>> origin/main
+    </main>
+
+    <!-- Institutional Covenant -->
+    <footer class="covenant">
+      <div>
+        <strong>The 449 Educational Commons</strong><br>
+        Published under the banner of <em>The Pleasant Ridge Gazette</em>.<br>
+        Zero corporate surveillance &bull; Zero tracking cookies &bull; 100% Free for USD 449 students.
+      </div>
+      <div style="text-align: right;">
+        <strong>Printed &amp; Maintained in Easton, Kansas</strong><br>
+        Serving Pleasant Ridge Elementary, Middle &amp; High School<br>
+        <a href="/" class="back-gazette-link">&larr; Return to The Pleasant Ridge Gazette</a>
+      </div>
+    </footer>
+
+  </div>
+
+</body>
+</html>
+

@@ -1,0 +1,1560 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Unravel It! - Cozy Yarn Art Puzzle</title>
+  <style>
+    :root {
+      --bg-table: #2b1d14;
+      --hoop-outer: #d4a373;
+      --hoop-inner: #faedcd;
+      --fabric-base: #fefae0;
+      --ui-dark: #3a2e2b;
+      --ui-muted: #8b7355;
+      --accent-coral: #ff5964;
+      --accent-yellow: #fec601;
+      --accent-mint: #06d6a0;
+      --accent-teal: #35a7ff;
+      --accent-purple: #9b5de5;
+      --accent-orange: #f77f00;
+      --accent-pink: #f72585;
+      --card-bg: rgba(255, 255, 255, 0.94);
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      margin: 0;
+      padding: 0;
+      touch-action: manipulation;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 20%, #3e271a 0%, #1e120c 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Quicksand", "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--ui-dark);
+    }
+
+    #app-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      max-width: 460px;
+      max-height: 900px;
+      background: radial-gradient(circle at 50% 40%, #fefcf3 0%, #eee4ce 100%);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Top Header */
+    header {
+      padding: 12px 16px 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 20;
+    }
+
+    .badge-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.88);
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1.5px solid rgba(212, 163, 115, 0.5);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .badge-wrap:active { transform: scale(0.96); }
+
+    .level-num {
+      font-size: 15px;
+      font-weight: 800;
+      color: #3e271a;
+    }
+    .level-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ui-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 1.5px solid rgba(212, 163, 115, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+      transition: transform 0.1s, background 0.15s;
+    }
+    .icon-btn:active {
+      transform: scale(0.9);
+      background: #faedcd;
+    }
+
+    /* Combo Banner */
+    .combo-banner {
+      position: absolute;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%) scale(0.5);
+      background: linear-gradient(135deg, #ff5964, #f72585);
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 4px 14px;
+      border-radius: 14px;
+      box-shadow: 0 4px 15px rgba(247, 37, 133, 0.4);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 25;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .combo-banner.active {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+    }
+
+    /* Canvas Frame (Embroidery Hoop) */
+    #canvas-box {
+      position: relative;
+      flex: 1;
+      margin: 4px 14px 6px;
+      border-radius: 32px;
+      background: radial-gradient(circle at 50% 50%, #fffdf8 0%, #f4ede1 100%);
+      border: 8px solid #d4a373;
+      box-shadow: inset 0 3px 12px rgba(60, 40, 20, 0.15), 0 8px 24px rgba(0, 0, 0, 0.12);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Bottom Control Tray */
+    footer {
+      padding: 10px 14px 18px;
+      background: linear-gradient(to top, rgba(254, 250, 224, 0.98), rgba(254, 250, 224, 0.85));
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-top: 1px solid rgba(212, 163, 115, 0.35);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 20;
+    }
+
+    /* Booster Action Row */
+    .booster-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 4px;
+    }
+
+    .booster-info {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ui-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .boosters-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .booster-btn {
+      padding: 5px 12px;
+      border-radius: 14px;
+      background: #ffffff;
+      border: 1.5px solid rgba(212, 163, 115, 0.4);
+      font-size: 11px;
+      font-weight: 700;
+      color: #3e271a;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      transition: transform 0.1s, background 0.15s, opacity 0.2s;
+    }
+    .booster-btn:active { transform: scale(0.92); background: #fefae0; }
+    .booster-btn.active {
+      background: var(--accent-coral);
+      color: #fff;
+      border-color: var(--accent-coral);
+      box-shadow: 0 0 10px rgba(255, 89, 100, 0.5);
+    }
+    .booster-btn.cooldown {
+      opacity: 0.52;
+      background: #e8ded2;
+      color: #8a7767;
+      border-color: rgba(180, 160, 140, 0.4);
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    .booster-badge {
+      font-size: 9px;
+      font-weight: 800;
+      background: #8a7767;
+      color: #ffffff;
+      padding: 1px 5px;
+      border-radius: 8px;
+    }
+
+    /* 4 Spool Dock Slots */
+    .dock-container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .dock-slot {
+      aspect-ratio: 1 / 1.18;
+      background: rgba(230, 215, 195, 0.45);
+      border: 2px dashed rgba(180, 150, 125, 0.55);
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .dock-slot.occupied {
+      background: #ffffff;
+      border: 2px solid rgba(212, 163, 115, 0.6);
+      box-shadow: 0 4px 12px rgba(60, 40, 20, 0.1);
+    }
+
+    .dock-slot.spinning {
+      transform: scale(1.04);
+      box-shadow: 0 0 16px rgba(254, 198, 1, 0.6);
+    }
+
+    .spool-body {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      box-shadow: inset 0 -4px 6px rgba(0,0,0,0.3), 0 4px 8px rgba(0,0,0,0.18);
+      transition: transform 0.2s;
+    }
+
+    .spool-hub {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #faedcd;
+      border: 2px solid #b5835a;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .spool-meta {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--ui-dark);
+      margin-top: 4px;
+    }
+
+    /* Conveyor Spool Queue */
+    .conveyor-belt {
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 18px;
+      padding: 8px 12px;
+      border: 1.5px solid rgba(212, 163, 115, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.04);
+    }
+
+    .conveyor-tag {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--ui-muted);
+      white-space: nowrap;
+    }
+
+    .spool-pick-tray {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 2px 4px;
+      scrollbar-width: none;
+    }
+    .spool-pick-tray::-webkit-scrollbar { display: none; }
+
+    .pick-spool-btn {
+      flex: 0 0 auto;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2.5px solid #ffffff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .pick-spool-btn:hover { transform: translateY(-3px) scale(1.05); }
+    .pick-spool-btn:active { transform: scale(0.92); }
+
+    .pick-spool-btn .badge-num {
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      background: #3e271a;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid #fff;
+    }
+
+    /* Modals & Overlays */
+    .modal-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(30, 20, 14, 0.75);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      padding: 24px;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: auto; }
+
+    .modal-sheet {
+      background: #ffffff;
+      border-radius: 26px;
+      padding: 26px 22px;
+      max-width: 320px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+      border: 3px solid #faedcd;
+    }
+
+    .modal-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #3e271a;
+      margin: 8px 0 6px;
+    }
+
+    .modal-desc {
+      font-size: 13px;
+      color: #7b6555;
+      line-height: 1.45;
+      margin-bottom: 20px;
+    }
+
+    .modal-action-btn {
+      width: 100%;
+      padding: 13px 18px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--accent-coral), #f72585);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 800;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(255, 89, 100, 0.4);
+      transition: transform 0.1s;
+    }
+    .modal-action-btn:active { transform: scale(0.96); }
+
+    /* Level Selector Grid Modal */
+    .level-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 16px 0 20px;
+      max-height: 240px;
+      overflow-y: auto;
+    }
+
+    .lvl-card-btn {
+      aspect-ratio: 1;
+      border-radius: 14px;
+      background: #fdfaf3;
+      border: 2px solid #e9d8c0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      color: #3e271a;
+      cursor: pointer;
+      transition: transform 0.15s, background 0.15s;
+    }
+    .lvl-card-btn:active { transform: scale(0.92); }
+    .lvl-card-btn.active {
+      background: var(--accent-coral);
+      color: #fff;
+      border-color: var(--accent-coral);
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: absolute;
+      top: 66px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: rgba(43, 29, 20, 0.94);
+      color: #fff;
+      padding: 7px 18px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s ease;
+      z-index: 50;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+      white-space: nowrap;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+  <script src="telemetry.js"></script>
+</head>
+<body>
+  <div id="app-container">
+    <header>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <a href="index.html" class="icon-btn" title="Back to 449 Field Arcade" style="text-decoration:none;" aria-label="Arcade Hub">🏛️</a>
+        <div class="badge-wrap" id="btn-open-levels">
+        <span style="font-size: 18px;">ðŸ§¶</span>
+        <div>
+          <div class="level-num" id="hud-level-num">Level 1</div>
+          <div class="level-name" id="hud-level-name">Cozy Heart</div>
+        </div>
+        <span style="font-size: 12px; color: var(--ui-muted);">â–¾</span>
+      </div>
+
+      <div class="header-actions">
+        <button class="icon-btn" id="btn-undo" title="Undo Spool">â†©</button>
+        <button class="icon-btn" id="btn-restart" title="Restart">â†º</button>
+        <button class="icon-btn" id="btn-sound" title="Audio">ðŸ”Š</button>
+      </div>
+    </header>
+
+    <div class="combo-banner" id="combo-banner">Cozy Combo! x2</div>
+    <div class="toast" id="toast-msg">Tap a matching spool below!</div>
+
+    <div id="canvas-box">
+      <canvas id="canvas"></canvas>
+    </div>
+
+    <footer>
+      <div class="booster-row">
+        <span class="booster-info">Active Spools (<span id="slot-count">0</span>/4)</span>
+        <div class="boosters-group">
+          <button class="booster-btn" id="btn-scissors" title="Snip a blocking strand">âœ‚ï¸ Snip</button>
+          <button class="booster-btn" id="btn-rainbow" title="Rainbow Spool">ðŸŒˆ Wild</button>
+        </div>
+      </div>
+
+      <div class="dock-container">
+        <div class="dock-slot" data-slot="0"></div>
+        <div class="dock-slot" data-slot="1"></div>
+        <div class="dock-slot" data-slot="2"></div>
+        <div class="dock-slot" data-slot="3"></div>
+      </div>
+
+      <div class="conveyor-belt">
+        <span class="conveyor-tag">Spool Rack:</span>
+        <div class="spool-pick-tray" id="spool-pick-tray"></div>
+      </div>
+    </footer>
+
+    <!-- Level Selector Modal -->
+    <div class="modal-overlay" id="modal-levels">
+      <div class="modal-sheet">
+        <div style="font-size: 32px;">ðŸ§µðŸª¡âœ¨</div>
+        <div class="modal-title">Select Knitted Art</div>
+        <div class="modal-desc">Pick any craft piece from the cozy workshop:</div>
+        <div class="level-grid" id="level-grid-container"></div>
+        <button class="modal-action-btn" id="btn-close-levels">Resume Crafting</button>
+      </div>
+    </div>
+
+    <!-- Win Modal -->
+    <div class="modal-overlay" id="modal-win">
+      <div class="modal-sheet">
+        <div style="font-size: 44px; animation: bounce 0.6s infinite alternate;">ðŸŽ‰ðŸ§¶âœ¨</div>
+        <div class="modal-title" id="win-title">Stitch Perfect!</div>
+        <div class="modal-desc" id="win-desc">The entire piece was cleanly unraveled!</div>
+        <button class="modal-action-btn" id="btn-next-level">Next Knitted Art â†’</button>
+      </div>
+    </div>
+
+    <!-- Loom Jammed Modal -->
+    <div class="modal-overlay" id="modal-jam">
+      <div class="modal-sheet">
+        <div style="font-size: 42px;">ðŸª¢âš ï¸</div>
+        <div class="modal-title">Loom Jammed!</div>
+        <div class="modal-desc">All spool slots are full with no matching top strands. Use âœ‚ï¸ Snip or retry!</div>
+        <button class="modal-action-btn" id="btn-retry">Try Again</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================================
+       Unravel It! - Cozy Yarn Art Puzzle Game Engine
+       Featuring 8 Hand-Crafted Levels, Boosters, Combos, and Audio Juice
+       ========================================================================= */
+
+    // Sound Synthesizer (Zero asset dependencies)
+    class SoundFX {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) this.ctx = new AudioCtx();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      toggle() {
+        this.enabled = !this.enabled;
+        return this.enabled;
+      }
+
+      // Ratchet spool spin click
+      spin(pitchMod = 1) {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        const base = (260 + Math.random() * 50) * pitchMod;
+        osc.frequency.setValueAtTime(base, now);
+        osc.frequency.exponentialRampToValueAtTime(base * 1.4, now + 0.045);
+        gain.gain.setValueAtTime(0.14, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.045);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.05);
+      }
+
+      // Spool completed & cleared
+      pop() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const notes = [659.25, 830.61, 987.77]; // E major
+        notes.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.04);
+          gain.gain.setValueAtTime(0.22, now + idx * 0.04);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.04 + 0.28);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + idx * 0.04);
+          osc.stop(now + idx * 0.04 + 0.3);
+        });
+      }
+
+      // Scissor Snip
+      snip() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const bufferSize = this.ctx.sampleRate * 0.06;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.25));
+        }
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'highpass';
+        filter.frequency.setValueAtTime(1400, now);
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.06);
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+        noise.start(now);
+      }
+
+      // Combo Chime
+      combo(multiplier = 2) {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const freq = 440 * Math.pow(1.15, multiplier);
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now);
+        gain.gain.setValueAtTime(0.24, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.4);
+      }
+
+      // Level Complete Victory Fanfare
+      victory() {
+        if (!this.enabled) return;
+        const chords = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+        chords.forEach((freq, i) => {
+          setTimeout(() => {
+            this.init();
+            if (!this.ctx) return;
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now);
+            gain.gain.setValueAtTime(0.25, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.5);
+          }, i * 90);
+        });
+      }
+
+      // Error Buzz
+      buzz() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(140, now);
+        osc.frequency.linearRampToValueAtTime(80, now + 0.22);
+        gain.gain.setValueAtTime(0.22, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.23);
+      }
+    }
+
+    // 8 Hand-Crafted Knitted Textile Levels
+    const LEVELS = [
+      {
+        id: 1,
+        title: "Cozy Heart",
+        icon: "ðŸ’–",
+        spoolCapacity: 3,
+        strands: [
+          { id: 'h1', color: '#35a7ff', name: 'Sky Blue', layer: 0, blockedBy: ['h3', 'h4'], path: [{x:0.26,y:0.42},{x:0.36,y:0.62},{x:0.50,y:0.78}] },
+          { id: 'h2', color: '#fec601', name: 'Goldenrod', layer: 0, blockedBy: ['h4', 'h5'], path: [{x:0.74,y:0.42},{x:0.64,y:0.62},{x:0.50,y:0.78}] },
+          { id: 'h3', color: '#ff5964', name: 'Ruby Pink', layer: 1, blockedBy: ['h5'], path: [{x:0.32,y:0.32},{x:0.50,y:0.46},{x:0.68,y:0.32}] },
+          { id: 'h4', color: '#fec601', name: 'Goldenrod', layer: 1, blockedBy: ['h6'], path: [{x:0.22,y:0.36},{x:0.40,y:0.56},{x:0.50,y:0.74}] },
+          { id: 'h5', color: '#ff5964', name: 'Ruby Pink', layer: 2, blockedBy: [], path: [{x:0.50,y:0.30},{x:0.30,y:0.20},{x:0.18,y:0.34},{x:0.35,y:0.56}] },
+          { id: 'h6', color: '#35a7ff', name: 'Sky Blue', layer: 2, blockedBy: [], path: [{x:0.50,y:0.30},{x:0.70,y:0.20},{x:0.82,y:0.34},{x:0.65,y:0.56}] }
+        ]
+      },
+      {
+        id: 2,
+        title: "Juicy Strawberry",
+        icon: "ðŸ“",
+        spoolCapacity: 3,
+        strands: [
+          { id: 'sb1', color: '#ff5964', name: 'Berry Red', layer: 0, blockedBy: ['sm1', 'sm2'], path: [{x:0.32,y:0.54},{x:0.50,y:0.78},{x:0.68,y:0.54}] },
+          { id: 'sb2', color: '#fec601', name: 'Yellow Seed', layer: 0, blockedBy: ['sm1'], path: [{x:0.42,y:0.58},{x:0.50,y:0.68},{x:0.58,y:0.58}] },
+          { id: 'sm1', color: '#ff5964', name: 'Berry Red', layer: 1, blockedBy: ['st1', 'st2'], path: [{x:0.24,y:0.42},{x:0.50,y:0.58},{x:0.76,y:0.42}] },
+          { id: 'sm2', color: '#fec601', name: 'Yellow Seed', layer: 1, blockedBy: ['st2', 'st3'], path: [{x:0.36,y:0.46},{x:0.50,y:0.52},{x:0.64,y:0.46}] },
+          { id: 'st1', color: '#06d6a0', name: 'Mint Leaf', layer: 2, blockedBy: [], path: [{x:0.24,y:0.35},{x:0.38,y:0.26},{x:0.50,y:0.38}] },
+          { id: 'st2', color: '#06d6a0', name: 'Mint Leaf', layer: 2, blockedBy: [], path: [{x:0.76,y:0.35},{x:0.62,y:0.26},{x:0.50,y:0.38}] },
+          { id: 'st3', color: '#06d6a0', name: 'Mint Leaf', layer: 2, blockedBy: [], path: [{x:0.50,y:0.20},{x:0.50,y:0.38}] }
+        ]
+      },
+      {
+        id: 3,
+        title: "Sunny Avocado",
+        icon: "ðŸ¥‘",
+        spoolCapacity: 3,
+        strands: [
+          { id: 'av1', color: '#4a2810', name: 'Brown Pit', layer: 0, blockedBy: ['av3', 'av4'], path: [{x:0.44,y:0.58},{x:0.56,y:0.58},{x:0.50,y:0.68}] },
+          { id: 'av2', color: '#4a2810', name: 'Brown Pit', layer: 0, blockedBy: ['av4'], path: [{x:0.46,y:0.62},{x:0.54,y:0.62}] },
+          { id: 'av3', color: '#fec601', name: 'Custard Yellow', layer: 1, blockedBy: ['av5', 'av6'], path: [{x:0.36,y:0.52},{x:0.50,y:0.44},{x:0.64,y:0.52}] },
+          { id: 'av4', color: '#fec601', name: 'Custard Yellow', layer: 1, blockedBy: ['av6'], path: [{x:0.34,y:0.64},{x:0.50,y:0.74},{x:0.66,y:0.64}] },
+          { id: 'av5', color: '#06d6a0', name: 'Avocado Green', layer: 2, blockedBy: [], path: [{x:0.40,y:0.30},{x:0.60,y:0.30},{x:0.72,y:0.55}] },
+          { id: 'av6', color: '#06d6a0', name: 'Avocado Green', layer: 2, blockedBy: [], path: [{x:0.72,y:0.55},{x:0.50,y:0.80},{x:0.28,y:0.55},{x:0.40,y:0.30}] }
+        ]
+      },
+      {
+        id: 4,
+        title: "Little Duckling",
+        icon: "ðŸ¥",
+        spoolCapacity: 3,
+        strands: [
+          { id: 'dk1', color: '#35a7ff', name: 'Water Blue', layer: 0, blockedBy: ['dk3'], path: [{x:0.20,y:0.72},{x:0.50,y:0.76},{x:0.80,y:0.72}] },
+          { id: 'dk2', color: '#f77f00', name: 'Orange Beak', layer: 0, blockedBy: ['dk4'], path: [{x:0.66,y:0.38},{x:0.78,y:0.42},{x:0.66,y:0.44}] },
+          { id: 'dk3', color: '#fec601', name: 'Duckling Yellow', layer: 1, blockedBy: ['dk5'], path: [{x:0.30,y:0.54},{x:0.50,y:0.66},{x:0.68,y:0.54}] },
+          { id: 'dk4', color: '#fec601', name: 'Duckling Yellow', layer: 1, blockedBy: ['dk6'], path: [{x:0.46,y:0.32},{x:0.62,y:0.32},{x:0.62,y:0.48},{x:0.46,y:0.48}] },
+          { id: 'dk5', color: '#35a7ff', name: 'Water Blue', layer: 2, blockedBy: [], path: [{x:0.25,y:0.66},{x:0.50,y:0.70},{x:0.75,y:0.66}] },
+          { id: 'dk6', color: '#f77f00', name: 'Orange Wing', layer: 2, blockedBy: [], path: [{x:0.34,y:0.50},{x:0.48,y:0.58},{x:0.38,y:0.62}] }
+        ]
+      },
+      {
+        id: 5,
+        title: "Sunflower Bloom",
+        icon: "ðŸŒ»",
+        spoolCapacity: 4,
+        strands: [
+          { id: 'sf1', color: '#4a2810', name: 'Seed Core', layer: 0, blockedBy: ['sf3','sf4'], path: [{x:0.44,y:0.44},{x:0.56,y:0.44},{x:0.56,y:0.56},{x:0.44,y:0.56}] },
+          { id: 'sf2', color: '#4a2810', name: 'Seed Core', layer: 0, blockedBy: ['sf4','sf5'], path: [{x:0.48,y:0.48},{x:0.52,y:0.52}] },
+          { id: 'sf3', color: '#fec601', name: 'Sun Petal', layer: 1, blockedBy: ['sf6'], path: [{x:0.50,y:0.28},{x:0.50,y:0.44}] },
+          { id: 'sf4', color: '#fec601', name: 'Sun Petal', layer: 1, blockedBy: ['sf7'], path: [{x:0.72,y:0.50},{x:0.56,y:0.50}] },
+          { id: 'sf5', color: '#fec601', name: 'Sun Petal', layer: 1, blockedBy: ['sf8'], path: [{x:0.50,y:0.72},{x:0.50,y:0.56}] },
+          { id: 'sf6', color: '#fec601', name: 'Sun Petal', layer: 2, blockedBy: [], path: [{x:0.34,y:0.34},{x:0.46,y:0.46}] },
+          { id: 'sf7', color: '#06d6a0', name: 'Stem Green', layer: 2, blockedBy: [], path: [{x:0.66,y:0.34},{x:0.54,y:0.46}] },
+          { id: 'sf8', color: '#06d6a0', name: 'Stem Green', layer: 2, blockedBy: [], path: [{x:0.50,y:0.72},{x:0.50,y:0.86}] }
+        ]
+      },
+      {
+        id: 6,
+        title: "Glazed Donut",
+        icon: "ðŸ©",
+        spoolCapacity: 4,
+        strands: [
+          { id: 'dn1', color: '#d4a373', name: 'Baked Dough', layer: 0, blockedBy: ['dn3','dn4'], path: [{x:0.30,y:0.48},{x:0.50,y:0.32},{x:0.70,y:0.48},{x:0.50,y:0.64},{x:0.30,y:0.48}] },
+          { id: 'dn2', color: '#d4a373', name: 'Baked Dough', layer: 0, blockedBy: ['dn4'], path: [{x:0.40,y:0.48},{x:0.50,y:0.40},{x:0.60,y:0.48},{x:0.50,y:0.56},{x:0.40,y:0.48}] },
+          { id: 'dn3', color: '#f72585', name: 'Pink Glaze', layer: 1, blockedBy: ['sp1','sp2'], path: [{x:0.28,y:0.44},{x:0.50,y:0.28},{x:0.72,y:0.44}] },
+          { id: 'dn4', color: '#f72585', name: 'Pink Glaze', layer: 1, blockedBy: ['sp3','sp4'], path: [{x:0.72,y:0.44},{x:0.50,y:0.68},{x:0.28,y:0.44}] },
+          { id: 'sp1', color: '#35a7ff', name: 'Blue Sprinkle', layer: 2, blockedBy: [], path: [{x:0.38,y:0.34},{x:0.42,y:0.36}] },
+          { id: 'sp2', color: '#fec601', name: 'Yellow Sprinkle', layer: 2, blockedBy: [], path: [{x:0.58,y:0.34},{x:0.62,y:0.36}] },
+          { id: 'sp3', color: '#06d6a0', name: 'Mint Sprinkle', layer: 2, blockedBy: [], path: [{x:0.64,y:0.48},{x:0.62,y:0.52}] },
+          { id: 'sp4', color: '#35a7ff', name: 'Blue Sprinkle', layer: 2, blockedBy: [], path: [{x:0.46,y:0.60},{x:0.52,y:0.60}] }
+        ]
+      },
+      {
+        id: 7,
+        title: "Midnight Owl",
+        icon: "ðŸ¦‰",
+        spoolCapacity: 4,
+        strands: [
+          { id: 'ow1', color: '#073b4c', name: 'Night Navy', layer: 0, blockedBy: ['ow3','ow4'], path: [{x:0.34,y:0.38},{x:0.50,y:0.24},{x:0.66,y:0.38},{x:0.66,y:0.72},{x:0.34,y:0.72},{x:0.34,y:0.38}] },
+          { id: 'ow2', color: '#fec601', name: 'Owl Eyes', layer: 0, blockedBy: ['ow4'], path: [{x:0.42,y:0.40},{x:0.42,y:0.46},{x:0.58,y:0.40},{x:0.58,y:0.46}] },
+          { id: 'ow3', color: '#35a7ff', name: 'Feather Blue', layer: 1, blockedBy: ['ow5'], path: [{x:0.40,y:0.54},{x:0.50,y:0.64},{x:0.60,y:0.54}] },
+          { id: 'ow4', color: '#f77f00', name: 'Beak Amber', layer: 1, blockedBy: ['ow6'], path: [{x:0.48,y:0.45},{x:0.52,y:0.45},{x:0.50,y:0.50}] },
+          { id: 'ow5', color: '#35a7ff', name: 'Feather Blue', layer: 2, blockedBy: [], path: [{x:0.30,y:0.44},{x:0.30,y:0.62},{x:0.38,y:0.56}] },
+          { id: 'ow6', color: '#fec601', name: 'Owl Tuft', layer: 2, blockedBy: [], path: [{x:0.70,y:0.44},{x:0.70,y:0.62},{x:0.62,y:0.56}] }
+        ]
+      },
+      {
+        id: 8,
+        title: "Rainbow Mandala",
+        icon: "ðŸŒˆ",
+        spoolCapacity: 4,
+        strands: [
+          { id: 'rm1', color: '#9b5de5', name: 'Violet Core', layer: 0, blockedBy: ['rm3','rm4'], path: [{x:0.40,y:0.50},{x:0.60,y:0.50}] },
+          { id: 'rm2', color: '#9b5de5', name: 'Violet Core', layer: 0, blockedBy: ['rm4','rm5'], path: [{x:0.50,y:0.40},{x:0.50,y:0.60}] },
+          { id: 'rm3', color: '#35a7ff', name: 'Aqua Ring', layer: 1, blockedBy: ['rm6'], path: [{x:0.30,y:0.50},{x:0.42,y:0.50}] },
+          { id: 'rm4', color: '#35a7ff', name: 'Aqua Ring', layer: 1, blockedBy: ['rm7'], path: [{x:0.70,y:0.50},{x:0.58,y:0.50}] },
+          { id: 'rm5', color: '#06d6a0', name: 'Emerald Ring', layer: 1, blockedBy: ['rm8'], path: [{x:0.50,y:0.30},{x:0.50,y:0.42}] },
+          { id: 'rm6', color: '#ff5964', name: 'Coral Flare', layer: 2, blockedBy: [], path: [{x:0.50,y:0.24},{x:0.74,y:0.48}] },
+          { id: 'rm7', color: '#fec601', name: 'Sunbeam Flare', layer: 2, blockedBy: [], path: [{x:0.74,y:0.48},{x:0.50,y:0.72}] },
+          { id: 'rm8', color: '#ff5964', name: 'Coral Flare', layer: 2, blockedBy: [], path: [{x:0.50,y:0.72},{x:0.26,y:0.48}] },
+          { id: 'rm9', color: '#fec601', name: 'Sunbeam Flare', layer: 2, blockedBy: [], path: [{x:0.26,y:0.48},{x:0.50,y:0.24}] }
+        ]
+      }
+    ];
+
+    class UnravelGameEngine {
+      constructor() {
+        this.canvas = document.getElementById('canvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.sfx = new SoundFX();
+
+        this.ui = {
+          hudLevelNum: document.getElementById('hud-level-num'),
+          hudLevelName: document.getElementById('hud-level-name'),
+          comboBanner: document.getElementById('combo-banner'),
+          toast: document.getElementById('toast-msg'),
+          slotCount: document.getElementById('slot-count'),
+          spoolPickTray: document.getElementById('spool-pick-tray'),
+          dockSlotEls: Array.from(document.querySelectorAll('.dock-slot')),
+          btnScissors: document.getElementById('btn-scissors'),
+          btnRainbow: document.getElementById('btn-rainbow'),
+          btnUndo: document.getElementById('btn-undo'),
+          btnRestart: document.getElementById('btn-restart'),
+          btnSound: document.getElementById('btn-sound'),
+          btnOpenLevels: document.getElementById('btn-open-levels'),
+          modalLevels: document.getElementById('modal-levels'),
+          levelGridContainer: document.getElementById('level-grid-container'),
+          btnCloseLevels: document.getElementById('btn-close-levels'),
+          modalWin: document.getElementById('modal-win'),
+          winTitle: document.getElementById('win-title'),
+          winDesc: document.getElementById('win-desc'),
+          btnNextLevel: document.getElementById('btn-next-level'),
+          modalJam: document.getElementById('modal-jam'),
+          btnRetry: document.getElementById('btn-retry')
+        };
+
+        this.currentLevelIdx = 0;
+        this.strands = [];
+        this.unraveledStrands = [];
+        this.slots = [null, null, null, null];
+        this.particles = [];
+        this.flyingThreads = [];
+        this.comboCount = 0;
+        this.scissorMode = false;
+        this.levelCompleted = false;
+        this.snipCooldown = 0;
+        this.wildCooldown = 0;
+        this.COOLDOWN_TURNS = 2; // Cooldown of 2 turns so boosters cannot be spammed
+
+        this.initCanvasSize();
+        this.buildLevelGrid();
+        this.bindEvents();
+        this.loadLevel(0);
+
+        this.loop = this.loop.bind(this);
+        requestAnimationFrame(this.loop);
+      }
+
+      initCanvasSize() {
+        const resize = () => {
+          const rect = this.canvas.parentElement.getBoundingClientRect();
+          const dpr = window.devicePixelRatio || 1;
+          this.width = rect.width;
+          this.height = rect.height;
+          this.canvas.width = this.width * dpr;
+          this.canvas.height = this.height * dpr;
+          this.ctx.resetTransform();
+          this.ctx.scale(dpr, dpr);
+        };
+        window.addEventListener('resize', resize);
+        resize();
+      }
+
+      showToast(text) {
+        this.ui.toast.textContent = text;
+        this.ui.toast.classList.add('show');
+        clearTimeout(this._toastTimeout);
+        this._toastTimeout = setTimeout(() => {
+          this.ui.toast.classList.remove('show');
+        }, 2200);
+      }
+
+      triggerCombo() {
+        this.comboCount++;
+        if (this.comboCount >= 2) {
+          const praises = ["Cozy Combo!", "Stitch Magic!", "Flawless Weave!", "Master Knitter!"];
+          const word = praises[Math.min(this.comboCount - 2, praises.length - 1)];
+          this.ui.comboBanner.textContent = `${word} x${this.comboCount} âœ¨`;
+          this.ui.comboBanner.classList.add('active');
+          this.sfx.combo(this.comboCount);
+
+          clearTimeout(this._comboTimeout);
+          this._comboTimeout = setTimeout(() => {
+            this.ui.comboBanner.classList.remove('active');
+            this.comboCount = 0;
+          }, 2400);
+        }
+      }
+
+      buildLevelGrid() {
+        this.ui.levelGridContainer.innerHTML = '';
+        LEVELS.forEach((lvl, idx) => {
+          const btn = document.createElement('div');
+          btn.className = `lvl-card-btn ${idx === this.currentLevelIdx ? 'active' : ''}`;
+          btn.innerHTML = `
+            <div style="font-size: 20px;">${lvl.icon}</div>
+            <div style="font-size: 11px; margin-top: 2px;">Lvl ${idx + 1}</div>
+          `;
+          btn.addEventListener('click', () => {
+            this.loadLevel(idx);
+            this.ui.modalLevels.classList.remove('open');
+          });
+          this.ui.levelGridContainer.appendChild(btn);
+        });
+      }
+
+      loadLevel(idx) {
+        this.currentLevelIdx = idx % LEVELS.length;
+        const lvl = LEVELS[this.currentLevelIdx];
+        this.levelCompleted = false;
+        this.comboCount = 0;
+        this.scissorMode = false;
+        this.ui.btnScissors.classList.remove('active');
+        this.slots = [null, null, null, null];
+        this.unraveledStrands = [];
+        this.flyingThreads = [];
+        this.particles = [];
+
+        this.ui.modalWin.classList.remove('open');
+        this.ui.modalJam.classList.remove('open');
+        this.ui.hudLevelNum.textContent = `Level ${this.currentLevelIdx + 1}`;
+        this.ui.hudLevelName.textContent = `${lvl.icon} ${lvl.title}`;
+
+        // Clone strands
+        this.strands = JSON.parse(JSON.stringify(lvl.strands)).map(s => ({
+          ...s,
+          isUnraveling: false
+        }));
+
+        this.buildLevelGrid();
+        this.updateHUD();
+        this.snipCooldown = 0;
+        this.wildCooldown = 0;
+        this.renderBoosters();
+        this.renderSlots();
+        this.renderPickTray();
+        this.showToast(`Tap exposed strands or spools to unravel!`);
+      }
+
+      tickTurn() {
+        let changed = false;
+        if (this.snipCooldown > 0) {
+          this.snipCooldown--;
+          changed = true;
+        }
+        if (this.wildCooldown > 0) {
+          this.wildCooldown--;
+          changed = true;
+        }
+        if (changed) {
+          this.renderBoosters();
+        }
+      }
+
+      renderBoosters() {
+        // Scissors Booster Button
+        if (this.snipCooldown > 0) {
+          this.ui.btnScissors.classList.add('cooldown');
+          this.ui.btnScissors.classList.remove('active');
+          this.ui.btnScissors.innerHTML = `âœ‚ï¸ Snip <span class="booster-badge">${this.snipCooldown}</span>`;
+        } else {
+          this.ui.btnScissors.classList.remove('cooldown');
+          this.ui.btnScissors.classList.toggle('active', this.scissorMode);
+          this.ui.btnScissors.innerHTML = `âœ‚ï¸ Snip`;
+        }
+
+        // Rainbow Wild Spool Button
+        if (this.wildCooldown > 0) {
+          this.ui.btnRainbow.classList.add('cooldown');
+          this.ui.btnRainbow.innerHTML = `ðŸŒˆ Wild <span class="booster-badge">${this.wildCooldown}</span>`;
+        } else {
+          this.ui.btnRainbow.classList.remove('cooldown');
+          this.ui.btnRainbow.innerHTML = `ðŸŒˆ Wild`;
+        }
+      }
+
+      getExposedStrands() {
+        const unraveledIds = new Set(this.unraveledStrands.map(s => s.id));
+        return this.strands.filter(s => {
+          if (unraveledIds.has(s.id) || s.isUnraveling) return false;
+          return s.blockedBy.every(blockerId => unraveledIds.has(blockerId));
+        });
+      }
+
+      getRemainingColors() {
+        const unraveledIds = new Set(this.unraveledStrands.map(s => s.id));
+        const activeStrands = this.strands.filter(s => !unraveledIds.has(s.id));
+        const colorMap = new Map();
+        for (let s of activeStrands) {
+          if (!colorMap.has(s.color)) {
+            colorMap.set(s.color, { color: s.color, name: s.name, count: 0 });
+          }
+          colorMap.get(s.color).count++;
+        }
+        return Array.from(colorMap.values());
+      }
+
+      pickSpool(colorHex, isRainbow = false) {
+        this.sfx.init();
+
+        // Check Wild cooldown
+        if (isRainbow && this.wildCooldown > 0) {
+          this.sfx.buzz();
+          const turnWord = this.wildCooldown === 1 ? 'turn' : 'turns';
+          this.showToast(`ðŸŒˆ Wild Spool is recharging (${this.wildCooldown} ${turnWord} left)!`);
+          return;
+        }
+
+        // Check if there is already an active non-full matching spool in a dock slot
+        let targetSlot = this.slots.findIndex(s => s && s.color === colorHex && s.count < s.capacity);
+
+        // Otherwise find first empty slot
+        if (targetSlot === -1) {
+          targetSlot = this.slots.findIndex(s => s === null);
+        }
+
+        if (targetSlot === -1) {
+          this.sfx.buzz();
+          this.showToast("All spool slots are full!");
+          this.checkJamCondition();
+          return;
+        }
+
+        const lvl = LEVELS[this.currentLevelIdx];
+        if (!this.slots[targetSlot]) {
+          this.slots[targetSlot] = {
+            color: colorHex,
+            isRainbow: !!isRainbow,
+            count: 0,
+            capacity: lvl.spoolCapacity || 3,
+            isSpinning: false,
+            rotation: 0
+          };
+        }
+
+        if (isRainbow) {
+          this.wildCooldown = this.COOLDOWN_TURNS;
+          this.renderBoosters();
+        } else {
+          this.tickTurn();
+        }
+
+        this.renderSlots();
+        this.checkUnravelAction();
+        this.renderPickTray();
+        this.updateHUD();
+      }
+
+      checkUnravelAction() {
+        const exposed = this.getExposedStrands();
+        let anyTriggered = false;
+
+        for (let i = 0; i < this.slots.length; i++) {
+          const spool = this.slots[i];
+          if (!spool || spool.count >= spool.capacity) continue;
+
+          // Find exposed matching strand
+          const match = exposed.find(s => (spool.isRainbow || s.color === spool.color) && !s.isUnraveling);
+          if (match) {
+            match.isUnraveling = true;
+            spool.isSpinning = true;
+            this.animateUnravelStrand(match, i);
+            anyTriggered = true;
+            break;
+          }
+        }
+
+        if (!anyTriggered) {
+          this.checkJamCondition();
+        }
+      }
+
+      animateUnravelStrand(strand, slotIndex) {
+        const slotEl = this.ui.dockSlotEls[slotIndex];
+        const slotRect = slotEl.getBoundingClientRect();
+        const canvasRect = this.canvas.getBoundingClientRect();
+
+        const targetX = (slotRect.left + slotRect.width / 2) - canvasRect.left;
+        const targetY = (slotRect.top + slotRect.height / 2) - canvasRect.top;
+
+        this.flyingThreads.push({
+          strand,
+          slotIndex,
+          targetX,
+          targetY,
+          progress: 0,
+          speed: 0.05
+        });
+      }
+
+      onStrandCompleted(item) {
+        const { strand, slotIndex } = item;
+        this.unraveledStrands.push(strand);
+        const spool = this.slots[slotIndex];
+
+        if (spool) {
+          spool.count++;
+          this.sfx.spin(1 + spool.count * 0.1);
+          this.triggerCombo();
+          if (navigator.vibrate) navigator.vibrate(18);
+
+          // Wool burst into spool
+          const slotEl = this.ui.dockSlotEls[slotIndex];
+          const slotRect = slotEl.getBoundingClientRect();
+          const canvasRect = this.canvas.getBoundingClientRect();
+          const sx = (slotRect.left + slotRect.width / 2) - canvasRect.left;
+          const sy = (slotRect.top + slotRect.height / 2) - canvasRect.top;
+
+          for (let p = 0; p < 14; p++) {
+            const angle = Math.random() * Math.PI * 2;
+            const spd = 2 + Math.random() * 3.8;
+            this.particles.push({
+              x: sx, y: sy,
+              vx: Math.cos(angle) * spd,
+              vy: Math.sin(angle) * spd,
+              color: strand.color,
+              alpha: 1,
+              radius: 3 + Math.random() * 3.5
+            });
+          }
+
+          if (spool.count >= spool.capacity) {
+            this.sfx.pop();
+            this.showToast(`âœ¨ ${spool.isRainbow ? 'Rainbow' : (strand.name || 'Yarn')} Spool Full!`);
+            this.slots[slotIndex] = null; // Clear slot!
+          } else {
+            spool.isSpinning = false;
+          }
+        }
+
+        this.renderSlots();
+        this.renderPickTray();
+        this.updateHUD();
+
+        if (this.unraveledStrands.length === this.strands.length) {
+          this.levelCompleted = true;
+          this.sfx.victory();
+          const lvl = LEVELS[this.currentLevelIdx];
+          this.ui.winTitle.textContent = `${lvl.icon} ${lvl.title} Complete!`;
+          this.ui.winDesc.textContent = `All ${this.strands.length} strands unraveled with snug perfection!`;
+          setTimeout(() => {
+            this.ui.modalWin.classList.add('open');
+          }, 450);
+        } else {
+          setTimeout(() => this.checkUnravelAction(), 110);
+        }
+      }
+
+      checkJamCondition() {
+        if (this.levelCompleted) return;
+        const exposed = this.getExposedStrands();
+        const activeOccupied = this.slots.filter(s => s !== null);
+
+        if (activeOccupied.length === 4) {
+          const canMatch = activeOccupied.some(spool =>
+            exposed.some(s => (spool.isRainbow || s.color === spool.color) && spool.count < spool.capacity)
+          );
+
+          if (!canMatch && this.flyingThreads.length === 0) {
+            this.sfx.buzz();
+            setTimeout(() => {
+              this.ui.modalJam.classList.add('open');
+            }, 550);
+          }
+        }
+      }
+
+      renderSlots() {
+        this.slots.forEach((spool, i) => {
+          const el = this.ui.dockSlotEls[i];
+          el.innerHTML = '';
+          el.className = 'dock-slot';
+
+          if (spool) {
+            el.classList.add('occupied');
+            if (spool.isSpinning) el.classList.add('spinning');
+
+            const pct = Math.round((spool.count / spool.capacity) * 100);
+            const bgGrad = spool.isRainbow
+              ? 'linear-gradient(135deg, #ff5964, #fec601, #06d6a0, #35a7ff, #9b5de5)'
+              : `radial-gradient(circle at 35% 35%, #ffffff 0%, ${spool.color} 55%, #1a1a1a 100%)`;
+
+            el.innerHTML = `
+              <div class="spool-body" style="background: ${bgGrad};">
+                <div class="spool-hub"></div>
+              </div>
+              <div class="spool-meta">${spool.count}/${spool.capacity}</div>
+            `;
+          }
+        });
+
+        this.ui.slotCount.textContent = this.slots.filter(s => s !== null).length;
+      }
+
+      renderPickTray() {
+        this.ui.spoolPickTray.innerHTML = '';
+        const remaining = this.getRemainingColors();
+        const exposed = this.getExposedStrands();
+        const exposedColors = new Set(exposed.map(s => s.color));
+
+        remaining.forEach(item => {
+          const btn = document.createElement('div');
+          btn.className = 'pick-spool-btn';
+          btn.style.background = `radial-gradient(circle at 35% 35%, #ffffff 0%, ${item.color} 55%, #1a1a1a 100%)`;
+
+          const isExposed = exposedColors.has(item.color);
+          if (isExposed) {
+            btn.style.boxShadow = `0 0 12px ${item.color}`;
+          }
+
+          btn.innerHTML = `
+            <div style="width: 14px; height: 14px; border-radius: 50%; background: #faedcd; border: 2px solid #b5835a;"></div>
+            <div class="badge-num">${item.count}</div>
+          `;
+
+          btn.addEventListener('click', () => {
+            this.pickSpool(item.color);
+          });
+
+          this.ui.spoolPickTray.appendChild(btn);
+        });
+      }
+
+      updateHUD() {
+        // Can be extended for score or stars
+      }
+
+      bindEvents() {
+        // Scissors Booster toggle
+        this.ui.btnScissors.addEventListener('click', () => {
+          if (this.snipCooldown > 0) {
+            this.sfx.buzz();
+            const turnWord = this.snipCooldown === 1 ? 'turn' : 'turns';
+            this.showToast(`âœ‚ï¸ Snip is recharging (${this.snipCooldown} ${turnWord} left)!`);
+            return;
+          }
+          this.scissorMode = !this.scissorMode;
+          this.renderBoosters();
+          if (this.scissorMode) {
+            this.showToast("âœ‚ï¸ Tap ANY strand on canvas to snip it!");
+          }
+        });
+
+        // Rainbow Wild Spool Booster
+        this.ui.btnRainbow.addEventListener('click', () => {
+          if (this.wildCooldown > 0) {
+            this.sfx.buzz();
+            const turnWord = this.wildCooldown === 1 ? 'turn' : 'turns';
+            this.showToast(`ðŸŒˆ Wild Spool is recharging (${this.wildCooldown} ${turnWord} left)!`);
+            return;
+          }
+          this.pickSpool('#ffffff', true);
+          this.showToast("ðŸŒˆ Wild Rainbow Spool Deployed!");
+        });
+
+        // Undo Last Spool
+        this.ui.btnUndo.addEventListener('click', () => {
+          const lastIdx = this.slots.map((s, idx) => s ? idx : -1).filter(idx => idx !== -1).pop();
+          if (lastIdx !== undefined && lastIdx !== -1) {
+            this.slots[lastIdx] = null;
+            this.renderSlots();
+            this.renderPickTray();
+            this.showToast("Spool returned to tray.");
+          }
+        });
+
+        this.ui.btnRestart.addEventListener('click', () => this.loadLevel(this.currentLevelIdx));
+        this.ui.btnSound.addEventListener('click', () => {
+          const on = this.sfx.toggle();
+          this.ui.btnSound.textContent = on ? 'ðŸ”Š' : 'ðŸ”‡';
+        });
+
+        // Level Select Dialog
+        this.ui.btnOpenLevels.addEventListener('click', () => {
+          this.ui.modalLevels.classList.add('open');
+        });
+        this.ui.btnCloseLevels.addEventListener('click', () => {
+          this.ui.modalLevels.classList.remove('open');
+        });
+
+        this.ui.btnNextLevel.addEventListener('click', () => this.loadLevel(this.currentLevelIdx + 1));
+        this.ui.btnRetry.addEventListener('click', () => this.loadLevel(this.currentLevelIdx));
+
+        // Canvas Tap Interaction
+        const handleCanvasTap = (e) => {
+          const rect = this.canvas.getBoundingClientRect();
+          const clickX = e.clientX - rect.left;
+          const clickY = e.clientY - rect.top;
+
+          // If Scissor mode is active, snip any clicked strand
+          if (this.scissorMode) {
+            const unraveledIds = new Set(this.unraveledStrands.map(s => s.id));
+            const activeStrands = this.strands.filter(s => !unraveledIds.has(s.id));
+
+            for (let s of activeStrands) {
+              for (let pt of s.path) {
+                const px = pt.x * this.width;
+                const py = pt.y * this.height;
+                if (Math.hypot(clickX - px, clickY - py) < 36) {
+                  this.sfx.snip();
+                  this.unraveledStrands.push(s);
+                  this.scissorMode = false;
+                  this.snipCooldown = this.COOLDOWN_TURNS;
+                  this.renderBoosters();
+                  this.showToast(`âœ‚ï¸ Snipped ${s.name || 'Strand'}!`);
+
+                  // Snip fiber explosion
+                  for (let p = 0; p < 18; p++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const spd = 2 + Math.random() * 4;
+                    this.particles.push({
+                      x: px, y: py,
+                      vx: Math.cos(angle) * spd,
+                      vy: Math.sin(angle) * spd,
+                      color: s.color,
+                      alpha: 1,
+                      radius: 3 + Math.random() * 3
+                    });
+                  }
+
+                  this.renderSlots();
+                  this.renderPickTray();
+                  this.checkUnravelAction();
+                  return;
+                }
+              }
+            }
+            return;
+          }
+
+          // Otherwise tap exposed strand to deploy its spool
+          const exposed = this.getExposedStrands();
+          for (let s of exposed) {
+            for (let pt of s.path) {
+              const px = pt.x * this.width;
+              const py = pt.y * this.height;
+              if (Math.hypot(clickX - px, clickY - py) < 38) {
+                this.pickSpool(s.color);
+                return;
+              }
+            }
+          }
+        };
+
+        this.canvas.addEventListener('click', handleCanvasTap);
+      }
+
+      updateAnimation() {
+        for (let i = this.flyingThreads.length - 1; i >= 0; i--) {
+          const ft = this.flyingThreads[i];
+          ft.progress += ft.speed;
+
+          const spool = this.slots[ft.slotIndex];
+          if (spool) {
+            spool.rotation = (spool.rotation || 0) + 0.35;
+          }
+
+          if (ft.progress >= 1) {
+            this.flyingThreads.splice(i, 1);
+            this.onStrandCompleted(ft);
+          }
+        }
+
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+          const p = this.particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.alpha *= 0.94;
+          if (p.alpha <= 0.04) {
+            this.particles.splice(i, 1);
+          }
+        }
+      }
+
+      draw() {
+        this.ctx.clearRect(0, 0, this.width, this.height);
+
+        // Linen fabric weave grid
+        this.ctx.strokeStyle = 'rgba(195, 175, 150, 0.16)';
+        this.ctx.lineWidth = 1;
+        const step = 20;
+        this.ctx.beginPath();
+        for (let x = 0; x < this.width; x += step) {
+          this.ctx.moveTo(x, 0);
+          this.ctx.lineTo(x, this.height);
+        }
+        for (let y = 0; y < this.height; y += step) {
+          this.ctx.moveTo(0, y);
+          this.ctx.lineTo(this.width, y);
+        }
+        this.ctx.stroke();
+
+        const unraveledIds = new Set(this.unraveledStrands.map(s => s.id));
+        const exposed = this.getExposedStrands();
+        const exposedIds = new Set(exposed.map(s => s.id));
+
+        const visible = this.strands.filter(s => !unraveledIds.has(s.id));
+        visible.sort((a, b) => a.layer - b.layer);
+
+        // Draw Knitted Strands
+        for (let strand of visible) {
+          if (strand.path.length < 2) continue;
+
+          const isExposed = exposedIds.has(strand.id);
+          const isUnraveling = strand.isUnraveling;
+
+          // 1. 3D Yarn Drop Shadow
+          this.ctx.save();
+          this.ctx.strokeStyle = 'rgba(30, 20, 15, 0.22)';
+          this.ctx.lineWidth = 15;
+          this.ctx.lineCap = 'round';
+          this.ctx.lineJoin = 'round';
+          this.ctx.beginPath();
+          this.ctx.moveTo(strand.path[0].x * this.width + 3, strand.path[0].y * this.height + 5);
+          for (let i = 1; i < strand.path.length; i++) {
+            this.ctx.lineTo(strand.path[i].x * this.width + 3, strand.path[i].y * this.height + 5);
+          }
+          this.ctx.stroke();
+          this.ctx.restore();
+
+          // 2. Thick Wool Yarn Core
+          this.ctx.save();
+          this.ctx.strokeStyle = strand.color;
+          this.ctx.lineWidth = 13;
+          this.ctx.lineCap = 'round';
+          this.ctx.lineJoin = 'round';
+
+          if (isUnraveling) {
+            this.ctx.setLineDash([8, 8]);
+          }
+
+          this.ctx.beginPath();
+          this.ctx.moveTo(strand.path[0].x * this.width, strand.path[0].y * this.height);
+          for (let i = 1; i < strand.path.length; i++) {
+            this.ctx.lineTo(strand.path[i].x * this.width, strand.path[i].y * this.height);
+          }
+          this.ctx.stroke();
+
+          // 3. Knitted Wool Braid Stitch Ribbing
+          this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+          this.ctx.lineWidth = 3.5;
+          this.ctx.setLineDash([5, 6]);
+          this.ctx.stroke();
+
+          // 4. Exposed Yarn Ends (Glowing bead markers)
+          if (isExposed && !isUnraveling) {
+            const pStart = strand.path[0];
+            const pEnd = strand.path[strand.path.length - 1];
+
+            this.ctx.fillStyle = '#ffffff';
+            this.ctx.beginPath();
+            this.ctx.arc(pStart.x * this.width, pStart.y * this.height, 4.5, 0, Math.PI * 2);
+            this.ctx.arc(pEnd.x * this.width, pEnd.y * this.height, 4.5, 0, Math.PI * 2);
+            this.ctx.fill();
+          }
+
+          this.ctx.restore();
+        }
+
+        // Flying Unspooling Streamers
+        for (let ft of this.flyingThreads) {
+          const strand = ft.strand;
+          const startPt = strand.path[Math.floor(strand.path.length / 2)];
+          const sx = startPt.x * this.width;
+          const sy = startPt.y * this.height;
+
+          const cx = (sx + ft.targetX) / 2 + 25;
+          const cy = (sy + ft.targetY) / 2;
+
+          this.ctx.save();
+          this.ctx.strokeStyle = strand.color;
+          this.ctx.lineWidth = 8 * (1 - ft.progress * 0.4);
+          this.ctx.lineCap = 'round';
+
+          this.ctx.beginPath();
+          this.ctx.moveTo(sx, sy);
+          this.ctx.quadraticCurveTo(cx, cy, ft.targetX, ft.targetY);
+          this.ctx.stroke();
+
+          // Traveling wool puff
+          const currX = (1 - ft.progress) * (1 - ft.progress) * sx + 2 * (1 - ft.progress) * ft.progress * cx + ft.progress * ft.progress * ft.targetX;
+          const currY = (1 - ft.progress) * (1 - ft.progress) * sy + 2 * (1 - ft.progress) * ft.progress * cy + ft.progress * ft.progress * ft.targetY;
+
+          this.ctx.fillStyle = '#ffffff';
+          this.ctx.beginPath();
+          this.ctx.arc(currX, currY, 6.5, 0, Math.PI * 2);
+          this.ctx.fill();
+          this.ctx.restore();
+        }
+
+        // Particles
+        for (let p of this.particles) {
+          this.ctx.save();
+          this.ctx.globalAlpha = p.alpha;
+          this.ctx.fillStyle = p.color;
+          this.ctx.beginPath();
+          this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          this.ctx.fill();
+          this.ctx.restore();
+        }
+      }
+
+      loop() {
+        this.updateAnimation();
+        this.draw();
+        requestAnimationFrame(this.loop);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      window.game = new UnravelGameEngine(); if(window.GazetteTelemetry) window.GazetteTelemetry.track('game_launch', { game: 'unravel_it' });
+    });
+  </script>
+</body>
+</html>
+

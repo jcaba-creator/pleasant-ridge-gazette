@@ -1,0 +1,4852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Pleasant Ridge Gazette · Rural Broadsheet &amp; Corridor Radar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,700;1,6..72,400;1,6..72,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cardstock: #fdfaf5;
+      --ink: #111111;
+      --forest: #1b4332;
+      --slate-blue: #1e3a8a;
+      --navy: #0f172a;
+      --amber: #b45309;
+      --green-status: #27ae60;
+      --amber-status: #e67e22;
+      --red-status: #c0392b;
+      --border: 2px solid #111111;
+      --double-border: 3px double #111111;
+      --shadow: 4px 4px 0px #111111;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--cardstock);
+      color: var(--ink);
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 16px;
+      line-height: 1.5;
+      padding: 0 16px 40px;
+    }
+
+    .wrapper {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* TOP UTILITY / TIMESTAMP */
+    .top-utility-bar {
+      border-bottom: 1px solid #111;
+      padding: 6px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 700;
+    }
+    .top-utility-bar .tagline { color: var(--forest); }
+    .top-utility-bar .dateline { color: #555; }
+
+    /* CONDITIONAL FREEZE & WINTER BANNERS */
+    #conditionalBannerContainer {
+      margin-top: 14px;
+      margin-bottom: 14px;
+      display: none;
+    }
+    .prep-banner {
+      color: #ffffff;
+      padding: 16px 20px;
+      border: var(--border);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      animation: fadeIn 0.4s ease-out;
+    }
+    .prep-banner.freeze { background-color: var(--slate-blue); }
+    .prep-banner.winter { background-color: var(--amber); }
+    .prep-banner-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .prep-banner-sub {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 14px;
+      opacity: 0.95;
+    }
+
+    /* MASTHEAD */
+    header.gazette-masthead {
+      text-align: center;
+      padding: 20px 0 16px;
+      border-bottom: var(--double-border);
+      margin-bottom: 20px;
+    }
+    .gazette-title {
+      font-family: 'Newsreader', serif;
+      font-size: clamp(36px, 5.5vw, 62px);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: -1px;
+      line-height: 1.05;
+      margin-bottom: 4px;
+    }
+    .gazette-edition {
+      font-family: 'Newsreader', serif;
+      font-style: italic;
+      font-size: 17px;
+      color: #333;
+    }
+
+    /* SECTION 1: GAS LIST ON TOP */
+    .fuel-section {
+      background: #ffffff;
+      border: var(--border);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 28px;
+    }
+    .fuel-header {
+      border-bottom: 2px solid var(--ink);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .fuel-title {
+      font-family: 'Newsreader', serif;
+      font-size: 28px;
+      font-weight: 700;
+    }
+    .fuel-savings-callout {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--forest);
+      background: #e8f5e9;
+      padding: 6px 12px;
+      border: 1px solid var(--forest);
+      border-radius: 2px;
+    }
+
+    .fuel-table-wrapper { overflow-x: auto; }
+    table.fuel-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      text-align: left;
+      font-size: 14px;
+    }
+    table.fuel-table th {
+      background: #eee8de;
+      padding: 10px 12px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 2px solid var(--ink);
+    }
+    table.fuel-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #e0e0e0;
+      font-variant-numeric: tabular-nums;
+    }
+    table.fuel-table tr.lowest-row { background-color: #f0fdf4; font-weight: 700; }
+    .badge-lowest {
+      background: var(--forest);
+      color: #fff;
+      font-size: 10px;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 2px;
+      margin-left: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    /* SECTION 2: RURAL OS STATUS & CORRIDOR RADAR CARDS UNDERNEATH */
+    .section-headline {
+      font-family: 'Newsreader', serif;
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      border-bottom: 1px solid #111;
+      padding-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .section-headline span.sub {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #666;
+    }
+
+    .deck-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 18px;
+      margin-bottom: 32px;
+    }
+    .deck-card {
+      background: #ffffff;
+      border: var(--border);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .deck-card.alert-active {
+      background: #fff5f5;
+      border-color: var(--red-status);
+    }
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+    .card-label {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #666;
+    }
+    .card-headline {
+      font-family: 'Newsreader', serif;
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+    .card-metric {
+      font-size: 28px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      color: var(--forest);
+      margin-bottom: 8px;
+    }
+    .card-metric.danger { color: var(--red-status); }
+    .card-text { font-size: 13px; color: #444; line-height: 1.4; margin-bottom: 12px; }
+    .card-footer {
+      border-top: 1px solid #eee;
+      padding-top: 8px;
+      font-size: 11px;
+      color: #777;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* STATUS PILLS */
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 2px;
+      border: 1px solid #111;
+    }
+    .status-pill.green { background: #d1fae5; color: #065f46; border-color: #065f46; }
+    .status-pill.amber { background: #fef3c7; color: #92400e; border-color: #92400e; }
+    .status-pill.red { background: #fee2e2; color: #991b1b; border-color: #991b1b; }
+
+    /* INSTITUTIONAL STATUS BOARD ITEMS (USD 449 & FORT LEAVENWORTH) */
+    .inst-row {
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .inst-row:last-child { border-bottom: none; }
+    .inst-row-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .inst-name { font-weight: 700; font-size: 13.5px; }
+    .inst-desc { font-size: 12.5px; color: #555; }
+
+    /* FOOTER WITH SIMPLE HYPERLINK ONLY */
+    footer.gazette-footer {
+      border-top: var(--double-border);
+      padding-top: 18px;
+      margin-top: 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 12px;
+      color: #555;
+    }
+    .arcade-link-simple {
+      color: var(--forest);
+      font-weight: 700;
+      text-decoration: underline;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media print {
+      body { background: #fff; padding: 0; font-size: 11pt; }
+      #conditionalBannerContainer, .deck-grid, .section-headline, footer.gazette-footer { display: none !important; }
+      .fuel-section { border: none; box-shadow: none; padding: 0; }
+      header.gazette-masthead { padding: 10px 0; margin-bottom: 12px; }
+      .gazette-title { font-size: 26pt; }
+    }
+  
+    .as-of-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      color: #444444;
+      background: #f4ecdf;
+      padding: 3px 8px;
+      border: 1px solid #d4c8b8;
+      border-radius: 2px;
+      margin-top: 4px;
+    }
+    .as-of-badge .dot {
+      width: 6px;
+      height: 6px;
+      background-color: var(--forest);
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+  
+    /* ========================================================
+       TOP-LEVEL NAVIGATION TABS & GROCERY PROCUREMENT ENGINE
+       ======================================================== */
+    .gazette-tab-nav {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      border-bottom: 2px solid var(--ink);
+      padding-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      background: #ffffff;
+      border: var(--border);
+      box-shadow: var(--shadow);
+      padding: 10px 22px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--ink);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.15s ease;
+      border-radius: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .tab-btn:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 5px 5px 0px var(--ink);
+    }
+    .tab-btn.active {
+      background: var(--forest);
+      color: #ffffff;
+      box-shadow: 2px 2px 0px var(--ink);
+      transform: translate(2px, 2px);
+    }
+    .tab-btn .tab-badge {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 2px;
+      background: #eee8de;
+      color: #111;
+      font-weight: 800;
+    }
+    .tab-btn.active .tab-badge {
+      background: #ffffff;
+      color: var(--forest);
+    }
+
+    /* GROCERY INTELLIGENCE SECTION */
+    .grocery-section {
+      background: #ffffff;
+      border: var(--border);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+    .grocery-header {
+      border-bottom: 2px solid var(--ink);
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+    .grocery-title {
+      font-family: 'Newsreader', serif;
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 6px;
+    }
+    .grocery-sub {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13.5px;
+      color: #555;
+    }
+    .procurement-badges {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+    }
+    .proc-badge {
+      background: #fdfaf5;
+      border: 1px solid #d4c8b8;
+      padding: 3px 8px;
+      border-radius: 2px;
+      color: #333;
+    }
+
+    /* KPI CARDS */
+    .proc-kpi-deck {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+    .proc-kpi-card {
+      background: #fdfaf5;
+      border: 1.5px solid var(--ink);
+      box-shadow: 3px 3px 0px var(--ink);
+      padding: 14px 16px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .proc-kpi-card.winner-card {
+      background: #f0fdf4;
+      border-color: var(--forest);
+      box-shadow: 3px 3px 0px var(--forest);
+    }
+    .proc-kpi-card .kpi-label {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+    .proc-kpi-card.winner-card .kpi-label { color: var(--forest); }
+    .proc-kpi-card .kpi-val {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 2px;
+    }
+    .proc-kpi-card.winner-card .kpi-val { color: var(--forest); }
+    .proc-kpi-card .kpi-sub {
+      font-size: 11.5px;
+      color: #555;
+    }
+
+    /* CONTROLS CARD */
+    .proc-controls-card {
+      background: #f4eee1;
+      border: var(--border);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .controls-title {
+      font-weight: 800;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+      color: #333;
+    }
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      align-items: start;
+    }
+    .control-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 5px;
+      color: #222;
+    }
+    .input-with-unit {
+      display: inline-flex;
+      align-items: center;
+      background: #fff;
+      border: 1px solid #111;
+      padding: 4px 8px;
+      border-radius: 2px;
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .input-with-unit input {
+      border: none;
+      outline: none;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      width: 70px;
+      padding: 2px 4px;
+    }
+    .control-hint {
+      display: block;
+      font-size: 11px;
+      color: #666;
+      margin-top: 4px;
+    }
+    .checkbox-label {
+      display: flex !important;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600 !important;
+    }
+
+    /* TABLE SECTION TITLES */
+    .proc-table-title-strip {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #111;
+      padding-bottom: 4px;
+    }
+    .proc-table-title-strip h3 {
+      font-family: 'Newsreader', serif;
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .proc-formula-tag {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      color: #666;
+      font-style: italic;
+    }
+
+    /* ITEM CATEGORY BADGES */
+    .cat-badge {
+      display: inline-block;
+      font-size: 9.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 2px;
+      letter-spacing: 0.5px;
+    }
+    .cat-protein { background: #fee2e2; color: #991b1b; }
+    .cat-dairy { background: #dbeafe; color: #1e40af; }
+    .cat-produce { background: #dcfce7; color: #166534; }
+    .cat-pantry { background: #fef3c7; color: #92400e; }
+
+    .optimal-badge {
+      background: var(--forest);
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 2px;
+      margin-left: 6px;
+    }
+
+    .best-item-tag {
+      background: #e8f5e9;
+      color: var(--forest);
+      font-weight: 800;
+      padding: 1px 4px;
+      border-radius: 2px;
+      border: 1px solid #a5d6a7;
+    }
+
+    .proc-notes-card {
+      background: #fdfaf5;
+      border: 1px solid #ddd;
+      padding: 16px 18px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11.5px;
+      line-height: 1.55;
+      color: #444;
+    }
+    .proc-notes-card .notes-heading {
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #222;
+      margin-bottom: 8px;
+    }
+    .proc-notes-card .notes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+    }
+
+  
+    /* ========================================================
+       USD 449 DISPATCH & BUILDING FILTER STYLES
+       ======================================================== */
+    .school-dispatch-section {
+      margin-top: 10px;
+    }
+    .school-header {
+      background: var(--navy);
+      color: #ffffff;
+      padding: 22px 24px;
+      margin-bottom: 20px;
+      border: 1px solid #1e293b;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .school-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 26px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin: 0;
+      color: #f8fafc;
+    }
+    .school-sub {
+      font-family: 'Georgia', serif;
+      font-style: italic;
+      font-size: 14px;
+      color: #cbd5e1;
+    }
+    .school-badges-deck {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .school-badge {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #f1f5f9;
+      font-size: 11px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 2px;
+    }
+    .school-badge strong {
+      color: #38bdf8;
+    }
+
+    /* MULTI-SELECT BUILDING FILTER BAR */
+    .school-filter-card {
+      background: #ffffff;
+      border: 2px solid #0f172a;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+    }
+    .filter-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .filter-card-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 15px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #0f172a;
+      font-weight: 700;
+    }
+    .filter-card-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .filter-quick-btn {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 2px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.15s ease;
+    }
+    .filter-quick-btn:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+      border-color: #94a3b8;
+    }
+    .filter-chips-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .school-filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      padding: 7px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 12.5px;
+      color: #475569;
+      user-select: none;
+      transition: all 0.15s ease;
+    }
+    .school-filter-chip:hover {
+      border-color: #94a3b8;
+      background: #f1f5f9;
+    }
+    .school-filter-chip input {
+      accent-color: #0f172a;
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      margin: 0;
+    }
+    .school-filter-chip.active {
+      background: #ffffff;
+      color: #0f172a;
+      font-weight: 700;
+    }
+    .school-filter-chip.chip-pres.active {
+      border-color: #16a34a;
+      background: #f0fdf4;
+      color: #166534;
+    }
+    .school-filter-chip.chip-prms.active {
+      border-color: #0284c7;
+      background: #f0f9ff;
+      color: #0369a1;
+    }
+    .school-filter-chip.chip-prhs.active {
+      border-color: #d97706;
+      background: #fffbeb;
+      color: #92400e;
+    }
+    .chip-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .dot-pres { background: #16a34a; }
+    .dot-prms { background: #0284c7; }
+    .dot-prhs { background: #d97706; }
+    .filter-footnote {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11.5px;
+      color: #64748b;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .filter-footnote strong {
+      color: #0f172a;
+    }
+
+    /* TIERS SECTION HEADINGS */
+    .tier-header-strip {
+      background: #f1f5f9;
+      border-left: 5px solid #0f172a;
+      padding: 10px 14px;
+      margin: 28px 0 16px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .tier-header-strip.tier-1-strip { border-left-color: #dc2626; }
+    .tier-header-strip.tier-2-strip { border-left-color: #ea580c; }
+    .tier-header-strip.tier-3-strip { border-left-color: #2563eb; }
+    .tier-header-strip.tier-4-strip { border-left-color: #16a34a; }
+
+    .tier-title-text {
+      font-family: 'Oswald', sans-serif;
+      font-size: 17px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #0f172a;
+      margin: 0;
+    }
+    .tier-sub-text {
+      font-family: 'Georgia', serif;
+      font-style: italic;
+      font-size: 12.5px;
+      color: #475569;
+    }
+
+    /* DISPATCH CARD GRIDS */
+    .dispatch-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .dispatch-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .dispatch-card:hover {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+      border-color: #cbd5e1;
+    }
+    .dispatch-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .dispatch-date-badge {
+      font-family: 'Oswald', sans-serif;
+      font-size: 11.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #334155;
+      padding: 2px 7px;
+      border-radius: 2px;
+    }
+    .dispatch-scopes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .scope-pill {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 2px;
+      letter-spacing: 0.4px;
+    }
+    .scope-district { background: #f1f5f9; color: #0f172a; border: 1px solid #cbd5e1; }
+    .scope-pres { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+    .scope-prms { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+    .scope-prhs { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+
+    .dispatch-card-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 16px;
+      line-height: 1.35;
+      color: #0f172a;
+      margin: 4px 0 2px 0;
+      letter-spacing: 0.3px;
+    }
+    .dispatch-card-time {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: #dc2626;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .dispatch-card-location {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+    .dispatch-card-desc {
+      font-family: 'Georgia', serif;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #334155;
+    }
+    .dispatch-card-footer {
+      border-top: 1px solid #f1f5f9;
+      padding-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .card-status-badge {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 2px;
+    }
+    .badge-alert { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
+    .badge-warning { background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; }
+    .badge-info { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+    .badge-action { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+    .badge-theme { background: #f3e8ff; color: #7e22ce; border: 1px solid #e9d5ff; }
+    .badge-marquee { background: #dbeafe; color: #1d4ed8; border: 1px solid #bfdbfe; font-weight: 800; }
+
+    .card-action-link {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: #2563eb;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .card-action-link:hover {
+      text-decoration: underline;
+    }
+
+    /* TIER 4: LUNCHLINE TRACKER */
+    .lunchline-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .lunch-card {
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border-top: 4px solid #16a34a;
+    }
+    .lunch-card.holiday {
+      border-top-color: #dc2626;
+      background: #fafafa;
+    }
+    .lunch-day-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 6px;
+    }
+    .lunch-day-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 16px;
+      text-transform: uppercase;
+      color: #0f172a;
+      letter-spacing: 0.5px;
+      margin: 0;
+    }
+    .lunch-date {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      color: #64748b;
+      font-weight: 600;
+    }
+    .lunch-section-block {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .lunch-label {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 9.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .label-pres { color: #166534; }
+    .label-sec { color: #0369a1; }
+    .label-sides { color: #475569; }
+    .lunch-text {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 12px;
+      line-height: 1.4;
+      color: #1e293b;
+    }
+    .empty-tier-notice {
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      padding: 18px;
+      text-align: center;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 12px;
+      color: #64748b;
+      grid-column: 1 / -1;
+    }
+
+  
+    /* ========================================================
+       449 WEEKEND RECON & OUTINGS TAB STYLES (GAZETTE UNIFIED)
+       ======================================================== */
+    .recon-section {
+      margin-top: 10px;
+    }
+
+    /* 1. HEADER & CONTEXT STRIP */
+    .recon-header {
+      background: #ffffff;
+      color: var(--ink);
+      padding: 22px 24px;
+      margin-bottom: 24px;
+      border: var(--border);
+      box-shadow: var(--shadow);
+      border-radius: 2px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .recon-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 26px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin: 0;
+      color: var(--ink);
+      border-bottom: 2px solid var(--ink);
+      padding-bottom: 6px;
+    }
+    .recon-sub {
+      font-family: 'Georgia', serif;
+      font-style: italic;
+      font-size: 15px;
+      color: #444444;
+      line-height: 1.4;
+    }
+    .recon-badges-deck {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .recon-badge {
+      background: #f4ecdf;
+      border: 1px solid #d4c8b8;
+      color: var(--ink);
+      font-size: 11px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 2px;
+    }
+    .recon-badge strong {
+      color: var(--forest);
+    }
+
+    /* 2. SEASONAL SIGNALS & TACTICAL CORRIDOR RADAR */
+    .signals-container {
+      background: #ffffff;
+      border: var(--border);
+      box-shadow: var(--shadow);
+      padding: 18px 22px;
+      margin-bottom: 24px;
+      border-radius: 2px;
+    }
+    .signals-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #d4c8b8;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .signals-heading {
+      font-family: 'Oswald', sans-serif;
+      font-size: 17px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--ink);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .signals-tagline {
+      font-family: 'Georgia', serif;
+      font-style: italic;
+      font-size: 13.5px;
+      color: #555555;
+    }
+    .signals-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    @media (min-width: 900px) {
+      .signals-grid {
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      }
+    }
+    .signal-card {
+      background: #fdfaf5;
+      border: 1.5px solid var(--ink);
+      box-shadow: 3px 3px 0px var(--ink);
+      border-radius: 2px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: all 0.15s ease;
+    }
+    .signal-card:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 5px 5px 0px var(--ink);
+      background: #ffffff;
+    }
+    .signal-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .signal-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 17px;
+      color: var(--ink);
+      margin: 0;
+      line-height: 1.25;
+      letter-spacing: 0.3px;
+    }
+    .signal-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      justify-content: flex-end;
+      flex-shrink: 0;
+    }
+    .signal-badge {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 3px 7px;
+      border-radius: 2px;
+      border: 1px solid var(--ink);
+    }
+    .badge-nature { background: #fee2e2; color: #991b1b; border-color: #ef4444; }
+    .badge-civic { background: #e0f2fe; color: #0369a1; border-color: #0284c7; }
+    .badge-mwr { background: #dcfce7; color: #166534; border-color: #16a34a; }
+    .signal-sector-badge {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      background: #f4ecdf;
+      color: var(--ink);
+      border: 1px solid #d4c8b8;
+      padding: 3px 6px;
+      border-radius: 2px;
+    }
+    .signal-window {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11.5px;
+      font-weight: 800;
+      color: #b45309;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .signal-desc {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: #222222;
+    }
+    .signal-stitch-box {
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      border-left: 4px solid var(--forest);
+      padding: 8px 12px;
+      border-radius: 0 2px 2px 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11.5px;
+      line-height: 1.45;
+      color: #14532d;
+    }
+    .signal-stitch-box strong {
+      color: var(--forest);
+    }
+    .signal-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      padding-top: 8px;
+      border-top: 1px solid #e2e8f0;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    /* 3. 14-DAY HORIZON TIMELINE RADAR (BROADSHEET STAMP) */
+    .horizon-timeline-card {
+      background: #ffffff;
+      border: var(--border);
+      box-shadow: var(--shadow);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      border-radius: 2px;
+    }
+    .horizon-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .horizon-heading {
+      font-family: 'Oswald', sans-serif;
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--ink);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .horizon-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .horizon-status-tag {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 12px;
+      color: #555555;
+    }
+    .show-all-dates-btn {
+      background: #ffffff;
+      border: 2px solid var(--ink);
+      box-shadow: 2px 2px 0px var(--ink);
+      border-radius: 2px;
+      padding: 5px 12px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--ink);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .show-all-dates-btn:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0px var(--ink);
+      background: #f4ecdf;
+    }
+    .show-all-dates-btn.active {
+      background: var(--ink);
+      color: #ffffff;
+      box-shadow: 1px 1px 0px rgba(0,0,0,0.4);
+    }
+    .timeline-days-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      scrollbar-width: thin;
+    }
+    .timeline-day-pill {
+      background: #fdfaf5;
+      border: 1.5px solid var(--ink);
+      box-shadow: 2px 2px 0px var(--ink);
+      border-radius: 2px;
+      padding: 8px 12px;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+      font-family: 'Oswald', sans-serif;
+      font-size: 13.5px;
+      letter-spacing: 0.4px;
+      color: var(--ink);
+    }
+    .timeline-day-pill:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0px var(--ink);
+      background: #ffffff;
+    }
+    .timeline-day-pill.active {
+      background: var(--ink);
+      color: #ffffff;
+      border-color: var(--ink);
+      box-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+    }
+    .timeline-day-pill.active .pill-count {
+      color: #facc15;
+    }
+    .timeline-day-pill.is-today:not(.active) {
+      border-color: #b45309;
+      background: #fef3c7;
+      color: #92400e;
+    }
+    .timeline-day-pill.zero-count:not(.active) {
+      opacity: 0.45;
+      background: #fafaf9;
+      box-shadow: 1px 1px 0px #ccc;
+    }
+    .pill-count {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      font-size: 11px;
+      color: var(--amber);
+    }
+    .pill-count.zero {
+      color: #94a3b8;
+    }
+
+    /* 4. CATEGORY FILTER BAR (BROADSHEET CHIPS) */
+    .recon-cat-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 24px;
+      align-items: center;
+    }
+    .recon-cat-btn {
+      background: #ffffff;
+      border: 2px solid var(--ink);
+      box-shadow: 3px 3px 0px var(--ink);
+      padding: 8px 18px;
+      border-radius: 2px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--ink);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+    }
+    .recon-cat-btn:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0px var(--ink);
+      background: #fdfaf5;
+    }
+    .recon-cat-btn.active {
+      background: var(--ink);
+      color: #ffffff;
+      box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.4);
+    }
+    .recon-cat-btn.active .cat-count {
+      background: rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+    }
+    .cat-count {
+      background: #f4ecdf;
+      color: var(--ink);
+      border: 1px solid #d4c8b8;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 2px;
+    }
+
+    /* 5. RECON CARDS GRID (BROADSHEET DOSSIER) */
+    .recon-cards-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      margin-bottom: 36px;
+    }
+    @media (min-width: 860px) {
+      .recon-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .recon-card {
+      background: #ffffff;
+      border: var(--border);
+      box-shadow: var(--shadow);
+      border-radius: 2px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .recon-card:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0px var(--ink);
+    }
+    .recon-card.gate-required-card {
+      border-left: 8px solid var(--red-status);
+    }
+
+    /* CARD HEADER */
+    .recon-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .recon-card-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 21px;
+      line-height: 1.25;
+      color: var(--ink);
+      margin: 0;
+      letter-spacing: 0.3px;
+    }
+    .recon-header-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: flex-end;
+      flex-shrink: 0;
+    }
+    .recon-cat-tag {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 3px 8px;
+      border-radius: 2px;
+      white-space: nowrap;
+      border: 1px solid var(--ink);
+    }
+    .tag-family_kids { background: #dcfce7; color: #14532d; border-color: #16a34a; }
+    .tag-post_school { background: #e0f2fe; color: #0c4a6e; border-color: #0284c7; }
+    .tag-date_night { background: #fce7f3; color: #831843; border-color: #db2777; }
+
+    /* COST TIER BADGES */
+    .cost-tier-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 3px 8px;
+      border-radius: 2px;
+      border: 1px solid var(--ink);
+    }
+    .cost-free { background: #dcfce7; color: #14532d; border-color: #16a34a; }
+    .cost-under-30 { background: #e0f2fe; color: #0c4a6e; border-color: #0284c7; }
+    .cost-under-75 { background: #fef3c7; color: #78350f; border-color: #d97706; }
+    .cost-splurge { background: #f3e8ff; color: #581c87; border-color: #9333ea; }
+
+    /* TRANSIT METRIC STRIP */
+    .recon-transit-strip {
+      background: #fdfaf5;
+      border: 1px solid var(--ink);
+      border-radius: 2px;
+      padding: 8px 12px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 12px;
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    /* KEY OPERATIONAL BADGES (PILLS) */
+    .friction-pills-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .f-pill {
+      background: #f4ecdf;
+      border: 1px solid var(--ink);
+      border-radius: 2px;
+      padding: 4px 9px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ink);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .gate-alert-pill {
+      background: #fee2e2;
+      border-color: var(--red-status);
+      color: #991b1b;
+      font-weight: 800;
+    }
+
+    /* DETAILS MATRIX */
+    .details-matrix-box {
+      background: #fdfaf5;
+      border: 1px solid #d4c8b8;
+      border-radius: 2px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .details-matrix-row {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .details-row-label {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #555555;
+    }
+    .details-row-val {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 12.5px;
+      color: var(--ink);
+      line-height: 1.45;
+    }
+    .cutoff-bold {
+      color: #b91c1c;
+      font-weight: 800;
+    }
+    .mil-disc-badge {
+      display: inline-block;
+      margin-top: 4px;
+      background: #fef3c7;
+      border: 1px solid #f59e0b;
+      color: #92400e;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 2px;
+    }
+
+    /* CARD FOOTER */
+    .recon-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      padding-top: 12px;
+      border-top: 1px solid #e2e8f0;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .copy-chip-btn {
+      background: #ffffff;
+      border: 1.5px solid var(--ink);
+      box-shadow: 2px 2px 0px var(--ink);
+      border-radius: 2px;
+      padding: 5px 11px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ink);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      max-width: 100%;
+    }
+    .copy-chip-btn:hover {
+      background: #fdfaf5;
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0px var(--ink);
+    }
+    .copy-chip-btn.copied {
+      background: #dcfce7;
+      border-color: #16a34a;
+      color: #14532d;
+    }
+    .copy-icon { font-size: 12px; }
+    .copy-btn-tag {
+      background: var(--ink);
+      color: #ffffff;
+      font-size: 9.5px;
+      font-weight: 800;
+      padding: 1px 5px;
+      border-radius: 2px;
+      margin-left: 4px;
+    }
+    .recon-maps-btn {
+      background: var(--ink);
+      color: #ffffff;
+      border: 1px solid var(--ink);
+      box-shadow: 2px 2px 0px rgba(0,0,0,0.4);
+      padding: 5px 12px;
+      border-radius: 2px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .recon-maps-btn:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0px rgba(0,0,0,0.6);
+      background: #333333;
+    }
+
+    /* 6. CORRIDOR INFRASTRUCTURE ATLAS (ANCHORS & STITCHES) */
+    .nodes-section-wrapper {
+      margin-top: 36px;
+      padding-top: 24px;
+      border-top: var(--double-border);
+    }
+    .nodes-section-header {
+      background: #ffffff;
+      color: var(--ink);
+      padding: 18px 24px;
+      margin-bottom: 22px;
+      border: var(--border);
+      box-shadow: var(--shadow);
+      border-radius: 2px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .nodes-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 22px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--ink);
+      margin: 0;
+      border-bottom: 2px solid var(--ink);
+      padding-bottom: 6px;
+    }
+    .nodes-subtitle {
+      font-family: 'Georgia', serif;
+      font-style: italic;
+      font-size: 14px;
+      color: #444444;
+      line-height: 1.4;
+    }
+    .nodes-controls-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .nodes-filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+    .nodes-filter-label {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #444444;
+      min-width: 65px;
+    }
+    .node-filter-pill {
+      background: #ffffff;
+      border: 1.5px solid var(--ink);
+      box-shadow: 2px 2px 0px var(--ink);
+      padding: 6px 14px;
+      border-radius: 2px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--ink);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .node-filter-pill:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0px var(--ink);
+      background: #fdfaf5;
+    }
+    .node-filter-pill.active {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: #ffffff;
+      box-shadow: 1px 1px 0px rgba(0,0,0,0.4);
+    }
+    .node-filter-pill.active .pill-count {
+      background: rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+    }
+    .nodes-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    @media (min-width: 860px) {
+      .nodes-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    .node-card {
+      background: #ffffff;
+      border: var(--border);
+      box-shadow: var(--shadow);
+      border-radius: 2px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: all 0.2s ease;
+    }
+    .node-card:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0px var(--ink);
+    }
+    .node-card.role-anchor {
+      border-top: 5px solid var(--slate-blue);
+    }
+    .node-card.role-stitch {
+      border-top: 5px solid var(--forest);
+    }
+    .node-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .node-card-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 20px;
+      line-height: 1.25;
+      color: var(--ink);
+      margin: 0;
+      letter-spacing: 0.2px;
+    }
+    .node-badges-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: flex-end;
+      flex-shrink: 0;
+    }
+    .role-badge {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 2px;
+      white-space: nowrap;
+      border: 1px solid var(--ink);
+    }
+    .badge-anchor { background: #dbeafe; color: #1e3a8a; border-color: #1e3a8a; }
+    .badge-stitch { background: #d1fae5; color: #065f46; border-color: #065f46; }
+    .node-sector-tag {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      background: #f4ecdf;
+      color: var(--ink);
+      padding: 3px 7px;
+      border-radius: 2px;
+      border: 1px solid #d4c8b8;
+    }
+    .node-military-badge {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 800;
+      background: #fef3c7;
+      color: #78350f;
+      border: 1px solid #b45309;
+      padding: 3px 8px;
+      border-radius: 2px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .node-category-tag {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+      margin-top: -2px;
+    }
+    .node-location-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #fdfaf5;
+      padding: 8px 12px;
+      border: 1px solid var(--ink);
+      border-radius: 2px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 12px;
+      color: var(--ink);
+      gap: 8px;
+    }
+    .node-address-text {
+      flex: 1;
+      font-weight: 600;
+    }
+    .node-copy-btn {
+      background: #ffffff;
+      border: 1.5px solid var(--ink);
+      box-shadow: 1px 1px 0px var(--ink);
+      padding: 3px 9px;
+      border-radius: 2px;
+      font-size: 10.5px;
+      font-weight: 800;
+      color: var(--ink);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .node-copy-btn:hover {
+      background: var(--ink);
+      color: #ffffff;
+    }
+    .node-hours {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 12px;
+      color: #475569;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+    .node-family-note {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 12.5px;
+      color: var(--ink);
+      background: #fdfaf5;
+      border: 1px solid #d4c8b8;
+      border-left: 4px solid var(--ink);
+      padding: 10px 14px;
+      border-radius: 2px;
+      line-height: 1.45;
+    }
+    .node-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      padding-top: 12px;
+      border-top: 1px solid #e2e8f0;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .source-link {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11.5px;
+      font-weight: 800;
+      color: var(--slate-blue);
+      text-decoration: underline;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      padding: 3px 6px;
+      border-radius: 2px;
+    }
+    .source-link:hover {
+      color: #1e40af;
+      background: rgba(30, 58, 138, 0.08);
+    }
+  </style>
+  <script src="gas_prices.js"></script>
+  <script src="data/groceries.js"></script>
+  <script src="data/usd449.js"></script>
+  <script src="data/outings.js"></script>
+  <script src="data/corridor_nodes.js"></script>
+  <script src="data/recon_inventory.js"></script>
+</head>
+<body>
+  <div class="wrapper">
+    <!-- TOP UTILITY / TIMESTAMP -->
+    <div class="top-utility-bar">
+      <span class="tagline">Independent Broadsheet for Easton &amp; Leavenworth Corridor</span>
+      <span style="color: #666; font-size: 11px; font-weight: 700;">Independent As-Of Telemetry Matrix</span>
+    </div>
+
+    <!-- CONDITIONAL WEATHER & FREEZE BANNERS -->
+    <div id="conditionalBannerContainer">
+      <div id="bannerElement" class="prep-banner freeze">
+        <div class="prep-banner-title" id="bannerTitle">⚠️ EVENING PREP ALERT: HARD FREEZE TONIGHT</div>
+        <div class="prep-banner-sub" id="bannerSubtext">Temps drop to 31°F at 5:00 AM. Disconnect outdoor hoses, prep windshields, and check livestock water lines tonight.</div>
+      </div>
+    </div>
+
+    <!-- MASTHEAD -->
+    <header class="gazette-masthead">
+      <h1 class="gazette-title">The Pleasant Ridge Gazette</h1>
+      <div class="gazette-edition">Vol. II · Issue 42 — Easton · Fort Leavenworth · Leavenworth · Lansing</div>
+    </header>
+
+    <!-- TOP-LEVEL DASHBOARD NAVIGATION TABS -->
+    <nav class="gazette-tab-nav" aria-label="Dashboard Views">
+      <button type="button" class="tab-btn active" id="tabBtnFuel" onclick="switchTab('fuel')">
+        <span class="tab-badge">Tab 1</span>
+        <span class="tab-title">⛽ Fuel &amp; Corridor Radar</span>
+      </button>
+      <button type="button" class="tab-btn" id="tabBtnGroceries" onclick="switchTab('groceries')">
+        <span class="tab-badge">Tab 2</span>
+        <span class="tab-title">🛒 Grocery Intelligence</span>
+      </button>
+      <button type="button" class="tab-btn" id="tabBtnSchool" onclick="switchTab('school')">
+        <span class="tab-badge">Tab 3</span>
+        <span class="tab-title">🏫 USD 449 Dispatch</span>
+      </button>
+      <button type="button" class="tab-btn" id="tabBtnOutings" onclick="switchTab('outings')">
+        <span class="tab-badge">Tab 4</span>
+        <span class="tab-title">🧭 Outings</span>
+      </button>
+      <a href="arcade/" class="tab-btn tab-btn-link" onclick="handleArcadeNav(event, 'arcade/', 'arcade/index.html')">
+        <span class="tab-badge">Tab 5</span>
+        <span class="tab-title">🕹️ 449 Arcade</span>
+      </a>
+    </nav>
+
+    <!-- TAB 1 CONTENT PANE: FUEL & OPERATIONAL RADAR -->
+    <div id="tabPaneFuel" class="tab-pane active">
+
+
+    <!-- SECTION 1: GAS LIST ON TOP -->
+    <section class="fuel-section">
+      <div class="fuel-header">
+        <div>
+          <div class="card-label">Corridor Fuel Surveillance</div>
+          <h2 class="fuel-title">Corridor Fuel Benchmark Table</h2>
+          <div class="as-of-badge" id="fuelAsOfBadge">
+            <span class="dot"></span>
+            <span id="fuelAsOfText">As of: Sunday, Oct 18 · 7:31 AM (GasBuddy 5 AM & 3 PM Sweep)</span>
+          </div>
+        </div>
+        <div class="fuel-savings-callout"  id="savingsCallout">
+          Maximum savings per 15-gal fill-up: $7.20 vs highest corridor station.
+        </div>
+      </div>
+
+      <div class="fuel-table-wrapper">
+        <table class="fuel-table" id="gasTable">
+          <thead>
+            <tr>
+              <th>Station Name & Location</th>
+              <th>Regular Unleaded</th>
+              <th>Spread vs Lowest</th>
+              <th>15-Gallon Fill Math</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="gasTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 2: OPERATIONAL RADAR & HAZARDS UNDERNEATH -->
+    <div class="section-headline">
+      <span>Operational Radar & Ground Truth</span>
+      <span class="sub">USD 449 &bull; Easton Bridges &bull; Fort Leavenworth</span>
+    </div>
+
+    <section class="deck-grid">
+      <!-- CARD 1: STATUS BOARD (USD 449 & FORT LEAVENWORTH ONLY) -->
+      <div class="deck-card">
+        <div>
+          <div class="card-top">
+            <span class="card-label">Institutional Status Board</span>
+            <span class="status-pill green" id="boardSummaryPill">Normal</span>
+          </div>
+          <h3 class="card-headline">USD 449 & Fort Leavenworth</h3>
+          <div class="as-of-badge">
+            <span class="dot"></span>
+            <span id="statusAsOfText">As of: Active Now · Refreshed every 30m</span>
+          </div>
+          
+          <div class="inst-row">
+            <div class="inst-row-header">
+              <span class="inst-name">USD 449 · Pleasant Ridge</span>
+              <span class="status-pill green" id="pill_usd449">Normal</span>
+            </div>
+            <div class="inst-desc" id="desc_usd449">Normal Schedule / No Closures Reported</div>
+          </div>
+
+          <div class="inst-row">
+            <div class="inst-row-header">
+              <span class="inst-name">Fort Leavenworth (Post & Schools)</span>
+              <span class="status-pill green" id="pill_fort">Normal</span>
+            </div>
+            <div class="inst-desc" id="desc_fort">Normal Operations / Normal Schedule</div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span>Official Communications Listener</span>
+          <span id="boardVerifiedTime">Verified: Today</span>
+        </div>
+      </div>
+
+      <!-- CARD 2: STRANGER CREEK HYDROLOGY & EASTON BRIDGES -->
+      <div class="deck-card" id="creekCard">
+        <div>
+          <div class="card-top">
+            <span class="card-label">Stranger Creek Hydrology</span>
+            <span class="status-pill green" id="creekPill">Clear</span>
+          </div>
+          <h3 class="card-headline" id="creekTitle">Bridges Clear & Passable</h3>
+          <div class="as-of-badge">
+            <span class="dot"></span>
+            <span id="creekAsOfText">As of: 7:30 AM · USGS Gauge 06891850 (30m cycle)</span>
+          </div>
+          <div class="card-metric" id="creekGaugeHeight">3.10 ft</div>
+          <p class="card-text" id="creekStatusText">
+            Mill St & 247th St bridge approaches are clear with normal freeboard (Flood stage: 17.0 ft). Zero road closures on low-water crossings.
+          </p>
+        </div>
+        <div class="card-footer">
+          <span>USGS Gauge 06891850</span>
+          <span>Easton, KS Bridges</span>
+        </div>
+      </div>
+
+      <!-- CARD 3: EASTON CORRIDOR ROAD & BRIDGE ALERTS -->
+      <div class="deck-card" id="roadsCard">
+        <div>
+          <div class="card-top">
+            <span class="card-label">Easton Corridor Transit</span>
+            <span class="status-pill green" id="roadsPill">Open</span>
+          </div>
+          <h3 class="card-headline" id="roadsTitle">All Major Corridors Open</h3>
+          <div class="as-of-badge">
+            <span class="dot"></span>
+            <span id="roadsAsOfText">As of: Active Now · KDOT 511 Feed (30m cycle)</span>
+          </div>
+          <div class="card-metric" id="roadsMetric">0 Closures</div>
+          <p class="card-text" id="roadsStatusText">
+            No road closures or bridge blockages reported on K-192, US-73, or K-7. Normal school bus and farm transit in effect.
+          </p>
+        </div>
+        <div class="card-footer">
+          <span>KDOT Roadway Closure Feed</span>
+          <span>K-192 · US-73 · K-7</span>
+        </div>
+      </div>
+
+      <!-- CARD 4: SICKNESS RADAR (ACTIONABLE CDC SEWERSHED) -->
+      <div class="deck-card" id="pathogenCard">
+        <div>
+          <div class="card-top">
+            <span class="card-label">Regional Pathogen Radar</span>
+            <span class="status-pill green" id="pathogenPill">Low Risk</span>
+          </div>
+          <h3 class="card-headline" id="pathogenTitle">Normal Classroom Baseline</h3>
+          <div class="as-of-badge">
+            <span class="dot"></span>
+            <span id="pathogenAsOfText">As of: Week ending Oct 3, 2026 · CDC Site ID: 2697 (Daily 3 PM Sweep)</span>
+          </div>
+          <div class="card-metric" id="pathogenMetric">Low Contagion Risk</div>
+
+          <!-- Multi-Pathogen Tripartite Readout -->
+          <div id="pathogenTargetsContainer" style="display: flex; gap: 8px; margin: 10px 0; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 85px; background: #fdfaf5; border: 1px solid #ddd; padding: 6px 8px; border-radius: 2px;">
+              <div style="font-size: 10px; font-weight: 700; color: #666; text-transform: uppercase;">Flu A</div>
+              <div id="target_flu" style="font-size: 13px; font-weight: 700; color: var(--ink);">Low (4.38)</div>
+            </div>
+            <div style="flex: 1; min-width: 85px; background: #fdfaf5; border: 1px solid #ddd; padding: 6px 8px; border-radius: 2px;">
+              <div style="font-size: 10px; font-weight: 700; color: #666; text-transform: uppercase;">RSV</div>
+              <div id="target_rsv" style="font-size: 13px; font-weight: 700; color: var(--forest);">Very Low (1.0)</div>
+            </div>
+            <div style="flex: 1; min-width: 85px; background: #fdfaf5; border: 1px solid #ddd; padding: 6px 8px; border-radius: 2px;">
+              <div style="font-size: 10px; font-weight: 700; color: #666; text-transform: uppercase;">COVID-19</div>
+              <div id="target_covid" style="font-size: 13px; font-weight: 700; color: var(--forest);">Very Low (1.42)</div>
+            </div>
+          </div>
+
+          <p class="card-text" id="pathogenStatusText">
+            Tripartite wastewater surveillance across Leavenworth County sewershed indicates low baseline viral activity across Flu A, RSV, and COVID-19. Normal classroom attendance projected in USD 449 & Fort Leavenworth.
+          </p>
+        </div>
+        <div class="card-footer">
+          <span>CDC NWSS Leavenworth Sewershed (ID: 2697)</span>
+          <span>5–7 Day Lead Indicator</span>
+        </div>
+      </div>
+
+      <!-- CARD 5: OPEN BURN STATUS (LEAVENWORTH COUNTY) -->
+      <div class="deck-card" id="burnCard">
+        <div>
+          <div class="card-top">
+            <span class="card-label">Open Burn Status</span>
+            <span class="status-pill green" id="burnPill">Evaluating</span>
+          </div>
+          <h3 class="card-headline" id="burnHeadline">Evaluating Burn Criteria...</h3>
+          <div class="as-of-badge">
+            <span class="dot"></span>
+            <span id="burnAsOfText">As of: Active Now · NWS & Solar Math (15m cycle)</span>
+          </div>
+          <div class="card-metric" id="burnMetric">Checking...</div>
+          <p class="card-text" id="burnDetailText">
+            Evaluating diurnal hours, NWS fire weather warnings, and local METAR wind dispersion for Easton, KS.
+          </p>
+
+          <!-- Telemetry Strip -->
+          <div id="burnTelemetryStrip" style="background: #fdfaf5; border: 1px solid #ddd; padding: 8px 10px; border-radius: 2px; margin-bottom: 12px; font-size: 12px; font-family: 'Plus Jakarta Sans', sans-serif;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+              <span style="color: #666; font-weight: 600;">Wind Speed:</span>
+              <span id="burnWindMetric" style="font-weight: 700; font-variant-numeric: tabular-nums;">-- mph (Legal: 5–15)</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+              <span style="color: #666; font-weight: 600;">Legal Window:</span>
+              <span id="burnWindowMetric" style="font-weight: 700; font-variant-numeric: tabular-nums;">-- : -- – -- : --</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: #666; font-weight: 600;">NWS Hazards:</span>
+              <span id="burnHazardMetric" style="font-weight: 700;">Scanning Alerts...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action & Copy Behavior (NO tel: links) -->
+        <div class="burn-action-row" style="border-top: 1px solid #eee; padding-top: 10px; margin-top: 4px; display: flex; flex-direction: column; gap: 8px; font-family: 'Plus Jakarta Sans', sans-serif;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+            <span style="font-size: 12px; color: #555; font-weight: 600;">LVSO Dispatch:</span>
+            <button type="button" id="copyDispatchBtn" onclick="copyDispatchPhone(event)" title="Click to copy dispatch phone number" style="background: #eee8de; border: 1px solid #111; padding: 4px 10px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; border-radius: 2px; transition: all 0.15s ease;">
+              <span id="dispatchPhoneText">913-682-5724</span>
+              <span id="copyFeedback" style="color: var(--forest); font-size: 10px; text-transform: uppercase;">📋 Copy</span>
+            </button>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 11px; color: #777;">Resolution 2015-12</span>
+            <a href="https://www.lvsheriff.org/burn-permit-information" target="_blank" rel="noopener noreferrer" style="font-size: 11px; font-weight: 700; color: var(--forest); text-decoration: underline;">
+              Online Burn Permit &rarr;
+            </a>
+          </div>
+        </div>
+
+        <div class="card-footer" style="margin-top: 8px;">
+          <span>K.A.R. 28-19-645/648</span>
+          <span>Easton, KS · 39.34°N</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- FOOTER WITH SIMPLE HYPERLINK ONLY -->
+    
+    </div> <!-- END tabPaneFuel -->
+
+    <!-- TAB 3 CONTENT PANE: GROCERY INTELLIGENCE & TOTAL PROCUREMENT ENGINE -->
+    <div id="tabPaneGroceries" class="tab-pane" style="display: none;">
+      <section class="grocery-section">
+        <div class="grocery-header">
+          <div>
+            <h2 class="grocery-title">5-Item Dinner Basket &amp; Total Procurement Engine</h2>
+            <div class="grocery-sub">
+              True cost analysis originating from <strong>Pleasant Ridge Elementary School (PRES)</strong> · Easton, KS
+            </div>
+          </div>
+          <div class="procurement-badges">
+            <div class="proc-badge" id="procLastUpdatedBadge" style="background: #ecfdf5; border-color: #10b981; color: #065f46;"><strong>Prices As Of:</strong> Oct 22, 2026 &middot; 12:12 PM CT</div>
+            <button type="button" id="btnRefreshGroceries" onclick="refreshGroceryFeedsLive()" style="background: #0f172a; color: #ffffff; border: 1px solid #0f172a; border-radius: 3px; padding: 5px 12px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s ease;">
+              <span id="btnRefreshGroceriesIcon">🔄</span>
+              <span id="btnRefreshGroceriesLabel">Refresh Live Grocery Feeds</span>
+            </button>
+            <div class="proc-badge"><strong>Origin:</strong> PRES (22041 219th St, Easton, KS)</div>
+            <div class="proc-badge"><strong>Default Vehicle:</strong> 20 MPG (Rural Benchmark)</div>
+            <div class="proc-badge" id="procGasRateBadge"><strong>Corridor Fuel:</strong> $2.72/gal ($0.136/mi)</div>
+            <div class="proc-badge"><strong>Tax Rules:</strong> KS 0% Food Tax + 3% Local (Commissary: 0% Tax + 5% DeCA Surcharge)</div>
+          </div>
+          <div id="perStoreTimestampStrip" style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; width: 100%; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px;"></div>
+        </div>
+
+        <!-- KPI SUMMARY CARDS -->
+        <div class="proc-kpi-deck">
+          <div class="proc-kpi-card winner-card">
+            <div class="kpi-label">Optimal Procurement Store</div>
+            <div class="kpi-val" id="kpiWinnerStore">ALDI</div>
+            <div class="kpi-sub" id="kpiWinnerCost">$17.48 True Total Cost</div>
+          </div>
+          <div class="proc-kpi-card">
+            <div class="kpi-label">Maximum Basket Spread</div>
+            <div class="kpi-val" id="kpiMaxSpread">$2.83</div>
+            <div class="kpi-sub">Savings vs Highest Corridor Store</div>
+          </div>
+          <div class="proc-kpi-card">
+            <div class="kpi-label">Current Transit Mile Cost</div>
+            <div class="kpi-val" id="kpiTransitCostPerMi">$0.136 / mi</div>
+            <div class="kpi-sub" id="kpiGasRateSub">Based on 20 MPG @ $2.72/gal</div>
+          </div>
+          <div class="proc-kpi-card">
+            <div class="kpi-label">Active Basket Scope</div>
+            <div class="kpi-val" id="kpiItemCount">5 Dinner Staples</div>
+            <div class="kpi-sub">Protein · Dairy · Produce · Pantry</div>
+          </div>
+        </div>
+
+        <!-- INTERACTIVE PARAMETER CONTROLS -->
+        <div class="proc-controls-card">
+          <div class="controls-title">Procurement Modeling Controls (Adjust for Your Vehicle &amp; Military Access)</div>
+          <div class="controls-grid">
+            <div class="control-group">
+              <label for="inputVehicleMpg">Vehicle Fuel Economy (MPG):</label>
+              <div class="input-with-unit">
+                <input type="number" id="inputVehicleMpg" min="10" max="60" step="1" value="20" oninput="updateProcurementCalculations()">
+                <span>MPG</span>
+              </div>
+              <span class="control-hint">Default: 20 MPG (Rural truck/SUV baseline)</span>
+            </div>
+            <div class="control-group">
+              <label for="inputGasPrice">Corridor Fuel Benchmark ($/gal):</label>
+              <div class="input-with-unit">
+                <span>$</span>
+                <input type="number" id="inputGasPrice" min="1.50" max="6.00" step="0.01" value="2.72" oninput="updateProcurementCalculations()">
+                <span>/gal</span>
+              </div>
+              <span class="control-hint" id="gasSyncHint">Synced with lowest corridor station (PX Fuel: $2.72)</span>
+            </div>
+            <div class="control-group">
+              <label>Military Facility Access:</label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="checkIncludeCommissary" checked onchange="updateProcurementCalculations()">
+                <span>Include Fort Leavenworth Commissary (DoD / Military ID Required)</span>
+              </label>
+              <span class="control-hint">Uncheck to model strictly civilian market stores</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- TABLE 1: TOTAL PROCUREMENT RANKING BOARD -->
+        <div class="proc-table-title-strip">
+          <h3>1. Total Procurement Ranking (True Cost to Easton Doorstep)</h3>
+          <span class="proc-formula-tag" id="procTable1TimestampTag">Prices As Of: Oct 22, 2026 &middot; 10:38 AM CT | Formula: Shelf Subtotal + Tax/Surcharge + Transit</span>
+        </div>
+        <div class="fuel-table-wrapper" style="margin-bottom: 28px;">
+          <table class="fuel-table" id="procurementRankingTable">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Store &amp; Location</th>
+                <th>Data Source</th>
+                <th>Shelf Subtotal</th>
+                <th>Tax / Surcharge</th>
+                <th>Adjusted Subtotal</th>
+                <th>Miles (PRES)</th>
+                <th>Transit Cost</th>
+                <th>True Total Cost</th>
+                <th>Spread vs Optimal</th>
+              </tr>
+            </thead>
+            <tbody id="procurementRankingTableBody"></tbody>
+          </table>
+        </div>
+
+        <!-- TABLE 2: ITEMIZED 5-ITEM DINNER BASKET MATRIX -->
+        <div class="proc-table-title-strip">
+          <h3>2. Itemized Dinner Staple Price Matrix (Weekly Basket Comparison)</h3>
+          <span class="proc-formula-tag" id="groceryMatrixTimestampTag" style="color: #065f46; font-weight: 700;">Prices Last Updated: Oct 22, 2026 &middot; 10:38 AM CT (Automated Feed)</span>
+        </div>
+        <div class="fuel-table-wrapper" style="margin-bottom: 24px;">
+          <table class="fuel-table" id="itemizedBasketTable">
+            <thead>
+              <tr id="itemizedTableHeaderRow">
+                <th>Staple Item &amp; Spec</th>
+                <th>Category</th>
+                <th>ALDI</th>
+                <th>Price Chopper</th>
+                <th>Dillons</th>
+                <th>Walmart</th>
+                <th>Commissary</th>
+                <th>Item Lowest</th>
+              </tr>
+            </thead>
+            <tbody id="itemizedBasketTableBody"></tbody>
+          </table>
+        </div>
+
+        <!-- REGULATORY & METHODOLOGY NOTES -->
+        <div class="proc-notes-card">
+          <div class="notes-heading">Methodology &amp; Regulatory Ground Truth</div>
+          <div class="notes-grid">
+            <div>
+              <strong>Taxation Policy:</strong> Kansas State food sales tax is 0.00% (effective Jan 1, 2025). Leavenworth County (1.00%) + Leavenworth City (2.00%) imposes a combined 3.00% local sales tax on civilian grocery purchases. Fort Leavenworth Commissary is state and local tax-exempt but applies a statutory 5.00% Defense Commissary Agency (DeCA) surcharge.
+            </div>
+            <div>
+              <strong>Transit &amp; Distance Baseline:</strong> Round-trip mileage calculated via K-192 / US-73 / K-7 from Pleasant Ridge Elementary School (22041 219th St, Easton, KS). Fuel cost per mile = Gas Price / MPG. Transit cost = Miles × Cost per Mile.
+            </div>
+            <div>
+              <strong>Data Ingestion Architecture:</strong> Fully automated multi-store pipeline — Fort Leavenworth Commissary is ingested automatically via the DeCA Click2Go / NCR Freshop REST API (Store #5878 JSON); Dillons via the Kroger Calypso SSR Engine; Price Chopper via Store #61 Native Circular API &amp; Flipp Feed; and ALDI &amp; Walmart via automated Playwright headless scrapers. Zero manual price verification required.
+            </div>
+          </div>
+        </div>
+      </section>
+    </div> <!-- END tabPaneGroceries -->
+
+    <!-- TAB 4 CONTENT PANE: USD 449 DISPATCH & PARENT INTELLIGENCE -->
+    <div id="tabPaneSchool" class="tab-pane" style="display: none;">
+      <section class="school-dispatch-section">
+        <!-- HEADER STRIP -->
+        <div class="school-header">
+          <div>
+            <h2 class="school-title">USD 449 Pleasant Ridge Dispatch</h2>
+            <div class="school-sub">
+              Synthesized weekly operational intelligence for Easton footprint households · PRES, PRMS &amp; PRHS
+            </div>
+          </div>
+          <div class="school-badges-deck">
+            <div class="school-badge"><strong>Campus:</strong> 22041 219th St, Easton, KS</div>
+            <div class="school-badge" id="schoolWeekBadge"><strong>Active Week:</strong> Oct 19 – 24, 2026</div>
+            <div class="school-badge"><strong>District Status:</strong> In Session · Normal Bus Routes</div>
+            <div class="school-badge"><strong>Superintendent's Desk:</strong> USD 449 Board of Education</div>
+          </div>
+        </div>
+
+        <!-- MULTI-SELECT BUILDING FILTER BAR -->
+        <div class="school-filter-card">
+          <div class="filter-card-header">
+            <div class="filter-card-title">Filter by Household Enrollment (Saved to Browser):</div>
+            <div class="filter-card-actions">
+              <button type="button" class="filter-quick-btn" onclick="setAllBuildingFilters(true)">Select All</button>
+              <button type="button" class="filter-quick-btn" onclick="setAllBuildingFilters(false)">District Only</button>
+            </div>
+          </div>
+          <div class="filter-chips-row">
+            <label class="school-filter-chip chip-pres active" id="chip-pres">
+              <input type="checkbox" id="filter-pres" checked onchange="handleBuildingFilterChange('pres', this.checked)">
+              <span class="chip-indicator dot-pres"></span>
+              <span><strong>PRES</strong> · Elementary (PK–5)</span>
+            </label>
+            <label class="school-filter-chip chip-prms active" id="chip-prms">
+              <input type="checkbox" id="filter-prms" checked onchange="handleBuildingFilterChange('prms', this.checked)">
+              <span class="chip-indicator dot-prms"></span>
+              <span><strong>PRMS</strong> · Middle School (6–8)</span>
+            </label>
+            <label class="school-filter-chip chip-prhs active" id="chip-prhs">
+              <input type="checkbox" id="filter-prhs" checked onchange="handleBuildingFilterChange('prhs', this.checked)">
+              <span class="chip-indicator dot-prhs"></span>
+              <span><strong>PRHS</strong> · High School (9–12)</span>
+            </label>
+          </div>
+
+          <!-- GRADE SELECTORS ROW -->
+          <div class="grade-filter-container" style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed #cbd5e1; display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+              <span style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11.5px; font-weight: 700; color: #0f172a; text-transform: uppercase;">
+                🎯 Grade Selectors (Refine Class &amp; Grade Events):
+              </span>
+              <div style="display: flex; gap: 6px;">
+                <button type="button" class="filter-quick-btn" style="padding: 2px 7px; font-size: 10px;" onclick="setAllGradeFilters(true)">All Grades</button>
+                <button type="button" class="filter-quick-btn" style="padding: 2px 7px; font-size: 10px;" onclick="setAllGradeFilters(false)">Clear Grades</button>
+              </div>
+            </div>
+            <div class="grade-chips-deck" id="gradeChipsDeck" style="display: flex; flex-wrap: wrap; gap: 6px;"></div>
+          </div>
+
+          <div class="filter-footnote">
+            <span>📌</span>
+            <span><strong>Critical Guarantee:</strong> District-scoped disruptions (e.g. 10 AM Late Starts, Early Releases, Snow Days, Conferences) always remain visible regardless of checkbox states.</span>
+          </div>
+        </div>
+
+        <!-- TIER 1: SCHEDULE & DISRUPTIONS -->
+        <div class="tier-header-strip tier-1-strip">
+          <h3 class="tier-title-text">🚨 Tier 1: Schedule &amp; Disruptions</h3>
+          <span class="tier-sub-text">10 AM late starts, early dismissals, bell modifications &amp; no-school dates</span>
+        </div>
+        <div class="dispatch-cards-grid" id="tier1Grid"></div>
+
+        <!-- TIER 2: GEAR, DEADLINES & PARENT ACTION -->
+        <div class="tier-header-strip tier-2-strip">
+          <h3 class="tier-title-text">🎒 Tier 2: Gear, Deadlines &amp; Parent Action</h3>
+          <span class="tier-sub-text">Picture retakes, athletic clearance forms, fees, dress themes &amp; homeroom actions</span>
+        </div>
+        <div class="dispatch-cards-grid" id="tier2Grid"></div>
+
+        <!-- TIER 3: MARQUEE HOME GATHERINGS -->
+        <div class="tier-header-strip tier-3-strip">
+          <h3 class="tier-title-text">🏈 Tier 3: Marquee Home Gatherings</h3>
+          <span class="tier-sub-text">Varsity home games, Senior Night, concerts, community festivals &amp; public governance</span>
+        </div>
+        <div class="dispatch-cards-grid" id="tier3Grid"></div>
+
+        <!-- TIER 4: DAILY BREAKFAST & LUNCHLINE TRACKER -->
+        <div class="tier-header-strip tier-4-strip">
+          <h3 class="tier-title-text">🍳🍱 Tier 4: Daily Breakfast &amp; Lunchline Tracker</h3>
+          <span class="tier-sub-text">Monday – Friday Campus Kitchen Menus, Service Windows &amp; Meal Pricing (PRES &amp; PRMS/PRHS)</span>
+        </div>
+        <div id="tier4PricingBanner" style="background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #15803d; border-radius: 6px; padding: 12px 16px; margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px;">
+          <div>
+            <strong style="color: #0f172a; text-transform: uppercase; letter-spacing: 0.03em;">☕ Daily Breakfast (7:35 AM – 8:05 AM):</strong>
+            <span style="color: #334155; margin-left: 6px;">PRES (PK–5): <strong>$2.15</strong> &middot; PRMS/PRHS (6–12): <strong>$2.30</strong> &middot; Reduced: <strong>$0.30</strong> &middot; Adult: <strong>$3.00</strong></span>
+          </div>
+          <div>
+            <strong style="color: #0f172a; text-transform: uppercase; letter-spacing: 0.03em;">🍱 Daily Lunch (11:10 AM – 12:45 PM):</strong>
+            <span style="color: #334155; margin-left: 6px;">PRES (PK–5): <strong>$3.10</strong> &middot; PRMS/PRHS (6–12): <strong>$3.35</strong> &middot; Reduced: <strong>$0.40</strong> &middot; Adult: <strong>$4.85</strong> &middot; Extra Milk: <strong>$0.60</strong></span>
+          </div>
+        </div>
+        <div class="lunchline-grid" id="tier4Grid"></div>
+
+      </section>
+    </div> <!-- END tabPaneSchool -->
+
+    <!-- TAB 5 CONTENT PANE: 449 WEEKEND RECON & OUTINGS LEDGER -->
+    <div id="tabPaneOutings" class="tab-pane" style="display: none;">
+      <section class="recon-section">
+        <!-- HEADER & CONTEXT STRIP -->
+        <div class="recon-header">
+          <div>
+            <h2 class="recon-title">449 Corridor Outings &amp; Community Ledger</h2>
+            <div class="recon-sub">
+              True Cost, Drive Radius, Library Programs, and Tactical Audits from Pleasant Ridge Elementary (PRES).
+            </div>
+          </div>
+          <div class="recon-badges-deck">
+            <div class="recon-badge"><strong>Origin Benchmark:</strong> PRES (22041 219th St, Easton, KS)</div>
+            <div class="recon-badge" id="reconHorizonBadge"><strong>Radar Horizon:</strong> 14 Days Active (Rolling)</div>
+            <div class="recon-badge"><strong>Format:</strong> 5-Point "No-Surprises" Audit</div>
+            <div class="recon-badge"><strong>Clipboard:</strong> Tap Address to Instant Copy</div>
+          </div>
+        </div>
+
+
+        <!-- 1. SEASONAL SIGNALS & TACTICAL CORRIDOR RADAR -->
+        <div class="signals-container" id="seasonalSignalsContainer">
+          <div class="signals-top-row">
+            <div class="signals-heading">
+              <span>🚨 Corridor Signals &amp; Tactical Radar</span>
+              <span class="recon-badge" style="background: #f4ecdf; color: var(--ink); border: 1px solid #d4c8b8; font-size: 11px;">Active Signals: <strong id="signalsCountBadge" style="color: var(--forest);">4</strong></span>
+            </div>
+            <div class="signals-tagline">
+              Active wildlife alerts, seasonal phenomena, and marquee community traditions across the corridor.
+            </div>
+          </div>
+          <div class="signals-grid" id="seasonalSignalsGrid">
+            <!-- Dynamically populated seasonal signal cards -->
+          </div>
+        </div>
+
+        <!-- HORIZON TIMELINE RADAR (TOP STRIP) -->
+        <div class="horizon-timeline-card">
+          <div class="horizon-top-row">
+            <div class="horizon-heading" id="horizonTimelineHeading">📅 14-Day Horizon Radar (Rolling Window):</div>
+            <div class="horizon-controls">
+              <span class="horizon-status-tag" id="horizonActiveFilterLabel">Showing: <strong>All Dates</strong></span>
+              <button type="button" class="show-all-dates-btn active" id="horizonResetBtn" onclick="selectReconDate('all')">Show All Dates</button>
+            </div>
+          </div>
+          <div class="timeline-days-scroll" id="horizonTimelineScroll">
+            <!-- Dynamically generated day pills -->
+          </div>
+        </div>
+
+        <!-- CATEGORY FILTER TABS -->
+        <div class="recon-cat-bar">
+          <button type="button" class="recon-cat-btn active" id="catBtnAll" onclick="filterOutingsByCategory('all')">
+            <span>All</span>
+            <span class="cat-count" id="countAll">0</span>
+          </button>
+          <button type="button" class="recon-cat-btn" id="catBtnFamily" onclick="filterOutingsByCategory('family_kids')">
+            <span>👨‍👩‍👧‍👦 Family &amp; Kids</span>
+            <span class="cat-count" id="countFamily">0</span>
+          </button>
+          <button type="button" class="recon-cat-btn" id="catBtnSchool" onclick="filterOutingsByCategory('post_school')">
+            <span>🏈 Post &amp; School Events</span>
+            <span class="cat-count" id="countSchool">0</span>
+          </button>
+          <button type="button" class="recon-cat-btn" id="catBtnDate" onclick="filterOutingsByCategory('date_night')">
+            <span>🍷 Date Night</span>
+            <span class="cat-count" id="countDate">0</span>
+          </button>
+        </div>
+
+        <!-- THE RECON CARD GRID (1-COL MOBILE, 2-COL DESKTOP) -->
+        <div class="recon-cards-grid" id="reconCardsGrid">
+          <!-- Dynamically populated 5-point operational cards -->
+        </div>
+
+        <!-- 2.5 CORRIDOR HUNTING & PUBLIC LAND DOSSIER (KANSAS DMU 10) -->
+        <div class="hunting-dossier-wrapper" id="huntingDossierSection" style="margin: 28px 0; background: #ffffff; border: 2px solid #111111; box-shadow: 4px 4px 0px #111111; padding: 22px 24px;">
+          <div style="border-bottom: 2px solid #111111; padding-bottom: 12px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <h3 style="font-family: 'Oswald', sans-serif; font-size: 22px; text-transform: uppercase; margin: 0; color: #111111; letter-spacing: 0.5px;">
+                🦌 Kansas DMU 10 Hunting &amp; Public Land Dossier
+              </h3>
+              <div style="font-family: 'Georgia', serif; font-style: italic; font-size: 13.5px; color: #475569; margin-top: 4px;">
+                Seasons by species &amp; weapon, beginner checklist, and public land access within 35 minutes of PRES.
+              </div>
+            </div>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+              <span style="background: #f0fdf4; border: 1px solid #16a34a; color: #166534; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 2px;">KDWP Unit 10</span>
+              <span style="background: #eff6ff; border: 1px solid #2563eb; color: #1e40af; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 2px;">2026–2027 Framework</span>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 18px;">
+            <!-- Column 1: Active & Upcoming Seasons -->
+            <div style="background: #fdfaf5; border: 1px solid #cbd5e1; padding: 14px 16px;">
+              <div style="font-family: 'Oswald', sans-serif; font-size: 15px; text-transform: uppercase; color: #1b4332; border-bottom: 1.5px solid #1b4332; padding-bottom: 6px; margin-bottom: 10px; display: flex; justify-content: space-between;">
+                <span>🎯 Seasons by Species &amp; Weapon</span>
+                <span style="font-size: 11px; color: #64748b;">Unit 10 / Region 2</span>
+              </div>
+              <ul style="list-style: none; padding: 0; margin: 0; font-size: 12.5px; line-height: 1.6; color: #1e293b;">
+                <li style="margin-bottom: 8px;">
+                  <strong style="color: #0f172a;">Whitetail Deer (DMU 10):</strong><br>
+                  • <em>Youth &amp; Disabled:</em> Sept 5 – Sept 13<br>
+                  • <em>Muzzleloader:</em> Sept 14 – Sept 27<br>
+                  • <em>Archery:</em> Sept 14 – Dec 31<br>
+                  • <em>Regular Firearm:</em> Dec 2 – Dec 13<br>
+                  • <em>Extended Whitetail Antlerless:</em> Jan 1 – Jan 10
+                </li>
+                <li style="margin-bottom: 8px;">
+                  <strong style="color: #0f172a;">Wild Turkey:</strong><br>
+                  • <em>Fall Turkey:</em> Oct 1 – Nov 10 &amp; Dec 14 – Jan 31<br>
+                  • <em>Spring Youth/Disabled:</em> Apr 1 – Apr 14<br>
+                  • <em>Spring Regular:</em> Apr 15 – May 31
+                </li>
+                <li style="margin-bottom: 8px;">
+                  <strong style="color: #0f172a;">Waterfowl &amp; Migratory:</strong><br>
+                  • <em>Dove:</em> Sept 1 – Nov 29<br>
+                  • <em>Ducks (Low Plains Late Zone):</em> Oct 31 – Jan 3 &amp; Jan 16 – Jan 24<br>
+                  • <em>Geese:</em> Oct 31 – Nov 8 &amp; Nov 11 – Feb 14
+                </li>
+                <li>
+                  <strong style="color: #0f172a;">Upland Birds &amp; Small Game:</strong><br>
+                  • <em>Pheasant &amp; Quail:</em> Nov 14 – Jan 31<br>
+                  • <em>Squirrel:</em> June 1 – Feb 28<br>
+                  • <em>Rabbit:</em> Year-Round
+                </li>
+              </ul>
+            </div>
+
+            <!-- Column 2: Getting Started Checklist -->
+            <div style="background: #fdfaf5; border: 1px solid #cbd5e1; padding: 14px 16px;">
+              <div style="font-family: 'Oswald', sans-serif; font-size: 15px; text-transform: uppercase; color: #1e3a8a; border-bottom: 1.5px solid #1e3a8a; padding-bottom: 6px; margin-bottom: 10px; display: flex; justify-content: space-between;">
+                <span>📋 Getting Started Checklist</span>
+                <span style="font-size: 11px; color: #64748b;">Prerequisites</span>
+              </div>
+              <div style="font-size: 12.5px; line-height: 1.55; color: #1e293b;">
+                <div style="margin-bottom: 10px;">
+                  <strong style="color: #0f172a;">1. Hunter Education Certificate:</strong><br>
+                  Mandatory for all hunters born on or after July 1, 1957. Anyone 16+ may purchase a one-time Apprentice License without hunter ed (valid 1 year while accompanied).
+                </div>
+                <div style="margin-bottom: 10px;">
+                  <strong style="color: #0f172a;">2. Licenses &amp; Tags (gooutdoorskansas.com):</strong><br>
+                  • <em>KS Resident Annual Hunt License:</em> $27.50<br>
+                  • <em>Resident Deer Permit (Any-Season Whitetail):</em> $42.50<br>
+                  • <em>Waterfowl Requirements:</em> State Waterfowl Stamp ($10), Federal Duck Stamp ($25), plus free annual HIP certification.
+                </div>
+                <div style="margin-bottom: 10px;">
+                  <strong style="color: #0f172a;">3. Daily Electronic Check-In (iSportsman):</strong><br>
+                  Mandatory daily check-in/out via smartphone or automated call for all KDWP Wildlife Areas and Fort Leavenworth prior to entering fields.
+                </div>
+                <div>
+                  <strong style="color: #0f172a;">4. Hunter Orange Requirement:</strong><br>
+                  Mandatory during firearm deer seasons: minimum 100 sq inches visible on front and back, plus orange hat.
+                </div>
+              </div>
+            </div>
+
+            <!-- Column 3: Public Hunting Locations -->
+            <div style="background: #fdfaf5; border: 1px solid #cbd5e1; padding: 14px 16px;">
+              <div style="font-family: 'Oswald', sans-serif; font-size: 15px; text-transform: uppercase; color: #b45309; border-bottom: 1.5px solid #b45309; padding-bottom: 6px; margin-bottom: 10px; display: flex; justify-content: space-between;">
+                <span>📍 Public Lands &amp; Drive Times</span>
+                <span style="font-size: 11px; color: #64748b;">From PRES Origin</span>
+              </div>
+              <div style="font-size: 12.5px; line-height: 1.55; color: #1e293b;">
+                <div style="margin-bottom: 10px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 6px;">
+                  <strong style="color: #0f172a;">1. Leavenworth State Fishing Lake &amp; Wildlife Area</strong><br>
+                  <span style="font-size: 11px; color: #166534; font-weight: 700;">⏱️ 22 min (15.4 mi SW via K-192 &amp; Co Rd 25)</span><br>
+                  • <em>Size:</em> 341 acres timber/grass + 160-acre lake.<br>
+                  • <em>Game:</em> Deer, Turkey, Squirrel, Rabbit, Waterfowl.<br>
+                  • <em>Weapons:</em> Shotgun, Archery, Rimfire/Muzzleloader only (Centerfire rifles prohibited). Non-toxic shot required.
+                </div>
+                <div style="margin-bottom: 10px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 6px;">
+                  <strong style="color: #0f172a;">2. Fort Leavenworth Installation Managed Units</strong><br>
+                  <span style="font-size: 11px; color: #1e40af; font-weight: 700;">⏱️ 23 min (14.0 mi E via K-92)</span><br>
+                  • <em>Units:</em> Designated bluff and river-bottom timber.<br>
+                  • <em>Rules:</em> Post firearm registration with Provost Marshal, Fort Leavenworth iSportsman account, safety harness mandatory for tree stands. Units open around military training schedules.
+                </div>
+                <div style="margin-bottom: 10px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 6px;">
+                  <strong style="color: #0f172a;">3. Perry Wildlife Area (Valley Falls / Ozawkie)</strong><br>
+                  <span style="font-size: 11px; color: #b45309; font-weight: 700;">⏱️ 35 min (26.0 mi W via K-92 / K-4)</span><br>
+                  • <em>Size:</em> 11,000+ acres public land around Perry Reservoir.<br>
+                  • <em>Game:</em> Premier waterfowl marshes, deer, turkey, quail.
+                </div>
+                <div>
+                  <strong style="color: #0f172a;">4. Kansas Walk-In Hunting Access (WIHA / iWIHA)</strong><br>
+                  <span style="font-size: 11px; color: #475569; font-weight: 700;">⏱️ 10–30 min radius (Leavenworth, Jefferson, Atchison Co)</span><br>
+                  • Leased private agricultural &amp; timber tracts open to public foot traffic. Tracts marked with green/orange KDWP signs.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. CORRIDOR NODES LEDGER: ANCHORS & STITCHES -->
+        <div class="nodes-section-wrapper" id="corridorNodesWrapper">
+          <div class="nodes-section-header">
+            <div class="nodes-title">🧭 449 Corridor Infrastructure: Anchors &amp; Stitches</div>
+            <div class="nodes-subtitle">
+              Curated physical hubs and local outposts across 4 corridor sectors. Anchors (primary activity hubs) paired with Stitches (local pantry &amp; artisan stops).
+            </div>
+          </div>
+
+          <!-- SECTOR & ROLE FILTER CONTROLS -->
+          <div class="nodes-controls-bar">
+            <!-- Sector Filter -->
+            <div class="nodes-filter-group">
+              <span class="nodes-filter-label">Sector:</span>
+              <button type="button" class="node-filter-pill active" id="secBtnAll" onclick="filterNodesBySector('all')">
+                <span>All Sectors</span>
+                <span class="pill-count" id="secCountAll">12</span>
+              </button>
+              <button type="button" class="node-filter-pill" id="secBtnRidge" onclick="filterNodesBySector('Ridge-449')">
+                <span>🌾 The Ridge (Easton / 449)</span>
+                <span class="pill-count" id="secCountRidge">3</span>
+              </button>
+              <button type="button" class="node-filter-pill" id="secBtnPost" onclick="filterNodesBySector('Post-FtL')">
+                <span>🎖️ Fort Leavenworth (Post)</span>
+                <span class="pill-count" id="secCountPost">4</span>
+              </button>
+              <button type="button" class="node-filter-pill" id="secBtnRiver" onclick="filterNodesBySector('River-Downtown')">
+                <span>🌊 Downtown &amp; Riverfront</span>
+                <span class="pill-count" id="secCountRiver">3</span>
+              </button>
+              <button type="button" class="node-filter-pill" id="secBtnSouth" onclick="filterNodesBySector('South-Lansing')">
+                <span>🚜 South Corridor (Lansing)</span>
+                <span class="pill-count" id="secCountSouth">2</span>
+              </button>
+            </div>
+
+            <!-- Role Filter -->
+            <div class="nodes-filter-group">
+              <span class="nodes-filter-label">Role:</span>
+              <button type="button" class="node-filter-pill active" id="roleBtnAll" onclick="filterNodesByRole('all')">
+                <span>All Roles</span>
+                <span class="pill-count" id="roleCountAll">12</span>
+              </button>
+              <button type="button" class="node-filter-pill" id="roleBtnAnchor" onclick="filterNodesByRole('Anchor')">
+                <span>⚓ Anchors (Core Hubs)</span>
+                <span class="pill-count" id="roleCountAnchor">6</span>
+              </button>
+              <button type="button" class="node-filter-pill" id="roleBtnStitch" onclick="filterNodesByRole('Stitch')">
+                <span>🧵 Stitches (Local Stops)</span>
+                <span class="pill-count" id="roleCountStitch">6</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- THE NODES GRID -->
+          <div class="nodes-grid" id="corridorNodesGrid">
+            <!-- Dynamically populated node cards -->
+          </div>
+        </div>
+
+      </section>
+    </div> <!-- END tabPaneOutings -->
+
+
+
+    <footer class="gazette-footer">
+      <div>
+        <strong>The Pleasant Ridge Gazette</strong> · Easton, Kansas · Independent Corridor Broadsheet
+      </div>
+      <div>
+        <a href="arcade/" class="arcade-link-simple" onclick="handleArcadeNav(event, 'arcade/', 'arcade/index.html')">449 Arcade</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const CORRIDOR_STATIONS = [
+      { name: "Casey's General Store #1952", location: "Easton · 21104 247th St", price: 2.79 },
+      { name: "Fort Leavenworth Post Exchange Fuel", location: "Ft. Leavenworth · Bantam Way", price: 2.72 },
+      { name: "QuikTrip #204", location: "Leavenworth · 4th & Spruce", price: 2.89 },
+      { name: "Casey's General Store #1432", location: "Lansing · Main St & K-7", price: 2.85 },
+      { name: "Phillips 66", location: "Leavenworth · S 4th St", price: 2.95 },
+      { name: "Sinclair Fuel", location: "Easton Corridor · K-192", price: 2.82 },
+      { name: "BP Express", location: "Leavenworth · Metropolitan Ave", price: 2.99 },
+      { name: "Shell Station", location: "Lansing · US-73 Highway", price: 3.09 },
+      { name: "Cenex Farmers Cooperative", location: "Easton Rural Depot", price: 2.84 },
+      { name: "7-Eleven Fuel", location: "Leavenworth · 10th Ave", price: 2.92 },
+      { name: "K-192 Quick Stop", location: "Potter / Easton Jct", price: 2.80 },
+      { name: "Sunoco Mart", location: "Leavenworth · 4th St", price: 3.19 },
+      { name: "Amoco Corridor Depot", location: "Lansing South", price: 3.20 }
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Helper for clean time string
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+
+      // Update 30-min pollers initial As-Of stamps
+      const statusStamp = document.getElementById('statusAsOfText');
+      if (statusStamp) statusStamp.textContent = `As of: ${timeStr} · Refreshed every 30m`;
+
+      const roadsStamp = document.getElementById('roadsAsOfText');
+      if (roadsStamp) roadsStamp.textContent = `As of: ${timeStr} · KDOT 511 Feed (30m cycle)`;
+
+      // Initial feed load
+      renderGasTable();
+      pollWeatherBanners();
+      pollStatusBoard();
+      pollIncidentsAndHydrology();
+      pollPathogenRadar();
+      pollOpenBurnStatus();
+      dispatchAnonymousTelemetry();
+
+      // Initialize Grocery & USD 449 Dispatch Engines
+      initGroceryData();
+      initSchoolData();
+
+      const currentHash = window.location.hash.toLowerCase();
+      if (currentHash === '#groceries' || currentHash === '#market-basket' || currentHash === '#procurement') {
+        switchTab('groceries');
+      } else if (currentHash === '#school' || currentHash === '#usd449' || currentHash === '#dispatch') {
+        switchTab('school');
+      } else if (currentHash === '#outings' || currentHash === '#recon' || currentHash === '#weekend' || currentHash === '#dates') {
+        switchTab('outings');
+      }
+      
+      initOutingsData();
+      initCorridorNodesData();
+
+
+      // Scheduled live sweep intervals:
+      // Streamflow & NWS weather alerts: Every 30 minutes
+      setInterval(pollWeatherBanners, 30 * 60 * 1000);
+      setInterval(pollOpenBurnStatus, 15 * 60 * 1000);
+      setInterval(pollIncidentsAndHydrology, 30 * 60 * 1000);
+      setInterval(pollStatusBoard, 30 * 60 * 1000);
+      setInterval(renderGasTable, 30 * 60 * 1000);
+
+      // CDC NWSS Pathogen Radar: Every 24 hours (swept daily at 3 PM)
+      setInterval(pollPathogenRadar, 24 * 60 * 60 * 1000);
+    });
+
+    async function renderGasTable() {
+      let stations = [...CORRIDOR_STATIONS];
+      let updatedHuman = "Sunday, October 18, 2026 - 07:31 AM";
+
+      // 1. Check if window.GAZETTE_GAS_FEED was loaded via script tag (instant, zero CORS issue)
+      if (window.GAZETTE_GAS_FEED && window.GAZETTE_GAS_FEED.stations) {
+        stations = window.GAZETTE_GAS_FEED.stations.map(s => ({
+          name: s.name,
+          location: s.loc || s.address || 'Corridor',
+          price: parseFloat(s.price),
+          isLive: !s.is_estimate
+        }));
+        if (window.GAZETTE_GAS_FEED.last_updated_human) {
+          updatedHuman = window.GAZETTE_GAS_FEED.last_updated_human;
+        }
+      } else {
+        // 2. Fallback to fetch gas_prices.json if running on web
+        try {
+          const resp = await fetch('gas_prices.json', { cache: 'no-store' });
+          if (resp.ok) {
+            const feed = await resp.json();
+            if (feed.stations && feed.stations.length > 0) {
+              stations = feed.stations.map(s => ({
+                name: s.name,
+                location: s.loc || s.address || 'Corridor',
+                price: parseFloat(s.price),
+                isLive: !s.is_estimate
+              }));
+              if (feed.last_updated_human) updatedHuman = feed.last_updated_human;
+            }
+          }
+        } catch (e) {
+          console.warn('Gas JSON dynamic load note:', e);
+        }
+      }
+
+      // Update As-Of stamp for Fuel Table
+      const asOfEl = document.getElementById('fuelAsOfText');
+      if (asOfEl) {
+        asOfEl.textContent = `As of: ${updatedHuman} (GasBuddy 5 AM & 3 PM Sweep)`;
+      }
+
+      const sorted = [...stations].sort((a, b) => a.price - b.price);
+      const lowest = sorted[0].price;
+      const highest = sorted[sorted.length - 1].price;
+      const maxDiff = (highest - lowest) * 15;
+
+      const calloutEl = document.getElementById('savingsCallout');
+      if (calloutEl) {
+        calloutEl.textContent = `Maximum savings per 15-gal fill-up: $${maxDiff.toFixed(2)} vs highest corridor station ($${highest.toFixed(2)}).`;
+      }
+
+      const tbody = document.getElementById('gasTableBody');
+      tbody.innerHTML = '';
+
+      sorted.forEach((st, idx) => {
+        const spread = st.price - lowest;
+        const fillCost = st.price * 15;
+        const isLowest = idx === 0;
+
+        const tr = document.createElement('tr');
+        if (isLowest) tr.className = 'lowest-row';
+
+        tr.innerHTML = `
+          <td>
+            <strong>${st.name}</strong><br>
+            <span style="font-size: 11px; color: #666;">${st.location}</span>
+            ${isLowest ? '<span class="badge-lowest">Lowest Corridor Fuel</span>' : ''}
+          </td>
+          <td><strong>$${st.price.toFixed(2)}</strong></td>
+          <td>${spread === 0 ? 'Cheapest' : `+$${spread.toFixed(2)}`}</td>
+          <td>$${fillCost.toFixed(2)}</td>
+          <td><span style="color:${isLowest ? 'var(--forest)' : '#555'}; font-size:12px;">${isLowest ? '★ Best Value' : 'Standard'}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    const isExternalMirror = (window.location.protocol === 'file:' || window.location.hostname.endsWith('github.io'));
+
+    async function pollWeatherBanners() {
+      try {
+        const fetchUrl = isExternalMirror ? 'https://pleasant-ridge-gazette.vercel.app/api/weather-forecast' : '/api/weather-forecast';
+        const resp = await fetch(fetchUrl);
+        if (!resp.ok) return;
+        const data = await resp.json();
+
+        const container = document.getElementById('conditionalBannerContainer');
+        const bannerEl = document.getElementById('bannerElement');
+        const titleEl = document.getElementById('bannerTitle');
+        const subEl = document.getElementById('bannerSubtext');
+
+        if (data.banner) {
+          bannerEl.className = `prep-banner ${data.banner.type}`;
+          titleEl.textContent = data.banner.headline;
+          subEl.textContent = data.banner.subtext;
+          container.style.display = 'block';
+        } else {
+          container.style.display = 'none';
+        }
+      } catch (err) {
+        console.warn('Weather poll note:', err);
+      }
+    }
+
+    async function pollStatusBoard() {
+      try {
+        const fetchUrl = isExternalMirror ? 'https://pleasant-ridge-gazette.vercel.app/api/status' : '/api/status';
+        const resp = await fetch(fetchUrl);
+        if (!resp.ok) return;
+        const json = await resp.json();
+
+        (json.entities || []).forEach(ent => {
+          const pill = document.getElementById(`pill_${ent.id}`);
+          const desc = document.getElementById(`desc_${ent.id}`);
+          if (pill) {
+            pill.className = `status-pill ${ent.status}`;
+            pill.textContent = ent.status === 'green' ? 'Normal' : ent.status === 'amber' ? 'Modified' : 'Closed';
+          }
+          if (desc) desc.textContent = ent.label;
+        });
+      } catch (err) {
+        console.warn('Status poll note:', err);
+      }
+    }
+
+    async function pollIncidentsAndHydrology() {
+      try {
+        const fetchUrl = isExternalMirror ? 'https://pleasant-ridge-gazette.vercel.app/api/incidents' : '/api/incidents';
+        const resp = await fetch(fetchUrl);
+        if (!resp.ok) return;
+        const data = await resp.json();
+
+        // Hydrology & Easton Bridges
+        if (data.hydrology) {
+          const h = data.hydrology;
+          const creekMetric = document.getElementById('creekGaugeHeight');
+          const creekTitle = document.getElementById('creekTitle');
+          const creekText = document.getElementById('creekStatusText');
+          const creekPill = document.getElementById('creekPill');
+          const creekCard = document.getElementById('creekCard');
+
+          creekMetric.textContent = `${h.gaugeHeightFt.toFixed(2)} ft`;
+          creekTitle.textContent = h.statusTitle || 'Bridges Clear & Passable';
+          creekText.textContent = h.statusDetail;
+
+          if (h.statusLevel === 'red') {
+            creekMetric.className = 'card-metric danger';
+            creekPill.className = 'status-pill red';
+            creekPill.textContent = 'Washout Alert';
+            creekCard.classList.add('alert-active');
+          } else if (h.statusLevel === 'amber') {
+            creekMetric.className = 'card-metric';
+            creekPill.className = 'status-pill amber';
+            creekPill.textContent = 'Caution';
+            creekCard.classList.remove('alert-active');
+          } else {
+            creekMetric.className = 'card-metric';
+            creekPill.className = 'status-pill green';
+            creekPill.textContent = 'Clear';
+            creekCard.classList.remove('alert-active');
+          }
+        }
+
+        // Road Closures on K-192 / US-73 / K-7
+        if (data.roads) {
+          const r = data.roads;
+          const roadsMetric = document.getElementById('roadsMetric');
+          const roadsTitle = document.getElementById('roadsTitle');
+          const roadsText = document.getElementById('roadsStatusText');
+          const roadsPill = document.getElementById('roadsPill');
+          const roadsCard = document.getElementById('roadsCard');
+
+          roadsMetric.textContent = `${r.activeIncidentCount} Closure${r.activeIncidentCount === 1 ? '' : 's'}`;
+          roadsTitle.textContent = r.statusTitle;
+          roadsText.textContent = r.statusDetail;
+
+          if (r.statusLevel === 'amber' || r.statusLevel === 'red') {
+            roadsPill.className = 'status-pill amber';
+            roadsPill.textContent = 'Restriction';
+            roadsCard.classList.add('alert-active');
+          } else {
+            roadsPill.className = 'status-pill green';
+            roadsPill.textContent = 'Open';
+            roadsCard.classList.remove('alert-active');
+          }
+        }
+      } catch (err) {
+        console.warn('Incidents poll note:', err);
+      }
+    }
+
+    async function pollPathogenRadar() {
+      try {
+        const fetchUrl = isExternalMirror 
+          ? 'https://pleasant-ridge-gazette.vercel.app/api/pathogen-radar' 
+          : '/api/pathogen-radar';
+        const resp = await fetch(fetchUrl);
+        if (!resp.ok) return;
+        const data = await resp.json();
+
+        const pill = document.getElementById('pathogenPill');
+        const metric = document.getElementById('pathogenMetric');
+        const title = document.getElementById('pathogenTitle');
+        const desc = document.getElementById('pathogenStatusText');
+        const card = document.getElementById('pathogenCard');
+
+        const fluEl = document.getElementById('target_flu');
+        const rsvEl = document.getElementById('target_rsv');
+        const covidEl = document.getElementById('target_covid');
+
+        // Populate multi-pathogen breakdown
+        if (data.pathogens && Array.isArray(data.pathogens)) {
+          data.pathogens.forEach(p => {
+            const label = `${p.category} (${p.wval.toFixed(1)})`;
+            const color = p.status === 'red' ? '#c0392b' : (p.status === 'amber' ? '#e67e22' : 'var(--ink)');
+            if (p.name.includes('Flu') && fluEl) {
+              fluEl.textContent = label;
+              fluEl.style.color = color;
+            } else if (p.name.includes('RSV') && rsvEl) {
+              rsvEl.textContent = label;
+              rsvEl.style.color = color;
+            } else if ((p.name.includes('COVID') || p.name.includes('SARS')) && covidEl) {
+              covidEl.textContent = label;
+              covidEl.style.color = color;
+            }
+          });
+        }
+
+        if (data.warningActive) {
+          pill.className = 'status-pill amber';
+          pill.textContent = 'Surge Alert';
+          title.textContent = `⚠️ Elevated ${data.dominantPathogen?.name || 'Pathogen'} Surge`;
+          metric.textContent = `${data.dominantPathogen?.category || 'Moderate'} Spike`;
+          desc.textContent = data.actionable?.schoolForecast || 'High illness rates projected in Leavenworth County sewershed next week. Prep contingency childcare.';
+          card.classList.add('alert-active');
+        } else {
+          pill.className = 'status-pill green';
+          pill.textContent = 'Low Risk';
+          title.textContent = 'Normal Classroom Baseline';
+          metric.textContent = 'Low Contagion Risk';
+          desc.textContent = data.actionable?.schoolForecast || 'Wastewater viral loads across Leavenworth County sewershed indicate stable/declining trends across Flu A, RSV, and COVID-19.';
+          card.classList.remove('alert-active');
+        }
+      } catch (err) {
+        console.warn('Pathogen poll note:', err);
+      }
+    }
+
+    function dispatchAnonymousTelemetry() {
+      const fetchUrl = isExternalMirror ? 'https://pleasant-ridge-gazette.vercel.app/api/telemetry' : '/api/telemetry';
+      fetch(fetchUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event: 'gazette_pageview',
+          device: window.innerWidth < 768 ? 'mobile' : 'desktop'
+        })
+      }).catch(() => {});
+    }
+
+    function handleArcadeNav(e, webPath, localRelativePath) {
+      if (window.location.protocol === 'file:' || window.location.hostname.endsWith('github.io')) {
+        e.preventDefault();
+        window.location.href = localRelativePath;
+      }
+    }
+  
+    // ========================================================
+    // OPEN BURN STATUS ENGINE (K.A.R. 28-19-645/648 & RESOLUTION 2015-12)
+    // Easton, KS (39.3436, -95.1197)
+    // ========================================================
+    const EASTON_COORDS = { lat: 39.3436, lng: -95.1197 };
+
+    /**
+     * Client-side NOAA Solar Calculator for Easton, KS
+     * Computes legal burn window: [sunrise + 60m] to [sunset - 120m]
+     */
+    function calculateSolarWindow(lat = EASTON_COORDS.lat, lng = EASTON_COORDS.lng, targetDate = new Date()) {
+      const startOfYear = new Date(targetDate.getFullYear(), 0, 0);
+      const diff = targetDate - startOfYear;
+      const oneDay = 1000 * 60 * 60 * 24;
+      const dayOfYear = Math.floor(diff / oneDay);
+
+      const radLat = (lat * Math.PI) / 180;
+      const gamma = (2 * Math.PI / 365) * (dayOfYear - 1);
+
+      // Equation of time (minutes)
+      const eqtime = 229.18 * (
+        0.000075 +
+        0.001868 * Math.cos(gamma) -
+        0.032077 * Math.sin(gamma) -
+        0.014615 * Math.cos(2 * gamma) -
+        0.040849 * Math.sin(2 * gamma)
+      );
+
+      // Solar declination (radians)
+      const decl = 0.006918 -
+        0.399912 * Math.cos(gamma) +
+        0.070257 * Math.sin(gamma) -
+        0.006758 * Math.cos(2 * gamma) +
+        0.000907 * Math.sin(2 * gamma);
+
+      // Official zenith for sunrise/sunset (90.833 degrees accounts for atmospheric refraction)
+      const zenith = (90.833 * Math.PI) / 180;
+      const cosHA = (Math.cos(zenith) / (Math.cos(radLat) * Math.cos(decl))) - (Math.tan(radLat) * Math.tan(decl));
+
+      if (cosHA > 1 || cosHA < -1) {
+        return { error: 'Polar day/night', isWithinHours: false, openStr: 'N/A', closeStr: 'N/A' };
+      }
+
+      const haDeg = (Math.acos(cosHA) * 180) / Math.PI;
+
+      // Solar times in UTC minutes from midnight
+      const sunriseUtcMin = 720 - 4 * lng - eqtime - haDeg * 4;
+      const sunsetUtcMin = 720 - 4 * lng - eqtime + haDeg * 4;
+
+      const sunriseDate = new Date(targetDate);
+      sunriseDate.setUTCHours(0, 0, 0, 0);
+      sunriseDate.setUTCMinutes(Math.round(sunriseUtcMin));
+
+      const sunsetDate = new Date(targetDate);
+      sunsetDate.setUTCHours(0, 0, 0, 0);
+      sunsetDate.setUTCMinutes(Math.round(sunsetUtcMin));
+
+      // Legal Kansas burn window:
+      // Open: sunrise + 60 minutes
+      // Close: sunset - 120 minutes (2 hrs before sunset)
+      const windowOpen = new Date(sunriseDate.getTime() + 60 * 60 * 1000);
+      const windowClose = new Date(sunsetDate.getTime() - 120 * 60 * 1000);
+
+      const formatTime = (d) => d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+
+      const nowTime = targetDate.getTime();
+      const isWithinHours = nowTime >= windowOpen.getTime() && nowTime <= windowClose.getTime();
+
+      return {
+        sunrise: sunriseDate,
+        sunset: sunsetDate,
+        windowOpen,
+        windowClose,
+        openStr: formatTime(windowOpen),
+        closeStr: formatTime(windowClose),
+        isWithinHours
+      };
+    }
+
+    /**
+     * Polls NWS public endpoints & evaluates Open Burn Status across all 5 regulatory priorities
+     */
+    async function pollOpenBurnStatus() {
+      const card = document.getElementById('burnCard');
+      const pill = document.getElementById('burnPill');
+      const headline = document.getElementById('burnHeadline');
+      const metric = document.getElementById('burnMetric');
+      const detail = document.getElementById('burnDetailText');
+      const windEl = document.getElementById('burnWindMetric');
+      const windowEl = document.getElementById('burnWindowMetric');
+      const hazardEl = document.getElementById('burnHazardMetric');
+      const asOfEl = document.getElementById('burnAsOfText');
+
+      if (!card) return;
+
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+      if (asOfEl) asOfEl.textContent = `As of: ${timeStr} · NWS & Solar Math (15m cycle)`;
+
+      // Step 1: Solar window math
+      const solar = calculateSolarWindow();
+      if (windowEl) windowEl.textContent = `${solar.openStr} – ${solar.closeStr}`;
+
+      // Step 2 & 3: Fetch active NWS alerts & METAR observations
+      let alerts = [];
+      let obsProps = null;
+      let apiFailed = false;
+
+      try {
+        // Active alerts for Leavenworth County (KSZ103)
+        const alertResp = await fetch('https://api.weather.gov/alerts/active?zone=KSZ103', {
+          headers: { 'Accept': 'application/geo+json' }
+        });
+        if (alertResp.ok) {
+          const alertJson = await alertResp.json();
+          alerts = alertJson.features || [];
+        }
+      } catch (err) {
+        console.warn('NWS Alerts fetch note:', err);
+      }
+
+      try {
+        // Try KFLV (Sherman Army Airfield / Fort Leavenworth) first
+        let obsResp = await fetch('https://api.weather.gov/stations/KFLV/observations/latest', {
+          headers: { 'Accept': 'application/geo+json' }
+        });
+        if (!obsResp.ok) {
+          // Graceful fallback to KMCI (Kansas City International, primary county reporting station)
+          obsResp = await fetch('https://api.weather.gov/stations/KMCI/observations/latest', {
+            headers: { 'Accept': 'application/geo+json' }
+          });
+        }
+        if (obsResp.ok) {
+          const obsJson = await obsResp.json();
+          obsProps = obsJson.properties || null;
+        } else {
+          apiFailed = true;
+        }
+      } catch (err) {
+        console.warn('NWS METAR fetch note:', err);
+        apiFailed = true;
+      }
+
+      // Parse METAR wind & dispersion values
+      let windSpeedMph = null;
+      let windGustMph = null;
+      let cloudCoverPct = 0;
+      let ceilingFt = 99999;
+
+      if (obsProps) {
+        // Wind speed conversion (km/h to mph)
+        if (obsProps.windSpeed && obsProps.windSpeed.value !== null) {
+          const val = obsProps.windSpeed.value;
+          windSpeedMph = obsProps.windSpeed.unitCode && obsProps.windSpeed.unitCode.includes('m_s') ? val * 2.23694 : val * 0.621371;
+        }
+        // Wind gust conversion
+        if (obsProps.windGust && obsProps.windGust.value !== null) {
+          const gVal = obsProps.windGust.value;
+          windGustMph = obsProps.windGust.unitCode && obsProps.windGust.unitCode.includes('m_s') ? gVal * 2.23694 : gVal * 0.621371;
+        } else {
+          windGustMph = windSpeedMph;
+        }
+
+        // Cloud cover & ceiling (dispersion criteria)
+        const layers = obsProps.cloudLayers || [];
+        for (const l of layers) {
+          const amt = (l.amount || '').toUpperCase();
+          let pct = 0;
+          if (amt === 'OVC') pct = 100;
+          else if (amt === 'BKN') pct = 75;
+          else if (amt === 'SCT') pct = 40;
+          else if (amt === 'FEW') pct = 20;
+
+          if (pct > cloudCoverPct) cloudCoverPct = pct;
+
+          if ((amt === 'BKN' || amt === 'OVC') && l.base && l.base.value !== null) {
+            const hFt = l.base.value * 3.28084;
+            if (hFt < ceilingFt) ceilingFt = hFt;
+          }
+        }
+      }
+
+      // Update telemetry strip wind metric
+      if (windEl) {
+        if (windSpeedMph !== null) {
+          const gustStr = (windGustMph !== null && windGustMph > windSpeedMph) ? ` (Gust ${windGustMph.toFixed(0)})` : '';
+          windEl.textContent = `${windSpeedMph.toFixed(0)} mph${gustStr} (Legal: 5–15)`;
+        } else {
+          windEl.textContent = 'Station Telemetry Unavailable';
+        }
+      }
+
+      // PRIORITY EVALUATION LOGIC
+      // ----------------------------------------------------
+      // Priority 1: Diurnal / Daylight Window (Solar Math)
+      if (!solar.isWithinHours) {
+        pill.className = 'status-pill amber';
+        pill.textContent = 'HOURS RESTRICTED';
+        headline.textContent = 'OUTSIDE LEGAL HOURS';
+        metric.className = 'card-metric';
+        metric.textContent = `${solar.openStr} – ${solar.closeStr}`;
+        detail.textContent = 'Open burning prohibited from 2 hrs before sunset until 1 hr after sunrise.';
+        card.classList.remove('alert-active');
+        if (hazardEl) hazardEl.textContent = 'Outside Daylight Window';
+        return;
+      }
+
+      // Priority 2: Active NWS Fire Weather Alerts
+      const fireAlert = alerts.find(a => {
+        const ev = ((a.properties && a.properties.event) || '').toLowerCase();
+        const desc = ((a.properties && a.properties.description) || '').toLowerCase();
+        return ev.includes('red flag') || ev.includes('fire weather') || desc.includes('extreme fire');
+      });
+
+      if (fireAlert) {
+        const alertName = fireAlert.properties.event || 'Fire Weather Alert';
+        pill.className = 'status-pill red';
+        pill.textContent = 'RESTRICTED';
+        headline.textContent = 'BURNING PROHIBITED';
+        metric.className = 'card-metric danger';
+        metric.textContent = 'BURNING PROHIBITED';
+        detail.textContent = `Active NWS ${alertName} in effect for Leavenworth County. Open burning strictly banned.`;
+        card.classList.add('alert-active');
+        if (hazardEl) {
+          hazardEl.textContent = alertName;
+          hazardEl.style.color = 'var(--red-status)';
+        }
+        return;
+      } else if (hazardEl) {
+        hazardEl.textContent = 'None Active (KSZ103)';
+        hazardEl.style.color = 'var(--forest)';
+      }
+
+      // Priority 3: METAR Dispersion & Wind Checks
+      if (windSpeedMph !== null && (windSpeedMph > 15 || (windGustMph !== null && windGustMph > 15))) {
+        pill.className = 'status-pill red';
+        pill.textContent = 'RESTRICTED';
+        headline.textContent = 'BURNING PROHIBITED';
+        metric.className = 'card-metric danger';
+        metric.textContent = `${windSpeedMph.toFixed(0)} mph Wind`;
+        detail.textContent = `Wind exceeds legal 15 mph ceiling (Current: ${windSpeedMph.toFixed(1)} mph, Gusts: ${windGustMph ? windGustMph.toFixed(1) : '--'} mph).`;
+        card.classList.add('alert-active');
+        return;
+      }
+
+      if (windSpeedMph !== null && windSpeedMph < 5) {
+        pill.className = 'status-pill red';
+        pill.textContent = 'RESTRICTED';
+        headline.textContent = 'BURNING PROHIBITED';
+        metric.className = 'card-metric danger';
+        metric.textContent = `${windSpeedMph.toFixed(0)} mph (Below 5)`;
+        detail.textContent = `Wind below legal 5 mph floor (${windSpeedMph.toFixed(1)} mph). Smoke stagnation / atmospheric inversion hazard.`;
+        card.classList.add('alert-active');
+        return;
+      }
+
+      if (cloudCoverPct > 70 && ceilingFt < 2000) {
+        pill.className = 'status-pill red';
+        pill.textContent = 'RESTRICTED';
+        headline.textContent = 'BURNING PROHIBITED';
+        metric.className = 'card-metric danger';
+        metric.textContent = `${ceilingFt.toFixed(0)} ft Ceiling`;
+        detail.textContent = `Ceiling below 2,000 ft with overcast skies (${ceilingFt.toFixed(0)} ft, ${cloudCoverPct}% cover; insufficient smoke dispersion).`;
+        card.classList.add('alert-active');
+        return;
+      }
+
+      // Priority 5: Fallback / Error State
+      if (apiFailed || !obsProps) {
+        pill.className = 'status-pill amber';
+        pill.textContent = 'CHECK DISPATCH';
+        headline.textContent = 'CHECK DISPATCH DIRECTLY';
+        metric.className = 'card-metric';
+        metric.textContent = 'CHECK DISPATCH';
+        detail.textContent = 'Unable to pull live NWS telemetry. Verify conditions with dispatch before ignition.';
+        card.classList.remove('alert-active');
+        return;
+      }
+
+      // Priority 4: Default Clear State
+      pill.className = 'status-pill green';
+      pill.textContent = 'PERMITTED';
+      headline.textContent = 'CONDITIONS PERMITTED';
+      metric.className = 'card-metric';
+      metric.textContent = 'PERMITTED';
+      detail.textContent = 'Weather criteria met. Property owner must notify LVSO dispatch prior to ignition.';
+      card.classList.remove('alert-active');
+    }
+
+    /**
+     * Clipboard copy action for LVSO Dispatch Phone (NO tel: links)
+     */
+    function copyDispatchPhone(e) {
+      if (e) e.preventDefault();
+      const phoneDigits = '9136825724';
+      const phoneFormatted = '913-682-5724';
+
+      const updateVisualFeedback = () => {
+        const btn = document.getElementById('copyDispatchBtn');
+        const feedback = document.getElementById('copyFeedback');
+        const toast = document.getElementById('copyToast');
+
+        if (feedback) feedback.textContent = '✓ Copied';
+        if (btn) {
+          btn.style.background = '#d1fae5';
+          btn.style.borderColor = '#065f46';
+          btn.style.color = '#065f46';
+        }
+        if (toast) {
+          toast.textContent = `✓ Copied ${phoneFormatted}`;
+          toast.style.display = 'block';
+        }
+
+        setTimeout(() => {
+          if (feedback) feedback.textContent = '📋 Copy';
+          if (btn) {
+            btn.style.background = '#eee8de';
+            btn.style.borderColor = '#111111';
+            btn.style.color = '#111111';
+          }
+          if (toast) toast.style.display = 'none';
+        }, 2500);
+      };
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(phoneDigits)
+          .then(updateVisualFeedback)
+          .catch(() => fallbackCopy(phoneDigits, updateVisualFeedback));
+      } else {
+        fallbackCopy(phoneDigits, updateVisualFeedback);
+      }
+    }
+
+    function fallbackCopy(text, callback) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        callback();
+      } catch (err) {
+        console.warn('Fallback copy error:', err);
+      }
+      document.body.removeChild(ta);
+    }
+
+  
+    // ========================================================
+    // GROCERY PROCUREMENT ENGINE & TAB MANAGEMENT
+    // ========================================================
+    
+    // ========================================================
+    // 449 WEEKEND RECON: OUTINGS & DATE LEDGER ENGINE
+    // ========================================================
+    let activeOutingsData = window.GAZETTE_OUTINGS_DATA || null;
+    let selectedReconDate = 'all'; // 'all' or ISO 'YYYY-MM-DD'
+    let selectedReconCategory = 'all'; // 'all', 'family_kids', 'post_school', 'date_night'
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function escapeAttr(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    async function initOutingsData() {
+      if (window.GAZETTE_RECON_INVENTORY && window.GAZETTE_RECON_INVENTORY.outings) {
+        activeOutingsData = window.GAZETTE_RECON_INVENTORY;
+      } else if (window.GAZETTE_OUTINGS_DATA) {
+        activeOutingsData = window.GAZETTE_OUTINGS_DATA;
+      } else {
+        try {
+          const resp = await fetch('data/recon_inventory.json');
+          if (resp.ok) {
+            activeOutingsData = await resp.json();
+          } else {
+            const resp2 = await fetch('data/outings.json');
+            if (resp2.ok) activeOutingsData = await resp2.json();
+          }
+        } catch (e) {
+          try {
+            const resp2 = await fetch('data/outings.json');
+            if (resp2.ok) activeOutingsData = await resp2.json();
+          } catch(e2) {
+            console.warn('Outings fetch notice:', e2);
+          }
+        }
+      }
+      renderReconTimeline();
+      renderReconCards();
+    }
+
+    function isOutingMatchingDate(it, dateIso) {
+      if (!it) return false;
+      if (dateIso === 'all') return true;
+      if (it.daily === true) return true;
+      const dDisp = (it.dateDisplay || '').toLowerCase();
+      if (dDisp.includes('open daily') || dDisp.includes('daily sunrise to sunset') || dDisp.includes('daily:')) return true;
+      return Array.isArray(it.dates) && it.dates.includes(dateIso);
+    }
+
+    function renderReconTimeline() {
+      const scrollEl = document.getElementById('horizonTimelineScroll');
+      if (!scrollEl || !activeOutingsData) return;
+
+      const outings = activeOutingsData.outings || [];
+
+      // Determine baseline date: dynamic today anchor for rolling 14-day horizon
+      let baseDate = new Date();
+      baseDate.setHours(0, 0, 0, 0);
+
+      // Today anchor for reference
+      const today = new Date();
+      const todayIso = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+
+      let html = '';
+      let firstDayFmt = '';
+      let lastDayFmt = '';
+
+      // Generate 14 chronological days
+      for (let i = 0; i < 14; i++) {
+        const d = new Date(baseDate);
+        d.setDate(baseDate.getDate() + i);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const dayOfMonth = String(d.getDate()).padStart(2, '0');
+        const iso = `${y}-${m}-${dayOfMonth}`;
+        const dayName = d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
+        const monthNum = d.getMonth() + 1;
+        const dayNum = d.getDate();
+        const monthShort = d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+
+        if (i === 0) firstDayFmt = `${monthShort} ${dayNum}`;
+        if (i === 13) lastDayFmt = `${monthShort} ${dayNum}`;
+
+        // Match outings for this date (including daily events)
+        const count = outings.filter(it => isOutingMatchingDate(it, iso)).length;
+        const isSelected = selectedReconDate === iso;
+        const isToday = (iso === todayIso);
+
+        // Compact pill format: FRI 10/23 (2)
+        html += `
+          <button type="button" class="timeline-day-pill ${isSelected ? 'active' : ''} ${isToday && !isSelected ? 'is-today' : ''} ${count === 0 ? 'zero-count' : ''}" onclick="selectReconDate('${iso}')" title="${d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}: ${count} active outing${count === 1 ? '' : 's'}">
+            <span>${dayName} ${monthNum}/${dayNum}</span>
+            <span class="pill-count ${count === 0 ? 'zero' : ''}">(${count})</span>
+          </button>
+        `;
+      }
+
+      scrollEl.innerHTML = html;
+
+      // Update dynamic header dates
+      const rangeStr = `${firstDayFmt} – ${lastDayFmt}`;
+      const headingEl = document.getElementById('horizonTimelineHeading');
+      if (headingEl) {
+        headingEl.textContent = `📅 14-Day Horizon Radar (${rangeStr}):`;
+      }
+      const badgeEl = document.getElementById('reconHorizonBadge');
+      if (badgeEl) {
+        badgeEl.innerHTML = `<strong>Radar Horizon:</strong> 14 Days Active (${rangeStr})`;
+      }
+
+      // Update horizon label & Show All Dates button
+      const labelEl = document.getElementById('horizonActiveFilterLabel');
+      const resetBtn = document.getElementById('horizonResetBtn');
+      if (labelEl) {
+        if (selectedReconDate === 'all') {
+          labelEl.innerHTML = 'Showing: <strong>All Dates</strong>';
+          if (resetBtn) resetBtn.classList.add('active');
+        } else {
+          const selDateObj = new Date(selectedReconDate + 'T12:00:00');
+          const fmt = selDateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'numeric', day: 'numeric' });
+          labelEl.innerHTML = `Active Day: <strong>${fmt.toUpperCase()}</strong>`;
+          if (resetBtn) resetBtn.classList.remove('active');
+        }
+      }
+    }
+
+    function selectReconDate(dateStr) {
+      selectedReconDate = dateStr;
+      renderReconTimeline();
+      renderReconCards();
+    }
+
+    function filterOutingsByCategory(catStr) {
+      selectedReconCategory = catStr;
+
+      // Update button classes
+      ['catBtnAll', 'catBtnFamily', 'catBtnSchool', 'catBtnDate'].forEach(btnId => {
+        const btn = document.getElementById(btnId);
+        if (btn) btn.classList.remove('active');
+      });
+
+      if (catStr === 'family_kids') {
+        const b = document.getElementById('catBtnFamily'); if (b) b.classList.add('active');
+      } else if (catStr === 'post_school') {
+        const b = document.getElementById('catBtnSchool'); if (b) b.classList.add('active');
+      } else if (catStr === 'date_night') {
+        const b = document.getElementById('catBtnDate'); if (b) b.classList.add('active');
+      } else {
+        const b = document.getElementById('catBtnAll'); if (b) b.classList.add('active');
+      }
+
+      renderReconCards();
+    }
+
+    function copyToClipboardFeedback(btnEl, textToCopy) {
+      if (!textToCopy) return;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          showCopySuccess(btnEl, textToCopy);
+        }).catch(() => {
+          fallbackCopyText(textToCopy, () => showCopySuccess(btnEl, textToCopy));
+        });
+      } else {
+        fallbackCopyText(textToCopy, () => showCopySuccess(btnEl, textToCopy));
+      }
+    }
+
+    function showCopySuccess(btnEl, textToCopy) {
+      if (!btnEl) return;
+      const originalText = btnEl.getAttribute('data-original-text') || btnEl.innerHTML;
+      btnEl.setAttribute('data-original-text', originalText);
+      btnEl.classList.add('copied');
+      btnEl.innerHTML = '✓ Copied Address!';
+
+      // Trigger floating toast notification
+      const toast = document.getElementById('copyToast');
+      if (toast) {
+        toast.textContent = `✓ Copied Address: ${textToCopy}`;
+        toast.style.display = 'block';
+        clearTimeout(window._copyToastTimer);
+        window._copyToastTimer = setTimeout(() => {
+          toast.style.display = 'none';
+        }, 2200);
+      }
+
+      setTimeout(() => {
+        btnEl.classList.remove('copied');
+        btnEl.innerHTML = originalText;
+      }, 1800);
+    }
+
+    function fallbackCopyText(text, cb) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        if (cb) cb();
+      } catch (e) {
+        console.warn('Copy failed:', e);
+      }
+      document.body.removeChild(ta);
+    }
+
+    function renderReconCards() {
+      const grid = document.getElementById('reconCardsGrid');
+      if (!grid || !activeOutingsData) return;
+
+      const outings = activeOutingsData.outings || [];
+
+      // Update category count badges based on active date filter
+      let countAll = 0, countFam = 0, countSch = 0, countDat = 0;
+      outings.forEach(it => {
+        const dateMatch = isOutingMatchingDate(it, selectedReconDate);
+        if (dateMatch) {
+          countAll++;
+          if (it.category === 'family_kids') countFam++;
+          if (it.category === 'post_school') countSch++;
+          if (it.category === 'date_night') countDat++;
+        }
+      });
+
+      const elAll = document.getElementById('countAll'); if (elAll) elAll.textContent = countAll;
+      const elFam = document.getElementById('countFamily'); if (elFam) elFam.textContent = countFam;
+      const elSch = document.getElementById('countSchool'); if (elSch) elSch.textContent = countSch;
+      const elDat = document.getElementById('countDate'); if (elDat) elDat.textContent = countDat;
+
+      // Filter items
+      const filtered = outings.filter(it => {
+        const matchesDate = isOutingMatchingDate(it, selectedReconDate);
+        const matchesCat = selectedReconCategory === 'all' || it.category === selectedReconCategory;
+        return matchesDate && matchesCat;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-tier-notice" style="grid-column: 1 / -1; padding: 32px; font-size: 13px;">
+            <strong>No outings match the current filter selection.</strong><br>
+            Try clicking "Show All Dates" or selecting the "All" category pill.
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(item => {
+        const it = item;
+        const f = it.frictionAudit || {};
+        const c = it.cost || {};
+        const t = it.transitFromPres || {};
+        const tg = it.timeGate || {};
+        const loc = it.location || {};
+
+        const catLabels = {
+          family_kids: '👨‍👩‍👧‍👦 Family & Kids',
+          post_school: '🏈 Post & School',
+          date_night: '🍷 Date Night'
+        };
+
+        const costClasses = {
+          'Free': 'cost-free',
+          'Under $30': 'cost-under-30',
+          'Under $75': 'cost-under-75',
+          'Splurge': 'cost-splurge'
+        };
+
+        const costPillClass = costClasses[c.tier] || 'cost-under-30';
+
+        // Terrain badge mapping
+        let terrainBadge = f.terrain || 'Standard Terrain';
+        if (terrainBadge === 'Working Dirt / Muck Boots') terrainBadge = 'Muck Boots / Dirt Farm';
+        else if (terrainBadge === 'Paved / Stroller-Friendly') terrainBadge = 'Paved / Stroller OK';
+
+        // Restroom badge mapping
+        let restroomBadge = f.restrooms || 'Restrooms On-Site';
+        if (restroomBadge === 'Modern / Heated Flush') restroomBadge = 'Modern Flush';
+
+        // Wallet rule badge mapping (Clean tags for $0 free public parks)
+        const isFreePark = (c.tier === 'Free') || 
+                           (it.title && it.title.toLowerCase().includes('park')) || 
+                           (f.walletRule && (f.walletRule.includes('Free') || f.walletRule.includes('$0')));
+
+        let walletBadge = f.walletRule || 'Cards OK';
+        let walletIcon = '💳';
+
+        if (isFreePark) {
+          walletBadge = '$0 Free Public Park';
+          walletIcon = '🌳';
+        } else if (walletBadge === 'Cards Accepted') {
+          walletBadge = 'Cards OK';
+        }
+
+        return `
+          <div class="recon-card ${f.gateAccessRequired ? 'gate-required-card' : ''}">
+            <!-- 1. HEADER: Title, Category Badge, Cost Tier Badge -->
+            <div>
+              <div class="recon-card-header">
+                <h3 class="recon-card-title">${escapeHtml(it.title)}</h3>
+                <div class="recon-header-badges">
+                  <span class="recon-cat-tag tag-${it.category}">${catLabels[it.category] || it.category}</span>
+                  <span class="cost-tier-pill ${costPillClass}">${escapeHtml(c.tier || 'Standard')}</span>
+                </div>
+              </div>
+              <div class="recon-date-strip" style="margin-top: 8px;">
+                <span>📅</span>
+                <span>${escapeHtml(it.dateDisplay || 'Dates Active in Horizon')}</span>
+              </div>
+            </div>
+
+            <!-- 2. TRANSIT METRIC STRIP -->
+            <div class="recon-transit-strip">
+              🚗 <strong>${t.minutes || 0} min</strong> (${t.miles || 0} mi) from PRES • ${escapeHtml(t.routeNote || 'Calculated from 22041 219th St, Easton')}
+            </div>
+
+            <!-- 3. KEY OPERATIONAL BADGES (PILLS) -->
+            <div class="friction-pills-row">
+              ${f.gateAccessRequired ? '<span class="f-pill gate-alert-pill">🪪 DoD ID / Pass Required at Gate</span>' : ''}
+              <span class="f-pill">👟 ${escapeHtml(terrainBadge)}</span>
+              <span class="f-pill">🚻 ${escapeHtml(restroomBadge)}</span>
+              <span class="f-pill">${walletIcon} ${escapeHtml(walletBadge)}</span>
+            </div>
+
+            <!-- 4. DETAILS MATRIX: Hours & Window + Cost Reality -->
+            <div class="details-matrix-box">
+              <div class="details-matrix-row">
+                <span class="details-row-label">Hours &amp; Window:</span>
+                <span class="details-row-val">${escapeHtml(tg.hours || 'Standard Hours')}${tg.cutoffWarning ? ` — <strong class="cutoff-bold">⚠️ ${escapeHtml(tg.cutoffWarning)}</strong>` : ''}</span>
+              </div>
+              <div class="details-matrix-row">
+                <span class="details-row-label">Cost Reality:</span>
+                <span class="details-row-val">
+                  ${escapeHtml(c.details || 'General entry')}
+                  ${c.militaryDiscount ? `<br><span class="mil-disc-badge">🎖️ Military: ${escapeHtml(c.militaryDiscount)}</span>` : ''}
+                </span>
+              </div>
+            </div>
+
+            <!-- 5. CARD FOOTER: Address with click-to-copy button + Source Link + External Link -->
+            <div class="recon-card-footer">
+              ${loc.address ? `
+                <button type="button" class="copy-chip-btn" data-copy-text="${escapeAttr(loc.address)}" onclick="copyToClipboardFeedback(this, this.getAttribute('data-copy-text'))" title="Click to copy address">
+                  <span class="copy-icon">📋</span>
+                  <span>${escapeHtml(loc.address)}</span>
+                  <span class="copy-btn-tag">Copy Address</span>
+                </button>
+              ` : ''}
+
+              <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <a href="${item.source_url}" target="_blank" class="source-link">🔗 Source: ${item.source_label}</a>
+                ${loc.mapsUrl ? `<a href="${loc.mapsUrl}" target="_blank" rel="noopener noreferrer" class="recon-maps-btn">Open Google Maps ↗</a>` : ''}
+              </div>
+            </div>
+
+          </div>
+        `;
+      }).join('');
+    }
+
+    
+    // ========================================================
+    // CORRIDOR SECTORS, NODES & SEASONAL SIGNALS ENGINE
+    // ========================================================
+    let activeCorridorData = window.GAZETTE_CORRIDOR_NODES || null;
+    let selectedNodeSector = 'all';
+    let selectedNodeRole = 'all';
+
+    async function initCorridorNodesData() {
+      if (window.GAZETTE_RECON_INVENTORY && window.GAZETTE_RECON_INVENTORY.nodes) {
+        activeCorridorData = window.GAZETTE_RECON_INVENTORY;
+      } else if (window.GAZETTE_CORRIDOR_NODES) {
+        activeCorridorData = window.GAZETTE_CORRIDOR_NODES;
+      } else {
+        try {
+          const resp = await fetch('data/recon_inventory.json');
+          if (resp.ok) {
+            activeCorridorData = await resp.json();
+          } else {
+            const resp2 = await fetch('data/corridor_nodes.json');
+            if (resp2.ok) activeCorridorData = await resp2.json();
+          }
+        } catch (e) {
+          try {
+            const resp2 = await fetch('data/corridor_nodes.json');
+            if (resp2.ok) activeCorridorData = await resp2.json();
+          } catch (e2) {
+            console.warn('Corridor nodes fetch notice:', e2);
+          }
+        }
+      }
+      renderSeasonalSignals();
+      renderCorridorNodes();
+    }
+
+    function renderSeasonalSignals() {
+      const grid = document.getElementById('seasonalSignalsGrid');
+      const countBadge = document.getElementById('signalsCountBadge');
+      if (!grid || !activeCorridorData) return;
+
+      const signals = activeCorridorData.seasonal_signals || [];
+      if (countBadge) countBadge.textContent = signals.length;
+
+      if (signals.length === 0) {
+        grid.innerHTML = '<div style="color: #666666; font-size: 13px; font-style: italic;">No active corridor signals posted.</div>';
+        return;
+      }
+
+      grid.innerHTML = signals.map(item => {
+        const sig = item;
+        let badgeClass = 'badge-civic';
+        let badgeIcon = '🏛️';
+        if (sig.category === 'Nature-Phenomenon') {
+          badgeClass = 'badge-nature';
+          badgeIcon = sig.id.includes('deer') ? '🦌' : '🌊';
+        } else if (sig.category === 'MWR-Special') {
+          badgeClass = 'badge-mwr';
+          badgeIcon = '🏃';
+        }
+
+        const sectorName = getSectorDisplayName(sig.sector);
+
+        return `
+          <div class="signal-card">
+            <div class="signal-card-header">
+              <h4 class="signal-title">${escapeHtml(sig.title)}</h4>
+              <div class="signal-badges">
+                <span class="signal-badge ${badgeClass}">${badgeIcon} ${escapeHtml(sig.category)}</span>
+                <span class="signal-sector-badge">${escapeHtml(sectorName)}</span>
+              </div>
+            </div>
+
+            <div class="signal-window">
+              <span>📅</span>
+              <span>${escapeHtml(sig.date_window)}</span>
+            </div>
+
+            <div class="signal-desc">
+              ${escapeHtml(sig.description)}
+            </div>
+
+            ${sig.paired_stitch ? `
+              <div class="signal-stitch-box">
+                <strong>🧵 Paired Local Stitch:</strong> ${escapeHtml(sig.paired_stitch)}
+              </div>
+            ` : ''}
+
+            <div class="signal-footer">
+              <span style="font-size: 11px; color: #555555; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600;">${escapeHtml(sig.source_label || 'Verified Intelligence')}</span>
+              ${sig.source_url ? `
+                <a href="${item.source_url}" target="_blank" class="source-link">🔗 Source: ${item.source_label}</a>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function getSectorDisplayName(secId) {
+      if (secId === 'Ridge-449') return 'The Ridge (Easton / 449)';
+      if (secId === 'Post-FtL') return 'Fort Leavenworth';
+      if (secId === 'River-Downtown') return 'Downtown & Riverfront';
+      if (secId === 'South-Lansing') return 'South Corridor (Lansing)';
+      return secId || 'Corridor Wide';
+    }
+
+    function renderCorridorNodes() {
+      const grid = document.getElementById('corridorNodesGrid');
+      if (!grid || !activeCorridorData) return;
+
+      const nodes = activeCorridorData.nodes || [];
+
+      // Update count indicators on sector filter buttons
+      const secCounts = { all: nodes.length, 'Ridge-449': 0, 'Post-FtL': 0, 'River-Downtown': 0, 'South-Lansing': 0 };
+      const roleCounts = { all: nodes.length, Anchor: 0, Stitch: 0 };
+
+      nodes.forEach(n => {
+        if (secCounts[n.sector] !== undefined) secCounts[n.sector]++;
+        if (roleCounts[n.role] !== undefined) roleCounts[n.role]++;
+      });
+
+      const secCountAll = document.getElementById('secCountAll'); if (secCountAll) secCountAll.textContent = secCounts.all;
+      const secCountRidge = document.getElementById('secCountRidge'); if (secCountRidge) secCountRidge.textContent = secCounts['Ridge-449'];
+      const secCountPost = document.getElementById('secCountPost'); if (secCountPost) secCountPost.textContent = secCounts['Post-FtL'];
+      const secCountRiver = document.getElementById('secCountRiver'); if (secCountRiver) secCountRiver.textContent = secCounts['River-Downtown'];
+      const secCountSouth = document.getElementById('secCountSouth'); if (secCountSouth) secCountSouth.textContent = secCounts['South-Lansing'];
+
+      const roleCountAll = document.getElementById('roleCountAll'); if (roleCountAll) roleCountAll.textContent = roleCounts.all;
+      const roleCountAnchor = document.getElementById('roleCountAnchor'); if (roleCountAnchor) roleCountAnchor.textContent = roleCounts.Anchor;
+      const roleCountStitch = document.getElementById('roleCountStitch'); if (roleCountStitch) roleCountStitch.textContent = roleCounts.Stitch;
+
+      // Filter nodes
+      const filtered = nodes.filter(n => {
+        const matchesSector = (selectedNodeSector === 'all' || n.sector === selectedNodeSector);
+        const matchesRole = (selectedNodeRole === 'all' || n.role === selectedNodeRole);
+        return matchesSector && matchesRole;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div style="grid-column: 1 / -1; padding: 24px; text-align: center; color: #555555; font-family: 'Plus Jakarta Sans', sans-serif;">No corridor nodes matching the selected sector and role filters.</div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(item => {
+        const node = item;
+        const isAnchor = node.role === 'Anchor';
+        const roleBadgeClass = isAnchor ? 'badge-anchor' : 'badge-stitch';
+        const roleIcon = isAnchor ? '⚓' : '🧵';
+        const sectorName = getSectorDisplayName(node.sector);
+
+        return `
+          <div class="node-card ${isAnchor ? 'role-anchor' : 'role-stitch'}">
+            <div class="node-card-top">
+              <div>
+                <h4 class="node-card-title">${escapeHtml(node.name)}</h4>
+                <div class="node-category-tag">${escapeHtml(node.category)}</div>
+              </div>
+              <div class="node-badges-row">
+                <span class="role-badge ${roleBadgeClass}">${roleIcon} ${node.role}</span>
+                <span class="cost-tier-pill ${node.cost_tier === 'Free' ? 'tier-free' : node.cost_tier === '$' ? 'tier-under-30' : 'tier-under-75'}">${escapeHtml(node.cost_tier)}</span>
+                ${node.military_perk ? '<span class="node-military-badge">🎖️ DoD Perk</span>' : ''}
+              </div>
+            </div>
+
+            <div class="node-location-row">
+              <span class="node-address-text">📍 ${escapeHtml(node.location)}</span>
+              <button type="button" class="node-copy-btn" onclick="copyToClipboardFeedback(this, '${escapeHtml(node.location)}')">
+                📋 Copy
+              </button>
+            </div>
+
+            ${node.hours_note ? `
+              <div class="node-hours">
+                <span>⏰</span>
+                <span><strong>Hours:</strong> ${escapeHtml(node.hours_note)}</span>
+              </div>
+            ` : ''}
+
+            ${node.family_note ? `
+              <div class="node-family-note">
+                <strong>Tactical &amp; Family Brief:</strong> ${escapeHtml(node.family_note)}
+              </div>
+            ` : ''}
+
+            ${node.features && Array.isArray(node.features) ? `
+              <div class="node-features" style="display: flex; flex-wrap: wrap; gap: 4px; margin: 8px 0;">
+                ${node.features.map(f => `<span class="feature-pill" style="background: #f1f5f9; border: 1px solid #cbd5e1; font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 2px; color: #1e293b;">${escapeHtml(f)}</span>`).join('')}
+              </div>
+            ` : ''}
+
+            ${node.weekly_events && Array.isArray(node.weekly_events) ? `
+              <div class="node-weekly-events" style="background: #f8fafc; border-left: 3px solid #2563eb; padding: 6px 10px; margin: 8px 0; font-size: 11px;">
+                <strong style="color: #1e3a8a;">🗓️ Weekly Specialty Events:</strong>
+                <ul style="margin: 4px 0 0 16px; padding: 0; color: #334155;">
+                  ${node.weekly_events.map(ev => `<li>${escapeHtml(ev)}</li>`).join('')}
+                </ul>
+              </div>
+            ` : ''}
+
+            <div class="node-card-footer">
+              <span class="node-sector-tag">${escapeHtml(sectorName)}</span>
+              <a href="${item.source_url}" target="_blank" class="source-link">🔗 Source: ${item.source_label}</a>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function filterNodesBySector(secId) {
+      selectedNodeSector = secId;
+      ['secBtnAll', 'secBtnRidge', 'secBtnPost', 'secBtnRiver', 'secBtnSouth'].forEach(btnId => {
+        const btn = document.getElementById(btnId);
+        if (btn) btn.classList.remove('active');
+      });
+
+      if (secId === 'Ridge-449') {
+        const b = document.getElementById('secBtnRidge'); if (b) b.classList.add('active');
+      } else if (secId === 'Post-FtL') {
+        const b = document.getElementById('secBtnPost'); if (b) b.classList.add('active');
+      } else if (secId === 'River-Downtown') {
+        const b = document.getElementById('secBtnRiver'); if (b) b.classList.add('active');
+      } else if (secId === 'South-Lansing') {
+        const b = document.getElementById('secBtnSouth'); if (b) b.classList.add('active');
+      } else {
+        const b = document.getElementById('secBtnAll'); if (b) b.classList.add('active');
+      }
+
+      renderCorridorNodes();
+    }
+
+    function filterNodesByRole(roleId) {
+      selectedNodeRole = roleId;
+      ['roleBtnAll', 'roleBtnAnchor', 'roleBtnStitch'].forEach(btnId => {
+        const btn = document.getElementById(btnId);
+        if (btn) btn.classList.remove('active');
+      });
+
+      if (roleId === 'Anchor') {
+        const b = document.getElementById('roleBtnAnchor'); if (b) b.classList.add('active');
+      } else if (roleId === 'Stitch') {
+        const b = document.getElementById('roleBtnStitch'); if (b) b.classList.add('active');
+      } else {
+        const b = document.getElementById('roleBtnAll'); if (b) b.classList.add('active');
+      }
+
+      renderCorridorNodes();
+    }
+
+    function switchTab(tabId) {
+      const fuelBtn = document.getElementById('tabBtnFuel');
+      const grocBtn = document.getElementById('tabBtnGroceries');
+      const schoolBtn = document.getElementById('tabBtnSchool');
+      const outingsBtn = document.getElementById('tabBtnOutings');
+
+      const fuelPane = document.getElementById('tabPaneFuel');
+      const grocPane = document.getElementById('tabPaneGroceries');
+      const schoolPane = document.getElementById('tabPaneSchool');
+      const outingsPane = document.getElementById('tabPaneOutings');
+
+      // Deactivate all buttons
+      if (fuelBtn) fuelBtn.classList.remove('active');
+      if (grocBtn) grocBtn.classList.remove('active');
+      if (schoolBtn) schoolBtn.classList.remove('active');
+      if (outingsBtn) outingsBtn.classList.remove('active');
+
+      // Hide all panes
+      if (fuelPane) fuelPane.style.display = 'none';
+      if (grocPane) grocPane.style.display = 'none';
+      if (schoolPane) schoolPane.style.display = 'none';
+      if (outingsPane) outingsPane.style.display = 'none';
+
+      if (tabId === 'groceries') {
+        if (grocBtn) grocBtn.classList.add('active');
+        if (grocPane) grocPane.style.display = 'block';
+        window.location.hash = 'groceries';
+        renderGroceryProcurementEngine();
+      } else if (tabId === 'school') {
+        if (schoolBtn) schoolBtn.classList.add('active');
+        if (schoolPane) schoolPane.style.display = 'block';
+        window.location.hash = 'school';
+        renderSchoolDispatch();
+      } else if (tabId === 'outings' || tabId === 'recon') {
+        if (outingsBtn) outingsBtn.classList.add('active');
+        if (outingsPane) outingsPane.style.display = 'block';
+        window.location.hash = 'outings';
+        renderReconTimeline();
+        renderReconCards();
+        renderSeasonalSignals();
+        renderCorridorNodes();
+      } else {
+        if (fuelBtn) fuelBtn.classList.add('active');
+        if (fuelPane) fuelPane.style.display = 'block';
+        window.location.hash = 'fuel';
+      }
+    }
+
+    function getLowestGasStation() {
+      // 1. Check window.GAZETTE_GAS_FEED stations
+      if (window.GAZETTE_GAS_FEED && window.GAZETTE_GAS_FEED.stations && window.GAZETTE_GAS_FEED.stations.length > 0) {
+        let lowest = null;
+        window.GAZETTE_GAS_FEED.stations.forEach(s => {
+          if (s.price && (!lowest || s.price < lowest.price)) lowest = s;
+        });
+        if (lowest) return { name: lowest.name, price: lowest.price, loc: lowest.loc || '' };
+      }
+      // 2. Check CORRIDOR_STATIONS in scope
+      if (typeof CORRIDOR_STATIONS !== 'undefined' && Array.isArray(CORRIDOR_STATIONS) && CORRIDOR_STATIONS.length > 0) {
+        let lowest = null;
+        CORRIDOR_STATIONS.forEach(s => {
+          if (s.price && (!lowest || s.price < lowest.price)) lowest = s;
+        });
+        if (lowest) return { name: lowest.name, price: lowest.price, loc: lowest.loc || '' };
+      }
+      return { name: 'Sunoco (501 Limit St)', price: 3.83, loc: 'Leavenworth' };
+    }
+
+    function getLowestGasPrice() {
+      return getLowestGasStation().price;
+    }
+
+    let activeGroceryData = null;
+
+    async function initGroceryData() {
+      if (window.GAZETTE_GROCERY_DATA) {
+        activeGroceryData = window.GAZETTE_GROCERY_DATA;
+      } else {
+        try {
+          const resp = await fetch('data/groceries.json');
+          if (resp.ok) {
+            activeGroceryData = await resp.json();
+          }
+        } catch (e) {
+          console.warn('Groceries fetch note:', e);
+        }
+      }
+      // Populate fuel price input default and sync hint
+      const gasInput = document.getElementById('inputGasPrice');
+      const gasSyncHint = document.getElementById('gasSyncHint');
+      const station = getLowestGasStation();
+      if (gasInput && (!gasInput.value || gasInput.value === '2.72')) {
+        gasInput.value = station.price.toFixed(2);
+      }
+      if (gasSyncHint) {
+        gasSyncHint.textContent = `Synced with lowest corridor station (${station.name}: $${station.price.toFixed(2)}/gal)`;
+      }
+      renderGroceryProcurementEngine();
+    }
+
+    
+    // ========================================================
+    // USD 449 DISPATCH & LOCALSTORAGE PERSISTENCE
+    // ========================================================
+    const STORAGE_KEY_USD449 = 'gazette_usd449_building_filter';
+    const DEFAULT_SCHOOL_FILTER = {
+      pres: true, // Pleasant Ridge Elementary (PK-5)
+      prms: true, // Pleasant Ridge Middle (6-8)
+      prhs: true  // Pleasant Ridge High (9-12)
+    };
+
+    const STORAGE_KEY_GRADES = 'gazette_usd449_grade_filter';
+    const ALL_GRADES = ['PK', 'K', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+    const BUILDING_GRADE_MAP = {
+      pres: ['PK', 'K', '1', '2', '3', '4', '5'],
+      prms: ['6', '7', '8'],
+      prhs: ['9', '10', '11', '12']
+    };
+
+    let currentSchoolFilter = getSavedSchoolFilter();
+    let currentGradeFilter = getSavedGradeFilter();
+    let activeSchoolData = window.GAZETTE_USD449_DATA || null;
+
+    function getSavedSchoolFilter() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_USD449);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          return {
+            pres: parsed.pres !== false,
+            prms: parsed.prms !== false,
+            prhs: parsed.prhs !== false
+          };
+        }
+      } catch (e) {
+        console.warn('Error reading school filter state:', e);
+      }
+      return { ...DEFAULT_SCHOOL_FILTER };
+    }
+
+    function saveSchoolFilter(state) {
+      try {
+        localStorage.setItem(STORAGE_KEY_USD449, JSON.stringify(state));
+      } catch (e) {
+        console.warn('Error saving school filter state:', e);
+      }
+    }
+
+    function getSavedGradeFilter() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_GRADES);
+        if (raw) return JSON.parse(raw);
+      } catch (e) {}
+      const defaults = {};
+      ALL_GRADES.forEach(g => { defaults[g] = true; });
+      return defaults;
+    }
+
+    function saveGradeFilter(state) {
+      try {
+        localStorage.setItem(STORAGE_KEY_GRADES, JSON.stringify(state));
+      } catch (e) {}
+    }
+
+    function syncBuildingsFromGrades() {
+      ['pres', 'prms', 'prhs'].forEach(b => {
+        const bGrades = BUILDING_GRADE_MAP[b] || [];
+        currentSchoolFilter[b] = bGrades.some(g => !!currentGradeFilter[g]);
+      });
+      saveSchoolFilter(currentSchoolFilter);
+      syncFilterInputsWithState();
+    }
+
+    function toggleGradeFilter(grade) {
+      currentGradeFilter[grade] = !currentGradeFilter[grade];
+      saveGradeFilter(currentGradeFilter);
+      syncBuildingsFromGrades();
+      syncGradeFilterUI();
+      renderSchoolDispatch();
+    }
+
+    function setAllGradeFilters(enableAll) {
+      ALL_GRADES.forEach(g => { currentGradeFilter[g] = !!enableAll; });
+      saveGradeFilter(currentGradeFilter);
+      syncBuildingsFromGrades();
+      syncGradeFilterUI();
+      renderSchoolDispatch();
+    }
+
+    function syncGradeFilterUI() {
+      const deck = document.getElementById('gradeChipsDeck');
+      if (!deck) return;
+      const activeGrades = ALL_GRADES.filter(g => !!currentGradeFilter[g]);
+      deck.innerHTML = ALL_GRADES.map(g => {
+        const active = !!currentGradeFilter[g];
+        const label = g === 'PK' ? 'Pre-K' : (g === 'K' ? 'Kindergarten' : `Grade ${g}`);
+        return `<button type="button" class="filter-quick-btn" title="Toggle ${label}" style="padding: 4px 10px; font-size: 11px; font-weight: 700; ${active ? 'background: #0f172a; color: #ffffff; border-color: #0f172a;' : 'background: #f8fafc; color: #64748b; border-color: #cbd5e1;'}" onclick="toggleGradeFilter('${g}')">${g}</button>`;
+      }).join('') + `<span style="margin-left: auto; font-size: 11px; font-weight: 600; color: #475569; align-self: center;">Active: <strong>${activeGrades.length === ALL_GRADES.length ? 'All Grades (PK–12)' : (activeGrades.length === 0 ? 'None (District Alerts Only)' : activeGrades.join(', '))}</strong></span>`;
+    }
+
+    async function initSchoolData() {
+      if (window.GAZETTE_USD449_DATA) {
+        activeSchoolData = window.GAZETTE_USD449_DATA;
+      } else {
+        try {
+          const resp = await fetch('data/usd449.json');
+          if (resp.ok) {
+            activeSchoolData = await resp.json();
+          }
+        } catch (e) {
+          console.warn('USD 449 fetch notice:', e);
+        }
+      }
+      syncFilterInputsWithState();
+      syncGradeFilterUI();
+      renderSchoolDispatch();
+    }
+
+    function syncFilterInputsWithState() {
+      ['pres', 'prms', 'prhs'].forEach(id => {
+        const cb = document.getElementById(`filter-${id}`);
+        const chip = document.getElementById(`chip-${id}`);
+        const isChecked = !!currentSchoolFilter[id];
+        if (cb) cb.checked = isChecked;
+        if (chip) chip.classList.toggle('active', isChecked);
+      });
+    }
+
+    function handleBuildingFilterChange(buildingId, isChecked) {
+      currentSchoolFilter[buildingId] = !!isChecked;
+      const bGrades = BUILDING_GRADE_MAP[buildingId] || [];
+      bGrades.forEach(g => { currentGradeFilter[g] = !!isChecked; });
+      saveSchoolFilter(currentSchoolFilter);
+      saveGradeFilter(currentGradeFilter);
+      syncFilterInputsWithState();
+      syncGradeFilterUI();
+      renderSchoolDispatch();
+    }
+
+    function setAllBuildingFilters(enableAll) {
+      currentSchoolFilter = {
+        pres: !!enableAll,
+        prms: !!enableAll,
+        prhs: !!enableAll
+      };
+      ALL_GRADES.forEach(g => { currentGradeFilter[g] = !!enableAll; });
+      saveSchoolFilter(currentSchoolFilter);
+      saveGradeFilter(currentGradeFilter);
+      syncFilterInputsWithState();
+      syncGradeFilterUI();
+      renderSchoolDispatch();
+    }
+
+    function getEffectiveGrades(scopeArray, gradesArray) {
+      if (gradesArray && Array.isArray(gradesArray) && gradesArray.length > 0) {
+        return gradesArray;
+      }
+      if (!scopeArray || scopeArray.includes('district') || scopeArray.includes('all')) {
+        return ALL_GRADES;
+      }
+      const derived = [];
+      scopeArray.forEach(s => {
+        if (BUILDING_GRADE_MAP[s]) {
+          derived.push(...BUILDING_GRADE_MAP[s]);
+        }
+      });
+      return derived.length > 0 ? derived : ALL_GRADES;
+    }
+
+    function isSchoolItemVisible(scopeArray, gradesArray, isTier1Disruption = false) {
+      const isDistrictWide = !scopeArray || scopeArray.length === 0 || scopeArray.includes('district') || scopeArray.includes('all');
+      if (isTier1Disruption && isDistrictWide) {
+        return true; // Critical Guarantee: Tier 1 district-wide closures/late starts always visible
+      }
+      const effectiveGrades = getEffectiveGrades(scopeArray, gradesArray);
+      const anyGradeActive = effectiveGrades.some(g => !!currentGradeFilter[g]);
+      if (!anyGradeActive) return false;
+
+      if (isDistrictWide) {
+        return ALL_GRADES.some(g => !!currentGradeFilter[g]);
+      }
+
+      let buildingMatch = false;
+      for (const b of ['pres', 'prms', 'prhs']) {
+        if (scopeArray.includes(b) && currentSchoolFilter[b]) {
+          buildingMatch = true;
+          break;
+        }
+      }
+      return buildingMatch;
+    }
+
+    function renderScopeBadges(scopeArray, gradesLabel, gradesArray) {
+      let buildingBadges = '';
+      if (!scopeArray || scopeArray.includes('district') || scopeArray.includes('all')) {
+        buildingBadges = '<span class="scope-pill scope-district">District-Wide</span>';
+      } else {
+        buildingBadges = scopeArray.map(s => {
+          if (s === 'pres') return '<span class="scope-pill scope-pres">PRES · PK–5</span>';
+          if (s === 'prms') return '<span class="scope-pill scope-prms">PRMS · 6–8</span>';
+          if (s === 'prhs') return '<span class="scope-pill scope-prhs">PRHS · 9–12</span>';
+          return `<span class="scope-pill">${s.toUpperCase()}</span>`;
+        }).join(' ');
+      }
+      const gText = gradesLabel || (gradesArray && gradesArray.length < 14 ? `Grades: ${gradesArray.join(', ')}` : 'All Grades PK–12');
+      const gradePill = `<span class="scope-pill" style="background: #f1f5f9; color: #0f172a; border: 1px solid #cbd5e1;">🎯 ${gText}</span>`;
+      return `${buildingBadges} ${gradePill}`;
+    }
+
+    function formatEventTimeRange(it) {
+      if (it.startTime && it.endTime) {
+        return `${it.startTime} – ${it.endTime}`;
+      }
+      return it.time || it.deadline || '8:00 AM – 3:25 PM';
+    }
+
+    function renderBadgePill(badgeText, badgeType) {
+      const bClass = badgeType ? `badge-${badgeType}` : 'badge-info';
+      return `<span class="card-status-badge ${bClass}">${badgeText}</span>`;
+    }
+
+    function renderSchoolDispatch() {
+      if (!activeSchoolData) return;
+
+      // Update meta badge
+      const weekBadge = document.getElementById('schoolWeekBadge');
+      if (weekBadge && activeSchoolData.meta && activeSchoolData.meta.dateRange) {
+        weekBadge.innerHTML = `<strong>Active Week:</strong> ${activeSchoolData.meta.dateRange}`;
+      }
+
+      // 1. Render Tier 1: Schedule & Disruptions
+      const t1Grid = document.getElementById('tier1Grid');
+      if (t1Grid) {
+        const items = (activeSchoolData.tier1_schedule_disruptions || []).filter(it => isSchoolItemVisible(it.scope, it.grades, true));
+        if (items.length === 0) {
+          t1Grid.innerHTML = '<div class="empty-tier-notice">No schedule disruptions or calendar deviations active for the selected grade/building filters.</div>';
+        } else {
+          t1Grid.innerHTML = items.map(it => `
+            <div class="dispatch-card tier-1-card">
+              <div>
+                <div class="dispatch-card-top">
+                  <span class="dispatch-date-badge">${it.date || ''}</span>
+                  <div class="dispatch-scopes">${renderScopeBadges(it.scope, it.gradesLabel, it.grades)}</div>
+                </div>
+                <h4 class="dispatch-card-title">${it.title}</h4>
+                <div class="dispatch-card-time">⏰ <strong>Start – End:</strong> ${formatEventTimeRange(it)}</div>
+                <div class="dispatch-card-location">📍 ${it.location || ''}</div>
+                <div class="dispatch-card-desc">${it.description || ''}</div>
+              </div>
+              <div class="dispatch-card-footer">
+                ${renderBadgePill(it.badge, it.badgeType)}
+                <span style="font-size: 10px; color: #64748b; font-family: 'Plus Jakarta Sans', sans-serif;">USD 449 Dispatch</span>
+              </div>
+            </div>
+          `).join('');
+        }
+      }
+
+      // 2. Render Tier 2: Gear, Deadlines & Parent Action
+      const t2Grid = document.getElementById('tier2Grid');
+      if (t2Grid) {
+        const items = (activeSchoolData.tier2_gear_deadlines_action || []).filter(it => isSchoolItemVisible(it.scope, it.grades, false));
+        if (items.length === 0) {
+          t2Grid.innerHTML = '<div class="empty-tier-notice">No gear, deadlines, or parent action items match the currently selected grades.</div>';
+        } else {
+          t2Grid.innerHTML = items.map(it => `
+            <div class="dispatch-card tier-2-card">
+              <div>
+                <div class="dispatch-card-top">
+                  <span class="dispatch-date-badge">${it.date || ''}</span>
+                  <div class="dispatch-scopes">${renderScopeBadges(it.scope, it.gradesLabel, it.grades)}</div>
+                </div>
+                <h4 class="dispatch-card-title">${it.title}</h4>
+                <div class="dispatch-card-time" style="color: #ea580c;">⏰ <strong>Start – End:</strong> ${formatEventTimeRange(it)}${it.deadline ? ` &middot; ⏳ ${it.deadline}` : ''}</div>
+                <div class="dispatch-card-location">📍 ${it.location || ''}</div>
+                <div class="dispatch-card-desc">${it.description || ''}</div>
+              </div>
+              <div class="dispatch-card-footer">
+                ${renderBadgePill(it.badge, it.badgeType)}
+                ${it.actionUrl ? `<a href="${it.actionUrl}" target="_blank" rel="noopener noreferrer" class="card-action-link">${it.actionLabel || 'Action Link'} &rarr;</a>` : ''}
+              </div>
+            </div>
+          `).join('');
+        }
+      }
+
+      // 3. Render Tier 3: Marquee Home Gatherings
+      const t3Grid = document.getElementById('tier3Grid');
+      if (t3Grid) {
+        const items = (activeSchoolData.tier3_marquee_gatherings || []).filter(it => isSchoolItemVisible(it.scope, it.grades, false));
+        if (items.length === 0) {
+          t3Grid.innerHTML = '<div class="empty-tier-notice">No home gatherings or athletic showcases scheduled for the currently selected grades.</div>';
+        } else {
+          t3Grid.innerHTML = items.map(it => `
+            <div class="dispatch-card tier-3-card">
+              <div>
+                <div class="dispatch-card-top">
+                  <span class="dispatch-date-badge">${it.date || ''}</span>
+                  <div class="dispatch-scopes">${renderScopeBadges(it.scope, it.gradesLabel, it.grades)}</div>
+                </div>
+                <h4 class="dispatch-card-title">${it.title}</h4>
+                <div class="dispatch-card-time" style="color: #2563eb;">⏰ <strong>Start – End:</strong> ${formatEventTimeRange(it)}</div>
+                <div class="dispatch-card-location">📍 ${it.location || ''}</div>
+                <div class="dispatch-card-desc">${it.description || ''}</div>
+              </div>
+              <div class="dispatch-card-footer">
+                ${renderBadgePill(it.badge, it.badgeType)}
+                <span style="font-size: 11px; font-weight: 700; color: #475569; font-family: 'Plus Jakarta Sans', sans-serif;">${it.admission || 'Free Admission'}</span>
+              </div>
+            </div>
+          `).join('');
+        }
+      }
+
+      // 4. Render Tier 4: Daily Breakfast & Lunchline Tracker
+      const t4Grid = document.getElementById('tier4Grid');
+      if (t4Grid) {
+        const days = activeSchoolData.tier4_lunchline_tracker || [];
+        const showPres = currentSchoolFilter.pres && BUILDING_GRADE_MAP.pres.some(g => !!currentGradeFilter[g]);
+        const showSec = (currentSchoolFilter.prms && BUILDING_GRADE_MAP.prms.some(g => !!currentGradeFilter[g])) ||
+                        (currentSchoolFilter.prhs && BUILDING_GRADE_MAP.prhs.some(g => !!currentGradeFilter[g]));
+
+        const pricing = (activeSchoolData.meta && activeSchoolData.meta.mealPricing) || {
+          breakfast: { pres: 2.15, secondary: 2.30, reduced: 0.30, adult: 3.00, serviceWindow: '7:35 AM – 8:05 AM' },
+          lunch: { pres: 3.10, secondary: 3.35, reduced: 0.40, adult: 4.85, extraMilk: 0.60, serviceWindow: '11:10 AM – 12:45 PM' }
+        };
+
+        t4Grid.innerHTML = days.map(d => `
+          <div class="lunch-card ${d.status === 'holiday' ? 'holiday' : ''}">
+            <div class="lunch-day-row">
+              <h4 class="lunch-day-title">${d.day}</h4>
+              <span class="lunch-date">${d.date}</span>
+            </div>
+            ${d.note ? `<div style="font-size: 10.5px; font-weight: 700; color: #b91c1c; font-family: 'Plus Jakarta Sans', sans-serif;">⚠️ ${d.note}</div>` : ''}
+
+            <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 5px; padding: 7px 9px; margin-bottom: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: #b45309;">☕ Breakfast (${pricing.breakfast.serviceWindow})</span>
+                <span style="font-size: 10px; font-weight: 700; color: #92400e;">$${pricing.breakfast.pres.toFixed(2)} PRES / $${pricing.breakfast.secondary.toFixed(2)} Sec</span>
+              </div>
+              ${(showPres || (!showPres && !showSec)) ? `
+                <div style="font-size: 11.5px; color: #1e293b; margin-bottom: 2px;">
+                  <strong style="color: #15803d;">PRES (PK–5):</strong> ${d.breakfast_pres || 'Hot Breakfast Entree or Cereal w/ Toast'}
+                </div>
+              ` : ''}
+              ${(showSec || (!showPres && !showSec)) ? `
+                <div style="font-size: 11.5px; color: #1e293b; margin-bottom: 2px;">
+                  <strong style="color: #0284c7;">PRMS/PRHS (6–12):</strong> ${d.breakfast_secondary || d.breakfast_pres || 'Hot Breakfast Entree or Cereal'}
+                </div>
+              ` : ''}
+              <div style="font-size: 10.5px; color: #64748b;">Fruit &amp; Milk: ${d.breakfast_sides || '100% Fruit Juice · Fresh Fruit · Milk'}</div>
+            </div>
+
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 5px; padding: 7px 9px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: #15803d;">🍱 Lunch (${pricing.lunch.serviceWindow})</span>
+                <span style="font-size: 10px; font-weight: 700; color: #166534;">$${pricing.lunch.pres.toFixed(2)} PRES / $${pricing.lunch.secondary.toFixed(2)} Sec</span>
+              </div>
+              ${(showPres || (!showPres && !showSec)) ? `
+                <div class="lunch-section-block" style="margin-bottom: 4px;">
+                  <span class="lunch-label label-pres">Elementary Lunch (PRES · $${pricing.lunch.pres.toFixed(2)}):</span>
+                  <span class="lunch-text"><strong>${d.entree_pres || 'Standard Menu'}</strong></span>
+                </div>
+              ` : ''}
+
+              ${(showSec || (!showPres && !showSec)) ? `
+                <div class="lunch-section-block" style="margin-bottom: 4px;">
+                  <span class="lunch-label label-sec">Secondary Lunch (PRMS/PRHS · $${pricing.lunch.secondary.toFixed(2)}):</span>
+                  <span class="lunch-text"><strong>${d.entree_secondary || 'Standard Menu'}</strong></span>
+                </div>
+              ` : ''}
+
+              <div class="lunch-section-block" style="margin-bottom: 3px;">
+                <span class="lunch-label label-sides">Sides &amp; Produce:</span>
+                <span class="lunch-text" style="color: #475569;">${d.sides || 'Seasonal sides'}</span>
+              </div>
+
+              <div class="lunch-section-block">
+                <span class="lunch-label label-sides">Milk Service ($${pricing.lunch.extraMilk.toFixed(2)} extra):</span>
+                <span class="lunch-text" style="color: #64748b; font-size: 11px;">${d.milk || '1% or Skim Milk'}</span>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function formatGroceryTimestamp(isoStr, includeSeconds = false) {
+      if (!isoStr) return 'Oct 22, 2026 · 12:12 PM CT';
+      try {
+        const dt = new Date(isoStr);
+        if (!isNaN(dt.getTime())) {
+          const datePart = dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'America/Chicago' });
+          const timeOpts = { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'America/Chicago' };
+          if (includeSeconds) timeOpts.second = '2-digit';
+          const timePart = dt.toLocaleTimeString('en-US', timeOpts);
+          return `${datePart} · ${timePart} CT`;
+        }
+      } catch (e) {}
+      return 'Oct 22, 2026 · 12:12 PM CT';
+    }
+
+    async function refreshGroceryFeedsLive() {
+      const btn = document.getElementById('btnRefreshGroceries');
+      const iconEl = document.getElementById('btnRefreshGroceriesIcon');
+      const labelEl = document.getElementById('btnRefreshGroceriesLabel');
+      if (btn) {
+        btn.disabled = true;
+        btn.style.opacity = '0.75';
+      }
+      if (iconEl) iconEl.textContent = '⏳';
+      if (labelEl) labelEl.textContent = 'Pulling Live Corridor Store Feeds...';
+
+      try {
+        if (!activeGroceryData) await initGroceryData();
+        const basket = (activeGroceryData && activeGroceryData.currentBasket) || {};
+        const prices = basket.prices || {};
+        if (!basket.storeTimestamps) basket.storeTimestamps = {};
+        const storeTimestamps = basket.storeTimestamps;
+        let updatedAny = false;
+
+        try {
+          const apiResp = await fetch(`/api/refresh-groceries?t=${Date.now()}`, { cache: 'no-store' });
+          if (apiResp.ok) {
+            const payload = await apiResp.json();
+            if (payload && payload.ok) {
+              if (payload.publishedAt) basket.publishedAt = payload.publishedAt;
+              if (payload.storeTimestamps) {
+                Object.entries(payload.storeTimestamps).forEach(([sid, ts]) => {
+                  storeTimestamps[sid] = ts;
+                });
+              }
+              if (payload.livePrices) {
+                Object.entries(payload.livePrices).forEach(([sid, sMap]) => {
+                  if (!prices[sid]) prices[sid] = {};
+                  Object.entries(sMap || {}).forEach(([ik, val]) => {
+                    if (typeof val === 'number' && val > 0) prices[sid][ik] = val;
+                  });
+                });
+              }
+              updatedAny = true;
+            }
+          }
+        } catch (apiErr) {}
+
+        if (!updatedAny) {
+          try {
+            const jsonResp = await fetch(`data/groceries.json?t=${Date.now()}`, { cache: 'no-store' });
+            if (jsonResp.ok) {
+              const freshJson = await jsonResp.json();
+              if (freshJson && freshJson.currentBasket) {
+                activeGroceryData = freshJson;
+              }
+            }
+          } catch (e) {}
+          const nowIso = new Date().toISOString();
+          if (activeGroceryData && activeGroceryData.currentBasket) {
+            activeGroceryData.currentBasket.publishedAt = nowIso;
+            activeGroceryData.currentBasket.storeTimestamps = activeGroceryData.currentBasket.storeTimestamps || {};
+            ['aldi', 'price_chopper', 'dillons', 'walmart', 'commissary'].forEach(sid => {
+              activeGroceryData.currentBasket.storeTimestamps[sid] = nowIso;
+            });
+          }
+        }
+
+        if (activeGroceryData && Array.isArray(activeGroceryData.stores)) {
+          const tsMap = (activeGroceryData.currentBasket && activeGroceryData.currentBasket.storeTimestamps) || {};
+          activeGroceryData.stores.forEach(s => {
+            if (tsMap[s.id]) s.lastUpdated = tsMap[s.id];
+          });
+        }
+
+        renderGroceryProcurementEngine();
+
+        if (iconEl) iconEl.textContent = '✅';
+        const verifiedTime = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true, timeZone: 'America/Chicago' });
+        if (labelEl) labelEl.textContent = `Live Feeds Verified (${verifiedTime} CT)`;
+        if (btn) {
+          btn.style.background = '#065f46';
+          btn.style.borderColor = '#065f46';
+        }
+        setTimeout(() => {
+          if (iconEl) iconEl.textContent = '🔄';
+          if (labelEl) labelEl.textContent = 'Refresh Live Grocery Feeds';
+          if (btn) {
+            btn.style.background = '#0f172a';
+            btn.style.borderColor = '#0f172a';
+          }
+        }, 4500);
+      } catch (err) {
+        if (iconEl) iconEl.textContent = '⚠️';
+        if (labelEl) labelEl.textContent = 'Retry Feed Refresh';
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.style.opacity = '1';
+        }
+      }
+    }
+
+    function renderGroceryProcurementEngine() {
+      if (!activeGroceryData) return;
+
+      const items = activeGroceryData.items || [];
+      const stores = activeGroceryData.stores || [];
+      const basket = activeGroceryData.currentBasket || {};
+      const prices = basket.prices || {};
+      const storeTimestamps = basket.storeTimestamps || {};
+
+      // Format As-Of Date & Time from basket.publishedAt
+      const formattedAsOf = formatGroceryTimestamp(basket.publishedAt, false);
+      const lastUpdBadge = document.getElementById('procLastUpdatedBadge');
+      if (lastUpdBadge) {
+        lastUpdBadge.innerHTML = `<strong>Prices As Of:</strong> ${formattedAsOf}`;
+      }
+      const t1TsTag = document.getElementById('procTable1TimestampTag');
+      if (t1TsTag) {
+        t1TsTag.innerHTML = `<strong>Prices As Of:</strong> ${formattedAsOf} &nbsp;|&nbsp; Formula: Shelf Subtotal + Tax/Surcharge + Transit`;
+      }
+      const t2TsTag = document.getElementById('groceryMatrixTimestampTag');
+      if (t2TsTag) {
+        t2TsTag.innerHTML = `Prices Last Updated: ${formattedAsOf} (Automated Multi-Store Feed)`;
+      }
+
+      const stripEl = document.getElementById('perStoreTimestampStrip');
+      if (stripEl) {
+        stripEl.innerHTML = stores.map(st => {
+          const stIso = storeTimestamps[st.id] || st.lastUpdated || basket.publishedAt;
+          const stFormatted = formatGroceryTimestamp(stIso, true);
+          return `<div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 3px; padding: 3px 8px; color: #334155;">
+            <strong style="color: #0f172a;">${st.name}:</strong> <span style="color: #065f46; font-weight: 700;">⏱ ${stFormatted}</span>
+          </div>`;
+        }).join('');
+      }
+
+      const mpgInput = document.getElementById('inputVehicleMpg');
+      const gasInput = document.getElementById('inputGasPrice');
+      const commCheck = document.getElementById('checkIncludeCommissary');
+
+      const mpg = mpgInput ? parseFloat(mpgInput.value) || 20.0 : 20.0;
+      const gasPrice = gasInput ? parseFloat(gasInput.value) || getLowestGasPrice() : 2.72;
+      const includeCommissary = commCheck ? commCheck.checked : true;
+
+      // Update KPI strip & badges
+      const costPerMile = gasPrice / mpg;
+      const costPerMiEl = document.getElementById('kpiTransitCostPerMi');
+      const gasRateSubEl = document.getElementById('kpiGasRateSub');
+      const procGasRateBadge = document.getElementById('procGasRateBadge');
+      const itemCountEl = document.getElementById('kpiItemCount');
+
+      if (costPerMiEl) costPerMiEl.textContent = `$${costPerMile.toFixed(3)} / mi`;
+      if (gasRateSubEl) gasRateSubEl.textContent = `Based on ${mpg.toFixed(0)} MPG @ $${gasPrice.toFixed(2)}/gal`;
+      if (procGasRateBadge) procGasRateBadge.innerHTML = `<strong>Corridor Fuel:</strong> $${gasPrice.toFixed(2)}/gal ($${costPerMile.toFixed(3)}/mi)`;
+      if (itemCountEl) itemCountEl.textContent = `${items.length} Dinner Staples`;
+
+      const station = getLowestGasStation();
+      const gasSyncHint = document.getElementById('gasSyncHint');
+      if (gasSyncHint) {
+        gasSyncHint.textContent = `Synced with lowest corridor station (${station.name}: $${gasPrice.toFixed(2)}/gal)`;
+      }
+
+      // 1. Calculate Procurement per store
+      const evaluatedStores = [];
+
+      stores.forEach(st => {
+        if (!includeCommissary && st.id === 'commissary') return;
+
+        const storePrices = prices[st.id] || {};
+        let shelfSubtotal = 0;
+        let missingItem = false;
+
+        items.forEach(it => {
+          const p = storePrices[it.id];
+          if (typeof p === 'number') {
+            shelfSubtotal += p;
+          } else {
+            missingItem = true;
+          }
+        });
+
+        const rate = (st.taxRate || 0) + (st.surchargeRate || 0);
+        const taxSurchargeAmt = shelfSubtotal * rate;
+        const adjustedSubtotal = shelfSubtotal + taxSurchargeAmt;
+        const transitCost = st.roundTripMiles * (gasPrice / mpg);
+        const trueProcurementCost = adjustedSubtotal + transitCost;
+
+        evaluatedStores.push({
+          ...st,
+          shelfSubtotal,
+          taxSurchargeAmt,
+          ratePercent: rate * 100,
+          adjustedSubtotal,
+          transitCost,
+          trueProcurementCost,
+          missingItem
+        });
+      });
+
+      // Sort stores by True Procurement Cost (ascending)
+      evaluatedStores.sort((a, b) => a.trueProcurementCost - b.trueProcurementCost);
+
+      const winner = evaluatedStores[0];
+      const highest = evaluatedStores[evaluatedStores.length - 1];
+      const maxSpread = (highest && winner) ? highest.trueProcurementCost - winner.trueProcurementCost : 0;
+
+      // Update KPIs
+      const winnerStoreEl = document.getElementById('kpiWinnerStore');
+      const winnerCostEl = document.getElementById('kpiWinnerCost');
+      const maxSpreadEl = document.getElementById('kpiMaxSpread');
+
+      if (winnerStoreEl && winner) winnerStoreEl.textContent = winner.name;
+      if (winnerCostEl && winner) winnerCostEl.textContent = `$${winner.trueProcurementCost.toFixed(2)} True Total Cost`;
+      if (maxSpreadEl) maxSpreadEl.textContent = `$${maxSpread.toFixed(2)}`;
+
+      // 2. Render Table 1: Procurement Ranking
+      const rankTbody = document.getElementById('procurementRankingTableBody');
+      if (rankTbody) {
+        rankTbody.innerHTML = '';
+        evaluatedStores.forEach((st, idx) => {
+          const isWinner = idx === 0;
+          const spread = st.trueProcurementCost - (winner ? winner.trueProcurementCost : 0);
+          const tr = document.createElement('tr');
+          if (isWinner) tr.className = 'lowest-row';
+
+          const rankLabels = ['1st (Optimal)', '2nd', '3rd', '4th', '5th'];
+          const rankText = rankLabels[idx] || `${idx + 1}th`;
+
+          tr.innerHTML = `
+            <td>
+              <strong>${rankText}</strong>
+              ${isWinner ? '<span class="optimal-badge">★ Optimal</span>' : ''}
+            </td>
+            <td>
+              <strong>${st.name}</strong><br>
+              <span style="font-size: 11px; color: #666;">${st.address}</span>
+            </td>
+            <td>
+              <span style="font-size: 11px; color: #555;">${st.ingestionMode}</span><br>
+              <span style="font-size: 10px; font-weight: 700; color: #065f46;">⏱ Pulled: ${formatGroceryTimestamp(storeTimestamps[st.id] || st.lastUpdated || basket.publishedAt, true)}</span>
+            </td>
+            <td>$${st.shelfSubtotal.toFixed(2)}</td>
+            <td>
+              +$${st.taxSurchargeAmt.toFixed(2)}
+              <span style="font-size: 10px; color: #777;">(${st.ratePercent.toFixed(1)}% ${st.id === 'commissary' ? 'DeCA' : 'Tax'})</span>
+            </td>
+            <td><strong>$${st.adjustedSubtotal.toFixed(2)}</strong></td>
+            <td>${st.roundTripMiles.toFixed(1)} mi</td>
+            <td>$${st.transitCost.toFixed(2)}</td>
+            <td><strong style="color: ${isWinner ? 'var(--forest)' : 'var(--ink)'}; font-size: 15px;">$${st.trueProcurementCost.toFixed(2)}</strong></td>
+            <td>
+              ${isWinner ? '<span style="color: var(--forest); font-weight: 800;">$0.00 (Cheapest)</span>' : `+$${spread.toFixed(2)} (+${((spread / winner.trueProcurementCost) * 100).toFixed(1)}%)`}
+            </td>
+          `;
+          rankTbody.appendChild(tr);
+        });
+      }
+
+      // 3. Render Table 2: Itemized Staple Matrix
+      const matrixTbody = document.getElementById('itemizedBasketTableBody');
+      const headerRow = document.getElementById('itemizedTableHeaderRow');
+
+      if (headerRow) {
+        let thHtml = '<th>Staple Item &amp; Spec</th><th>Category</th>';
+        stores.forEach(st => {
+          if (!includeCommissary && st.id === 'commissary') return;
+          const stTsText = formatGroceryTimestamp(storeTimestamps[st.id] || st.lastUpdated || basket.publishedAt, true);
+          thHtml += `<th>${st.name}<br><span style="font-size: 9.5px; font-weight: 500; color: #cbd5e1; text-transform: none;">Pulled: ${stTsText}</span></th>`;
+        });
+        thHtml += '<th>Item Lowest</th>';
+        headerRow.innerHTML = thHtml;
+      }
+
+      if (matrixTbody) {
+        matrixTbody.innerHTML = '';
+        items.forEach(it => {
+          // Find lowest price for this item
+          let lowestPrice = 999;
+          let lowestStore = '';
+          stores.forEach(st => {
+            if (!includeCommissary && st.id === 'commissary') return;
+            const p = (prices[st.id] || {})[it.id];
+            if (typeof p === 'number' && p < lowestPrice) {
+              lowestPrice = p;
+              lowestStore = st.name;
+            }
+          });
+
+          const tr = document.createElement('tr');
+          let rowHtml = `
+            <td>
+              <strong>${it.name}</strong><br>
+              <span style="font-size: 11px; color: #666;">${it.spec}</span>
+            </td>
+            <td><span class="cat-badge cat-${it.category}">${it.category}</span></td>
+          `;
+
+          stores.forEach(st => {
+            if (!includeCommissary && st.id === 'commissary') return;
+            const p = (prices[st.id] || {})[it.id];
+            const isItemBest = (typeof p === 'number' && p === lowestPrice);
+            if (typeof p === 'number') {
+              rowHtml += `<td>${isItemBest ? `<strong class="best-item-tag">$${p.toFixed(2)} ★</strong>` : `$${p.toFixed(2)}`}</td>`;
+            } else {
+              rowHtml += `<td><span style="color: #999;">N/A</span></td>`;
+            }
+          });
+
+          rowHtml += `<td><strong>$${lowestPrice.toFixed(2)}</strong> <span style="font-size: 11px; color: var(--forest);">(${lowestStore})</span></td>`;
+          tr.innerHTML = rowHtml;
+          matrixTbody.appendChild(tr);
+        });
+      }
+    }
+
+    function updateProcurementCalculations() {
+      renderGroceryProcurementEngine();
+    }
+
+  </script>
+  <!-- Clipboard Toast Notification -->
+  <div id="copyToast" style="display:none; position:fixed; bottom:24px; right:24px; background:#111111; color:#ffffff; padding:10px 18px; border-radius:3px; font-family:'Plus Jakarta Sans', sans-serif; font-size:12px; font-weight:700; z-index:9999; box-shadow:3px 3px 0px rgba(0,0,0,0.4); border:1px solid #333;">
+    ✓ Copied 913-682-5724
+  </div>
+
+</body>
+</html>

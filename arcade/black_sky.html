@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>BLACK SKY: LEAVENWORTH — Systems Survival &amp; Resilience Strategy</title>
+    <style>
+        :root {
+            --bg: #070b12;
+            --panel-bg: #0f172a;
+            --card-bg: #131d31;
+            --border: #22304d;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-red: #ef4444;
+            --accent-amber: #f59e0b;
+            --accent-blue: #38bdf8;
+            --accent-emerald: #10b981;
+            --accent-purple: #a855f7;
+        }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+            -webkit-tap-highlight-color: transparent;
+        }
+        html, body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            height: 100%;
+            height: 100dvh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        header { 
+            background: #0c1220; 
+            border-bottom: 1px solid var(--border); 
+            padding: 10px 16px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            z-index: 30;
+            flex-shrink: 0;
+        }
+        .logo { 
+            font-size: 15px; 
+            font-weight: 800; 
+            letter-spacing: 0.05em; 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+        }
+        .logo-badge { 
+            font-size: 9px; 
+            background: #dc2626; 
+            color: #fff; 
+            padding: 2px 6px; 
+            border-radius: 4px; 
+            font-weight: 800; 
+        }
+        .header-status { 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            font-size: 11px; 
+        }
+        .phase-indicator { 
+            background: #1e293b; 
+            border: 1px solid #334155; 
+            padding: 4px 8px; 
+            border-radius: 20px; 
+            font-weight: 700; 
+            font-size: 10px; 
+            text-transform: uppercase; 
+            white-space: nowrap;
+        }
+        
+        .btn-dash-toggle { 
+            background: #2563eb; 
+            color: #fff; 
+            border: none; 
+            padding: 6px 12px; 
+            font-size: 11px; 
+            font-weight: 700; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            transition: all 0.2s; 
+            display: flex; 
+            align-items: center; 
+            gap: 4px; 
+            white-space: nowrap;
+        }
+        .btn-dash-toggle:hover { background: #1d4ed8; }
+
+        /* Top HUD Bar */
+        .hud-bar { 
+            background: var(--panel-bg); 
+            border-bottom: 1px solid var(--border); 
+            padding: 8px 14px; 
+            display: flex; 
+            gap: 12px; 
+            overflow-x: auto; 
+            font-size: 11px; 
+            align-items: center; 
+            flex-shrink: 0;
+            -webkit-overflow-scrolling: touch;
+        }
+        .hud-item { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 1px; 
+            min-width: 95px; 
+            flex-shrink: 0;
+        }
+        .hud-label { 
+            font-size: 9px; 
+            text-transform: uppercase; 
+            color: var(--text-muted); 
+            font-weight: 700; 
+            letter-spacing: 0.5px;
+        }
+        .hud-val { 
+            font-size: 14px; 
+            font-weight: 800; 
+        }
+
+        /* Main Workspace Layout */
+        .workspace { 
+            flex: 1 1 0%; 
+            min-height: 0; 
+            display: grid; 
+            grid-template-columns: 1fr 320px; 
+            overflow: hidden; 
+            position: relative; 
+        }
+
+        @media (max-width: 950px) { 
+            .workspace { 
+                display: flex;
+                flex-direction: column;
+                grid-template-columns: none;
+                flex: 1 1 0%;
+                min-height: 0;
+                height: 0;
+            } 
+            .sidebar {
+                display: none !important;
+            }
+        }
+
+        /* Play Area Terminal */
+        .play-area { 
+            flex: 1 1 0%; 
+            min-height: 0;
+            height: 100%;
+            padding: 12px; 
+            overflow-y: scroll; 
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-y;
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+        }
+
+        /* Mobile Tactical Ribbon */
+        .mobile-score-bar {
+            display: none;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 11px;
+            font-weight: 700;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        @media (max-width: 950px) {
+            .mobile-score-bar {
+                display: flex;
+            }
+        }
+
+        /* SitRep Card */
+        .sitrep-card { 
+            background: var(--card-bg); 
+            border: 1px solid var(--border); 
+            border-radius: 8px; 
+            padding: 12px 14px; 
+            border-left: 4px solid var(--accent-blue); 
+            flex-shrink: 0;
+        }
+        .sitrep-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 4px; 
+            font-size: 11px; 
+            color: var(--text-muted); 
+            font-weight: 700; 
+        }
+        .sitrep-title { 
+            font-size: 14px; 
+            font-weight: 800; 
+            color: #fff; 
+            margin-bottom: 4px; 
+        }
+        .sitrep-body { 
+            font-size: 12px; 
+            line-height: 1.4; 
+            color: #cbd5e1; 
+        }
+
+        /* Section Headings */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            margin-bottom: 6px;
+        }
+        .section-badge {
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--accent-blue);
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        /* Project Dossier Card (Active) */
+        .active-project-card {
+            background: linear-gradient(180deg, #162035 0%, #111a2d 100%);
+            border: 2px solid var(--accent-blue);
+            border-radius: 10px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            margin-bottom: 8px;
+        }
+        .active-project-card.completed {
+            border-color: var(--accent-emerald);
+            background: linear-gradient(180deg, #0d281e 0%, #081a14 100%);
+        }
+
+        .project-title-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .project-name {
+            font-size: 14px;
+            font-weight: 800;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .project-tag {
+            font-size: 9px;
+            background: rgba(56, 189, 248, 0.2);
+            color: var(--accent-blue);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        /* 4-Stage Stepper Bar */
+        .stepper-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+            margin: 4px 0;
+        }
+        .step-segment {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+        .step-segment.done {
+            background: var(--accent-emerald);
+        }
+        .step-segment.current {
+            background: var(--accent-blue);
+            box-shadow: 0 0 8px rgba(56, 189, 248, 0.7);
+        }
+
+        /* Current Stage Detail Box */
+        .stage-box {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .stage-label {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--accent-amber);
+            display: flex;
+            justify-content: space-between;
+        }
+        .stage-desc {
+            font-size: 11px;
+            color: #cbd5e1;
+            line-height: 1.4;
+        }
+        .stage-costs {
+            display: flex;
+            gap: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding-top: 6px;
+            margin-top: 2px;
+        }
+
+        /* Tactile Action Buttons */
+        .btn-card-action {
+            border: none;
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.15s;
+        }
+        .btn-card-action.deploy {
+            background: var(--accent-blue);
+            color: #000;
+        }
+        .btn-card-action.deploy:hover {
+            background: #7dd3fc;
+        }
+        .btn-card-action.need-hours {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid var(--accent-red);
+            color: var(--accent-red);
+        }
+        .btn-card-action.activate {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+        .btn-card-action.activate:hover {
+            background: rgba(255, 255, 255, 0.18);
+            border-color: #fff;
+        }
+        .btn-card-action.disabled-slot {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+        .btn-card-action.installed {
+            background: #064e3b;
+            color: #34d399;
+            cursor: default;
+        }
+        .btn-card-action.crisis {
+            background: var(--accent-red);
+            color: #fff;
+        }
+        .btn-card-action.crisis:hover {
+            background: #f87171;
+        }
+
+        /* Queue Project Card (Inactive) */
+        .queue-project-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        /* Bottom Command Bar */
+        .command-bar {
+            background: #090e1a;
+            border-top: 2px solid var(--border);
+            padding: 10px 14px;
+            padding-bottom: max(12px, env(safe-area-inset-bottom));
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 50;
+            flex-shrink: 0;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.7);
+            gap: 8px;
+        }
+        .btn-advance { 
+            background: #059669; 
+            color: #fff; 
+            border: none; 
+            padding: 10px 20px; 
+            font-size: 13px; 
+            font-weight: 800; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            transition: all 0.2s; 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+            white-space: nowrap;
+        }
+        .btn-advance:hover { 
+            background: #047857; 
+            box-shadow: 0 0 14px rgba(5,150,105,0.4); 
+        }
+
+        .batch-controls {
+            display: none;
+            gap: 4px;
+        }
+        .btn-batch {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .btn-batch:hover { background: rgba(255, 255, 255, 0.15); }
+
+        @media (max-width: 600px) {
+            #commandBarSubtext { display: none; }
+            .btn-advance {
+                flex: 1;
+                justify-content: center;
+                padding: 12px;
+                font-size: 13px;
+            }
+        }
+
+        /* Right Tactical Map Sidebar (Desktop) */
+        .sidebar { 
+            background: var(--panel-bg); 
+            border-left: 1px solid var(--border); 
+            padding: 14px; 
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+        }
+        .sidebar-card { 
+            background: #090e1a; 
+            border: 1px solid var(--border); 
+            border-radius: 6px; 
+            padding: 10px; 
+        }
+        .sidebar-title { 
+            font-size: 10px; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            color: var(--text-muted); 
+            margin-bottom: 6px; 
+        }
+        .faction-row { display: flex; flex-direction: column; gap: 3px; margin-bottom: 6px; }
+        .faction-label { display: flex; justify-content: space-between; font-size: 10px; font-weight: 600; }
+        .faction-bar { width: 100%; height: 4px; background: #1e293b; border-radius: 2px; overflow: hidden; }
+        .faction-fill { height: 100%; border-radius: 2px; }
+
+        /* Slide-Over Live Telemetry Drawer */
+        .dash-drawer { 
+            position: absolute; 
+            top: 0; 
+            right: 0; 
+            width: 100%; 
+            max-width: 580px; 
+            height: 100%; 
+            background: #0b1120; 
+            border-left: 2px solid #2563eb; 
+            box-shadow: -10px 0 30px rgba(0,0,0,0.8); 
+            z-index: 80; 
+            transform: translateX(100%); 
+            transition: transform 0.3s ease-in-out; 
+            display: flex; 
+            flex-direction: column; 
+        }
+        .dash-drawer.open { transform: translateX(0); }
+        .drawer-header { 
+            padding: 12px 16px; 
+            border-bottom: 1px solid var(--border); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: #0e1628; 
+            flex-shrink: 0;
+        }
+        .drawer-title { font-size: 14px; font-weight: 700; color: #fff; }
+        .btn-close-drawer { background: transparent; color: var(--text-muted); border: none; font-size: 20px; font-weight: 700; cursor: pointer; }
+        .btn-close-drawer:hover { color: #fff; }
+        .drawer-content { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+
+        /* Toast Message */
+        .toast-msg { 
+            position: fixed; 
+            top: 65px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            background: #0f172a; 
+            border: 2px solid #38bdf8; 
+            color: #fff; 
+            padding: 8px 16px; 
+            border-radius: 8px; 
+            font-size: 12px; 
+            font-weight: 700; 
+            z-index: 1000; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.85); 
+            display: none; 
+            max-width: 90vw;
+            text-align: center;
+        }
+
+        /* Modal Overlay (Strike & Debrief) */
+        .modal-overlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
+            height: 100vh; 
+            background: rgba(5,9,16,0.94); 
+            z-index: 120; 
+            display: none; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 16px; 
+        }
+        .modal-card { 
+            background: #0e1628; 
+            border: 2px solid var(--accent-red); 
+            border-radius: 8px; 
+            max-width: 520px; 
+            width: 100%; 
+            padding: 20px; 
+            box-shadow: 0 0 40px rgba(239,68,68,0.3); 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-title { font-size: 18px; font-weight: 800; color: var(--accent-red); text-transform: uppercase; letter-spacing: 0.05em; }
+        .modal-body { font-size: 12px; line-height: 1.5; color: #cbd5e1; }
+        .btn-modal { background: #dc2626; color: #fff; border: none; padding: 12px; font-size: 13px; font-weight: 800; border-radius: 6px; cursor: pointer; text-transform: uppercase; margin-top: 8px; }
+        .btn-modal:hover { background: #b91c1c; }
+    </style>
+</head>
+<body>
+    <div id="toastMsg" class="toast-msg"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <span>⚡ BLACK SKY</span>
+            <span class="logo-badge">EMP PROTOCOL</span>
+        </div>
+        <div class="header-status">
+            <span class="phase-indicator" id="phaseBadge" style="color: var(--accent-blue); border-color: var(--accent-blue);">
+                PHASE 1: PREP SPRINT
+            </span>
+            <button class="btn-dash-toggle" id="btnToggleDrawer">
+                <span>📊 HUD</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Top Dynamic HUD -->
+    <div class="hud-bar" id="hudBar"></div>
+
+    <!-- Workspace -->
+    <div class="workspace">
+        
+        <!-- Left Command / Play Terminal -->
+        <div class="play-area">
+            
+            <!-- Mobile Tactical Scoreboard -->
+            <div class="mobile-score-bar" id="mobileScoreBar">
+                <span>🛡️ <strong id="mobCouplers">0/6 Shielded</strong></span>
+                <span>⏱️ <strong id="mobHours" style="color: var(--accent-blue);">160h Left</strong></span>
+                <span>📈 <strong id="mobSurvival" style="color: var(--accent-emerald);">18.6% Survival</strong></span>
+            </div>
+
+            <!-- SitRep Card -->
+            <div class="sitrep-card" id="sitrepCard">
+                <div class="sitrep-header">
+                    <span id="sitrepTime">Month -36 (Campaign Launch)</span>
+                    <span id="sitrepThreat" style="color: var(--accent-amber);">Threat: Unquantified</span>
+                </div>
+                <div class="sitrep-title" id="sitrepTitle">The Peacetime Preparedness Window Opens</div>
+                <div class="sitrep-body" id="sitrepBody">
+                    You have taken office as County Emergency Management Director alongside an Army Strategist Fellow from Fort Leavenworth. You have 36 months of peacetime budget cycles. Can you quietly armor the county using dual-use grants, farm co-op alliances, and administrative covenants before the sky goes dark?
+                </div>
+            </div>
+
+            <!-- Dynamic Decision Arena -->
+            <div class="decision-section" id="decisionSection"></div>
+
+        </div>
+
+        <!-- Right Faction & Map Sidebar (Desktop) -->
+        <div class="sidebar">
+            
+            <div class="sidebar-card">
+                <div class="sidebar-title">Coupler Installation Status</div>
+                <div style="font-size: 18px; font-weight: 800; color: var(--accent-amber);" id="sideCouplersVal">0 of 6 Ready</div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;" id="sideCouplersDesc">Baseline Survival: 18.6%</div>
+            </div>
+
+            <div class="sidebar-card">
+                <div class="sidebar-title">Department Concurrency</div>
+                <div style="font-size: 13px; font-weight: 700; color: #fff;" id="sideConcurrencyVal">Active Slots: 0 / 2</div>
+                <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">Your office can manage max 2 major initiatives simultaneously.</div>
+            </div>
+
+            <div class="sidebar-card">
+                <div class="sidebar-title">Faction Trust &amp; Alignment</div>
+                <div id="factionsContainer"></div>
+            </div>
+
+            <div class="sidebar-card">
+                <div class="sidebar-title">Operational Archetype</div>
+                <div style="font-size: 12px; font-weight: 700; color: #fff;" id="archetypeName">Civilian Emergency Manager</div>
+                <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px;" id="archetypeDesc">High farm &amp; civic trust; low military pull; vulnerable to commission politics.</div>
+            </div>
+
+            <div class="sidebar-card" style="margin-top: auto;">
+                <div class="sidebar-title">External Analysis Dashboards</div>
+                <div style="display: flex; flex-direction: column; gap: 6px; font-size: 11px;">
+                    <a href="/arcade/phase1_dashboard.html" target="_blank" style="color: var(--accent-blue); text-decoration: none;">↗ Phase 1 Peacetime Dashboard</a>
+                    <a href="/arcade/emp_dashboard.html" target="_blank" style="color: var(--accent-emerald); text-decoration: none;">↗ Post-Attack Survival Sandbox</a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Slide-Over Live Telemetry Drawer -->
+        <div class="dash-drawer" id="dashDrawer">
+            <div class="drawer-header">
+                <div class="drawer-title">📊 Real-Time Metrics &amp; Telemetry</div>
+                <button class="btn-close-drawer" id="btnCloseDrawer">×</button>
+            </div>
+            <div class="drawer-content">
+                <div style="font-size: 11px; color: var(--text-muted);">
+                    Live mathematical integration of population stocks, fuel burn, water head, and prison cohorts. Updates on every tick.
+                </div>
+                
+                <div style="background: #090e1a; border: 1px solid var(--border); border-radius: 6px; padding: 10px;">
+                    <div style="font-size: 11px; font-weight: 700; color: #fff; margin-bottom: 6px;">Demographic Trajectory &amp; Casualties</div>
+                    <svg id="drawChartDemo" viewBox="0 0 450 180" style="width: 100%; height: 160px;"></svg>
+                </div>
+
+                <div style="background: #090e1a; border: 1px solid var(--border); border-radius: 6px; padding: 10px;">
+                    <div style="font-size: 11px; font-weight: 700; color: #fff; margin-bottom: 6px;">Inmate 4-Cohort Status (4,250 Total Men)</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 11px;">
+                        <div>Secured in Cells: <strong id="drawInmatesSecured" style="color: #10b981;">4,250</strong></div>
+                        <div>Died Inside Cells: <strong id="drawInmatesDeadInside" style="color: #ef4444;">0</strong></div>
+                        <div>Roaming in County: <strong id="drawInmatesRoaming" style="color: #f59e0b;">0</strong></div>
+                        <div>Died Outside: <strong id="drawInmatesDeadOutside" style="color: #94a3b8;">0</strong></div>
+                    </div>
+                </div>
+
+                <div style="background: #090e1a; border: 1px solid var(--border); border-radius: 6px; padding: 10px;">
+                    <div style="font-size: 11px; font-weight: 700; color: #fff; margin-bottom: 6px;">Fuel Reserves &amp; Municipal Water Head</div>
+                    <svg id="drawChartFuel" viewBox="0 0 450 180" style="width: 100%; height: 160px;"></svg>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bottom Command Advance Bar -->
+    <div class="command-bar">
+        <div style="font-size: 11px; color: var(--text-muted);" id="commandBarSubtext">
+            Allocate staff hours above, then advance month.
+        </div>
+        
+        <div class="batch-controls" id="batchControls">
+            <button class="btn-batch" onclick="advanceDays(7)">+7 Days</button>
+            <button class="btn-batch" onclick="advanceDays(30)">+30 Days</button>
+        </div>
+
+        <button class="btn-advance" id="btnAdvance">
+            <span id="btnAdvanceLabel">ADVANCE TO MONTH -35 ▶</span>
+        </button>
+    </div>
+
+    <!-- STRIKE MODAL (Day 0 Transition) -->
+    <div class="modal-overlay" id="strikeModal">
+        <div class="modal-card">
+            <div class="modal-title">⚠️ RED SKY EVENT: HEMP DETONATION</div>
+            <div class="modal-body">
+                <strong>AT 10:24 AM, A HIGH-ALTITUDE NUCLEAR WEAPON DETONATED OVER NEBRASKA AT 250 KM ALTITUDE.</strong><br><br>
+                The E1 Compton pulse burned microchip gate oxides across Kansas in 2 nanoseconds. The E3 geomagnetic surge saturated the regional transmission grid. The national power grid is dead.<br><br>
+                <div style="background: #070b12; padding: 10px; border-radius: 6px; border-left: 3px solid var(--accent-amber); margin: 6px 0;">
+                    <strong>YOUR PEACETIME COUPLER AUDIT:</strong><br>
+                    • Physical Couplers Shielded: <strong id="strikeCouplers">0 of 6</strong><br>
+                    • Pre-Arranged Fuel Drop-Pumps: <strong id="strikeFuel">None</strong><br>
+                    • Guard Family Billeting Covenant: <strong id="strikeGuards">Not Signed</strong><br>
+                    • Starting Survival Ceiling: <strong id="strikeCeiling" style="color: var(--accent-emerald);">18.6%</strong>
+                </div><br>
+                Peacetime planning is over. <strong>The survival of 91,750 people is now in your hands.</strong>
+            </div>
+            <button class="btn-modal" id="btnBeginPhase2">ENTER INCIDENT COMMAND (DAY 0) ▶</button>
+        </div>
+    </div>
+
+    <!-- GAME OVER / DEBRIEF MODAL -->
+    <div class="modal-overlay" id="debriefModal">
+        <div class="modal-card" style="border-color: var(--accent-emerald);">
+            <div class="modal-title" id="debriefTitle" style="color: var(--accent-emerald);">YEAR 1 EVALUATION: MISSION COMPLETE</div>
+            <div class="modal-body" id="debriefBody"></div>
+            <button class="btn-modal" style="background: #059669;" onclick="location.reload();">PLAY AGAIN (NEW STRATEGY) ↺</button>
+        </div>
+    </div>
+
+    <script>
+        // Multi-Stage Initiatives Data (24 Total Tactical Operations)
+        const initiatives = [
+            {
+                id: 'pto_mills',
+                name: 'Tractor PTO Hammer-Mill Network',
+                icon: '🌽',
+                tag: 'Food Security',
+                stages: [
+                    { 
+                        num: 1, 
+                        title: 'Recon & PTO Spline Audit', 
+                        desc: 'Inspect Basehor and Tonganoxie grain co-op elevators. Measure tractor PTO output splines (540 vs 1000 RPM mismatch).', 
+                        costHours: 30, costTax: 800, grantGain: 0
+                    },
+                    { 
+                        num: 2, 
+                        title: 'Farm Bureau Co-Op Coalition', 
+                        desc: 'Negotiate mutual-aid covenants with local farmers granting county emergency grain-milling authority.', 
+                        costHours: 35, costTax: 1200, grantGain: 10000
+                    },
+                    { 
+                        num: 3, 
+                        title: 'Machine PTO Adapter Step-Down Sleeves', 
+                        desc: 'Contract an Easton machinist to fabricate hardened 1000-to-540 RPM step-down PTO gearbox couplers.', 
+                        costHours: 40, costTax: 3500, grantGain: 15000
+                    },
+                    { 
+                        num: 4, 
+                        title: 'Live Tractor-Hitch Field Drill', 
+                        desc: 'Hitch hammer-mill to John Deere 7810 at Basehor co-op; successfully mill 50 bushels of cattle corn into edible meal.', 
+                        costHours: 35, costTax: 1500, grantGain: 10000
+                    }
+                ]
+            },
+            {
+                id: 'fuel_pumps',
+                name: 'EMP-Shielded 12V Drop-Pumps Cache',
+                icon: '⛽',
+                tag: 'Fuel Logistics',
+                stages: [
+                    { 
+                        num: 1, 
+                        title: 'Underground Gas Tank Depth Survey', 
+                        desc: 'Measure fill-pipe depths and cap clearance at Casey’s and QuikTrip gas stations along Highway 24/40.', 
+                        costHours: 25, costTax: 500, grantGain: 0
+                    },
+                    { 
+                        num: 2, 
+                        title: 'Cloaked Hazard Mitigation Grant', 
+                        desc: 'Package funding request as "Submersible Flood Sump Clearing Kit" to avoid commissioner doomsday panic.', 
+                        costHours: 30, costTax: 1000, grantGain: 18000
+                    },
+                    { 
+                        num: 3, 
+                        title: 'Procure 20 DC Pumps & Faraday Bins', 
+                        desc: 'Order commercial 12-volt submersible fuel pumps and copper-mesh Faraday storage enclosures.', 
+                        costHours: 40, costTax: 3500, grantGain: 0
+                    },
+                    { 
+                        num: 4, 
+                        title: 'Station Manager Covenants & Master Keys', 
+                        desc: 'Execute emergency fuel-siphon covenants with station owners and secure physical tank access keys.', 
+                        costHours: 30, costTax: 1000, grantGain: 0
+                    }
+                ]
+            },
+            {
+                id: 'wells',
+                name: 'Alluvial Valley Hand-Pump Wells',
+                icon: '💧',
+                tag: 'Water Security',
+                stages: [
+                    { 
+                        num: 1, 
+                        title: 'Missouri River Hydrology Survey', 
+                        desc: 'Map shallow alluvial water table and gravel strata along Missouri River bottoms north of Fort Leavenworth.', 
+                        costHours: 35, costTax: 1500, grantGain: 0
+                    },
+                    { 
+                        num: 2, 
+                        title: 'KDHE Health Board Permitting Rider', 
+                        desc: 'Overcome state environmental health objections by classifying wells as agricultural irrigation monitoring ports.', 
+                        costHours: 35, costTax: 2000, grantGain: 25000
+                    },
+                    { 
+                        num: 3, 
+                        title: 'Drive 18 Steel Sandpoints into Alluvium', 
+                        desc: 'Contract local well-drilling crew to pound 2-inch heavy galvanized steel sandpoints into alluvial gravel.', 
+                        costHours: 50, costTax: 7000, grantGain: 20000
+                    },
+                    { 
+                        num: 4, 
+                        title: 'Install Cast-Iron Pitcher Pumps & Testing', 
+                        desc: 'Mount manual cast-iron lever pumps on all 18 well heads and conduct certified coliform water purity tests.', 
+                        costHours: 35, costTax: 2000, grantGain: 0
+                    }
+                ]
+            },
+            {
+                id: 'billeting',
+                name: 'Prison Guard Family Billeting Covenant',
+                icon: '🛡️',
+                tag: 'Institutional Stability',
+                stages: [
+                    { 
+                        num: 1, 
+                        title: 'KDOC Union Steward Reconnaissance', 
+                        desc: 'Meet off-duty with Lansing Correctional union leadership to address officer family survival and desertion fears.', 
+                        costHours: 30, costTax: 500, grantGain: 0
+                    },
+                    { 
+                        num: 2, 
+                        title: 'Fort Leavenworth Garrison Negotiation', 
+                        desc: 'Negotiate with Army garrison commander to designate decommissioned brick barracks for 300 civilian guard families.', 
+                        costHours: 45, costTax: 1000, grantGain: 0
+                    },
+                    { 
+                        num: 3, 
+                        title: 'Inter-Agency Defense Pact Drafting', 
+                        desc: 'Draft tripartite covenant between County Commission, Kansas DOC, and Department of Defense.', 
+                        costHours: 50, costTax: 1500, grantGain: 0
+                    },
+                    { 
+                        num: 4, 
+                        title: 'Union All-Hands Ratification Vote', 
+                        desc: 'Hold union assembly at Lansing hall; 94% of correctional officers ratify the post-collapse billeting covenant.', 
+                        costHours: 35, costTax: 500, grantGain: 0
+                    }
+                ]
+            },
+            {
+                id: 'ham_nets',
+                name: 'Amateur Radio ARES Hardened Net',
+                icon: '📻',
+                tag: 'Communications',
+                stages: [
+                    { 
+                        num: 1, 
+                        title: 'County Amateur Radio Operator Census', 
+                        desc: 'Identify and catalog 45 licensed amateur radio operators across Easton, Basehor, and rural townships.', 
+                        costHours: 20, costTax: 300, grantGain: 0
+                    },
+                    { 
+                        num: 2, 
+                        title: 'Procure Vacuum-Tube & Solar Transceivers', 
+                        desc: 'Subsidize acquisition of vintage tube-based transceivers immune to EMP semiconductor burn-out.', 
+                        costHours: 35, costTax: 1800, grantGain: 12000
+                    },
+                    { 
+                        num: 3, 
+                        title: 'Pilot Knob Repeater Faraday Hardening', 
+                        desc: 'Scale high tower on Pilot Knob; install gas-discharge antenna lightning arrestors and heavy copper grounding rings.', 
+                        costHours: 35, costTax: 1500, grantGain: 0
+                    },
+                    { 
+                        num: 4, 
+                        title: 'Countywide Full-Blackout Radio Drill', 
+                        desc: 'Execute surprise nighttime radio check connecting County EOC, Sheriff, and Fort Leavenworth ops.', 
+                        costHours: 30, costTax: 1000, grantGain: 0
+                    }
+                ]
+            },
+            {
+                id: 'loco_microgrid',
+                name: 'UP Locomotive Hospital Microgrid',
+                icon: '🚂',
+                tag: 'Grid Engineering',
+                stages: [
+                    { 
+                        num: 1, 
+                        title: 'St. John Hospital Switchgear Audit', 
+                        desc: 'Audit hospital emergency 480V 3-phase electrical busbars and measure rail spur clearance 80 yards away.', 
+                        costHours: 30, costTax: 1000, grantGain: 0
+                    },
+                    { 
+                        num: 2, 
+                        title: 'Union Pacific Corporate Legal Waiver', 
+                        desc: 'Negotiate safety indemnity and emergency requisition waiver with Union Pacific rail dispatchers in Omaha.', 
+                        costHours: 45, costTax: 2500, grantGain: 20000
+                    },
+                    { 
+                        num: 3, 
+                        title: 'Procure 480V 400A Locomotive Drop Cables', 
+                        desc: 'Custom-order heavy copper Cam-Lok pigtails matching EMD SD70 locomotive HEP auxiliary alternators.', 
+                        costHours: 45, costTax: 7500, grantGain: 35000
+                    },
+                    { 
+                        num: 4, 
+                        title: 'Live Midnight Locomotive Black-Start Test', 
+                        desc: 'Couple UP locomotive on rail spur; tap alternator and successfully energize hospital ICU and surgical suites.', 
+                        costHours: 45, costTax: 2000, grantGain: 0
+                    }
+                ]
+            }
+        ];
+
+        // Game State Object
+        const state = {
+            phase: 1,
+            month: -36,
+            day: 0,
+            
+            adminHours: 160,
+            budgetLocal: 65850,
+            taxSpent: 0,
+            grantsCaptured: 0,
+            paranoia: 5,
+
+            maxActiveProjects: 2,
+
+            projects: {
+                pto_mills: { stageIndex: 0, status: 'QUEUED' },
+                fuel_pumps: { stageIndex: 0, status: 'QUEUED' },
+                wells: { stageIndex: 0, status: 'QUEUED' },
+                billeting: { stageIndex: 0, status: 'QUEUED' },
+                ham_nets: { stageIndex: 0, status: 'QUEUED' },
+                loco_microgrid: { stageIndex: 0, status: 'QUEUED' }
+            },
+
+            couplers: {
+                pto_mills: false,
+                fuel_pumps: false,
+                wells: false,
+                billeting: false,
+                ham_nets: false,
+                loco_microgrid: false
+            },
+
+            factions: {
+                commission: 75,
+                dod: 60,
+                kdoc_union: 50,
+                farm_bureau: 70,
+                press: 65
+            },
+
+            pop_civ: 80000,
+            pop_refugees: 0,
+            pop_military: 7500,
+            inmates_secured: 4250,
+            inmates_roaming: 0,
+            
+            deaths_starve: 0,
+            deaths_water: 0,
+            deaths_conflict: 0,
+            deaths_med: 0,
+            deaths_hypo: 0,
+            deaths_inmates_inside: 0,
+            deaths_inmates_outside: 0,
+
+            fuel_mil: 45000,
+            water_tank: 1.0,
+            pantry_days: 14,
+
+            history: []
+        };
+
+        // DOM Handles
+        const hudBar = document.getElementById('hudBar');
+        const phaseBadge = document.getElementById('phaseBadge');
+        const sitrepTime = document.getElementById('sitrepTime');
+        const sitrepThreat = document.getElementById('sitrepThreat');
+        const sitrepTitle = document.getElementById('sitrepTitle');
+        const sitrepBody = document.getElementById('sitrepBody');
+        const decisionSection = document.getElementById('decisionSection');
+        const btnAdvance = document.getElementById('btnAdvance');
+        const btnAdvanceLabel = document.getElementById('btnAdvanceLabel');
+        const sideCouplersVal = document.getElementById('sideCouplersVal');
+        const sideCouplersDesc = document.getElementById('sideCouplersDesc');
+        const sideConcurrencyVal = document.getElementById('sideConcurrencyVal');
+        const factionsContainer = document.getElementById('factionsContainer');
+
+        const dashDrawer = document.getElementById('dashDrawer');
+        const btnToggleDrawer = document.getElementById('btnToggleDrawer');
+        const btnCloseDrawer = document.getElementById('btnCloseDrawer');
+
+        const strikeModal = document.getElementById('strikeModal');
+        const btnBeginPhase2 = document.getElementById('btnBeginPhase2');
+        const debriefModal = document.getElementById('debriefModal');
+        const batchControls = document.getElementById('batchControls');
+
+        btnToggleDrawer.addEventListener('click', () => dashDrawer.classList.toggle('open'));
+        btnCloseDrawer.addEventListener('click', () => dashDrawer.classList.remove('open'));
+
+        function getCouplersCount() {
+            return Object.values(state.couplers).filter(Boolean).length;
+        }
+
+        function getProjectedSurvival() {
+            const count = getCouplersCount();
+            return (18.6 + (count * 12.4)).toFixed(1);
+        }
+
+        function getActiveProjectsCount() {
+            return Object.values(state.projects).filter(p => p.status === 'ACTIVE').length;
+        }
+
+        function showToast(html, duration = 3000) {
+            const el = document.getElementById('toastMsg');
+            el.innerHTML = html;
+            el.style.display = 'block';
+            clearTimeout(window._toastTimeout);
+            window._toastTimeout = setTimeout(() => { el.style.display = 'none'; }, duration);
+        }
+
+        function renderHUD() {
+            const cCount = getCouplersCount();
+            const projSurv = getProjectedSurvival();
+            const activeSlots = getActiveProjectsCount();
+
+            const mobCouplers = document.getElementById('mobCouplers');
+            const mobHours = document.getElementById('mobHours');
+            const mobSurvival = document.getElementById('mobSurvival');
+            if (mobCouplers) mobCouplers.textContent = cCount + '/6 Shielded';
+            if (mobHours) mobHours.textContent = state.phase === 1 ? state.adminHours + 'h Left' : 'Day ' + state.day;
+            if (mobSurvival) mobSurvival.textContent = projSurv + '% Survival';
+
+            if (sideConcurrencyVal) sideConcurrencyVal.textContent = 'Active Slots: ' + activeSlots + ' / ' + state.maxActiveProjects;
+
+            if (state.phase === 1) {
+                hudBar.innerHTML = `
+                    <div class="hud-item">
+                        <span class="hud-label">Timeline</span>
+                        <span class="hud-val" style="color: var(--accent-amber);">Month ${state.month}</span>
+                    </div>
+                    <div class="hud-item">
+                        <span class="hud-label">Staff Bandwidth</span>
+                        <span class="hud-val" style="color: #38bdf8;">${state.adminHours} / 160h</span>
+                    </div>
+                    <div class="hud-item">
+                        <span class="hud-label">Active Slots</span>
+                        <span class="hud-val" style="color: #fff;">${activeSlots} / ${state.maxActiveProjects}</span>
+                    </div>
+                    <div class="hud-item">
+                        <span class="hud-label">Local Budget Left</span>
+                        <span class="hud-val" style="color: #10b981;">$${(state.budgetLocal - state.taxSpent).toLocaleString()}</span>
+                    </div>
+                    <div class="hud-item">
+                        <span class="hud-label">Grants Captured</span>
+                        <span class="hud-val" style="color: #a855f7;">$${state.grantsCaptured.toLocaleString()}</span>
+                    </div>
+                    <div class="hud-item">
+                        <span class="hud-label">Couplers Armored</span>
+                        <span class="hud-val" style="color: var(--accent-amber);">${cCount} of 6</span>
+                    </div>
+                `;
+            } else {
+                hudBar.innerHTML = `
+                    <div class="hud-item">
+                        <span class="hud-label">Blackout Day</span>
+                        <span class="hud-val" style="color: var(--accent-red);">Day ${state.day} / 365</span>
+                    </div>
+                    <div class="hud-item">
+                        <span class="hud-label">Total Living</span>
+                        <span class="hud-val" style="color: #10b981;">${Math.floor(state.pop_civ + state.pop_refugees + state.pop_military).toLocaleString()}</span>
+                    </div>
+                    <div class="hud-item">
+                        <span class="hud-label">Cumulative Deaths</span>
+                        <span class="hud-val" style="color: #ef4444;">${Math.floor(state.deaths_starve + state.deaths_water + state.deaths_conflict + state.deaths_med + state.deaths_hypo).toLocaleString()}</span>
+                    </div>
+                    <div class="hud-item">
+                        <span class="hud-label">Pantry Reserve</span>
+                        <span class="hud-val" style="color: #f59e0b;">${Math.floor(state.pantry_days)} Days</span>
+                    </div>
+                    <div class="hud-item">
+                        <span class="hud-label">Hospital Diesel</span>
+                        <span class="hud-val" style="color: #38bdf8;">${Math.floor(state.fuel_mil).toLocaleString()} gal</span>
+                    </div>
+                `;
+            }
+        }
+
+        function renderFactions() {
+            factionsContainer.innerHTML = `
+                <div class="faction-row">
+                    <div class="faction-label"><span>County Commission</span><span>${state.factions.commission}%</span></div>
+                    <div class="faction-bar"><div class="faction-fill" style="width: ${state.factions.commission}%; background: #10b981;"></div></div>
+                </div>
+                <div class="faction-row">
+                    <div class="faction-label"><span>Fort Leavenworth (DoD)</span><span>${state.factions.dod}%</span></div>
+                    <div class="faction-bar"><div class="faction-fill" style="width: ${state.factions.dod}%; background: #38bdf8;"></div></div>
+                </div>
+                <div class="faction-row">
+                    <div class="faction-label"><span>Lansing Prison Union</span><span>${state.factions.kdoc_union}%</span></div>
+                    <div class="faction-bar"><div class="faction-fill" style="width: ${state.factions.kdoc_union}%; background: #a855f7;"></div></div>
+                </div>
+                <div class="faction-row">
+                    <div class="faction-label"><span>Farm Bureau / Co-Ops</span><span>${state.factions.farm_bureau}%</span></div>
+                    <div class="faction-bar"><div class="faction-fill" style="width: ${state.factions.farm_bureau}%; background: #f59e0b;"></div></div>
+                </div>
+                <div class="faction-row">
+                    <div class="faction-label"><span>Local Press (*Leavenworth Times*)</span><span>${state.factions.press}%</span></div>
+                    <div class="faction-bar"><div class="faction-fill" style="width: ${state.factions.press}%; background: #cbd5e1;"></div></div>
+                </div>
+            `;
+        }
+
+        // Render Phase 1 Multi-Stage Operations
+        function renderPhase1Dossiers() {
+            decisionSection.innerHTML = '';
+
+            const activeSlots = getActiveProjectsCount();
+            const canActivateMore = activeSlots < state.maxActiveProjects;
+
+            // 1. Pipeline Guidance Banner
+            const banner = document.createElement('div');
+            banner.style.background = 'rgba(56, 189, 248, 0.08)';
+            banner.style.border = '1px solid rgba(56, 189, 248, 0.3)';
+            banner.style.borderRadius = '8px';
+            banner.style.padding = '10px 14px';
+            banner.style.fontSize = '12px';
+            banner.style.color = '#38bdf8';
+            banner.style.display = 'flex';
+            banner.style.justifyContent = 'space-between';
+            banner.style.alignItems = 'center';
+            banner.style.marginBottom = '12px';
+            banner.innerHTML = `
+                <div><strong>📋 Tactical Pipeline:</strong> Department concurrency capped at <strong>2 active initiatives</strong>. Complete 4 milestones to armor each coupler before Month 0!</div>
+                <div style="font-size: 11px; color: #fff; font-weight: 800; white-space: nowrap; margin-left: 8px;">Slots: ${activeSlots}/2</div>
+            `;
+            decisionSection.appendChild(banner);
+
+            // 2. ACTIVE INITIATIVES
+            const activeProjects = initiatives.filter(init => state.projects[init.id].status === 'ACTIVE');
+            
+            const activeHeader = document.createElement('div');
+            activeHeader.className = 'section-header';
+            activeHeader.innerHTML = `<span>⚡ Active Field Operations (${activeProjects.length} / 2 Slots Engaged)</span>`;
+            decisionSection.appendChild(activeHeader);
+
+            if (activeProjects.length === 0) {
+                const emptyNotice = document.createElement('div');
+                emptyNotice.style.background = 'rgba(255, 255, 255, 0.03)';
+                emptyNotice.style.border = '1px dashed var(--border)';
+                emptyNotice.style.borderRadius = '8px';
+                emptyNotice.style.padding = '16px';
+                emptyNotice.style.textAlign = 'center';
+                emptyNotice.style.fontSize = '12px';
+                emptyNotice.style.color = 'var(--text-muted)';
+                emptyNotice.style.marginBottom = '14px';
+                emptyNotice.innerHTML = 'No active initiatives in flight. Choose an initiative from the <strong>Pipeline Dossiers</strong> below to engage a departmental slot.';
+                decisionSection.appendChild(emptyNotice);
+            } else {
+                activeProjects.forEach(init => {
+                    const pState = state.projects[init.id];
+                    const stageIdx = pState.stageIndex;
+                    const stage = init.stages[stageIdx];
+                    const canAfford = state.adminHours >= stage.costHours;
+
+                    const card = document.createElement('div');
+                    card.className = 'active-project-card';
+                    card.innerHTML = `
+                        <div class="project-title-bar">
+                            <div class="project-name">${init.icon} ${init.name}</div>
+                            <span class="project-tag">${init.tag}</span>
+                        </div>
+
+                        <!-- 4-Stage Progress Stepper -->
+                        <div class="stepper-bar">
+                            ${[0, 1, 2, 3].map(i => `
+                                <div class="step-segment ${i < stageIdx ? 'done' : (i === stageIdx ? 'current' : '')}" title="Stage ${i+1}: ${init.stages[i].title}"></div>
+                            `).join('')}
+                        </div>
+
+                        <!-- Current Stage Details -->
+                        <div class="stage-box">
+                            <div class="stage-label">
+                                <span>MILESTONE ${stage.num} OF 4: ${stage.title.toUpperCase()}</span>
+                                <span style="color: var(--accent-blue); font-size: 10px;">${Math.round((stageIdx / 4) * 100)}% Complete</span>
+                            </div>
+                            <div class="stage-desc">${stage.desc}</div>
+                            <div class="stage-costs">
+                                <span style="${canAfford ? '' : 'color: var(--accent-red); font-weight: 800;'}">⏱️ ${stage.costHours} Staff Hours</span>
+                                <span>💵 $${stage.costTax.toLocaleString()} Tax Match</span>
+                                ${stage.grantGain > 0 ? `<span style="color: var(--accent-purple);">+$${stage.grantGain.toLocaleString()} Grant</span>` : ''}
+                            </div>
+                        </div>
+
+                        <button class="btn-card-action ${canAfford ? 'deploy' : 'need-hours'}" id="btnAdv_${init.id}">
+                            ${canAfford ? `⚡ Allocate ${stage.costHours}h &amp; Execute Milestone` : `⏱️ Needs ${stage.costHours}h (You have ${state.adminHours}h — Advance Month Below)`}
+                        </button>
+                    `;
+
+                    card.querySelector('#btnAdv_' + init.id).addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (!canAfford) {
+                            showToast('⚠️ <strong>Insufficient Staff Hours:</strong> Requires ' + stage.costHours + 'h (You have ' + state.adminHours + 'h left this month). Tap <strong>ADVANCE MONTH</strong> below to refresh monthly bandwidth.');
+                            return;
+                        }
+
+                        // Execute Sub-Task Milestone
+                        state.adminHours -= stage.costHours;
+                        state.taxSpent += stage.costTax;
+                        state.grantsCaptured += stage.grantGain;
+                        pState.stageIndex++;
+
+                        if (pState.stageIndex >= 4) {
+                            pState.status = 'COMPLETED';
+                            state.couplers[init.id] = true;
+                            showToast('🏆 <strong>PROJECT FULLY HARDENED:</strong> ' + init.name + ' is 100% operational in the county COOP!');
+                        } else {
+                            showToast('✓ <strong>Milestone Complete:</strong> ' + stage.title + ' (' + stage.costHours + 'h allocated)');
+                        }
+
+                        updateGameState();
+                    });
+
+                    decisionSection.appendChild(card);
+                });
+            }
+
+            // 3. HARDENED COUPLERS (Completed Initiatives)
+            const completedProjects = initiatives.filter(init => state.projects[init.id].status === 'COMPLETED');
+            if (completedProjects.length > 0) {
+                const compHeader = document.createElement('div');
+                compHeader.className = 'section-header';
+                compHeader.innerHTML = `<span>🛡️ Hardened &amp; Shielded Couplers (${completedProjects.length} of 6 Ready)</span>`;
+                decisionSection.appendChild(compHeader);
+
+                completedProjects.forEach(init => {
+                    const card = document.createElement('div');
+                    card.className = 'active-project-card completed';
+                    card.innerHTML = `
+                        <div class="project-title-bar">
+                            <div class="project-name" style="color: #34d399;">✓ ${init.icon} ${init.name}</div>
+                            <span class="project-tag" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">100% OPERATIONAL</span>
+                        </div>
+                        <div style="font-size: 11px; color: #a7f3d0;">
+                            All 4 strategic milestones complete. This critical infrastructure coupler is hardened against E1/E3 EMP failure and integrated into county COOP.
+                        </div>
+                    `;
+                    decisionSection.appendChild(card);
+                });
+            }
+
+            // 4. PIPELINE QUEUE (Available to Activate)
+            const queuedProjects = initiatives.filter(init => state.projects[init.id].status === 'QUEUED');
+            if (queuedProjects.length > 0) {
+                const qHeader = document.createElement('div');
+                qHeader.className = 'section-header';
+                qHeader.innerHTML = `
+                    <span>📁 Pipeline Dossiers (Ready to Activate)</span>
+                    <span class="section-badge">${queuedProjects.length} Available</span>
+                `;
+                decisionSection.appendChild(qHeader);
+
+                queuedProjects.forEach(init => {
+                    const qCard = document.createElement('div');
+                    qCard.className = 'queue-project-card';
+                    qCard.innerHTML = `
+                        <div>
+                            <div style="font-weight: 800; font-size: 13px; color: #fff;">${init.icon} ${init.name}</div>
+                            <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">4 Strategic Milestones • ${init.tag}</div>
+                        </div>
+                        <button class="btn-card-action ${canActivateMore ? 'activate' : 'disabled-slot'}" style="width: auto; padding: 6px 12px; font-size: 11px; white-space: nowrap;" id="btnAct_${init.id}">
+                            ${canActivateMore ? '+ Engage Slot' : '🔒 Slots Full (2/2)'}
+                        </button>
+                    `;
+
+                    qCard.querySelector('#btnAct_' + init.id).addEventListener('click', () => {
+                        if (!canActivateMore) {
+                            showToast('⚠️ <strong>Department Concurrency Cap:</strong> You can only manage 2 active initiatives simultaneously. Complete or advance an active project to open a slot.');
+                            return;
+                        }
+                        state.projects[init.id].status = 'ACTIVE';
+                        showToast('⚡ <strong>Initiative Activated:</strong> ' + init.name + ' is now on your active operations docket.');
+                        updateGameState();
+                    });
+
+                    decisionSection.appendChild(qCard);
+                });
+            }
+        }
+
+        // Phase 2 Crisis Directives
+        const phase2Orders = [
+            {
+                name: '💧 Deploy Emergency Alluvial Water Brigades',
+                desc: 'Mobilize citizen volunteers with 5-gallon carts to distribute pre-filtered alluvial well water in town.',
+                costFuel: 100,
+                run: () => {
+                    state.water_tank = Math.max(state.water_tank, 0.4);
+                }
+            },
+            {
+                name: '🌽 Run Tractor PTO Hammer-Mills for Grain',
+                desc: 'Hitch tractors at Basehor & Tonganoxie co-ops; process 3,500 bushels of field corn into edible cornmeal.',
+                costFuel: 250,
+                run: () => {
+                    state.pantry_days += 5;
+                }
+            },
+            {
+                name: '🔒 Reinforce Lansing & USP Perimeter Cordon',
+                desc: 'Deploy Fort Leavenworth military police platoon with rations to maintain order at prison cellblocks.',
+                costFuel: 200,
+                run: () => {
+                    state.inmates_secured = Math.max(4100, state.inmates_secured);
+                }
+            },
+            {
+                name: '⛽ Siphon Commercial Gas Station Reservoirs',
+                desc: 'Deploy 12V drop-pumps to Casey’s and QuikTrip underground tanks; replenish hospital and tractor fuel.',
+                costFuel: 0,
+                run: () => {
+                    if (state.couplers.fuel_pumps) {
+                        state.fuel_mil += 1200;
+                        showToast('⛽ Siphoned 1,200 gallons using shielded drop-pumps!');
+                    } else {
+                        showToast('⚠️ No drop-pumps installed in peacetime! Underground fuel inaccessible.');
+                    }
+                }
+            }
+        ];
+
+        function renderPhase2Cards() {
+            decisionSection.innerHTML = '';
+            
+            const p2Header = document.createElement('div');
+            p2Header.className = 'section-header';
+            p2Header.innerHTML = `<span>🔥 Black Sky Crisis Directives (Daily Incident Command)</span>`;
+            decisionSection.appendChild(p2Header);
+
+            phase2Orders.forEach(o => {
+                const canAfford = state.fuel_mil >= o.costFuel;
+                const card = document.createElement('div');
+                card.className = 'active-project-card';
+                card.style.borderColor = 'var(--border)';
+                card.innerHTML = `
+                    <div class="project-title-bar">
+                        <div class="project-name">${o.name}</div>
+                        <span class="project-tag" style="background: rgba(239, 68, 68, 0.2); color: #f87171;">Crisis Order</span>
+                    </div>
+                    <div style="font-size: 11px; color: #cbd5e1; line-height: 1.4;">${o.desc}</div>
+                    <div style="font-size: 11px; color: var(--accent-amber); font-weight: 700; border-top: 1px solid rgba(255, 255, 255, 0.06); padding-top: 6px;">
+                        ⛽ ${o.costFuel} gal Diesel Burn
+                    </div>
+                    <button class="btn-card-action crisis">
+                        🔥 Issue Crisis Directive (${o.costFuel} gal)
+                    </button>
+                `;
+
+                card.addEventListener('click', () => {
+                    if (state.fuel_mil >= o.costFuel) {
+                        state.fuel_mil -= o.costFuel;
+                        o.run();
+                        showToast('⚡ <strong>Directive Issued:</strong> ' + o.name);
+                        updateGameState();
+                    } else {
+                        showToast('⚠️ <strong>Insufficient Fuel:</strong> Requires ' + o.costFuel + ' gal diesel.');
+                    }
+                });
+
+                decisionSection.appendChild(card);
+            });
+        }
+
+        function updateGameState() {
+            renderHUD();
+            renderFactions();
+
+            const cCount = getCouplersCount();
+            sideCouplersVal.textContent = cCount + ' of 6 Ready';
+            sideCouplersDesc.textContent = 'Projected Survival: ' + getProjectedSurvival() + '%';
+
+            if (state.phase === 1) {
+                renderPhase1Dossiers();
+                btnAdvanceLabel.textContent = state.month === -1 ? 'INITIATE STRIKE TEST (DAY 0) ⚠️' : 'ADVANCE TO MONTH ' + (state.month + 1) + ' ▶';
+                batchControls.style.display = 'none';
+                document.getElementById('commandBarSubtext').textContent = 'Allocate staff hours above, then advance month.';
+            } else {
+                renderPhase2Cards();
+                btnAdvanceLabel.textContent = 'NEXT DAY (DAY ' + (state.day + 1) + ') ▶';
+                batchControls.style.display = 'flex';
+                document.getElementById('commandBarSubtext').textContent = 'Execute crisis orders or advance timeline.';
+            }
+
+            renderDrawerCharts();
+        }
+
+        btnAdvance.addEventListener('click', () => {
+            if (state.phase === 1) {
+                advancePhase1Month();
+            } else {
+                advancePhase2Day();
+            }
+        });
+
+        function advancePhase1Month() {
+            state.month++;
+            state.adminHours = 160;
+
+            if (state.month === -30) {
+                sitrepTitle.textContent = "Commissioner Bob's Audit Notice";
+                sitrepBody.textContent = "Commissioner Bob notes unusual overtime hours in emergency management: 'Why is county staff spending 60 hours measuring railroad switches and talking to farm co-ops?' You defend the work under flood mitigation, but commission trust dips 10%.";
+                state.factions.commission = Math.max(20, state.factions.commission - 10);
+            } else if (state.month === -24) {
+                sitrepTitle.textContent = "Budget Hearing: The Sheriff's Challenge";
+                sitrepBody.textContent = "The County Sheriff demands that your $12,000 shallow well budget be redirected to purchase new patrol cruiser radios. You successfully broker a compromise, but lose 10% political buffer.";
+            } else if (state.month === -18) {
+                sitrepTitle.textContent = "KDHE Environmental Well Permitting Dispute";
+                sitrepBody.textContent = "A Topeka water regulator questions unlicensed rural sandpoint wells. Thanks to Farm Bureau backing, you secure an agricultural research exemption.";
+                state.factions.farm_bureau = Math.min(100, state.factions.farm_bureau + 5);
+            } else if (state.month === -12) {
+                sitrepTitle.textContent = "Election Year Chill";
+                sitrepBody.textContent = "Commissioner Bob faces a conservative challenger attacking 'unnecessary county spending.' Bob warns you to keep your head down and avoid any controversial initiatives.";
+                state.paranoia += 15;
+            } else if (state.month === -6) {
+                sitrepTitle.textContent = "Supply Chain Scramble";
+                sitrepBody.textContent = "Industrial copper wire and 480V Cam-Lok tap cables face a national 2-month shipment delay. Lead times tighten as international tensions flare on the wire.";
+            } else if (state.month === 0) {
+                triggerStrike();
+                return;
+            }
+
+            sitrepTime.textContent = 'Month ' + state.month + ' (' + (36 + state.month) + ' Months of Prep)';
+            updateGameState();
+        }
+
+        function triggerStrike() {
+            document.getElementById('strikeCouplers').textContent = getCouplersCount() + ' of 6';
+            document.getElementById('strikeFuel').textContent = state.couplers.fuel_pumps ? '20 Shielded Kits Ready' : 'None (Tanks Inaccessible)';
+            document.getElementById('strikeGuards').textContent = state.couplers.billeting ? 'Signed & Ratified' : 'Unsigned (Desertion Risk)';
+            document.getElementById('strikeCeiling').textContent = getProjectedSurvival() + '%';
+            
+            strikeModal.style.display = 'flex';
+        }
+
+        btnBeginPhase2.addEventListener('click', () => {
+            strikeModal.style.display = 'none';
+            state.phase = 2;
+            state.day = 0;
+
+            phaseBadge.textContent = "PHASE 2: BLACK SKY CRISIS COMMAND";
+            phaseBadge.style.color = "var(--accent-red)";
+            phaseBadge.style.borderColor = "var(--accent-red)";
+
+            sitrepTime.textContent = "Day 0 (Post-Strike)";
+            sitrepThreat.textContent = "DEFCON 1 — Total Continental Grid Blackout";
+            sitrepTitle.textContent = "The Sky Goes Dark: Day 0 Blackout";
+            sitrepBody.textContent = "The high-altitude EMP pulse has fused transformers and microcontrollers nationwide. Tap water pressure is dropping fast. Supermarkets have 48 hours of food. You must issue daily directives to survive the year.";
+
+            updateGameState();
+        });
+
+        window.advanceDays = function(n) {
+            for (let i = 0; i < n; i++) {
+                if (state.day >= 365) break;
+                advancePhase2Day();
+            }
+        };
+
+        function advancePhase2Day() {
+            state.day += 1;
+
+            if (state.water_tank > 0) {
+                state.water_tank = Math.max(0, state.water_tank - 0.35);
+            } else {
+                let safeFrac = state.couplers.wells ? 0.95 : 0.20;
+                let pathogenDeaths = (state.pop_civ + state.pop_refugees) * 0.004 * (1.0 - safeFrac);
+                state.deaths_water += pathogenDeaths;
+                state.pop_civ = Math.max(0, state.pop_civ - pathogenDeaths * 0.7);
+                state.pop_refugees = Math.max(0, state.pop_refugees - pathogenDeaths * 0.3);
+            }
+
+            if (state.day > 10 && state.pantry_days > 0) {
+                state.pantry_days = Math.max(0, state.pantry_days - 1.0);
+            } else if (state.day > 30) {
+                let starveRisk = state.couplers.pto_mills ? 0.0001 : 0.0025;
+                let starveDeaths = (state.pop_civ + state.pop_refugees) * starveRisk;
+                state.deaths_starve += starveDeaths;
+                state.pop_civ = Math.max(0, state.pop_civ - starveDeaths);
+            }
+
+            if (state.couplers.billeting) {
+                state.inmates_secured = Math.max(4150, state.inmates_secured - 1);
+            } else {
+                if (state.day > 5 && state.inmates_secured > 0) {
+                    let insideLoss = 8;
+                    state.inmates_secured -= insideLoss;
+                    state.deaths_inmates_inside += insideLoss;
+                    state.deaths_starve += insideLoss;
+
+                    if (state.inmates_roaming < 400) {
+                        state.inmates_roaming += 2;
+                    }
+                }
+            }
+
+            state.history.push({
+                day: state.day,
+                living: state.pop_civ + state.pop_refugees + state.pop_military + state.inmates_secured + state.inmates_roaming,
+                deaths: state.deaths_starve + state.deaths_water + state.deaths_conflict + state.deaths_med + state.deaths_hypo
+            });
+
+            if (state.day >= 365) {
+                triggerDebrief();
+                return;
+            }
+
+            sitrepTime.textContent = 'Day ' + state.day + ' Post-EMP';
+            updateGameState();
+        }
+
+        function triggerDebrief() {
+            const totalD = state.deaths_starve + state.deaths_water + state.deaths_conflict + state.deaths_med + state.deaths_hypo;
+            const netDip = Math.round((totalD / (91750 + state.pop_refugees)) * 1000) / 10;
+            const isGold = (netDip <= 10.0);
+
+            document.getElementById('debriefTitle').textContent = isGold ? "🏆 GOLD ENDING: FORTRESS LEAVENWORTH ACHIEVED!" : "SURVIVAL DEBRIEF: CRISIS ENDED";
+            document.getElementById('debriefTitle').style.color = isGold ? "var(--accent-emerald)" : "var(--accent-amber)";
+            
+            document.getElementById('debriefBody').innerHTML = `
+                <strong>ONE YEAR AFTER THE STRIKE:</strong><br><br>
+                • Total Living Survivors: <strong>${Math.floor(state.pop_civ + state.pop_military).toLocaleString()}</strong><br>
+                • Total Casualties: <strong>${Math.floor(totalD).toLocaleString()}</strong><br>
+                • Net Mortality Dip: <strong>${netDip}%</strong> (${isGold ? 'GOAL MET: Under 10% Dip' : 'Goal Missed: Greater than 10% Dip'})<br><br>
+                <strong>Inmate Accounting:</strong><br>
+                - Secured Inside Alive: ${Math.floor(state.inmates_secured).toLocaleString()}<br>
+                - Died in Cells: ${Math.floor(state.deaths_inmates_inside).toLocaleString()}<br>
+                - Roaming Alive: ${Math.floor(state.inmates_roaming).toLocaleString()}<br><br>
+                <em>${isGold ? 'Because you pre-staged agricultural mills, secured guard family covenants, and installed shallow alluvial wells in peacetime, Leavenworth County held its mortality dip to under 10% and stands as a bastion of civilization.' : 'Without sufficient pre-attack couplers, post-attack improvisation proved unable to hold the line against starvation and waterborne epidemics.'}</em>
+            `;
+
+            debriefModal.style.display = 'flex';
+        }
+
+        function renderDrawerCharts() {
+            document.getElementById('drawInmatesSecured').textContent = Math.floor(state.inmates_secured).toLocaleString();
+            document.getElementById('drawInmatesDeadInside').textContent = Math.floor(state.deaths_inmates_inside).toLocaleString();
+            document.getElementById('drawInmatesRoaming').textContent = Math.floor(state.inmates_roaming).toLocaleString();
+            document.getElementById('drawInmatesDeadOutside').textContent = Math.floor(state.deaths_inmates_outside).toLocaleString();
+        }
+
+        // Initial Start
+        updateGameState();
+    </script>
+</body>
+</html>

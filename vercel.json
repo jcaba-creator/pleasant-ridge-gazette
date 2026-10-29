@@ -1,0 +1,87 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/arcade",
+      "destination": "/arcade/index.html"
+    },
+    {
+      "source": "/arcade/",
+      "destination": "/arcade/index.html"
+    },
+    {
+      "source": "/arcade/sparkle",
+      "destination": "/arcade/sparkle.html"
+    },
+    {
+      "source": "/arcade/unicorn",
+      "destination": "/arcade/unicorn.html"
+    },
+    {
+      "source": "/arcade/pokeguess",
+      "destination": "/arcade/pokeguess.html"
+    },
+    {
+      "source": "/arcade/starfall",
+      "destination": "/arcade/starfall.html"
+    },
+    {
+      "source": "/arcade/phonics",
+      "destination": "/arcade/phonics.html"
+    },
+    {
+      "source": "/arcade/homestead",
+      "destination": "/arcade/homestead.html"
+    },
+    {
+      "source": "/arcade/breaker_vault",
+      "destination": "/arcade/breaker_vault.html"
+    },
+    {
+      "source": "/breaker_vault",
+      "destination": "/arcade/breaker_vault.html"
+    },
+    {
+      "source": "/arcade/k9_volt",
+      "destination": "/arcade/project-k9-volt.html"
+    },
+    {
+      "source": "/arcade/constant_conflict",
+      "destination": "/arcade/ages_of_constant_conflict.html"
+    },
+    {
+      "source": "/arcade/black_sky",
+      "destination": "/arcade/black_sky.html"
+    },
+    {
+      "source": "/black_sky",
+      "destination": "/arcade/black_sky.html"
+    },
+    {
+      "source": "/arcade/unravel",
+      "destination": "/arcade/unravel.html"
+    },
+    {
+      "source": "/unravel",
+      "destination": "/arcade/unravel.html"
+    },
+    {
+      "source": "/arcade/conquest",
+      "destination": "/arcade/ages_of_conquest.html"
+    },
+    {
+      "source": "/conquest",
+      "destination": "/arcade/ages_of_conquest.html"
+    },
+    {
+      "source": "/arcade/pastureops",
+      "destination": "/arcade/pastureops.html"
+    },
+    {
+      "source": "/pastureops",
+      "destination": "/arcade/pastureops.html"
+    }
+  ]
+}

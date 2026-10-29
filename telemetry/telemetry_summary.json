@@ -1,0 +1,15 @@
+{
+  "updated_at": "2026-10-23T05:00:23.934308",
+  "cumulative_prediction_accuracy_pct": 100.0,
+  "total_operational_cycles_audited": 7,
+  "latest_model_outcome": "Model Win: Clear Corridor Confirmed",
+  "latest_readings": {
+    "forecast_min_temp": "53\u00b0F",
+    "stranger_creek_easton": "2.68 ft (Flood Stage: 17.0 ft)",
+    "easton_bridges": "CLEAR",
+    "pathogen_14day_trend": "-86%",
+    "usd449": "Green",
+    "fort_leavenworth": "Green",
+    "corridor_closures": 0
+  }
+}

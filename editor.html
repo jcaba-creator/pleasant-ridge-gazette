@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Pleasant Ridge Gazette — Production Workbench</title>
+  <style>
+    :root {
+      --ink: #111111;
+      --paper: #fdfaf5;
+      --accent: #1b4332;
+      --border: #222222;
+      --muted: #555555;
+      --highlight: #e9f5ed;
+      --live-green: #10b981;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Georgia, 'Times New Roman', Times, serif;
+      background-color: #2b2b2b;
+      color: var(--ink);
+      display: flex;
+      min-height: 100vh;
+    }
+    .control-panel {
+      width: 460px;
+      background: #1e1e1e;
+      color: #f0f0f0;
+      padding: 24px;
+      overflow-y: auto;
+      border-right: 2px solid #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      flex-shrink: 0;
+      height: 100vh;
+    }
+    .control-panel h2 { font-size: 18px; margin-bottom: 4px; color: #ffffff; text-transform: uppercase; letter-spacing: 0.5px; }
+    .control-panel p.sub { font-size: 12px; color: #aaaaaa; margin-bottom: 16px; }
+
+    /* Live Feed Status Banner */
+    .feed-status-card {
+      background: #121c17;
+      border: 1px solid #1e3a2b;
+      border-left: 4px solid var(--live-green);
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 18px;
+    }
+    .feed-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .feed-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #6ee7b7;
+    }
+    .feed-pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--live-green);
+      box-shadow: 0 0 8px var(--live-green);
+    }
+    .feed-meta {
+      font-size: 11px;
+      color: #9ca3af;
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+    .feed-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .btn-feed-sync {
+      flex: 1;
+      padding: 6px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 3px;
+      border: 1px solid #374151;
+      background: #2563eb;
+      color: #ffffff;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+    .btn-feed-sync:hover { background: #3b82f6; }
+    .btn-file-load {
+      padding: 6px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 3px;
+      border: 1px solid #374151;
+      background: #374151;
+      color: #e5e7eb;
+      cursor: pointer;
+    }
+    .btn-file-load:hover { background: #4b5563; }
+
+    .section-title { font-size: 12px; font-weight: 700; text-transform: uppercase; color: #6ee7b7; margin: 18px 0 10px 0; border-bottom: 1px solid #333; padding-bottom: 4px; }
+    .field-group { margin-bottom: 10px; }
+    .field-group label { display: block; font-size: 12px; color: #cccccc; margin-bottom: 4px; }
+    .field-group input, .field-group textarea { width: 100%; padding: 8px; background: #2d2d2d; border: 1px solid #444; color: #fff; border-radius: 4px; font-size: 13px; }
+    
+    .station-row {
+      display: grid;
+      grid-template-columns: 1.3fr 1.2fr 75px 24px;
+      gap: 6px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+    .station-status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      margin: 0 auto;
+    }
+    .station-status-dot.est { background: #f59e0b; }
+
+    .btn-bar { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+    button.action-btn { padding: 12px; border: none; border-radius: 4px; font-weight: 700; font-size: 14px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; }
+    .btn-primary { background: #10b981; color: #052e16; }
+    .btn-primary:hover { background: #34d399; }
+    .btn-secondary { background: #3b82f6; color: #ffffff; }
+    .btn-secondary:hover { background: #60a5fa; }
+    .social-box { margin-top: 16px; background: #111; border: 1px solid #444; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 11px; white-space: pre-wrap; color: #d1d5db; max-height: 220px; overflow-y: auto; }
+    
+    .preview-area { flex: 1; display: flex; justify-content: center; align-items: flex-start; padding: 32px; overflow-y: auto; height: 100vh; }
+    .gazette-sheet {
+      width: 8.5in;
+      min-height: 11in;
+      background: var(--paper);
+      padding: 0.5in 0.55in;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+      border: 1px solid #d4d0c8;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .masthead { text-align: center; border-bottom: 4px double var(--border); padding-bottom: 12px; margin-bottom: 14px; }
+    .masthead-top { display: flex; justify-content: space-between; font-family: -apple-system, sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 10px; }
+    .paper-title { font-size: 38px; font-weight: 900; letter-spacing: -0.5px; line-height: 1.05; text-transform: uppercase; margin-bottom: 5px; }
+    .paper-tagline { font-style: italic; font-size: 14px; color: #333; }
+    
+    .summary-banner { background: var(--highlight); border: 2px solid var(--accent); padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; }
+    .summary-banner .left-col h3 { font-size: 12px; text-transform: uppercase; color: var(--accent); font-family: -apple-system, sans-serif; margin-bottom: 3px; font-weight: 800; }
+    .summary-banner .left-col p { font-size: 17px; font-weight: bold; }
+    .summary-banner .right-col { text-align: right; border-left: 2px solid var(--accent); padding-left: 14px; }
+    .summary-banner .right-col .big-savings { font-size: 24px; font-weight: 900; color: var(--accent); font-family: -apple-system, sans-serif; }
+    .summary-banner .right-col span { display: block; font-size: 9px; text-transform: uppercase; font-family: -apple-system, sans-serif; font-weight: 700; }
+    
+    .section-header { font-family: -apple-system, sans-serif; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; border-bottom: 2px solid var(--border); padding-bottom: 4px; display: flex; justify-content: space-between; }
+    
+    table.gas-table { width: 100%; border-collapse: collapse; margin-bottom: 14px; font-family: -apple-system, sans-serif; }
+    table.gas-table th { background: #111; color: #fff; text-align: left; padding: 6px 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.3px; }
+    table.gas-table th.num, table.gas-table td.num { text-align: right; }
+    table.gas-table td { padding: 6px 8px; border-bottom: 1px solid #ccc; font-size: 12.5px; }
+    table.gas-table tr.cheapest-row { background: var(--highlight); font-weight: 700; }
+    .badge-cheapest { background: var(--accent); color: #fff; font-size: 9px; padding: 2px 5px; border-radius: 3px; text-transform: uppercase; margin-left: 6px; font-weight: 700; }
+    .badge-feed { font-size: 9px; color: #666; font-style: italic; margin-left: 4px; font-weight: normal; }
+
+    .two-col-grid { display: grid; grid-template-columns: 1.25fr 1fr; gap: 14px; margin-bottom: 12px; }
+    .notes-box { border: 1px solid var(--border); padding: 10px 12px; }
+    .notes-box h4 { font-family: -apple-system, sans-serif; font-size: 11px; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-bottom: 6px; }
+    .notes-box p { font-size: 12px; line-height: 1.35; }
+    
+    .cta-box { border: 3px solid var(--border); padding: 10px 12px; background: #fff; text-align: center; display: flex; flex-direction: column; justify-content: center; }
+    .cta-box h4 { font-family: -apple-system, sans-serif; font-size: 12px; font-weight: 800; text-transform: uppercase; margin-bottom: 2px; }
+    .cta-box .sms-command { font-family: -apple-system, sans-serif; font-size: 16px; font-weight: 900; margin: 3px 0; padding: 3px; background: #eee; border: 1px dashed #333; }
+    .cta-box p { font-size: 10.5px; color: var(--muted); }
+    
+    .sponsor-box { border: 2px dashed #666; padding: 8px 12px; text-align: center; margin-bottom: 10px; background: #fafafa; }
+    .sponsor-label { font-family: -apple-system, sans-serif; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #666; margin-bottom: 2px; }
+    .sponsor-content { font-size: 12.5px; font-weight: bold; }
+    
+    .footer-covenant { border-top: 2px solid var(--border); padding-top: 6px; font-size: 9.5px; line-height: 1.3; color: #333; display: flex; justify-content: space-between; gap: 20px; }
+    
+    @media print {
+      body { background: none; }
+      .control-panel { display: none !important; }
+      .preview-area { padding: 0; }
+      .gazette-sheet { box-shadow: none; border: none; width: 100%; min-height: auto; padding: 0.15in 0.2in; }
+    }
+  </style>
+  <script src="gas_prices.js"></script>
+</head>
+<body>
+
+  <div class="control-panel">
+    <h2>Gazette Production Engine</h2>
+    <p class="sub">USD 449, Ft. Leavenworth, Leavenworth & Lansing</p>
+
+    <!-- Real-Time Automated Feed Status -->
+    <div class="feed-status-card">
+      <div class="feed-header">
+        <span class="feed-badge">
+          <span class="feed-pulse"></span>
+          <span id="feed-status-title">Live Corridor Feed Active</span>
+        </span>
+        <span style="font-size: 10px; color: #6ee7b7; font-family: monospace;" id="feed-source-tag">GasBuddy GraphQL</span>
+      </div>
+      <div class="feed-meta" id="feed-meta-desc">
+        Synced: Saturday, Oct 17, 2026 (14 stations verified)
+      </div>
+      <div class="feed-actions">
+        <button class="btn-feed-sync" onclick="syncLiveFeed()">⚡ Refresh Live Feed</button>
+        <button class="btn-file-load" onclick="document.getElementById('file-input').click()">📂 Load JSON</button>
+        <input type="file" id="file-input" style="display:none" accept=".json" onchange="handleFileLoad(event)">
+      </div>
+    </div>
+
+    <div class="section-title">1. Issue Metadata</div>
+    <div class="field-group"><label>Volume & Issue</label><input type="text" id="in-vol" value="Vol. 2, Issue 42" oninput="renderGazette()"></div>
+    <div class="field-group"><label>Issue Date</label><input type="text" id="in-date" value="Saturday, October 17, 2026" oninput="renderGazette()"></div>
+    <div class="field-group"><label>SMS Text-In Number</label><input type="text" id="in-phone" value="(913) 555-0199" oninput="renderGazette()"></div>
+
+    <div class="section-title">2. Corridor Stations (Auto-Populated from Feed)</div>
+    <div id="station-inputs"></div>
+
+    <div class="section-title">3. Field Notes & Sponsor Box</div>
+    <div class="field-group"><label>Field Notes</label><textarea id="in-notes" rows="2" oninput="renderGazette()">Prices verified across the Easton-Leavenworth-Lansing loop via near real-time corridor feed.</textarea></div>
+    <div class="field-group"><label>Sponsor Box</label><input type="text" id="in-sponsor" value="Community Launch Edition — 100% Free for USD 449 Readers." oninput="renderGazette()"></div>
+
+    <div class="btn-bar">
+      <button class="action-btn btn-primary" onclick="window.print()">1. Print / Save as PDF</button>
+      <button class="action-btn btn-secondary" onclick="copySocialText()">2. Copy Facebook / SMS Text</button>
+    </div>
+    <div class="social-box" id="social-output"></div>
+  </div>
+
+  <div class="preview-area">
+    <div class="gazette-sheet" id="sheet">
+      <div>
+        <div class="masthead">
+          <div class="masthead-top">
+            <span id="out-vol">Vol. 2, Issue 42</span>
+            <span>USD 449 • Ft. Leavenworth • Leavenworth • Lansing</span>
+            <span>Free Forever</span>
+          </div>
+          <div class="paper-title">The Pleasant Ridge Gazette</div>
+          <div class="paper-tagline">"What things cost and who's good in the 449."</div>
+        </div>
+
+        <div class="summary-banner">
+          <div class="left-col">
+            <h3>Cheapest Regular Gas on Corridor</h3>
+            <p id="out-best-summary">Loading real-time prices...</p>
+          </div>
+          <div class="right-col">
+            <div class="big-savings" id="out-max-save">$0.00</div>
+            <span>Saved per 15-Gal Tank vs. Highest</span>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <span>Weekly Regional Gas Sheet</span>
+          <span id="out-date">Saturday, Oct 17, 2026</span>
+        </div>
+
+        <table class="gas-table">
+          <thead>
+            <tr>
+              <th>Station & Location</th>
+              <th>Corridor Area</th>
+              <th class="num">Regular / Gal</th>
+              <th class="num">+/- vs. Best</th>
+              <th class="num">15-Gal Fill-Up</th>
+            </tr>
+          </thead>
+          <tbody id="out-table-body"></tbody>
+        </table>
+
+        <div class="two-col-grid">
+          <div class="notes-box">
+            <h4>Ground-Truth Field Notes</h4>
+            <p id="out-notes"></p>
+          </div>
+          <div class="cta-box">
+            <h4>Get The Sheet Every Sunday</h4>
+            <p>Never miss a weekly price drop:</p>
+            <div class="sms-command" id="out-sms-cta">Text GAS to (913) 555-0199</div>
+            <p>Free forever. Zero spam.</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="sponsor-box">
+          <div class="sponsor-label">Labeled Sponsor Message</div>
+          <div class="sponsor-content" id="out-sponsor"></div>
+        </div>
+        <div class="footer-covenant">
+          <div><strong>RULES:</strong> 1. Free forever. 2. Church & State: Recommendations never for sale. 3. Ground truth verified in person.</div>
+          <div style="text-align:right;"><strong>Published in Easton, KS</strong><br>For USD 449 & Corridor</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const defaultStations = [
+      { id: "49808", name: "Sunoco", loc: "501 Limit St (Leavenworth)", price: 3.85, is_estimate: false },
+      { id: "186732", name: "Murphy USA (Walmart)", loc: "10th Ave / Eisenhower (Leavenworth)", price: 3.86, is_estimate: false },
+      { id: "96594", name: "AAFES Express", loc: "Main Post (Ft. Leavenworth)", price: 3.87, is_estimate: false },
+      { id: "204958", name: "7-Eleven", loc: "Metropolitan Ave (Leavenworth)", price: 3.87, is_estimate: false },
+      { id: "202132", name: "QuikTrip", loc: "1205 N Main St (Lansing)", price: 3.89, is_estimate: false },
+      { id: "132625", name: "Dillons Fuel Center", loc: "Eisenhower Rd (Leavenworth)", price: 3.89, is_estimate: false },
+      { id: "124378", name: "Casey's General Store", loc: "2100 S 4th St (Leavenworth)", price: 3.89, is_estimate: false },
+      { id: "35573", name: "Casey's", loc: "2004 Spruce St (Leavenworth)", price: 3.89, is_estimate: false },
+      { id: "147917", name: "BP / Amoco", loc: "601 S Main St (Lansing)", price: 3.89, is_estimate: false },
+      { id: "129028", name: "Cenex", loc: "109 4H Rd (Lansing)", price: 3.89, is_estimate: false },
+      { id: "103082", name: "Fav Trip", loc: "1300 S 4th St (Leavenworth)", price: 3.89, is_estimate: false },
+      { id: "143099", name: "Hilltop Market / 66", loc: "Easton-Tongie Loop (Easton)", price: 3.91, is_estimate: true },
+      { id: "155402", name: "Sam's Club Fuel", loc: "Parallel Pkwy Corridor", price: 3.97, is_estimate: false },
+      { id: "132624", name: "Shell", loc: "Spruce St (Leavenworth)", price: 3.99, is_estimate: false }
+    ];
+
+    let activeStations = [...defaultStations];
+
+    async function syncLiveFeed() {
+      const btn = document.querySelector('.btn-feed-sync');
+      if (btn) btn.textContent = 'Syncing...';
+      try {
+        const resp = await fetch('gas_prices.json?t=' + Date.now());
+        if (resp.ok) {
+          const feed = await resp.json();
+          applyFeedData(feed);
+        }
+      } catch (e) {
+        console.warn('Sync note:', e);
+      }
+      if (btn) btn.textContent = '⚡ Refresh Live Feed';
+    }
+
+    function applyFeedData(feed) {
+      if (!feed || !feed.stations || !feed.stations.length) return;
+      activeStations = feed.stations;
+      
+      const metaEl = document.getElementById('feed-meta-desc');
+      if (metaEl && feed.last_updated_human) {
+        metaEl.textContent = `Synced: ${feed.last_updated_human}       const inDateEl = document.getElementById('in-date');
+      if (inDateEl && feed.date_header) {
+        inDateEl.value = feed.date_header;
+      }
+(${feed.stations.length} stations verified)`;
+      }
+
+      initInputs();
+      renderGazette();
+    }
+
+    function handleFileLoad(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const feed = JSON.parse(e.target.result);
+          applyFeedData(feed);
+        } catch (err) { alert('Invalid JSON file.'); }
+      };
+      reader.readAsText(file);
+    }
+
+    function initInputs() {
+      const container = document.getElementById('station-inputs');
+      container.innerHTML = '';
+      activeStations.forEach((st, idx) => {
+        const row = document.createElement('div');
+        row.className = 'station-row';
+        row.innerHTML = `
+          <input type="text" value="${st.name}" oninput="updateStation(${idx}, 'name', this.value)">
+          <input type="text" value="${st.loc}" oninput="updateStation(${idx}, 'loc', this.value)">
+          <input type="number" step="0.01" value="${st.price.toFixed(2)}" oninput="updateStation(${idx}, 'price', parseFloat(this.value)||0)">
+          <div class="station-status-dot ${st.is_estimate ? 'est' : ''}" title="${st.is_estimate ? 'Estimated' : 'Live Verified'}"></div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function updateStation(idx, field, val) {
+      activeStations[idx][field] = val;
+      renderGazette();
+    }
+
+    function renderGazette() {
+      document.getElementById('out-vol').textContent = document.getElementById('in-vol').value;
+      document.getElementById('out-date').textContent = document.getElementById('in-date').value;
+      document.getElementById('out-notes').textContent = document.getElementById('in-notes').value;
+      document.getElementById('out-sponsor').textContent = document.getElementById('in-sponsor').value;
+      document.getElementById('out-sms-cta').textContent = `Text GAS to ${document.getElementById('in-phone').value}`;
+
+      const sorted = [...activeStations].sort((a, b) => a.price - b.price);
+      const cheapest = sorted[0];
+      const highest = sorted[sorted.length - 1];
+      const maxDiff = (highest.price - cheapest.price) * 15;
+
+      document.getElementById('out-best-summary').textContent = `${cheapest.name} ($${cheapest.price.toFixed(2)}) — ${cheapest.loc}`;
+      document.getElementById('out-max-save').textContent = `$${maxDiff.toFixed(2)}`;
+
+      const tbody = document.getElementById('out-table-body');
+      tbody.innerHTML = '';
+
+      sorted.forEach((st, idx) => {
+        const spread = st.price - cheapest.price;
+        const fill15 = st.price * 15;
+        const isCheapest = idx === 0;
+
+        const tr = document.createElement('tr');
+        if (isCheapest) tr.className = 'cheapest-row';
+
+        tr.innerHTML = `
+          <td><strong>${st.name}</strong> ${isCheapest ? '<span class="badge-cheapest">Best Price</span>' : ''}</td>
+          <td>${st.loc}</td>
+          <td class="num"><strong>$${st.price.toFixed(2)}</strong></td>
+          <td class="num">${spread === 0 ? 'Cheapest' : `+$${spread.toFixed(2)}`}</td>
+          <td class="num">$${fill15.toFixed(2)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      generateSocialText(sorted, cheapest, highest, maxDiff);
+    }
+
+    function generateSocialText(sorted, cheapest, highest, maxDiff) {
+      const dateVal = document.getElementById('in-date').value;
+      const phoneVal = document.getElementById('in-phone').value;
+      
+      let text = `THE PLEASANT RIDGE GAZETTE — GAS REPORT\n`;
+      text += `📅 Verified: ${dateVal}\n\n`;
+      text += `🏆 LOWEST CORRIDOR FUEL: ${cheapest.name} ($${cheapest.price.toFixed(2)})\n`;
+      text += `📍 Location: ${cheapest.loc}\n`;
+      text += `💰 Max 15-Gal Savings: $${maxDiff.toFixed(2)} vs highest ($${highest.price.toFixed(2)})\n\n`;
+      text += `TOP 5 CORRIDOR STATIONS:\n`;
+      sorted.slice(0, 5).forEach((st, i) => {
+        text += `${i + 1}. ${st.name} - $${st.price.toFixed(2)} (${st.loc})\n`;
+      });
+      text += `\n📲 Text GAS to ${phoneVal} for weekly Sunday drops!`;
+
+      document.getElementById('social-output').textContent = text;
+    }
+
+    function copySocialText() {
+      const text = document.getElementById('social-output').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Copied Facebook / SMS bulletin to clipboard!');
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // If pre-loaded via gas_prices.js, apply immediately without CORS blocking
+      if (window.GAZETTE_GAS_FEED && window.GAZETTE_GAS_FEED.stations) {
+        applyFeedData(window.GAZETTE_GAS_FEED);
+      } else {
+        initInputs();
+        renderGazette();
+      }
+      syncLiveFeed();
+    });
+  </script>
+</body>
+</html>

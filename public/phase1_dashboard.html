@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 1: Peacetime Friction & Capital Allocation Sandbox (Month -36 to Day 0)</title>
+    <style>
+        :root {
+            --bg: #090d16;
+            --card-bg: #131b2e;
+            --border: #243049;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-red: #ef4444;
+            --accent-amber: #f59e0b;
+            --accent-blue: #38bdf8;
+            --accent-emerald: #10b981;
+            --accent-purple: #a855f7;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--bg); color: var(--text-main); padding: 24px; }
+        
+        header { margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 16px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; }
+        h1 { font-size: 24px; font-weight: 700; color: #fff; }
+        .subtitle { color: var(--text-muted); font-size: 13px; margin-top: 4px; line-height: 1.4; }
+        
+        .badge-box { background: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 10px 14px; font-size: 12px; max-width: 420px; }
+        .badge-title { color: var(--accent-blue); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+        .badge-desc { color: #cbd5e1; line-height: 1.35; }
+
+        /* Strategy Controls Card */
+        .controls-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 18px 20px; margin-bottom: 20px; }
+        .controls-header { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; margin-bottom: 12px; }
+        .controls-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+        
+        .strategy-block { background: #090e1a; border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; }
+        .strategy-label { font-size: 12px; font-weight: 700; color: #fff; margin-bottom: 8px; display: flex; justify-content: space-between; }
+        .toggle-group { display: flex; background: #131b2e; border: 1px solid var(--border); border-radius: 6px; padding: 3px; gap: 4px; }
+        .toggle-btn { background: transparent; color: var(--text-muted); border: none; padding: 7px 12px; font-size: 12px; font-weight: 600; border-radius: 4px; cursor: pointer; transition: all 0.2s; width: 50%; text-align: center; }
+        .toggle-btn.active { background: #2563eb; color: #fff; box-shadow: 0 0 10px rgba(37,99,235,0.4); }
+        .toggle-btn.active.btn-stealth { background: #059669; box-shadow: 0 0 10px rgba(16,185,129,0.4); }
+
+        /* Month Scrubber */
+        .slider-section { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 18px 20px; margin-bottom: 20px; }
+        .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .month-display { font-size: 18px; font-weight: 700; color: var(--accent-amber); }
+        input[type="range"] { width: 100%; height: 8px; border-radius: 4px; background: #243049; outline: none; -webkit-appearance: none; cursor: pointer; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--accent-amber); cursor: pointer; border: 2px solid #fff; }
+
+        /* Metric Cards */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px; }
+        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+        .card-label { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; margin-bottom: 4px; }
+        .card-value { font-size: 22px; font-weight: 800; }
+        .card-subtext { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+        /* Silo Clearance Grid */
+        .silo-card { background: #111a2e; border: 1px solid #2d3c59; border-radius: 8px; padding: 18px 20px; margin-bottom: 24px; }
+        .silo-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 12px; display: flex; justify-content: space-between; }
+        .silo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+        .silo-box { background: #090e1a; border: 1px solid var(--border); border-radius: 6px; padding: 12px; }
+        .silo-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); display: flex; justify-content: space-between; }
+        .progress-bar-bg { width: 100%; height: 6px; background: #1e293b; border-radius: 3px; margin: 8px 0 6px 0; overflow: hidden; }
+        .progress-bar-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+        .silo-status { font-size: 11px; color: var(--text-muted); }
+
+        /* Charts Grid */
+        .charts-container { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 24px; }
+        @media (max-width: 1000px) { .charts-container { grid-template-columns: 1fr; } }
+        
+        .chart-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+        .chart-title { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px; display: flex; justify-content: space-between; }
+        .chart-subtitle { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; }
+        svg { width: 100%; height: 220px; background: #090e1a; border-radius: 6px; }
+        
+        .axis-line { stroke: #243049; stroke-width: 1; }
+        .axis-text { fill: #64748b; font-size: 10px; }
+        .grid-line { stroke: #151e33; stroke-dasharray: 4,4; stroke-width: 1; }
+
+        .legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; font-size: 11px; }
+        .legend-item { display: flex; align-items: center; gap: 5px; }
+        .legend-color { width: 10px; height: 10px; border-radius: 2px; }
+
+        /* Scratchpad */
+        .scratchpad-section { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 18px 20px; margin-top: 12px; margin-bottom: 30px; }
+        .scratchpad-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+        .scratchpad-title { font-size: 15px; font-weight: 700; color: #fff; }
+        .scratchpad-subtitle { font-size: 11px; color: var(--text-muted); }
+        .btn { background: #2563eb; color: #fff; border: none; border-radius: 5px; padding: 7px 14px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn:hover { background: #1d4ed8; }
+        .btn-success { background: #059669 !important; }
+        .btn-secondary { background: #243049; color: #cbd5e1; }
+        .btn-secondary:hover { background: #334155; }
+        .scratchpad-textarea { width: 100%; min-height: 160px; background: #090e1a; color: #f1f5f9; border: 1px solid var(--border); border-radius: 6px; padding: 14px; font-family: monospace; font-size: 13px; line-height: 1.5; resize: vertical; outline: none; }
+        .scratchpad-textarea:focus { border-color: #38bdf8; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>
+            <h1>Phase 1: Peacetime Friction & Capital Allocation Engine</h1>
+            <div class="subtitle">
+                Modeling 36 Months of Political Capital, Inter-Agency Bureaucratic Clearance, and Grant Financing Prior to Day 0
+            </div>
+        </div>
+        <div class="badge-box">
+            <div class="badge-title">🏛️ The Public Choice Dilemma</div>
+            <div class="badge-desc">
+                Politicians discount benefits by 25–40% per 4-year term. Direct doomsday pitches create instant media ridicule; stealth dual-use framing bypasses friction.
+            </div>
+        </div>
+    </header>
+
+    <!-- Strategy Framing Switches -->
+    <div class="controls-card">
+        <div class="controls-header">Select Political Framing & Administrative Strategy</div>
+        <div class="controls-grid">
+            
+            <div class="strategy-block">
+                <div class="strategy-label">
+                    <span>1. Pitch Taxonomy</span>
+                    <span id="labelPitch" style="color: var(--accent-emerald);">Stealth All-Hazards</span>
+                </div>
+                <div class="toggle-group" id="togglesPitch">
+                    <button class="toggle-btn" data-val="direct">☢️ Direct EMP Pitch</button>
+                    <button class="toggle-btn active btn-stealth" data-val="stealth">🌪️ Stealth All-Hazards</button>
+                </div>
+            </div>
+
+            <div class="strategy-block">
+                <div class="strategy-label">
+                    <span>2. Inter-Agency Legal Pathway</span>
+                    <span id="labelLegal" style="color: var(--accent-emerald);">COOP Annex Piggybacking</span>
+                </div>
+                <div class="toggle-group" id="togglesLegal">
+                    <button class="toggle-btn" data-val="novel">📜 Novel Sovereign Treaty</button>
+                    <button class="toggle-btn active btn-stealth" data-val="piggyback">📋 COOP Annex Piggyback</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Month Timeline Scrubber -->
+    <div class="slider-section">
+        <div class="slider-header">
+            <div>
+                <span style="font-weight: 700; font-size: 15px;">Peacetime Timeline Scrubber (36 Months Prior to Strike)</span>
+                <span style="color: var(--text-muted); font-size: 12px; margin-left: 10px;">Drag slider to watch political will, budgets, and physical installation advance</span>
+            </div>
+            <div class="month-display" id="monthDisplay">Month -36 (Campaign Start)</div>
+        </div>
+        <input type="range" id="monthSlider" min="0" max="36" value="0">
+    </div>
+
+    <!-- Dynamic Metrics Cards -->
+    <div class="grid">
+        <div class="card">
+            <div class="card-label">Political Will / Capital</div>
+            <div class="card-value" id="valPolCapital" style="color: var(--accent-emerald);">100%</div>
+            <div class="card-subtext" id="subPolCapital">Commission approval headroom</div>
+        </div>
+        <div class="card">
+            <div class="card-label">Local Taxpayer Spend</div>
+            <div class="card-value" id="valTaxSpend" style="color: #38bdf8;">$0</div>
+            <div class="card-subtext" id="subTaxSpend">Of $65,850 total target</div>
+        </div>
+        <div class="card">
+            <div class="card-label">Federal Grants Captured</div>
+            <div class="card-value" id="valGrants" style="color: var(--accent-purple);">$0</div>
+            <div class="card-subtext" id="subGrants">USDA / FEMA pre-disaster funds</div>
+        </div>
+        <div class="card">
+            <div class="card-label">Couplers Installed</div>
+            <div class="card-value" id="valCouplers" style="color: var(--accent-amber);">0 of 6</div>
+            <div class="card-subtext" id="subCouplers">Physical hardware ready</div>
+        </div>
+        <div class="card">
+            <div class="card-label">Projected Post-Strike Survival</div>
+            <div class="card-value" id="valSurvival" style="color: var(--accent-red);">18.6%</div>
+            <div class="card-subtext" id="subSurvival">Baseline status quo collapse</div>
+        </div>
+    </div>
+
+    <!-- Silo Bureaucratic Clearance Grid -->
+    <div class="silo-card">
+        <div class="silo-title">
+            <span>🏛️ Sovereign Bureaucratic Clearance Status across 4 Silos</span>
+            <span id="overallClearanceBadge" style="font-size: 12px; color: var(--accent-blue); font-weight: 700;">Average Clearance: 0%</span>
+        </div>
+        <div class="silo-grid">
+            
+            <div class="silo-box">
+                <div class="silo-label">
+                    <span>1. Fort Leavenworth (DoD)</span>
+                    <span id="pctDoD">0%</span>
+                </div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="barDoD" style="width: 0%; background: #38bdf8;"></div></div>
+                <div class="silo-status" id="statusDoD">Pending Garrison Staff review</div>
+            </div>
+
+            <div class="silo-box">
+                <div class="silo-label">
+                    <span>2. Lansing Prison (KDOC)</span>
+                    <span id="pctKDOC">0%</span>
+                </div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="barKDOC" style="width: 0%; background: #a855f7;"></div></div>
+                <div class="silo-status" id="statusKDOC">Staff union liability review</div>
+            </div>
+
+            <div class="silo-box">
+                <div class="silo-label">
+                    <span>3. County Commission (Budget)</span>
+                    <span id="pctCounty">0%</span>
+                </div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="barCounty" style="width: 0%; background: #10b981;"></div></div>
+                <div class="silo-status" id="statusCounty">Awaiting committee hearing</div>
+            </div>
+
+            <div class="silo-box">
+                <div class="silo-label">
+                    <span>4. Water District & DWR (Permits)</span>
+                    <span id="pctWater">0%</span>
+                </div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="barWater" style="width: 0%; background: #f59e0b;"></div></div>
+                <div class="silo-status" id="statusWater">Groundwater casing permits</div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-container">
+        
+        <!-- CHART 1: Political Capital vs Capital Outlay -->
+        <div class="chart-box">
+            <div class="chart-title">
+                <span>1. Political Will vs. Capital Spent</span>
+                <span id="chart1Val" style="color: var(--accent-emerald);">Will: 100%</span>
+            </div>
+            <div class="chart-subtitle">Political capital headroom vs. local taxpayer funds and captured federal grants</div>
+            <svg id="chartCapital" viewBox="0 0 500 220"></svg>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-color" style="background: #10b981;"></div> Political Capital %</div>
+                <div class="legend-item"><div class="legend-color" style="background: #38bdf8;"></div> Local Taxpayer Dollars ($)</div>
+                <div class="legend-item"><div class="legend-color" style="background: #a855f7;"></div> Federal Grants Captured ($)</div>
+            </div>
+        </div>
+
+        <!-- CHART 2: Silo Clearance Trajectory -->
+        <div class="chart-box">
+            <div class="chart-title">
+                <span>2. Bureaucratic Legal Clearance Velocity</span>
+                <span id="chart2Val" style="color: #38bdf8;">Avg: 0%</span>
+            </div>
+            <div class="chart-subtitle">Speed of legal ratification across DoD, KDOC Prison, County, and Water District</div>
+            <svg id="chartClearance" viewBox="0 0 500 220"></svg>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-color" style="background: #38bdf8;"></div> Fort Leavenworth (DoD)</div>
+                <div class="legend-item"><div class="legend-color" style="background: #a855f7;"></div> Lansing Prison (KDOC)</div>
+                <div class="legend-item"><div class="legend-color" style="background: #10b981;"></div> County Commission</div>
+                <div class="legend-item"><div class="legend-color" style="background: #f59e0b;"></div> Water District (KDHE/DWR)</div>
+            </div>
+        </div>
+
+        <!-- CHART 3: Coupler Installation Progress -->
+        <div class="chart-box">
+            <div class="chart-title">
+                <span>3. Physical Hardware Deployment</span>
+                <span id="chart3Val" style="color: var(--accent-amber);">0 Couplers Ready</span>
+            </div>
+            <div class="chart-subtitle">Deployment of PTO mills, alluvial wellheads, fuel pumps, and signed agreements</div>
+            <svg id="chartCouplers" viewBox="0 0 500 220"></svg>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-color" style="background: #f59e0b;"></div> Active Couplers (0→6)</div>
+                <div class="legend-item"><div class="legend-color" style="background: #10b981;"></div> Physical Hardware Deployment %</div>
+            </div>
+        </div>
+
+        <!-- CHART 4: Resulting Post-Strike Survival Curve -->
+        <div class="chart-box">
+            <div class="chart-title">
+                <span>4. Projected Post-Strike Year 1 Survival</span>
+                <span id="chart4Val" style="color: var(--accent-emerald);">18.6% Survival</span>
+            </div>
+            <div class="chart-subtitle">How peacetime installation directly expands the survival ceiling if hit at Month M</div>
+            <svg id="chartSurvival" viewBox="0 0 500 220"></svg>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-color" style="background: #10b981;"></div> Projected Survival Rate (%)</div>
+                <div class="legend-item"><div class="legend-color" style="background: #ef4444;"></div> The &lt;10% Mortality Dip Threshold (90%)</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Scratchpad Section -->
+    <div class="scratchpad-section">
+        <div class="scratchpad-header">
+            <div>
+                <div class="scratchpad-title">📝 Phase 1 Strategy Scratchpad & Capital Backlog</div>
+                <div class="scratchpad-subtitle">
+                    Record grant strategy ideas, commissioner interview notes, and procurement milestones. Auto-saves locally; 1-click clipboard copy.
+                </div>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <span id="saveStatus" style="font-size: 11px; color: #10b981; font-weight: 600;">✓ Saved</span>
+                <button class="btn btn-secondary" id="clearBtn">Clear</button>
+                <button class="btn" id="copyBtn">📋 Copy to Clipboard</button>
+            </div>
+        </div>
+        <textarea id="scratchpadArea" class="scratchpad-textarea" placeholder="[PHASE 1: PEACETIME CAPITAL & FRICTION LOG]&#10;• USDA Grant Angle: Mobile PTO grain mills qualify under Value-Added Producer Grants (VAPG).&#10;• Water District Strategy: Shallow alluvial wells drilled as community garden irrigation tap points to bypass KDHE industrial permits.&#10;• Commission Strategy: Package fuel drop-pumps under tornado generator support."></textarea>
+    </div>
+
+    <script>
+        // Phase 1 Peacetime Friction & Procurement Engine
+        let pitchMode = 'stealth';   // 'direct' vs 'stealth'
+        let legalMode = 'piggyback'; // 'novel' vs 'piggyback'
+
+        function computePhase1Timeline() {
+            const months = 36;
+            const timeline = [];
+
+            let polCapital = 100.0;
+            let taxSpent = 0.0;
+            let grantCaptured = 0.0;
+
+            const isDirect = (pitchMode === 'direct');
+            const isNovel = (legalMode === 'novel');
+
+            // Clearance rates (% per month)
+            // Direct pitch induces heavy pushback; novel legal track drags in committee
+            const rateDoD = isNovel ? (isDirect ? 1.5 : 2.5) : (isDirect ? 3.0 : 8.5);
+            const rateKDOC = isNovel ? (isDirect ? 1.0 : 2.0) : (isDirect ? 2.5 : 9.0);
+            const rateCounty = isDirect ? 1.2 : 7.0;
+            const rateWater = isDirect ? 2.0 : 6.5;
+
+            let clDoD = 0.0, clKDOC = 0.0, clCounty = 0.0, clWater = 0.0;
+
+            for (let m = 0; m <= months; m++) {
+                // Political Capital Burn / Regeneration
+                if (isDirect) {
+                    // Direct EMP pitch burns political capital fast due to public skepticism and commission fatigue
+                    polCapital = Math.max(15.0, polCapital - 2.2);
+                } else {
+                    // Stealth dual-use framing: commissioners see real local benefits (feed grinding, drought wells)
+                    polCapital = Math.min(100.0, polCapital + (m > 6 ? 0.3 : -0.5));
+                }
+
+                // Clearance advance
+                clDoD = Math.min(100.0, clDoD + rateDoD);
+                clKDOC = Math.min(100.0, clKDOC + rateKDOC);
+                clCounty = Math.min(100.0, clCounty + rateCounty);
+                clWater = Math.min(100.0, clWater + rateWater);
+
+                const avgClearance = (clDoD + clKDOC + clCounty + clWater) / 4.0;
+
+                // Capital Expenditure
+                if (avgClearance > 25.0) {
+                    if (isDirect) {
+                        // Direct pitch: 100% funded from local county taxpayers, zero federal grants
+                        taxSpent = Math.min(65850.0, taxSpent + 2200.0);
+                        grantCaptured = 0.0;
+                    } else {
+                        // Stealth pitch: 80% captured from USDA / FEMA all-hazard grants, only 20% local tax
+                        grantCaptured = Math.min(54000.0, grantCaptured + 2500.0);
+                        taxSpent = Math.min(11850.0, taxSpent + 550.0);
+                    }
+                }
+
+                // Couplers Installed (0 to 6) based on clearance & funding
+                const deploymentProgress = Math.min(100.0, (avgClearance * 0.6) + ((taxSpent + grantCaptured) / 65850.0 * 40.0));
+                const couplersInstalled = Math.floor(deploymentProgress / 16.6);
+
+                // Projected post-strike survival rate if attacked at Month M
+                // Base: 18.6% -> Max: 93.2%
+                const survivalRate = Math.round((18.6 + (deploymentProgress / 100.0) * (93.2 - 18.6)) * 10) / 10;
+
+                timeline.push({
+                    month: m - 36, // -36 to 0
+                    monthIdx: m,
+                    polCapital: Math.round(polCapital),
+                    taxSpent: Math.round(taxSpent),
+                    grantCaptured: Math.round(grantCaptured),
+                    clDoD: Math.round(clDoD),
+                    clKDOC: Math.round(clKDOC),
+                    clCounty: Math.round(clCounty),
+                    clWater: Math.round(clWater),
+                    avgClearance: Math.round(avgClearance),
+                    couplersInstalled: Math.min(6, couplersInstalled),
+                    deploymentProgress: Math.round(deploymentProgress),
+                    survivalRate: survivalRate
+                });
+            }
+
+            return timeline;
+        }
+
+        let p1Timeline = computePhase1Timeline();
+
+        // Strategy Toggles UI
+        const pitchBtns = document.querySelectorAll('#togglesPitch .toggle-btn');
+        const legalBtns = document.querySelectorAll('#togglesLegal .toggle-btn');
+        const labelPitch = document.getElementById('labelPitch');
+        const labelLegal = document.getElementById('labelLegal');
+
+        pitchBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                pitchBtns.forEach(b => b.classList.remove('active', 'btn-stealth'));
+                btn.classList.add('active');
+                if (btn.getAttribute('data-val') === 'stealth') btn.classList.add('btn-stealth');
+                pitchMode = btn.getAttribute('data-val');
+                labelPitch.textContent = pitchMode === 'stealth' ? 'Stealth All-Hazards' : 'Direct EMP Pitch';
+                labelPitch.style.color = pitchMode === 'stealth' ? 'var(--accent-emerald)' : 'var(--accent-red)';
+                recompute();
+            });
+        });
+
+        legalBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                legalBtns.forEach(b => b.classList.remove('active', 'btn-stealth'));
+                btn.classList.add('active');
+                if (btn.getAttribute('data-val') === 'piggyback') btn.classList.add('btn-stealth');
+                legalMode = btn.getAttribute('data-val');
+                labelLegal.textContent = legalMode === 'piggyback' ? 'COOP Annex Piggybacking' : 'Novel Sovereign Treaty';
+                labelLegal.style.color = legalMode === 'piggyback' ? 'var(--accent-emerald)' : 'var(--accent-amber)';
+                recompute();
+            });
+        });
+
+        function recompute() {
+            p1Timeline = computePhase1Timeline();
+            renderCharts();
+            updateMonth(parseInt(slider.value));
+        }
+
+        const slider = document.getElementById('monthSlider');
+        const monthDisplay = document.getElementById('monthDisplay');
+
+        const valPolCapital = document.getElementById('valPolCapital');
+        const subPolCapital = document.getElementById('subPolCapital');
+        const valTaxSpend = document.getElementById('valTaxSpend');
+        const subTaxSpend = document.getElementById('subTaxSpend');
+        const valGrants = document.getElementById('valGrants');
+        const subGrants = document.getElementById('subGrants');
+        const valCouplers = document.getElementById('valCouplers');
+        const subCouplers = document.getElementById('subCouplers');
+        const valSurvival = document.getElementById('valSurvival');
+        const subSurvival = document.getElementById('subSurvival');
+
+        const overallClearanceBadge = document.getElementById('overallClearanceBadge');
+        const pctDoD = document.getElementById('pctDoD');
+        const barDoD = document.getElementById('barDoD');
+        const statusDoD = document.getElementById('statusDoD');
+        const pctKDOC = document.getElementById('pctKDOC');
+        const barKDOC = document.getElementById('barKDOC');
+        const statusKDOC = document.getElementById('statusKDOC');
+        const pctCounty = document.getElementById('pctCounty');
+        const barCounty = document.getElementById('barCounty');
+        const statusCounty = document.getElementById('statusCounty');
+        const pctWater = document.getElementById('pctWater');
+        const barWater = document.getElementById('barWater');
+        const statusWater = document.getElementById('statusWater');
+
+        function updateMonth(mIdx) {
+            const d = p1Timeline[mIdx];
+            const mLabel = d.month === 0 ? "Month 0 (Strike Day)" : `Month ${d.month} (${36 + d.month} Months of Prep)`;
+            monthDisplay.textContent = mLabel;
+
+            valPolCapital.textContent = `${d.polCapital}%`;
+            subPolCapital.textContent = d.polCapital < 40 ? "Severe political fatigue" : "Healthy political headroom";
+
+            valTaxSpend.textContent = `$${d.taxSpent.toLocaleString()}`;
+            subTaxSpend.textContent = pitchMode === 'stealth' ? "20% local cost share" : "100% county tax burden";
+
+            valGrants.textContent = `$${d.grantCaptured.toLocaleString()}`;
+            subGrants.textContent = pitchMode === 'stealth' ? "USDA VAPG & FEMA PDM" : "$0 (Direct pitch ineligible)";
+
+            valCouplers.textContent = `${d.couplersInstalled} of 6`;
+            subCouplers.textContent = `${d.deploymentProgress}% deployment progress`;
+
+            valSurvival.textContent = `${d.survivalRate}%`;
+            if (d.survivalRate >= 90.0) {
+                valSurvival.style.color = "var(--accent-emerald)";
+                subSurvival.textContent = "Fortress Protocol achieved (<10% dip)";
+            } else if (d.survivalRate >= 60.0) {
+                valSurvival.style.color = "var(--accent-amber)";
+                subSurvival.textContent = "Intermediate resiliency";
+            } else {
+                valSurvival.style.color = "var(--accent-red)";
+                subSurvival.textContent = "Catastrophic collapse floor";
+            }
+
+            overallClearanceBadge.textContent = `Average Clearance: ${d.avgClearance}%`;
+            
+            pctDoD.textContent = `${d.clDoD}%`;
+            barDoD.style.width = `${d.clDoD}%`;
+            statusDoD.textContent = d.clDoD >= 100 ? "Garrison Covenant Ratified" : (d.clDoD > 40 ? "Legal review in progress" : "Pending staff review");
+
+            pctKDOC.textContent = `${d.clKDOC}%`;
+            barKDOC.style.width = `${d.clKDOC}%`;
+            statusKDOC.textContent = d.clKDOC >= 100 ? "Union Billeting Annex Signed" : (d.clKDOC > 40 ? "Union MOU negotiations" : "Liability review");
+
+            pctCounty.textContent = `${d.clCounty}%`;
+            barCounty.style.width = `${d.clCounty}%`;
+            statusCounty.textContent = d.clCounty >= 100 ? "Budget Approved & Disbursed" : (d.clCounty > 40 ? "Second reading passed" : "Awaiting committee");
+
+            pctWater.textContent = `${d.clWater}%`;
+            barWater.style.width = `${d.clWater}%`;
+            statusWater.textContent = d.clWater >= 100 ? "Alluvial Well Casing Permits Granted" : (d.clWater > 40 ? "KDHE hydrology review" : "Permit intake");
+
+            // Chart values
+            document.getElementById('chart1Val').textContent = `Capital: $${(d.taxSpent + d.grantCaptured).toLocaleString()}`;
+            document.getElementById('chart2Val').textContent = `Avg Clearance: ${d.avgClearance}%`;
+            document.getElementById('chart3Val').textContent = `${d.couplersInstalled} Couplers Ready`;
+            document.getElementById('chart4Val').textContent = `${d.survivalRate}% Survival Ceiling`;
+
+            drawTimeIndicators(mIdx);
+        }
+
+        const W = 500, H = 220, padL = 40, padR = 15, padT = 15, padB = 30;
+        function xPix(mIdx) { return padL + (mIdx / 36) * (W - padL - padR); }
+
+        function buildSVG(svgId, maxVal, lines) {
+            const svg = document.getElementById(svgId);
+            function yPix(val) { return padT + (1 - Math.min(maxVal, Math.max(0, val)) / maxVal) * (H - padT - padB); }
+
+            let out = `
+                <line x1="${padL}" y1="${H-padB}" x2="${W-padR}" y2="${H-padB}" class="axis-line" />
+                <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${H-padB}" class="axis-line" />
+                <line x1="${padL}" y1="${yPix(maxVal/2)}" x2="${W-padR}" y2="${yPix(maxVal/2)}" class="grid-line" />
+                <text x="${padL}" y="${H-8}" class="axis-text">M-36</text>
+                <text x="${xPix(9)}" y="${H-8}" class="axis-text">M-27</text>
+                <text x="${xPix(18)}" y="${H-8}" class="axis-text">M-18</text>
+                <text x="${xPix(27)}" y="${H-8}" class="axis-text">M-9</text>
+                <text x="${W-padR-15}" y="${H-8}" class="axis-text">M-0</text>
+                <text x="5" y="${padT+10}" class="axis-text">${maxVal >= 1000 ? (maxVal/1000)+'k' : maxVal}</text>
+            `;
+
+            lines.forEach(l => {
+                const pts = l.data.map((v, i) => `${xPix(i)},${yPix(v)}`).join(' ');
+                out += `<polyline points="${pts}" fill="none" stroke="${l.color}" stroke-width="${l.width || 2}" />`;
+            });
+
+            svg.setAttribute('data-base', out);
+            svg.innerHTML = out;
+        }
+
+        function renderCharts() {
+            // Chart 1: Capital & Political Will
+            buildSVG('chartCapital', 100, [
+                { data: p1Timeline.map(d => d.polCapital), color: '#10b981', width: 2.5 },
+                { data: p1Timeline.map(d => (d.taxSpent / 65850.0) * 100), color: '#38bdf8', width: 2 },
+                { data: p1Timeline.map(d => (d.grantCaptured / 65850.0) * 100), color: '#a855f7', width: 2 }
+            ]);
+
+            // Chart 2: Silo Clearance Trajectory
+            buildSVG('chartClearance', 100, [
+                { data: p1Timeline.map(d => d.clDoD), color: '#38bdf8', width: 2 },
+                { data: p1Timeline.map(d => d.clKDOC), color: '#a855f7', width: 2 },
+                { data: p1Timeline.map(d => d.clCounty), color: '#10b981', width: 2 },
+                { data: p1Timeline.map(d => d.clWater), color: '#f59e0b', width: 2 }
+            ]);
+
+            // Chart 3: Couplers Installed (Max 6)
+            buildSVG('chartCouplers', 6, [
+                { data: p1Timeline.map(d => d.couplersInstalled), color: '#f59e0b', width: 2.5 },
+                { data: p1Timeline.map(d => (d.deploymentProgress / 100.0) * 6), color: '#10b981', width: 1.8 }
+            ]);
+
+            // Chart 4: Projected Survival (Max 100%)
+            buildSVG('chartSurvival', 100, [
+                { data: p1Timeline.map(d => d.survivalRate), color: '#10b981', width: 2.5 },
+                { data: p1Timeline.map(() => 90.0), color: '#ef4444', width: 1.5 } // 90% benchmark
+            ]);
+
+            drawTimeIndicators(parseInt(slider.value));
+        }
+
+        function drawTimeIndicators(mIdx) {
+            const curX = xPix(mIdx);
+            ['chartCapital', 'chartClearance', 'chartCouplers', 'chartSurvival'].forEach(id => {
+                const svg = document.getElementById(id);
+                const base = svg.getAttribute('data-base') || '';
+                const overlay = `<line x1="${curX}" y1="${padT}" x2="${curX}" y2="${H-padB}" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,3" />`;
+                svg.innerHTML = base + overlay;
+            });
+        }
+
+        slider.addEventListener('input', (e) => updateMonth(parseInt(e.target.value)));
+
+        const scratchArea = document.getElementById('scratchpadArea');
+        const saveStatus = document.getElementById('saveStatus');
+        const copyBtn = document.getElementById('copyBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const STORAGE_KEY = 'leavenworth_phase1_scratchpad';
+
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) scratchArea.value = saved;
+
+        let saveTimer = null;
+        scratchArea.addEventListener('input', () => {
+            saveStatus.textContent = 'Saving...';
+            saveStatus.style.color = '#f59e0b';
+            clearTimeout(saveTimer);
+            saveTimer = setTimeout(() => {
+                localStorage.setItem(STORAGE_KEY, scratchArea.value);
+                saveStatus.textContent = '✓ Saved';
+                saveStatus.style.color = '#10b981';
+            }, 400);
+        });
+
+        copyBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(scratchArea.value);
+                copyBtn.textContent = '✓ Copied!';
+                copyBtn.classList.add('btn-success');
+                setTimeout(() => {
+                    copyBtn.textContent = '📋 Copy to Clipboard';
+                    copyBtn.classList.remove('btn-success');
+                }, 2500);
+            } catch(e) {
+                scratchArea.select();
+                document.execCommand('copy');
+                copyBtn.textContent = '✓ Copied!';
+                setTimeout(() => copyBtn.textContent = '📋 Copy to Clipboard', 2500);
+            }
+        });
+
+        clearBtn.addEventListener('click', () => {
+            if (scratchArea.value.trim() && confirm('Clear scratchpad content?')) {
+                scratchArea.value = '';
+                localStorage.removeItem(STORAGE_KEY);
+                saveStatus.textContent = '✓ Cleared';
+            }
+        });
+
+        renderCharts();
+        updateMonth(0);
+    </script>
+</body>
+</html>

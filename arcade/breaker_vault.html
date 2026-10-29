@@ -1,0 +1,1992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>The Breaker Vault : 8-Sector Horror Escape Campaign</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Plus+Jakarta+Sans:wght@600;800&family=Creepster&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #07080a;
+      --panel: #11141a;
+      --border: #262c38;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --green: #10b981;
+      --blue: #38bdf8;
+      --mono: 'Share Tech Mono', monospace;
+      --sans: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-touch-callout: none; }
+
+    body {
+      background-color: var(--bg);
+      color: #e2e8f0;
+      font-family: var(--sans);
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      touch-action: none;
+    }
+
+    /* TOP HUD BAR */
+    header.hud-bar {
+      height: 48px;
+      min-height: 48px;
+      background: rgba(15, 18, 24, 0.98);
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      z-index: 30;
+      font-family: var(--mono);
+      font-size: 11px;
+    }
+
+    .hud-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sector-badge {
+      background: #090b0e;
+      border: 1px solid var(--amber);
+      color: var(--amber);
+      font-weight: 800;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 3px;
+      letter-spacing: 0.5px;
+    }
+
+    .sector-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #f1f5f9;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 160px;
+    }
+
+    .hud-stats {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stat-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: #090b0e;
+      border: 1px solid var(--border);
+      padding: 3px 7px;
+      border-radius: 3px;
+      font-size: 10px;
+    }
+
+    .stat-label { color: #64748b; font-size: 9px; text-transform: uppercase; }
+    .stat-val { font-weight: 700; color: #f1f5f9; }
+
+    .btn-hud {
+      background: #090b0e;
+      border: 1px solid var(--border);
+      color: #cbd5e1;
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 3px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn-hud:hover { border-color: var(--amber); color: #fff; }
+
+    /* GAME CANVAS VIEWPORT */
+    #viewport {
+      flex: 1;
+      position: relative;
+      background: #090b10;
+      overflow: hidden;
+      cursor: crosshair;
+      touch-action: none;
+    }
+
+    canvas#gameCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ON-SCREEN INTERACTION PROMPT */
+    #interactPrompt {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(17, 20, 26, 0.95);
+      border: 2px solid var(--amber);
+      color: #fff;
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 18px;
+      border-radius: 4px;
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+      display: none;
+      pointer-events: none;
+      z-index: 25;
+      animation: pulsePrompt 0.8s infinite alternate;
+      white-space: nowrap;
+    }
+    @keyframes pulsePrompt {
+      from { transform: translateX(-50%) scale(1); }
+      to { transform: translateX(-50%) scale(1.05); }
+    }
+
+    /* =========================================
+       MOBILE TOUCH CONTROLS (THUMB ERGONOMIC)
+       ========================================= */
+    /* LEFT CLUSTER: MOVEMENT D-PAD */
+    .touch-dpad {
+      position: absolute;
+      bottom: 18px;
+      left: 14px;
+      z-index: 24;
+      display: grid;
+      grid-template-columns: repeat(3, 48px);
+      grid-template-rows: repeat(3, 48px);
+      gap: 5px;
+      opacity: 0.9;
+    }
+    .dpad-btn {
+      background: rgba(18, 22, 31, 0.88);
+      border: 1.5px solid #334155;
+      color: #e2e8f0;
+      font-family: var(--mono);
+      font-size: 16px;
+      font-weight: 800;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      touch-action: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+    .dpad-btn:active, .dpad-btn.pressed {
+      background: var(--amber);
+      color: #000;
+      border-color: #f59e0b;
+    }
+    .dpad-center {
+      background: rgba(11, 14, 20, 0.5);
+      border: 1px dashed #262c38;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      color: #64748b;
+    }
+
+    /* RIGHT CLUSTER: TACTICAL STANCE (SNEAK / SPRINT / ACTION) */
+    .touch-actions {
+      position: absolute;
+      bottom: 18px;
+      right: 14px;
+      z-index: 24;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-end;
+    }
+
+    .action-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tactical-btn {
+      height: 48px;
+      min-width: 62px;
+      padding: 0 12px;
+      background: rgba(18, 22, 31, 0.92);
+      border: 2px solid #334155;
+      color: #cbd5e1;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 800;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      touch-action: none;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+      transition: all 0.15s ease;
+    }
+    .tactical-btn .btn-icon { font-size: 16px; }
+    .tactical-btn .btn-sub { font-size: 8px; text-transform: uppercase; color: #94a3b8; }
+
+    /* SNEAK TOGGLE (ACTIVE STATE) */
+    .tactical-btn.sneak-toggle {
+      border-color: #047857;
+      color: #34d399;
+    }
+    .tactical-btn.sneak-toggle.active {
+      background: #064e3b;
+      border-color: var(--green);
+      color: #10b981;
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.6);
+      transform: scale(1.05);
+    }
+
+    /* SPRINT BUTTON (HELD / ACTIVE) */
+    .tactical-btn.sprint-btn {
+      border-color: #b45309;
+      color: #fbbf24;
+    }
+    .tactical-btn.sprint-btn.active, .tactical-btn.sprint-btn:active {
+      background: #78350f;
+      border-color: var(--amber);
+      color: #fff;
+      box-shadow: 0 0 16px rgba(245, 158, 11, 0.6);
+    }
+
+    /* INTERACT / ACTION [E] BUTTON */
+    .tactical-btn.interact-main {
+      width: 132px;
+      height: 50px;
+      background: #172033;
+      border: 2px solid var(--amber);
+      color: #f8fafc;
+      font-size: 13px;
+    }
+    .tactical-btn.interact-main:active {
+      background: var(--amber);
+      color: #000;
+    }
+    .tactical-btn.interact-main.highlight {
+      background: #78350f;
+      border-color: #fbbf24;
+      animation: pulseAction 0.6s infinite alternate;
+    }
+    @keyframes pulseAction {
+      from { transform: scale(1); }
+      to { transform: scale(1.04); }
+    }
+
+    /* BOTTOM BAR */
+    footer.inv-bar {
+      height: 60px;
+      min-height: 60px;
+      background: rgba(15, 18, 24, 0.98);
+      border-top: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      z-index: 30;
+      font-family: var(--mono);
+    }
+
+    .key-tracker {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .key-badge-card {
+      background: #090b0e;
+      border: 1px solid var(--amber);
+      padding: 4px 10px;
+      border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+    .key-badge-label { font-size: 8px; color: #64748b; text-transform: uppercase; }
+    .key-badge-count { font-size: 13px; font-weight: 800; color: var(--amber); }
+
+    .stance-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #090b0e;
+      border: 1px solid var(--border);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+    .stance-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #64748b;
+    }
+    .stance-dot.sneaking { background: var(--green); box-shadow: 0 0 8px var(--green); }
+    .stance-dot.sprinting { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+
+    .meter-cluster {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .meter-box {
+      width: 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .meter-label {
+      font-size: 9px;
+      color: #94a3b8;
+      display: flex;
+      justify-content: space-between;
+    }
+    .meter-track {
+      width: 100%;
+      height: 6px;
+      background: #1e2430;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .meter-fill {
+      height: 100%;
+      width: 100%;
+      transition: width 0.1s ease;
+    }
+    #staminaFill { background: var(--green); }
+    #noiseFill { background: var(--amber); width: 0%; }
+
+    .controls-hint {
+      font-size: 10px;
+      color: #64748b;
+    }
+    @media (max-width: 800px) {
+      .controls-hint { display: none; }
+      .meter-box { width: 75px; }
+    }
+
+    /* MODAL OVERLAYS */
+    .modal-backdrop {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(4px);
+      z-index: 50;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-backdrop.open { display: flex; }
+
+    .modal-box {
+      background: var(--panel);
+      border: 2px solid var(--border);
+      border-radius: 4px;
+      padding: 20px;
+      max-width: 480px;
+      width: 92%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      font-family: var(--sans);
+    }
+    .modal-box.horror { border-color: var(--red); box-shadow: 0 0 35px rgba(239, 68, 68, 0.35); }
+    .modal-box.victory { border-color: var(--green); box-shadow: 0 0 35px rgba(16, 185, 129, 0.35); }
+
+    .modal-header {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--amber);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #f8fafc;
+      margin-bottom: 8px;
+    }
+    .modal-desc {
+      font-size: 12.5px;
+      color: #94a3b8;
+      line-height: 1.45;
+      margin-bottom: 16px;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .modal-btn {
+      background: #1e2430;
+      border: 1px solid var(--border);
+      color: #f1f5f9;
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 12px;
+      border-radius: 3px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.15s ease;
+    }
+    .modal-btn:hover:not(:disabled) {
+      border-color: var(--amber);
+      background: #283142;
+    }
+    .modal-btn.stealth {
+      border-left: 4px solid var(--green);
+    }
+    .modal-btn.danger {
+      border-left: 4px solid var(--red);
+    }
+    .modal-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* CHIME KEYS IN MODAL */
+    .chime-pad {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin: 14px 0;
+    }
+    .chime-btn {
+      background: #1e2430;
+      border: 1px solid #334155;
+      color: #f8fafc;
+      font-family: var(--mono);
+      font-size: 16px;
+      font-weight: 800;
+      padding: 14px 0;
+      border-radius: 3px;
+      cursor: pointer;
+      text-align: center;
+    }
+    .chime-btn:hover { background: #334155; border-color: var(--amber); }
+    .chime-btn:active { background: var(--amber); color: #000; }
+    .chime-readout {
+      background: #090b0e;
+      border: 1px solid var(--border);
+      padding: 8px;
+      font-family: var(--mono);
+      text-align: center;
+      font-size: 15px;
+      letter-spacing: 4px;
+      color: var(--amber);
+      border-radius: 3px;
+      margin-bottom: 12px;
+    }
+
+    /* SCREEN SHAKE */
+    body.shake {
+      animation: screenRattle 0.35s cubic-bezier(.36,.07,.19,.97) both;
+    }
+    @keyframes screenRattle {
+      10%, 90% { transform: translate3d(-3px, 2px, 0); }
+      20%, 80% { transform: translate3d(4px, -3px, 0); }
+      30%, 50%, 70% { transform: translate3d(-6px, 4px, 0); }
+      40%, 60% { transform: translate3d(6px, -4px, 0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP HUD -->
+  <header class="hud-bar">
+    <div class="hud-left">
+      <div class="sector-badge" id="hudSectorBadge">SECTOR 01</div>
+      <div class="sector-title" id="hudSectorName">Maintenance Corridor</div>
+    </div>
+
+    <div class="hud-stats">
+      <div class="stat-badge">
+        <span class="stat-label">ENTITY</span>
+        <span class="stat-val" id="hudDistance">35.0 m</span>
+      </div>
+      <div class="stat-badge">
+        <span class="stat-label">STATUS</span>
+        <span class="stat-val" id="hudState" style="color:var(--green)">PATROLLING</span>
+      </div>
+      <a href="index.html" class="btn-hud">&larr; Arcade</a>
+    </div>
+  </header>
+
+  <!-- VIEWPORT -->
+  <main id="viewport" tabindex="0">
+    <canvas id="gameCanvas"></canvas>
+    <div id="interactPrompt">[E] Inspect Drawer</div>
+
+    <!-- TOUCH CONTROLS (THUMB OPTIMIZED) -->
+    <!-- LEFT: 8-WAY D-PAD -->
+    <div class="touch-dpad">
+      <button class="dpad-btn" id="btnUL" onpointerdown="touchDir(-1, -1)" onpointerup="touchStop()" onpointercancel="touchStop()">◤</button>
+      <button class="dpad-btn" id="btnU" onpointerdown="touchDir(0, -1)" onpointerup="touchStop()" onpointercancel="touchStop()">▲</button>
+      <button class="dpad-btn" id="btnUR" onpointerdown="touchDir(1, -1)" onpointerup="touchStop()" onpointercancel="touchStop()">◥</button>
+      <button class="dpad-btn" id="btnL" onpointerdown="touchDir(-1, 0)" onpointerup="touchStop()" onpointercancel="touchStop()">◀</button>
+      <div class="dpad-center">MOVE</div>
+      <button class="dpad-btn" id="btnR" onpointerdown="touchDir(1, 0)" onpointerup="touchStop()" onpointercancel="touchStop()">▶</button>
+      <button class="dpad-btn" id="btnDL" onpointerdown="touchDir(-1, 1)" onpointerup="touchStop()" onpointercancel="touchStop()">◣</button>
+      <button class="dpad-btn" id="btnD" onpointerdown="touchDir(0, 1)" onpointerup="touchStop()" onpointercancel="touchStop()">▼</button>
+      <button class="dpad-btn" id="btnDR" onpointerdown="touchDir(1, 1)" onpointerup="touchStop()" onpointercancel="touchStop()">◢</button>
+    </div>
+
+    <!-- RIGHT: TACTICAL STANCE & ACTION CLUSTER -->
+    <div class="touch-actions">
+      <div class="action-row">
+        <!-- SNEAK TOGGLE (PRESS ONCE TO STAY IN SNEAK / CROUCH) -->
+        <button class="tactical-btn sneak-toggle" id="btnTouchSneak" onclick="toggleTouchSneak()">
+          <span class="btn-icon">🤫</span>
+          <span id="sneakBtnLabel">SNEAK</span>
+          <span class="btn-sub" id="sneakBtnSub">[OFF]</span>
+        </button>
+
+        <!-- SPRINT BUTTON (HOLD TO SPRINT) -->
+        <button class="tactical-btn sprint-btn" id="btnTouchSprint" onpointerdown="touchSprint(true)" onpointerup="touchSprint(false)" onpointercancel="touchSprint(false)">
+          <span class="btn-icon">⚡</span>
+          <span>SPRINT</span>
+          <span class="btn-sub">HOLD</span>
+        </button>
+      </div>
+
+      <!-- MAIN INTERACT ACTION BUTTON -->
+      <button class="tactical-btn interact-main" id="btnTouchInteract" onclick="handleInteract()">
+        <span style="font-size:14px; font-weight:800;">[E] INTERACT</span>
+        <span class="btn-sub" id="touchInteractSub">SEARCH / USE</span>
+      </button>
+    </div>
+  </main>
+
+  <!-- BOTTOM INVENTORY & METERS -->
+  <footer class="inv-bar">
+    <div class="key-tracker">
+      <div class="key-badge-card">
+        <span class="key-badge-label">SECURITY KEYS</span>
+        <span class="key-badge-count" id="keyProgressText">0 / 1 Keys</span>
+      </div>
+
+      <div class="stance-indicator">
+        <div class="stance-dot" id="stanceDot"></div>
+        <span id="stanceText">WALK</span>
+      </div>
+    </div>
+
+    <div class="meter-cluster">
+      <div class="meter-box">
+        <div class="meter-label">
+          <span>STAMINA</span>
+          <span id="staminaVal">100%</span>
+        </div>
+        <div class="meter-track">
+          <div class="meter-fill" id="staminaFill"></div>
+        </div>
+      </div>
+
+      <div class="meter-box">
+        <div class="meter-label">
+          <span>NOISE</span>
+          <span id="noiseVal">0 dB</span>
+        </div>
+        <div class="meter-track">
+          <div class="meter-fill" id="noiseFill"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls-hint">
+      <span style="color:#f59e0b;">Desktop:</span> WASD Move · C Sneak · Shift Sprint · E Action · Mouse Flashlight
+    </div>
+  </footer>
+
+  <!-- MODAL: DRAWER INSPECTION -->
+  <div class="modal-backdrop" id="modalDrawer">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span id="drawerModalHeader">SECURITY LOCKER</span>
+        <span id="drawerLockStatus" style="color:var(--amber)">LOCKED</span>
+      </div>
+      <h2 class="modal-title" id="drawerModalTitle">Sector Cabinet</h2>
+      <p class="modal-desc" id="drawerModalDesc">
+        Heavy reinforced lock. Choose silent pull (takes 2s) to prevent sound, or yank rapidly (instant, but creates loud screech).
+      </p>
+      
+      <!-- Chime Pad (Visible only for Chime Drawers) -->
+      <div id="drawerChimeSection" style="display:none;">
+        <div class="chime-readout" id="chimeHistory">_ _ _ _</div>
+        <div class="chime-pad">
+          <button class="chime-btn" onclick="pressChime('C', 261.63)">C</button>
+          <button class="chime-btn" onclick="pressChime('E', 329.63)">E</button>
+          <button class="chime-btn" onclick="pressChime('G', 392.00)">G</button>
+          <button class="chime-btn" onclick="pressChime('B', 493.88)">B</button>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="modal-btn stealth" id="btnPullSlow" onclick="pullActiveDrawer('slow')">
+          <span>🤫 Pull Slowly &amp; Steadily (Takes 2s)</span>
+          <span style="color:var(--green)">0 dB · Silent</span>
+        </button>
+        <button class="modal-btn danger" id="btnPullFast" onclick="pullActiveDrawer('fast')">
+          <span>⚡ Yank Drawer Rapidly (Instant)</span>
+          <span style="color:var(--red)">+55 dB! Screech</span>
+        </button>
+        <button class="modal-btn" id="btnTakeKey" style="display:none; border-color:var(--amber); color:var(--amber);" onclick="takeActiveKey()">
+          <span>🔑 Take Sector Key</span>
+          <span>Add to Keyring</span>
+        </button>
+        <button class="modal-btn" style="background:transparent; border-color:#334155;" onclick="closeModal()">
+          <span>&larr; Step Back</span>
+          <span>Esc</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: DIVERSION CHUTE -->
+  <div class="modal-backdrop" id="modalChute">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span>VENTILATION SHAFT</span>
+        <span style="color:var(--blue)">DIVERSION DUCT</span>
+      </div>
+      <h2 class="modal-title">Acoustic Diversion Chute</h2>
+      <p class="modal-desc">
+        Drop a heavy metallic bolt down the chute to trick the entity into hunting the opposite wing!
+      </p>
+      <div class="modal-actions">
+        <button class="modal-btn danger" onclick="triggerDiversion()">
+          <span>🪈 Throw Metal Bolt Down Chute</span>
+          <span style="color:var(--blue)">+20m Distance Relief!</span>
+        </button>
+        <button class="modal-btn" style="background:transparent; border-color:#334155;" onclick="closeModal()">
+          <span>&larr; Step Back</span>
+          <span>Esc</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: EXIT DOOR -->
+  <div class="modal-backdrop" id="modalExit">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span>SECTOR PERIMETER</span>
+        <span id="exitSealStatus" style="color:var(--red)">PNEUMATIC SEAL</span>
+      </div>
+      <h2 class="modal-title" id="exitDoorTitle">Sector Blast Door</h2>
+      <p class="modal-desc" id="exitDoorDesc">
+        Requires all security keys for this sector to release the locks and advance to the next level.
+      </p>
+      <div class="modal-actions">
+        <button class="modal-btn" id="btnAdvanceSector" style="border-color:var(--green); color:var(--green);" onclick="advanceLevel()">
+          <span>🚪 TURN KEYS &amp; UNSEAL BLAST DOOR</span>
+          <span>NEXT SECTOR &rarr;</span>
+        </button>
+        <button class="modal-btn" style="background:transparent; border-color:#334155;" onclick="closeModal()">
+          <span>&larr; Step Back</span>
+          <span>Esc</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: LEVEL CLEARED TRANSITION -->
+  <div class="modal-backdrop" id="modalLevelCleared">
+    <div class="modal-box victory">
+      <div class="modal-header">
+        <span>SECTOR CLEARED</span>
+        <span style="color:var(--green)">SUCCESS</span>
+      </div>
+      <h1 class="modal-title" style="color:var(--green); font-size:24px;" id="clearedSectorTitle">SECTOR 01 EVACUATED!</h1>
+      <p class="modal-desc" id="clearedSectorDesc">
+        Pneumatic seals vented! You locked the heavy steel bulkhead behind you, sealing the creature in the lower wing.
+      </p>
+      <div class="modal-actions">
+        <button class="modal-btn" style="border-color:var(--green); color:var(--green);" onclick="startNextSector()">
+          <span id="nextSectorBtnText">Enter Next Sector &rarr;</span>
+          <span>Proceed</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: GRAND CAMPAIGN VICTORY (ALL 8 SECTORS COMPLETE) -->
+  <div class="modal-backdrop" id="modalGrandVictory">
+    <div class="modal-box victory">
+      <div class="modal-header">
+        <span>FULL FACILITY EVACUATION</span>
+        <span style="color:var(--green)">ALL 8 SECTORS CLEARED</span>
+      </div>
+      <h1 class="modal-title" style="color:var(--green); font-size:26px;">SURFACE GATE UNSEALED!</h1>
+      <p class="modal-desc">
+        You unlocked all 8 security barriers through the entire Sub-Station complex and emerged into the cold Kansas night air! The facility blast doors slammed down forever behind you.<br><br>
+        <strong>Total Campaign Time: <span id="grandTimeVal" style="color:var(--amber); font-family:var(--mono);">0.0s</span></strong><br>
+        <strong>Survivor Rank: <span style="color:var(--green);">SECTOR 4 VETERAN (S-RANK)</span></strong>
+      </p>
+      <div class="modal-actions">
+        <button class="modal-btn" style="border-color:var(--green); color:var(--green);" onclick="restartCampaign()">
+          <span>Replay 8-Sector Campaign</span>
+          <span>&circlearrowright;</span>
+        </button>
+        <a href="index.html" class="modal-btn" style="text-decoration:none; justify-content:center;">
+          Return to 449 Field Arcade Hub
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: GAME OVER (CAUGHT) -->
+  <div class="modal-backdrop" id="modalGameOver">
+    <div class="modal-box horror">
+      <h1 class="modal-title" style="font-family:'Creepster', cursive; font-size:38px; color:var(--red);">CAUGHT IN THE VAULT</h1>
+      <p class="modal-desc" id="caughtDesc">
+        The creature surged from the darkness and cornered you before you gathered the sector keys.<br><br>
+        The iron doors slammed shut. Silence returned to Sector.
+      </p>
+      <div class="modal-actions">
+        <button class="modal-btn danger" onclick="retryCurrentSector()">
+          <span>🔄 Retry Current Sector</span>
+          <span>Retry</span>
+        </button>
+        <button class="modal-btn" onclick="restartCampaign()" style="background:#1e2430;">
+          <span>Start Campaign from Sector 01</span>
+        </button>
+        <a href="index.html" class="modal-btn" style="text-decoration:none; justify-content:center;">
+          Return to 449 Field Arcade Hub
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       THE BREAKER VAULT — 8-SECTOR HORROR ESCAPE CAMPAIGN ENGINE
+       Touch-First Mobile Ergonomics + Offscreen Fog-of-War + Web Audio
+       ========================================================================== */
+
+    // --- 8 PROGRESSIVE SECTORS CONFIGURATION ---
+    const SECTORS = [
+      {
+        level: 1,
+        code: "SECTOR 01",
+        name: "Maintenance Hall",
+        keysNeeded: 1,
+        monsterSpeed: 1.5,
+        detectDist: 180,
+        wallColor: "#1e2430",
+        wallBorder: "#334155",
+        floorColor: "#121620",
+        ambientDark: "rgba(7, 9, 14, 0.65)",
+        desc: "Find 1 Key to unlock the security exit door."
+      },
+      {
+        level: 2,
+        code: "SECTOR 02",
+        name: "Archive Vault",
+        keysNeeded: 2,
+        monsterSpeed: 1.8,
+        detectDist: 210,
+        wallColor: "#241f1a",
+        wallBorder: "#3d3229",
+        floorColor: "#161310",
+        ambientDark: "rgba(9, 8, 6, 0.68)",
+        desc: "Find 2 Keys across the archive filing cabinets."
+      },
+      {
+        level: 3,
+        code: "SECTOR 03",
+        name: "Electrical Grid",
+        keysNeeded: 3,
+        monsterSpeed: 2.1,
+        detectDist: 240,
+        wallColor: "#14241e",
+        wallBorder: "#203a30",
+        floorColor: "#0f1c16",
+        ambientDark: "rgba(6, 12, 10, 0.70)",
+        desc: "Find 3 High-Voltage Breaker Keys."
+      },
+      {
+        level: 4,
+        code: "SECTOR 04",
+        name: "Harmonic Workshop",
+        keysNeeded: 4,
+        monsterSpeed: 2.4,
+        detectDist: 270,
+        wallColor: "#24142e",
+        wallBorder: "#3a204a",
+        floorColor: "#180c20",
+        ambientDark: "rgba(10, 6, 14, 0.72)",
+        desc: "Find 4 Keys, including the resonant chime cabinet (C-E-G-B)."
+      },
+      {
+        level: 5,
+        code: "SECTOR 05",
+        name: "Coolant Pumping Wing",
+        keysNeeded: 5,
+        monsterSpeed: 2.7,
+        detectDist: 300,
+        wallColor: "#0f292e",
+        wallBorder: "#18424a",
+        floorColor: "#0a1b20",
+        ambientDark: "rgba(5, 14, 16, 0.74)",
+        desc: "Find 5 Coolant Isolation Keys. Sneak across noisy grates."
+      },
+      {
+        level: 6,
+        code: "SECTOR 06",
+        name: "Cryogenic Deep Storage",
+        keysNeeded: 6,
+        monsterSpeed: 3.0,
+        detectDist: 330,
+        wallColor: "#0f1e2e",
+        wallBorder: "#1a324d",
+        floorColor: "#0a1420",
+        ambientDark: "rgba(5, 10, 16, 0.76)",
+        desc: "Find 6 Frozen Vault Keys. The creature's hearing is sharp."
+      },
+      {
+        level: 7,
+        code: "SECTOR 07",
+        name: "High-Containment Cells",
+        keysNeeded: 7,
+        monsterSpeed: 3.4,
+        detectDist: 370,
+        wallColor: "#2a0f12",
+        wallBorder: "#45191e",
+        floorColor: "#1c0a0c",
+        ambientDark: "rgba(16, 5, 7, 0.78)",
+        desc: "Find 7 Containment Keys. Red emergency lighting active."
+      },
+      {
+        level: 8,
+        code: "SECTOR 08",
+        name: "The Master Breaker Core",
+        keysNeeded: 8,
+        monsterSpeed: 3.8,
+        detectDist: 410,
+        wallColor: "#261a08",
+        wallBorder: "#422e10",
+        floorColor: "#1a1205",
+        ambientDark: "rgba(14, 10, 4, 0.80)",
+        desc: "FINAL STAGE: Collect all 8 Master Keys to escape to the surface!"
+      }
+    ];
+
+    // --- AUDIO SYNTHESIS ENGINE ---
+    let audioCtx = null;
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function triggerHaptic(ms = 30) {
+      if ('vibrate' in navigator) {
+        try { navigator.vibrate(ms); } catch(e) {}
+      }
+    }
+
+    function playTone(freq, type = 'sine', duration = 0.2, vol = 0.15) {
+      if (!audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function playFootstep(isSprinting, isGrate) {
+      if (!audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = isGrate ? 'triangle' : 'sine';
+        const baseFreq = isGrate ? 320 : (isSprinting ? 95 : 65);
+        osc.frequency.setValueAtTime(baseFreq + Math.random() * 20, audioCtx.currentTime);
+        gain.gain.setValueAtTime(isSprinting ? 0.08 : 0.03, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.08);
+      } catch (e) {}
+    }
+
+    function playMetalScreech() {
+      if (!audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(140, audioCtx.currentTime + 0.4);
+        gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.45);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.45);
+      } catch (e) {}
+    }
+
+    function playTumblerClick() {
+      playTone(1200, 'square', 0.04, 0.12);
+      setTimeout(() => playTone(800, 'sine', 0.06, 0.15), 40);
+      triggerHaptic(40);
+    }
+
+    function playMonsterGrowl() {
+      playTone(55, 'sawtooth', 0.8, 0.3);
+      triggerHaptic([60, 40, 80]);
+    }
+
+    // --- GAME CONSTANTS & CAMPAIGN STATE ---
+    const TILE_SIZE = 48;
+    const MAP_COLS = 38;
+    const MAP_ROWS = 24;
+
+    const campaignState = {
+      currentSectorIdx: 0,
+      campaignStartTime: Date.now(),
+      running: true,
+      activeModal: null,
+      keysCollected: 0,
+      drawers: [],
+      chimeHistory: [],
+      targetChimes: ['C', 'E', 'G', 'B'],
+      activeDrawerIdx: null
+    };
+
+    const player = {
+      x: 4 * TILE_SIZE + 24,
+      y: 12 * TILE_SIZE + 24,
+      radius: 14,
+      angle: 0,
+      speed: 3.5,
+      isMoving: false,
+      isSprinting: false,
+      isSneaking: false,
+      stepTimer: 0,
+      stamina: 100,
+      noise: 0
+    };
+
+    const monster = {
+      x: 20 * TILE_SIZE + 24,
+      y: 6 * TILE_SIZE + 24,
+      radius: 18,
+      speed: 1.5,
+      angle: 0,
+      targetX: 20 * TILE_SIZE + 24,
+      targetY: 6 * TILE_SIZE + 24,
+      waypointIdx: 0,
+      state: 'PATROLLING',
+      divertTimer: 0,
+      waypoints: []
+    };
+
+    let exitDoor = { x: 4 * TILE_SIZE + 24, y: 21 * TILE_SIZE + 24 };
+    let diversionChute = { x: 20 * TILE_SIZE + 24, y: 2 * TILE_SIZE + 24 };
+
+    // --- MAP GRID (40 x 24) ---
+    const map = [];
+    for (let r = 0; r < MAP_ROWS; r++) {
+      const row = [];
+      for (let c = 0; c < MAP_COLS; c++) {
+        row.push(0);
+      }
+      map.push(row);
+    }
+
+    function buildLevelMap(sectorIdx) {
+      for (let r = 0; r < MAP_ROWS; r++) {
+        for (let c = 0; c < MAP_COLS; c++) {
+          if (r === 0 || r === MAP_ROWS - 1 || c === 0 || c === MAP_COLS - 1) {
+            map[r][c] = 1;
+          } else {
+            map[r][c] = 0;
+          }
+        }
+      }
+
+      function addHWall(r, c1, c2, gap) {
+        for (let c = c1; c <= c2; c++) {
+          if (c !== gap && c !== gap + 1) map[r][c] = 1;
+        }
+      }
+      function addVWall(c, r1, r2, gap) {
+        for (let r = r1; r <= r2; r++) {
+          if (r !== gap && r !== gap + 1) map[r][c] = 1;
+        }
+      }
+
+      // 5 Connected Chambers with Corridors
+      addHWall(9, 1, 13, 6);
+      addVWall(13, 1, 9, 5);
+
+      addHWall(9, 14, 25, 19);
+      addVWall(25, 1, 9, 5);
+
+      addHWall(10, 26, 36, 31);
+      addVWall(26, 1, 10, 5);
+
+      addHWall(15, 1, 13, 8);
+      addVWall(13, 15, 22, 19);
+
+      addHWall(14, 25, 36, 30);
+      addVWall(25, 14, 22, 18);
+
+      // Pillars
+      map[5][4] = 4;
+      map[5][9] = 4;
+      map[5][30] = 4;
+      map[5][34] = 4;
+      map[18][30] = 4;
+      map[18][34] = 4;
+      map[18][5] = 4;
+      map[18][9] = 4;
+
+      // Metal Grates
+      for (let c = 14; c < 25; c++) {
+        map[12][c] = 2;
+        map[13][c] = 2;
+      }
+
+      const sec = SECTORS[sectorIdx];
+      campaignState.keysCollected = 0;
+      campaignState.drawers = [];
+
+      const candidateSpots = [
+        { x: 7 * TILE_SIZE + 24, y: 3 * TILE_SIZE + 24, room: "Archive N-W", isChime: false },
+        { x: 33 * TILE_SIZE + 24, y: 3 * TILE_SIZE + 24, room: "Electrical N-E", isChime: false },
+        { x: 33 * TILE_SIZE + 24, y: 19 * TILE_SIZE + 24, room: "Workshop S-E", isChime: (sec.level >= 4) },
+        { x: 22 * TILE_SIZE + 24, y: 5 * TILE_SIZE + 24, room: "Ventilation Wing", isChime: false },
+        { x: 9 * TILE_SIZE + 24, y: 19 * TILE_SIZE + 24, room: "Storage Depot", isChime: false },
+        { x: 19 * TILE_SIZE + 24, y: 19 * TILE_SIZE + 24, room: "Generator Sub", isChime: false },
+        { x: 4 * TILE_SIZE + 24, y: 5 * TILE_SIZE + 24, room: "Records Office", isChime: false },
+        { x: 30 * TILE_SIZE + 24, y: 12 * TILE_SIZE + 24, room: "Control Deck", isChime: false }
+      ];
+
+      for (let i = 0; i < sec.keysNeeded; i++) {
+        const spot = candidateSpots[i % candidateSpots.length];
+        campaignState.drawers.push({
+          idx: i + 1,
+          x: spot.x,
+          y: spot.y,
+          room: spot.room,
+          isChime: spot.isChime,
+          unlocked: !spot.isChime,
+          opened: false,
+          taken: false
+        });
+      }
+
+      player.x = 4 * TILE_SIZE + 24;
+      player.y = 12 * TILE_SIZE + 24;
+      player.stamina = 100;
+      player.noise = 0;
+
+      monster.x = 22 * TILE_SIZE + 24;
+      monster.y = 6 * TILE_SIZE + 24;
+      monster.speed = sec.monsterSpeed;
+      monster.state = 'PATROLLING';
+      monster.waypoints = [
+        { x: 20 * TILE_SIZE + 24, y: 6 * TILE_SIZE + 24 },
+        { x: 28 * TILE_SIZE + 24, y: 12 * TILE_SIZE + 24 },
+        { x: 28 * TILE_SIZE + 24, y: 18 * TILE_SIZE + 24 },
+        { x: 19 * TILE_SIZE + 24, y: 18 * TILE_SIZE + 24 },
+        { x: 10 * TILE_SIZE + 24, y: 12 * TILE_SIZE + 24 }
+      ];
+
+      exitDoor.x = 4 * TILE_SIZE + 24;
+      exitDoor.y = 21 * TILE_SIZE + 24;
+
+      updateHUD();
+    }
+
+    // --- INPUT CAPTURE (DESKTOP + MOBILE) ---
+    const keys = {};
+    const touchVector = { x: 0, y: 0 };
+    const mouse = { x: 0, y: 0, worldX: 0, worldY: 0, hasMoved: false };
+
+    // Mobile Stance State
+    const mobileStance = {
+      isSneaking: false,
+      isSprinting: false
+    };
+
+    function touchDir(x, y) {
+      initAudio();
+      touchVector.x = x;
+      touchVector.y = y;
+    }
+    function touchStop() {
+      touchVector.x = 0;
+      touchVector.y = 0;
+    }
+
+    // Toggle Sneak on Mobile/Tablet
+    function toggleTouchSneak() {
+      initAudio();
+      mobileStance.isSneaking = !mobileStance.isSneaking;
+      if (mobileStance.isSneaking) {
+        mobileStance.isSprinting = false; // Cannot sprint while sneaking
+        document.getElementById('btnTouchSprint').classList.remove('active');
+      }
+      triggerHaptic(25);
+      updateTouchControlsUI();
+    }
+
+    // Hold/Release Sprint on Mobile/Tablet
+    function touchSprint(active) {
+      initAudio();
+      if (active) {
+        mobileStance.isSneaking = false; // Cancel sneak when sprinting
+      }
+      mobileStance.isSprinting = active;
+      if (active) triggerHaptic(30);
+      updateTouchControlsUI();
+    }
+
+    function updateTouchControlsUI() {
+      const sneakBtn = document.getElementById('btnTouchSneak');
+      const sprintBtn = document.getElementById('btnTouchSprint');
+      const sneakSub = document.getElementById('sneakBtnSub');
+      const stanceDot = document.getElementById('stanceDot');
+      const stanceText = document.getElementById('stanceText');
+
+      if (mobileStance.isSneaking || keys['c'] || keys['control']) {
+        sneakBtn.classList.add('active');
+        sneakSub.textContent = '[ON]';
+        stanceDot.className = 'stance-dot sneaking';
+        stanceText.textContent = 'SNEAK';
+        stanceText.style.color = 'var(--green)';
+      } else if (mobileStance.isSprinting || keys['shift']) {
+        sneakBtn.classList.remove('active');
+        sneakSub.textContent = '[OFF]';
+        sprintBtn.classList.add('active');
+        stanceDot.className = 'stance-dot sprinting';
+        stanceText.textContent = 'SPRINT';
+        stanceText.style.color = 'var(--amber)';
+      } else {
+        sneakBtn.classList.remove('active');
+        sneakSub.textContent = '[OFF]';
+        sprintBtn.classList.remove('active');
+        stanceDot.className = 'stance-dot';
+        stanceText.textContent = 'WALK';
+        stanceText.style.color = '#cbd5e1';
+      }
+    }
+
+    // Keyboard Events
+    window.addEventListener('keydown', (e) => {
+      initAudio();
+      const k = e.key.toLowerCase();
+      keys[k] = true;
+      if (k === 'w' || k === 'a' || k === 's' || k === 'd' || k.startsWith('arrow')) {
+        e.preventDefault();
+      }
+      if (e.key === 'e' || e.key === 'E' || e.key === ' ') {
+        handleInteract();
+      }
+      if (e.key === 'Escape') {
+        closeModal();
+      }
+      updateTouchControlsUI();
+    });
+
+    window.addEventListener('keyup', (e) => {
+      keys[e.key.toLowerCase()] = false;
+      updateTouchControlsUI();
+    });
+
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const lightCanvas = document.createElement('canvas');
+    const lightCtx = lightCanvas.getContext('2d');
+
+    function resizeCanvas() {
+      const vp = document.getElementById('viewport');
+      const w = vp.clientWidth || window.innerWidth;
+      const h = vp.clientHeight || (window.innerHeight - 108);
+      canvas.width = w;
+      canvas.height = h;
+      lightCanvas.width = w;
+      lightCanvas.height = h;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Mouse Aim
+    window.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+      mouse.hasMoved = true;
+    });
+
+    // Touch Aim Flashlight on Canvas (Right Half or Drag anywhere)
+    const viewportEl = document.getElementById('viewport');
+    viewportEl.addEventListener('touchstart', handleCanvasTouch, { passive: false });
+    viewportEl.addEventListener('touchmove', handleCanvasTouch, { passive: false });
+
+    function handleCanvasTouch(e) {
+      initAudio();
+      if (e.target.closest('.touch-dpad') || e.target.closest('.touch-actions')) {
+        return; // Let buttons handle their own touches
+      }
+      e.preventDefault();
+      const t = e.touches[0];
+      if (t) {
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = t.clientX - rect.left;
+        mouse.y = t.clientY - rect.top;
+        mouse.hasMoved = true;
+      }
+    }
+
+    canvas.addEventListener('click', () => {
+      initAudio();
+      document.getElementById('viewport').focus();
+    });
+
+    // --- COLLISION LOGIC ---
+    function checkCircleWallCollision(x, y, radius) {
+      const col = Math.floor(x / TILE_SIZE);
+      const row = Math.floor(y / TILE_SIZE);
+      for (let r = row - 1; r <= row + 1; r++) {
+        for (let c = col - 1; c <= col + 1; c++) {
+          if (r < 0 || r >= MAP_ROWS || c < 0 || c >= MAP_COLS) continue;
+          if (map[r][c] === 1 || map[r][c] === 4) {
+            const rx = c * TILE_SIZE;
+            const ry = r * TILE_SIZE;
+            const nearestX = Math.max(rx, Math.min(x, rx + TILE_SIZE));
+            const nearestY = Math.max(ry, Math.min(y, ry + TILE_SIZE));
+            const dx = x - nearestX;
+            const dy = y - nearestY;
+            if (dx * dx + dy * dy < radius * radius) {
+              return true;
+            }
+          }
+        }
+      }
+      return false;
+    }
+
+    // --- GAME LOOP ---
+    let lastTime = performance.now();
+    let heartbeatTimer = 0;
+
+    function gameLoop(now) {
+      const dt = Math.min(0.1, (now - lastTime) / 1000);
+      lastTime = now;
+
+      if (campaignState.running && !campaignState.activeModal) {
+        update(dt);
+      }
+
+      render();
+      requestAnimationFrame(gameLoop);
+    }
+
+    // --- UPDATE ---
+    function update(dt) {
+      let dx = 0;
+      let dy = 0;
+
+      if (keys['w'] || keys['arrowup']) dy -= 1;
+      if (keys['s'] || keys['arrowdown']) dy += 1;
+      if (keys['a'] || keys['arrowleft']) dx -= 1;
+      if (keys['d'] || keys['arrowright']) dx += 1;
+
+      if (touchVector.x !== 0 || touchVector.y !== 0) {
+        dx = touchVector.x;
+        dy = touchVector.y;
+      }
+
+      player.isMoving = dx !== 0 || dy !== 0;
+      
+      // SPRINT CHECK (KEYBOARD OR MOBILE STANCE)
+      const sprintActive = (keys['shift'] || mobileStance.isSprinting);
+      player.isSprinting = sprintActive && player.isMoving && player.stamina > 5;
+
+      // SNEAK CHECK (KEYBOARD OR MOBILE STANCE TOGGLE)
+      const sneakActive = (keys['c'] || keys['control'] || mobileStance.isSneaking);
+      player.isSneaking = sneakActive && player.isMoving && !player.isSprinting;
+
+      if (dx !== 0 && dy !== 0) {
+        dx *= 0.7071;
+        dy *= 0.7071;
+      }
+
+      let currentSpeed = player.speed;
+      if (player.isSprinting) {
+        currentSpeed = player.speed * 1.6;
+        player.stamina = Math.max(0, player.stamina - dt * 25);
+      } else if (player.isSneaking) {
+        currentSpeed = player.speed * 0.52; // Slower, completely stealthy
+        player.stamina = Math.min(100, player.stamina + dt * 10);
+      } else {
+        player.stamina = Math.min(100, player.stamina + dt * 15);
+      }
+
+      const newX = player.x + dx * currentSpeed;
+      if (!checkCircleWallCollision(newX, player.y, player.radius)) player.x = newX;
+
+      const newY = player.y + dy * currentSpeed;
+      if (!checkCircleWallCollision(player.x, newY, player.radius)) player.y = newY;
+
+      // Aim Angle Calculation
+      const camX = player.x - canvas.width / 2;
+      const camY = player.y - canvas.height / 2;
+      if (mouse.hasMoved) {
+        mouse.worldX = mouse.x + camX;
+        mouse.worldY = mouse.y + camY;
+        player.angle = Math.atan2(mouse.worldY - player.y, mouse.worldX - player.x);
+      } else if (player.isMoving) {
+        player.angle = Math.atan2(dy, dx);
+      }
+
+      // Footsteps & Noise Generation
+      if (player.isMoving) {
+        const stepInterval = player.isSprinting ? 0.24 : (player.isSneaking ? 0.60 : 0.38);
+        player.stepTimer += dt;
+        if (player.stepTimer >= stepInterval) {
+          player.stepTimer = 0;
+          const curCol = Math.floor(player.x / TILE_SIZE);
+          const curRow = Math.floor(player.y / TILE_SIZE);
+          const isGrate = map[curRow] && map[curRow][curCol] === 2;
+          
+          playFootstep(player.isSprinting, isGrate);
+
+          // NOISE CALCULATION: Sneak produces virtually NO noise even on grates!
+          let stepNoise = 0;
+          if (player.isSprinting) {
+            stepNoise = isGrate ? 55 : 30;
+          } else if (player.isSneaking) {
+            stepNoise = isGrate ? 2 : 0; // Sneak is silent!
+          } else {
+            stepNoise = isGrate ? 24 : 12;
+          }
+          player.noise = Math.min(100, player.noise + stepNoise);
+        }
+      }
+
+      player.noise = Math.max(0, player.noise - dt * 20);
+
+      // Monster AI
+      updateMonster(dt);
+
+      // Heartbeat Audio & Tactile Haptics
+      heartbeatTimer += dt;
+      const mdist = Math.hypot(player.x - monster.x, player.y - monster.y) / TILE_SIZE;
+      const hbInterval = Math.max(0.32, mdist / 32.0);
+      if (heartbeatTimer >= hbInterval) {
+        heartbeatTimer = 0;
+        const hbVol = 0.28 * (1 - Math.min(1, mdist / 28.0));
+        playTone(45, 'sine', 0.12, hbVol);
+        if (mdist < 15.0) {
+          triggerHaptic(25);
+        }
+      }
+
+      checkObjectProximity();
+      updateHUD();
+    }
+
+    function updateMonster(dt) {
+      const sec = SECTORS[campaignState.currentSectorIdx];
+      const mdx = player.x - monster.x;
+      const mdy = player.y - monster.y;
+      const dist = Math.hypot(mdx, mdy);
+      const distInMeters = (dist / TILE_SIZE).toFixed(1);
+      document.getElementById('hudDistance').textContent = `${distInMeters} m`;
+
+      if (monster.state === 'DIVERTED') {
+        monster.divertTimer -= dt;
+        if (monster.divertTimer <= 0) {
+          monster.state = 'PATROLLING';
+        }
+      }
+
+      if (monster.state !== 'DIVERTED') {
+        if (dist < sec.detectDist || (dist < sec.detectDist * 1.5 && player.noise > 40)) {
+          if (monster.state !== 'HUNTING') {
+            playMonsterGrowl();
+            document.body.classList.add('shake');
+            setTimeout(() => document.body.classList.remove('shake'), 400);
+          }
+          monster.state = 'HUNTING';
+          monster.targetX = player.x;
+          monster.targetY = player.y;
+        } else if (player.noise > 18) {
+          monster.state = 'INVESTIGATING';
+          monster.targetX = player.x;
+          monster.targetY = player.y;
+        } else if (monster.state === 'HUNTING' && dist > sec.detectDist * 1.8) {
+          monster.state = 'PATROLLING';
+        }
+      }
+
+      if (monster.state === 'PATROLLING') {
+        const wp = monster.waypoints[monster.waypointIdx];
+        if (wp) {
+          monster.targetX = wp.x;
+          monster.targetY = wp.y;
+          if (Math.hypot(monster.x - wp.x, monster.y - wp.y) < 20) {
+            monster.waypointIdx = (monster.waypointIdx + 1) % monster.waypoints.length;
+          }
+        }
+      }
+
+      const tdx = monster.targetX - monster.x;
+      const tdy = monster.targetY - monster.y;
+      const tdist = Math.hypot(tdx, tdy);
+      if (tdist > 5) {
+        let mSpeed = monster.speed;
+        if (monster.state === 'HUNTING') mSpeed = monster.speed * 1.8;
+        else if (monster.state === 'DIVERTED') mSpeed = monster.speed * 2.1;
+        else if (monster.state === 'INVESTIGATING') mSpeed = monster.speed * 1.3;
+
+        monster.angle = Math.atan2(tdy, tdx);
+        const nextX = monster.x + (tdx / tdist) * mSpeed;
+        const nextY = monster.y + (tdy / tdist) * mSpeed;
+        if (!checkCircleWallCollision(nextX, monster.y, monster.radius)) monster.x = nextX;
+        if (!checkCircleWallCollision(monster.x, nextY, monster.radius)) monster.y = nextY;
+      }
+
+      if (dist < player.radius + monster.radius + 6) {
+        triggerGameOver();
+      }
+    }
+
+    // --- INTERACTION CHECKS ---
+    let interactTarget = null;
+    function checkObjectProximity() {
+      const promptEl = document.getElementById('interactPrompt');
+      const touchInteractBtn = document.getElementById('btnTouchInteract');
+      const touchSub = document.getElementById('touchInteractSub');
+      interactTarget = null;
+
+      // 1. Drawers
+      for (let i = 0; i < campaignState.drawers.length; i++) {
+        const d = campaignState.drawers[i];
+        if (!d.taken) {
+          const dist = Math.hypot(player.x - d.x, player.y - d.y);
+          if (dist < 50) {
+            interactTarget = { type: 'drawer', index: i };
+            promptEl.textContent = `[E] Inspect Drawer ${d.idx} (${d.room})`;
+            promptEl.style.display = 'block';
+            touchInteractBtn.classList.add('highlight');
+            touchSub.textContent = `DRAWER ${d.idx}`;
+            return;
+          }
+        }
+      }
+
+      // 2. Diversion Chute
+      const chuteDist = Math.hypot(player.x - diversionChute.x, player.y - diversionChute.y);
+      if (chuteDist < 50) {
+        interactTarget = { type: 'chute' };
+        promptEl.textContent = `[E] Acoustic Diversion Chute`;
+        promptEl.style.display = 'block';
+        touchInteractBtn.classList.add('highlight');
+        touchSub.textContent = `THROW BOLT`;
+        return;
+      }
+
+      // 3. Exit Door
+      const exitDist = Math.hypot(player.x - exitDoor.x, player.y - exitDoor.y);
+      if (exitDist < 54) {
+        const sec = SECTORS[campaignState.currentSectorIdx];
+        interactTarget = { type: 'exit' };
+        promptEl.textContent = `[E] ${sec.name} Blast Door (${campaignState.keysCollected}/${sec.keysNeeded} Keys)`;
+        promptEl.style.display = 'block';
+        touchInteractBtn.classList.add('highlight');
+        touchSub.textContent = `UNSEAL DOOR`;
+        return;
+      }
+
+      promptEl.style.display = 'none';
+      touchInteractBtn.classList.remove('highlight');
+      touchSub.textContent = `SEARCH / USE`;
+    }
+
+    function handleInteract() {
+      if (!interactTarget || campaignState.activeModal) return;
+
+      if (interactTarget.type === 'drawer') {
+        openDrawerModal(interactTarget.index);
+      } else if (interactTarget.type === 'chute') {
+        openModal('modalChute');
+      } else if (interactTarget.type === 'exit') {
+        openExitModal();
+      }
+    }
+
+    function openDrawerModal(idx) {
+      campaignState.activeDrawerIdx = idx;
+      const d = campaignState.drawers[idx];
+      document.getElementById('drawerModalHeader').textContent = `SECTOR DRAWER 0${d.idx} • ${d.room.toUpperCase()}`;
+      document.getElementById('drawerModalTitle').textContent = `Cabinet #${d.idx}`;
+      
+      const lockStatusEl = document.getElementById('drawerLockStatus');
+      const chimeSec = document.getElementById('drawerChimeSection');
+      const btnSlow = document.getElementById('btnPullSlow');
+      const btnFast = document.getElementById('btnPullFast');
+      const btnTake = document.getElementById('btnTakeKey');
+
+      if (d.isChime && !d.unlocked) {
+        lockStatusEl.textContent = 'TONAL LOCK (Harmonic Sequence)';
+        lockStatusEl.style.color = 'var(--amber)';
+        chimeSec.style.display = 'block';
+        btnSlow.disabled = true;
+        btnFast.disabled = true;
+        btnTake.style.display = 'none';
+      } else if (!d.opened) {
+        lockStatusEl.textContent = 'READY TO PULL';
+        lockStatusEl.style.color = 'var(--green)';
+        chimeSec.style.display = 'none';
+        btnSlow.disabled = false;
+        btnFast.disabled = false;
+        btnTake.style.display = 'none';
+      } else {
+        lockStatusEl.textContent = 'OPENED';
+        lockStatusEl.style.color = 'var(--blue)';
+        chimeSec.style.display = 'none';
+        btnSlow.disabled = true;
+        btnFast.disabled = true;
+        btnTake.style.display = 'flex';
+      }
+
+      openModal('modalDrawer');
+    }
+
+    function pullActiveDrawer(mode) {
+      const idx = campaignState.activeDrawerIdx;
+      if (idx === null) return;
+      const d = campaignState.drawers[idx];
+
+      if (mode === 'fast') {
+        playMetalScreech();
+        player.noise = 80;
+        document.body.classList.add('shake');
+        setTimeout(() => document.body.classList.remove('shake'), 350);
+      } else {
+        playTone(300, 'sine', 0.2, 0.1);
+        player.noise = Math.min(100, player.noise + 4);
+      }
+
+      d.opened = true;
+      document.getElementById('btnPullSlow').disabled = true;
+      document.getElementById('btnPullFast').disabled = true;
+      document.getElementById('btnTakeKey').style.display = 'flex';
+    }
+
+    function takeActiveKey() {
+      const idx = campaignState.activeDrawerIdx;
+      if (idx === null) return;
+      const d = campaignState.drawers[idx];
+      d.taken = true;
+
+      playTumblerClick();
+      campaignState.keysCollected++;
+      closeModal();
+      updateHUD();
+    }
+
+    function pressChime(note, freq) {
+      playTone(freq, 'sine', 0.5, 0.25);
+      campaignState.chimeHistory.push(note);
+      if (campaignState.chimeHistory.length > 4) campaignState.chimeHistory.shift();
+
+      document.getElementById('chimeHistory').textContent = campaignState.chimeHistory.join('   ');
+
+      if (campaignState.chimeHistory.length === 4) {
+        const matches = campaignState.chimeHistory.every((n, i) => n === campaignState.targetChimes[i]);
+        if (matches) {
+          playTumblerClick();
+          const d = campaignState.drawers[campaignState.activeDrawerIdx];
+          d.unlocked = true;
+          document.getElementById('drawerLockStatus').textContent = 'UNLOCKED (HARMONIC MATCH)';
+          document.getElementById('drawerLockStatus').style.color = 'var(--green)';
+          document.getElementById('btnPullSlow').disabled = false;
+          document.getElementById('btnPullFast').disabled = false;
+        } else {
+          setTimeout(() => {
+            playTone(150, 'sawtooth', 0.2, 0.2);
+            campaignState.chimeHistory = [];
+            document.getElementById('chimeHistory').textContent = '_ _ _ _';
+          }, 350);
+        }
+      }
+    }
+
+    function triggerDiversion() {
+      playMetalScreech();
+      monster.state = 'DIVERTED';
+      monster.divertTimer = 22.0;
+      monster.targetX = 35 * TILE_SIZE + 24;
+      monster.targetY = 3 * TILE_SIZE + 24;
+      closeModal();
+      alert('CLATTER! The heavy bolt echoed through the ductwork into the opposite wing! The creature bolted across the station towards the sound (+22s relief)!');
+      updateHUD();
+    }
+
+    function openExitModal() {
+      const sec = SECTORS[campaignState.currentSectorIdx];
+      const hasAll = campaignState.keysCollected >= sec.keysNeeded;
+      
+      document.getElementById('exitDoorTitle').textContent = `${sec.code}: ${sec.name} Blast Door`;
+      document.getElementById('exitDoorDesc').innerHTML = `
+        Requires all <strong>${sec.keysNeeded} Security Keys</strong> to unseal pneumatic locking deadbolts.<br>
+        Currently holding: <strong>${campaignState.keysCollected} / ${sec.keysNeeded} Keys</strong>.
+      `;
+
+      const sealEl = document.getElementById('exitSealStatus');
+      const advanceBtn = document.getElementById('btnAdvanceSector');
+
+      if (hasAll) {
+        sealEl.textContent = 'READY TO UNSEAL';
+        sealEl.style.color = 'var(--green)';
+        advanceBtn.disabled = false;
+      } else {
+        sealEl.textContent = `LOCKED (${sec.keysNeeded - campaignState.keysCollected} MORE NEEDED)`;
+        sealEl.style.color = 'var(--red)';
+        advanceBtn.disabled = true;
+      }
+
+      openModal('modalExit');
+    }
+
+    function advanceLevel() {
+      closeModal();
+      playTumblerClick();
+      setTimeout(() => playTone(880, 'sine', 0.8, 0.3), 150);
+
+      const sec = SECTORS[campaignState.currentSectorIdx];
+
+      if (campaignState.currentSectorIdx >= SECTORS.length - 1) {
+        campaignState.running = false;
+        const totalSec = ((Date.now() - campaignState.campaignStartTime) / 1000).toFixed(1);
+        document.getElementById('grandTimeVal').textContent = `${totalSec}s`;
+        openModal('modalGrandVictory');
+      } else {
+        document.getElementById('clearedSectorTitle').textContent = `${sec.code}: ${sec.name.toUpperCase()} CLEARED!`;
+        document.getElementById('clearedSectorDesc').innerHTML = `
+          All ${sec.keysNeeded} security keys engaged. Pneumatic seals vented and you locked the blast bulkhead behind you.<br><br>
+          Next Area: <strong>${SECTORS[campaignState.currentSectorIdx + 1].code} — ${SECTORS[campaignState.currentSectorIdx + 1].name}</strong><br>
+          Keys Required: <strong>${SECTORS[campaignState.currentSectorIdx + 1].keysNeeded} Keys</strong>.
+        `;
+        openModal('modalLevelCleared');
+      }
+    }
+
+    function startNextSector() {
+      closeModal();
+      campaignState.currentSectorIdx++;
+      buildLevelMap(campaignState.currentSectorIdx);
+    }
+
+    function retryCurrentSector() {
+      closeModal();
+      campaignState.running = true;
+      buildLevelMap(campaignState.currentSectorIdx);
+    }
+
+    function restartCampaign() {
+      closeModal();
+      campaignState.currentSectorIdx = 0;
+      campaignState.campaignStartTime = Date.now();
+      campaignState.running = true;
+      buildLevelMap(0);
+    }
+
+    function triggerGameOver() {
+      campaignState.running = false;
+      document.body.classList.add('shake');
+      playTone(60, 'sawtooth', 0.8, 0.4);
+      triggerHaptic([100, 50, 150]);
+      const sec = SECTORS[campaignState.currentSectorIdx];
+      document.getElementById('caughtDesc').innerHTML = `
+        The creature cornered you in <strong>${sec.code} (${sec.name})</strong>.<br>
+        Keys Collected: ${campaignState.keysCollected} / ${sec.keysNeeded}.
+      `;
+      openModal('modalGameOver');
+    }
+
+    function openModal(id) {
+      campaignState.activeModal = id;
+      document.getElementById(id).classList.add('open');
+    }
+
+    function closeModal() {
+      if (campaignState.activeModal) {
+        document.getElementById(campaignState.activeModal).classList.remove('open');
+        campaignState.activeModal = null;
+      }
+    }
+
+    // --- RENDERING ---
+    function render() {
+      if (canvas.width === 0 || canvas.height === 0) return;
+
+      const sec = SECTORS[campaignState.currentSectorIdx];
+      const camX = Math.floor(player.x - canvas.width / 2);
+      const camY = Math.floor(player.y - canvas.height / 2);
+
+      // --- LAYER 1: BASE GAME WORLD ---
+      ctx.fillStyle = '#07090e';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.save();
+      ctx.translate(-camX, -camY);
+
+      const startCol = Math.max(0, Math.floor(camX / TILE_SIZE));
+      const endCol = Math.min(MAP_COLS - 1, Math.ceil((camX + canvas.width) / TILE_SIZE));
+      const startRow = Math.max(0, Math.floor(camY / TILE_SIZE));
+      const endRow = Math.min(MAP_ROWS - 1, Math.ceil((camY + canvas.height) / TILE_SIZE));
+
+      for (let r = startRow; r <= endRow; r++) {
+        for (let c = startCol; c <= endCol; c++) {
+          const tile = map[r][c];
+          const px = c * TILE_SIZE;
+          const py = r * TILE_SIZE;
+
+          if (tile === 1) {
+            ctx.fillStyle = sec.wallColor;
+            ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
+            ctx.strokeStyle = sec.wallBorder;
+            ctx.lineWidth = 2;
+            ctx.strokeRect(px + 1, py + 1, TILE_SIZE - 2, TILE_SIZE - 2);
+          } else if (tile === 4) {
+            ctx.fillStyle = sec.wallBorder;
+            ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
+            ctx.fillStyle = '#f59e0b';
+            ctx.fillRect(px + 8, py + 8, TILE_SIZE - 16, TILE_SIZE - 16);
+          } else if (tile === 2) {
+            ctx.fillStyle = '#10131a';
+            ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
+            ctx.strokeStyle = '#2d3748';
+            ctx.lineWidth = 1.5;
+            for (let g = 6; g < TILE_SIZE; g += 8) {
+              ctx.beginPath();
+              ctx.moveTo(px + g, py);
+              ctx.lineTo(px + g, py + TILE_SIZE);
+              ctx.stroke();
+            }
+          } else {
+            ctx.fillStyle = sec.floorColor;
+            ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
+            ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(px, py, TILE_SIZE, TILE_SIZE);
+          }
+        }
+      }
+
+      // Draw Sector Drawers
+      for (const d of campaignState.drawers) {
+        ctx.save();
+        ctx.translate(d.x, d.y);
+
+        ctx.fillStyle = d.taken ? '#1e293b' : (d.opened ? '#047857' : '#b45309');
+        ctx.fillRect(-18, -18, 36, 36);
+        ctx.strokeStyle = d.taken ? '#475569' : '#f59e0b';
+        ctx.lineWidth = 2.5;
+        ctx.strokeRect(-18, -18, 36, 36);
+
+        ctx.fillStyle = d.taken ? '#64748b' : '#fff';
+        ctx.font = '700 11px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(d.taken ? 'EMPTY' : `KEY ${d.idx}`, 0, 4);
+
+        ctx.restore();
+      }
+
+      // Draw Diversion Chute
+      ctx.save();
+      ctx.translate(diversionChute.x, diversionChute.y);
+      ctx.beginPath();
+      ctx.arc(0, 0, 20, 0, Math.PI * 2);
+      ctx.fillStyle = '#0f172a';
+      ctx.fill();
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 3.5;
+      ctx.stroke();
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = '10px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('DUCT', 0, 3);
+      ctx.restore();
+
+      // Draw Exit Blast Door
+      ctx.save();
+      ctx.translate(exitDoor.x, exitDoor.y);
+      const allKeysReady = campaignState.keysCollected >= sec.keysNeeded;
+      ctx.fillStyle = allKeysReady ? '#065f46' : '#7f1d1d';
+      ctx.fillRect(-24, -24, 48, 48);
+      ctx.strokeStyle = allKeysReady ? '#10b981' : '#ef4444';
+      ctx.lineWidth = 3.5;
+      ctx.strokeRect(-24, -24, 48, 48);
+      ctx.fillStyle = allKeysReady ? '#10b981' : '#ef4444';
+      ctx.font = '700 11px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(allKeysReady ? 'OPEN' : 'LOCKED', 0, 4);
+      ctx.restore();
+
+      // Draw Monster
+      ctx.save();
+      ctx.translate(monster.x, monster.y);
+      ctx.rotate(monster.angle);
+      ctx.beginPath();
+      ctx.arc(0, 0, monster.radius, 0, Math.PI * 2);
+      ctx.fillStyle = '#450a0a';
+      ctx.fill();
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath();
+      ctx.arc(8, -6, 4, 0, Math.PI * 2);
+      ctx.arc(8, 6, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // Draw Player Character (Visual Stance Shift)
+      ctx.save();
+      ctx.translate(player.x, player.y);
+      ctx.rotate(player.angle);
+      
+      // Survivor Body (Changes color slightly if sneaking/crouching)
+      ctx.beginPath();
+      ctx.arc(0, 0, player.isSneaking ? player.radius * 0.85 : player.radius, 0, Math.PI * 2);
+      ctx.fillStyle = player.isSneaking ? '#047857' : (player.isSprinting ? '#c2410c' : '#0284c7');
+      ctx.fill();
+      ctx.strokeStyle = player.isSneaking ? '#34d399' : (player.isSprinting ? '#fb923c' : '#38bdf8');
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+      
+      // Head
+      ctx.fillStyle = '#fed7aa';
+      ctx.beginPath();
+      ctx.arc(0, 0, player.isSneaking ? 5.5 : 7, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Flashlight Weapon
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillRect(8, -4, 11, 8);
+      ctx.restore();
+
+      ctx.restore(); // Finished world rendering
+
+      // --- LAYER 2: OFFSCREEN FOG-OF-WAR & FLASHLIGHT MASK ---
+      lightCtx.clearRect(0, 0, lightCanvas.width, lightCanvas.height);
+
+      lightCtx.fillStyle = sec.ambientDark;
+      lightCtx.fillRect(0, 0, lightCanvas.width, lightCanvas.height);
+
+      lightCtx.globalCompositeOperation = 'destination-out';
+
+      const screenPX = player.x - camX;
+      const screenPY = player.y - camY;
+
+      // Personal halo
+      const haloGrad = lightCtx.createRadialGradient(screenPX, screenPY, 10, screenPX, screenPY, 70);
+      haloGrad.addColorStop(0, 'rgba(255, 255, 255, 1)');
+      haloGrad.addColorStop(0.8, 'rgba(255, 255, 255, 0.8)');
+      haloGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      lightCtx.fillStyle = haloGrad;
+      lightCtx.beginPath();
+      lightCtx.arc(screenPX, screenPY, 70, 0, Math.PI * 2);
+      lightCtx.fill();
+
+      // Flashlight Cone
+      const coneDist = 380;
+      const coneSpan = Math.PI * 0.38;
+      const beamGrad = lightCtx.createRadialGradient(screenPX, screenPY, 20, screenPX, screenPY, coneDist);
+      beamGrad.addColorStop(0, 'rgba(255, 255, 255, 1)');
+      beamGrad.addColorStop(0.75, 'rgba(255, 255, 255, 0.85)');
+      beamGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      lightCtx.fillStyle = beamGrad;
+      lightCtx.beginPath();
+      lightCtx.moveTo(screenPX, screenPY);
+      lightCtx.arc(screenPX, screenPY, coneDist, player.angle - coneSpan / 2, player.angle + coneSpan / 2);
+      lightCtx.closePath();
+      lightCtx.fill();
+
+      lightCtx.globalCompositeOperation = 'source-over';
+
+      // --- LAYER 3: BLIT LIGHTING OVER MAIN CANVAS ---
+      ctx.drawImage(lightCanvas, 0, 0);
+    }
+
+    // --- HUD UPDATES ---
+    function updateHUD() {
+      const sec = SECTORS[campaignState.currentSectorIdx];
+
+      document.getElementById('hudSectorBadge').textContent = sec.code;
+      document.getElementById('hudSectorName').textContent = sec.name;
+
+      const stEl = document.getElementById('hudState');
+      stEl.textContent = monster.state;
+      if (monster.state === 'HUNTING') stEl.style.color = 'var(--red)';
+      else if (monster.state === 'INVESTIGATING') stEl.style.color = 'var(--amber)';
+      else if (monster.state === 'DIVERTED') stEl.style.color = 'var(--blue)';
+      else stEl.style.color = 'var(--green)';
+
+      const hasAll = campaignState.keysCollected >= sec.keysNeeded;
+      document.getElementById('keyProgressText').textContent = `${campaignState.keysCollected} / ${sec.keysNeeded} Keys`;
+
+      document.getElementById('staminaFill').style.width = `${player.stamina}%`;
+      document.getElementById('staminaVal').textContent = `${Math.round(player.stamina)}%`;
+
+      document.getElementById('noiseFill').style.width = `${player.noise}%`;
+      document.getElementById('noiseVal').textContent = `${Math.round(player.noise)} dB`;
+    }
+
+    // Initialize Sector 01
+    buildLevelMap(0);
+    updateTouchControlsUI();
+    requestAnimationFrame(gameLoop);
+  </script>
+</body>
+</html>

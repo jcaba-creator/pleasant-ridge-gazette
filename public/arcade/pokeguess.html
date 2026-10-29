@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PokéGuess: Dex Number Challenge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0b0f19;
+      --card-bg: rgba(22, 28, 45, 0.85);
+      --card-border: rgba(255, 255, 255, 0.12);
+      --poke-red: #ff3e3e;
+      --poke-red-glow: rgba(255, 62, 62, 0.4);
+      --poke-yellow: #ffcb05;
+      --poke-blue: #3b4cca;
+      --poke-cyan: #00f0ff;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --success: #10b981;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-dark);
+      min-height: 100dvh;
+      padding-top: max(16px, env(safe-area-inset-top));
+      padding-bottom: max(36px, calc(env(safe-area-inset-bottom) + 20px));
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 62, 62, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(59, 76, 202, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(255, 203, 5, 0.05) 0%, transparent 60%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      overflow-x: hidden;
+    }
+
+    .bg-pokeball {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      border: 20px solid rgba(255, 255, 255, 0.03);
+      z-index: 0;
+      pointer-events: none;
+    }
+    .bg-pokeball::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 20px;
+      background: rgba(255, 255, 255, 0.03);
+      transform: translateY(-50%);
+    }
+    .bg-pokeball-1 { top: -50px; left: -100px; }
+    .bg-pokeball-2 { bottom: -100px; right: -50px; }
+
+    .game-container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 520px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(16px);
+      border-radius: 28px;
+      padding: 2rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6),
+                  0 0 30px rgba(255, 62, 62, 0.1);
+    }
+
+    .pokedex-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .pokedex-lights {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .main-light {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #00f0ff, #0077ff);
+      border: 3px solid #fff;
+      box-shadow: 0 0 15px #00f0ff;
+      animation: pulseLight 2s infinite alternate;
+    }
+
+    @keyframes pulseLight {
+      0% { box-shadow: 0 0 8px #00f0ff; }
+      100% { box-shadow: 0 0 20px #00f0ff, 0 0 30px #0077ff; }
+    }
+
+    .sub-light {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .light-red { background: #ff3e3e; box-shadow: 0 0 6px #ff3e3e; }
+    .light-yellow { background: #ffcb05; box-shadow: 0 0 6px #ffcb05; }
+    .light-green { background: #10b981; box-shadow: 0 0 6px #10b981; }
+
+    .header-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.7rem;
+      color: var(--poke-yellow);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+      letter-spacing: 1px;
+    }
+
+    .sound-toggle {
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: background 0.2s;
+    }
+    .sound-toggle:hover {
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    .screen-frame {
+      background: linear-gradient(135deg, #121829 0%, #0a0d14 100%);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .screen-frame::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.015),
+        rgba(255, 255, 255, 0.015) 1px,
+        transparent 1px,
+        transparent 2px
+      );
+      pointer-events: none;
+    }
+
+    .pokemon-sprite-container {
+      width: 170px;
+      height: 170px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .pokemon-sprite {
+      width: 160px;
+      height: 160px;
+      object-fit: contain;
+      transition: filter 0.5s ease, transform 0.3s ease;
+      filter: brightness(0) drop-shadow(0 0 12px rgba(0, 240, 255, 0.3));
+    }
+
+    .pokemon-sprite.revealed {
+      filter: brightness(1) drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5));
+      animation: popReveal 0.6s ease forwards;
+    }
+
+    @keyframes popReveal {
+      0% { transform: scale(0.6) rotate(-10deg); }
+      50% { transform: scale(1.15) rotate(5deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+
+    .dex-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-top: 0.25rem;
+    }
+
+    .pokemon-name-tag {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 1.1rem;
+      color: #fff;
+      margin-top: 0.5rem;
+      text-align: center;
+      min-height: 1.8rem;
+    }
+
+    .range-box {
+      width: 100%;
+      margin: 1.5rem 0 1rem 0;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 0.8rem 1.2rem;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .range-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+    }
+
+    .range-bar-track {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .range-bar-fill {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      background: linear-gradient(90deg, var(--poke-red), var(--poke-yellow));
+      border-radius: 4px;
+      transition: left 0.4s ease, width 0.4s ease;
+    }
+
+    .input-section {
+      display: flex;
+      gap: 10px;
+      margin-top: 1rem;
+    }
+
+    .guess-input {
+      flex: 1;
+      background: rgba(15, 23, 42, 0.9);
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      padding: 0.85rem 1.2rem;
+      color: #fff;
+      font-size: 1.2rem;
+      font-weight: 700;
+      outline: none;
+      text-align: center;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .guess-input:focus {
+      border-color: var(--poke-yellow);
+      box-shadow: 0 0 15px rgba(255, 203, 5, 0.3);
+    }
+
+    .throw-btn {
+      background: linear-gradient(135deg, var(--poke-red) 0%, #d92626 100%);
+      color: #fff;
+      border: none;
+      border-radius: 16px;
+      padding: 0 1.5rem;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 6px 20px var(--poke-red-glow);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .throw-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(255, 62, 62, 0.6);
+    }
+
+    .throw-btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn-pokeball-icon {
+      width: 22px;
+      height: 22px;
+      background: #fff;
+      border-radius: 50%;
+      border: 2px solid #111;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-pokeball-icon::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 50%;
+      background: var(--poke-red);
+    }
+    .btn-pokeball-icon::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 6px; height: 6px;
+      background: #fff;
+      border: 2px solid #111;
+      border-radius: 50%;
+    }
+
+    .feedback-banner {
+      margin-top: 1rem;
+      padding: 0.85rem 1rem;
+      border-radius: 14px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .feedback-higher {
+      background: rgba(255, 62, 62, 0.15);
+      border: 1px solid rgba(255, 62, 62, 0.4);
+      color: #ff6b6b;
+    }
+    .feedback-lower {
+      background: rgba(59, 76, 202, 0.15);
+      border: 1px solid rgba(59, 76, 202, 0.4);
+      color: #60a5fa;
+    }
+    .feedback-win {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.5);
+      color: #34d399;
+    }
+
+    .controls-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 1.2rem;
+    }
+
+    .action-btn {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+      padding: 0.65rem 1rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .action-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .history-section {
+      margin-top: 1.5rem;
+    }
+
+    .history-title {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.6rem;
+      font-weight: 700;
+    }
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 150px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .history-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 0.5rem 0.8rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+    }
+
+    .history-item-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .history-thumb {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+    }
+
+    .history-badge {
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+    }
+    .badge-higher { background: rgba(255, 62, 62, 0.2); color: #ff6b6b; }
+    .badge-lower { background: rgba(59, 76, 202, 0.2); color: #60a5fa; }
+    .badge-match { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+
+    .history-list::-webkit-scrollbar {
+      width: 4px;
+    }
+    .history-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+    }
+  
+    .arcade-nav-bar {
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 2;
+    }
+    .back-arcade-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      transition: all 0.15s ease;
+    }
+    .back-arcade-btn:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.25);
+      transform: translateX(-3px);
+    }
+
+</style>
+  <script src="telemetry.js"></script>
+</head>
+<body>
+
+  <div class="bg-pokeball bg-pokeball-1"></div>
+  <div class="bg-pokeball bg-pokeball-2"></div>
+
+  
+    <!-- Progressive Challenge Tiers -->
+    <div style="display:flex; gap:8px; margin-bottom:14px; z-index:2; background:rgba(0,0,0,0.5); padding:6px 12px; border-radius:999px; border:1px solid rgba(255,255,255,0.15);">
+      <button id="tier-1-btn" onclick="setTier(1)" style="background:var(--poke-yellow); color:#000; border:none; padding:6px 14px; border-radius:999px; font-weight:800; font-size:12px; cursor:pointer;">Tier 1 (1–25)</button>
+      <button id="tier-2-btn" onclick="setTier(2)" style="background:transparent; color:#94a3b8; border:none; padding:6px 14px; border-radius:999px; font-weight:800; font-size:12px; cursor:pointer;">Tier 2 (1–75)</button>
+      <button id="tier-3-btn" onclick="setTier(3)" style="background:transparent; color:#94a3b8; border:none; padding:6px 14px; border-radius:999px; font-weight:800; font-size:12px; cursor:pointer;">Tier 3 (1–151)</button>
+    </div>
+
+    <div class="game-container">
+    <div class="pokedex-header">
+      <div class="pokedex-lights">
+        <div class="main-light"></div>
+        <div class="sub-light light-red"></div>
+        <div class="sub-light light-yellow"></div>
+        <div class="sub-light light-green"></div>
+      </div>
+      <div class="header-title">POKÉGUESS</div>
+      <button class="sound-toggle" id="soundToggleBtn">🔊 Audio</button>
+    </div>
+
+    <div class="screen-frame">
+      <div class="pokemon-sprite-container">
+        <img id="pokeSprite" class="pokemon-sprite" src="" alt="Secret Pokemon" />
+      </div>
+      <div class="dex-subtitle" id="dexSubtitle">POKÉDEX # ???</div>
+      <div class="pokemon-name-tag" id="pokeNameTag">Who's That Pokémon?</div>
+    </div>
+
+    <div class="range-box">
+      <div class="range-label">
+        <span>Dex Range:</span>
+        <span id="rangeText">#1 — #151</span>
+      </div>
+      <div class="range-bar-track">
+        <div class="range-bar-fill" id="rangeFill" style="left: 0%; width: 100%;"></div>
+      </div>
+    </div>
+
+    <div class="input-section">
+      <input type="number" id="guessInput" class="guess-input" placeholder="1 - 151" min="1" max="151" autofocus />
+      <button class="throw-btn" id="throwBtn">
+        <div class="btn-pokeball-icon"></div>
+        THROW
+      </button>
+    </div>
+
+    <div class="feedback-banner" id="feedbackBanner"></div>
+
+    <div class="controls-row">
+      <button class="action-btn" id="hintBtn">💡 Ask Prof. Oak</button>
+      <button class="action-btn" id="resetBtn">🔄 New Pokémon</button>
+    </div>
+
+    <div class="history-section">
+      <div class="history-title">Throw History (<span id="attemptsCount">0</span>)</div>
+      <div class="history-list" id="historyList"></div>
+    </div>
+  </div>
+
+  <script>
+    class SoundFX {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+
+      init() {
+        if (!this.ctx) {
+          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+      }
+
+      playThrow() {
+        if (!this.enabled) return;
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(400, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1200, this.ctx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.15);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.15);
+      }
+
+      playHintSound() {
+        if (!this.enabled) return;
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, this.ctx.currentTime);
+        osc.frequency.setValueAtTime(800, this.ctx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.2);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.2);
+      }
+
+      playWinFanfare() {
+        if (!this.enabled) return;
+        this.init();
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, i) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime + i * 0.1);
+          gain.gain.setValueAtTime(0.15, this.ctx.currentTime + i * 0.1);
+          gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + i * 0.1 + 0.25);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(this.ctx.currentTime + i * 0.1);
+          osc.stop(this.ctx.currentTime + i * 0.1 + 0.25);
+        });
+      }
+    }
+
+    const sounds = new SoundFX();
+    const MAX_DEX = 151;
+    let targetDex = 0;
+    let targetName = "";
+    let minRange = 1;
+    let maxRange = MAX_DEX;
+    let attempts = 0;
+    let gameOver = false;
+
+    const pokeSprite = document.getElementById('pokeSprite');
+    const dexSubtitle = document.getElementById('dexSubtitle');
+    const pokeNameTag = document.getElementById('pokeNameTag');
+    const rangeText = document.getElementById('rangeText');
+    const rangeFill = document.getElementById('rangeFill');
+    const guessInput = document.getElementById('guessInput');
+    const throwBtn = document.getElementById('throwBtn');
+    const feedbackBanner = document.getElementById('feedbackBanner');
+    const hintBtn = document.getElementById('hintBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const attemptsCount = document.getElementById('attemptsCount');
+    const historyList = document.getElementById('historyList');
+    const soundToggleBtn = document.getElementById('soundToggleBtn');
+
+    async function startNewGame() {
+      targetDex = Math.floor(Math.random() * MAX_DEX) + 1;
+      minRange = 1;
+      maxRange = MAX_DEX;
+      attempts = 0;
+      gameOver = false;
+
+      dexSubtitle.textContent = "POKÉDEX # ???";
+      pokeNameTag.textContent = "Who's That Pokémon?";
+      pokeSprite.classList.remove('revealed');
+      pokeSprite.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${targetDex}.png`;
+      
+      guessInput.value = "";
+      guessInput.disabled = false;
+      throwBtn.disabled = false;
+      feedbackBanner.style.display = "none";
+      historyList.innerHTML = "";
+      attemptsCount.textContent = "0";
+      
+      updateRangeBar();
+
+      try {
+        const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${targetDex}`);
+        const data = await res.json();
+        targetName = data.name.toUpperCase();
+      } catch (err) {
+        targetName = "MYSTERY POKÉMON";
+      }
+    }
+
+    function updateRangeBar() {
+      rangeText.textContent = `#${minRange} — #${maxRange}`;
+      const leftPercent = ((minRange - 1) / MAX_DEX) * 100;
+      const widthPercent = ((maxRange - minRange + 1) / MAX_DEX) * 100;
+      rangeFill.style.left = `${leftPercent}%`;
+      rangeFill.style.width = `${widthPercent}%`;
+    }
+
+    async function handleGuess() {
+      if (gameOver) return;
+
+      const guess = parseInt(guessInput.value);
+      if (isNaN(guess) || guess < 1 || guess > MAX_DEX) {
+        showFeedback(`Please enter a valid Dex # between 1 and ${MAX_DEX}!`, "higher");
+        return;
+      }
+
+      sounds.playThrow();
+      attempts++;
+      attemptsCount.textContent = attempts;
+
+      let guessedName = `#${guess}`;
+      try {
+        const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${guess}`);
+        const data = await res.json();
+        guessedName = data.name.toUpperCase();
+      } catch (e) {}
+
+      if (guess === targetDex) {
+        gameOver = true;
+        sounds.playWinFanfare();
+        pokeSprite.classList.add('revealed');
+        dexSubtitle.textContent = `POKÉDEX #${targetDex}`;
+        pokeNameTag.textContent = targetName;
+        
+        showFeedback(`🎯 GOTCHA! ${targetName} was caught in ${attempts} ${attempts === 1 ? 'throw' : 'throws'}!`, "win");
+        guessInput.disabled = true;
+        throwBtn.disabled = true;
+
+        addHistoryItem(guess, guessedName, "MATCH", "badge-match");
+        minRange = targetDex;
+        maxRange = targetDex;
+        updateRangeBar();
+
+      } else if (guess < targetDex) {
+        if (guess >= minRange) minRange = guess + 1;
+        showFeedback(`▲ HIGHER than #${guess} ${guessedName}!`, "higher");
+        addHistoryItem(guess, guessedName, "▲ HIGHER", "badge-higher");
+        updateRangeBar();
+      } else {
+        if (guess <= maxRange) maxRange = guess - 1;
+        showFeedback(`▼ LOWER than #${guess} ${guessedName}!`, "lower");
+        addHistoryItem(guess, guessedName, "▼ LOWER", "badge-lower");
+        updateRangeBar();
+      }
+
+      guessInput.value = "";
+      guessInput.focus();
+    }
+
+    function showFeedback(msg, type) {
+      feedbackBanner.textContent = msg;
+      feedbackBanner.className = `feedback-banner feedback-${type}`;
+      feedbackBanner.style.display = "block";
+    }
+
+    function addHistoryItem(dex, name, badgeText, badgeClass) {
+      const item = document.createElement('div');
+      item.className = 'history-item';
+      item.innerHTML = `
+        <div class="history-item-left">
+          <img class="history-thumb" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${dex}.png" alt="${name}" />
+          <span>#${dex} ${name}</span>
+        </div>
+        <span class="history-badge ${badgeClass}">${badgeText}</span>
+      `;
+      historyList.prepend(item);
+    }
+
+    async function giveHint() {
+      if (gameOver) return;
+      sounds.playHintSound();
+      try {
+        const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${targetDex}`);
+        const data = await res.json();
+        const types = data.types.map(t => t.type.name.toUpperCase()).join(" / ");
+        showFeedback(`💡 Prof. Oak's Hint: This Pokémon is ${types} type!`, "win");
+      } catch (err) {
+        showFeedback(`💡 Prof. Oak says: The Dex # is between ${minRange} and ${maxRange}!`, "win");
+      }
+    }
+
+    throwBtn.addEventListener('click', handleGuess);
+    guessInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') handleGuess();
+    });
+    hintBtn.addEventListener('click', giveHint);
+    resetBtn.addEventListener('click', startNewGame);
+
+    soundToggleBtn.addEventListener('click', () => {
+      sounds.enabled = !sounds.enabled;
+      soundToggleBtn.textContent = sounds.enabled ? "🔊 Audio" : "🔇 Muted";
+    });
+
+    startNewGame();
+  </script>
+</body>
+</html>

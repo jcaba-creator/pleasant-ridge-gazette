@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>PastureOps - Testing: Poultry Time-Motion Simulator</title>
+<style>
+  :root {
+    --bg-dark: #0f1411;
+    --canvas-bg: #090d0b;
+    --panel-bg: #161e18;
+    --panel-sub: #1e2922;
+    --panel-border: #28372d;
+    --text-primary: #e6ede8;
+    --text-muted: #8ea394;
+    --accent-green: #48bb78;
+    --accent-green-bright: #68d391;
+    --accent-amber: #ecc94b;
+    --accent-cyan: #38b2ac;
+    --accent-red: #f56565;
+    --accent-blue: #4299e1;
+    --pasture-fresh: #1e3822;
+    --pasture-fresh-alt: #1a321e;
+    --pasture-grazed: #4a3c22;
+    --farmstead-bg: #1e2621;
+    --target-color: #ecc94b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
+  body {
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  /* TOP STATUS HUD */
+  #hud {
+    background: var(--panel-bg);
+    border-bottom: 2px solid var(--panel-border);
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 600;
+    z-index: 10;
+    flex-shrink: 0;
+  }
+  .hud-stat { display: flex; align-items: center; gap: 5px; }
+  .hud-badge {
+    background: #000;
+    padding: 2px 7px;
+    border-radius: 4px;
+    border: 1px solid var(--panel-border);
+    color: var(--accent-green);
+    font-family: monospace;
+  }
+  .hud-tag {
+    background: #742a2a;
+    color: #feb2b2;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+  }
+
+  /* WORKSPACE LAYOUT */
+  #main-viewport {
+    display: flex;
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* MAP VIEWPORT */
+  #canvas-container {
+    flex: 1;
+    position: relative;
+    background: var(--canvas-bg);
+    overflow: hidden;
+    touch-action: none;
+  }
+  canvas { display: block; width: 100%; height: 100%; }
+
+  /* FLOATING MAP CONTROLS OVERLAY */
+  #map-overlay-controls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    z-index: 5;
+  }
+  .map-btn {
+    background: rgba(22, 30, 24, 0.88);
+    backdrop-filter: blur(4px);
+    border: 1px solid var(--panel-border);
+    color: var(--text-primary);
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  }
+  .map-btn:active { background: var(--accent-green); color: #000; }
+
+  /* FLOATING TARGET CALLOUT BANNER */
+  #target-banner {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(18, 24, 20, 0.92);
+    backdrop-filter: blur(6px);
+    border: 1px solid var(--accent-amber);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 11px;
+    z-index: 5;
+    pointer-events: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  #target-banner strong { color: var(--accent-amber); font-size: 12px; }
+
+  /* DESKTOP SIDEBAR */
+  #sidebar {
+    width: 320px;
+    background: var(--panel-bg);
+    border-left: 2px solid var(--panel-border);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    flex-shrink: 0;
+  }
+
+  .panel-section {
+    padding: 12px;
+    border-bottom: 1px solid var(--panel-border);
+  }
+  .panel-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+  }
+
+  /* STAMINA GAUGE */
+  .gauge-container {
+    background: #050806;
+    border: 1px solid var(--panel-border);
+    height: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 6px;
+  }
+  #stamina-bar {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, var(--accent-green), var(--accent-amber));
+    transition: width 0.25s ease, background 0.25s ease;
+  }
+  .gauge-label {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 800;
+    font-family: monospace;
+    text-shadow: 0 1px 2px #000;
+  }
+
+  /* TICKET LIST */
+  .ticket-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    padding: 3px 0;
+    border-bottom: 1px dashed rgba(255,255,255,0.06);
+  }
+  .ticket-row span:last-child { font-weight: bold; font-family: monospace; }
+
+  /* BUTTONS */
+  .btn {
+    background: var(--panel-sub);
+    border: 1px solid var(--accent-green);
+    color: var(--text-primary);
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .btn:active { background: var(--accent-green); color: #000; }
+  .btn-accent {
+    background: #22543d;
+    border-color: var(--accent-green);
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  }
+  .btn-accent:active { background: var(--accent-green); color: #000; }
+  .btn-amber {
+    background: #5d4a17;
+    border-color: var(--accent-amber);
+    color: #fff;
+  }
+  .btn-amber:active { background: var(--accent-amber); color: #000; }
+
+  /* BOTTOM RACKS / CONTROL TRAY (Desktop) */
+  #bottom-tray {
+    height: 120px;
+    background: var(--panel-bg);
+    border-top: 2px solid var(--panel-border);
+    display: flex;
+    padding: 8px 12px;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+  .tray-card {
+    flex: 1;
+    background: #121814;
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .tray-title { font-size: 11px; color: var(--text-muted); font-weight: 700; }
+  .tray-val { font-size: 16px; font-weight: 800; color: var(--text-primary); font-family: monospace; }
+
+  /* MOBILE STICKY THUMB DECK */
+  #mobile-thumb-deck {
+    display: none;
+    background: var(--panel-bg);
+    border-top: 2px solid var(--panel-border);
+    padding: 10px 14px;
+    flex-shrink: 0;
+    z-index: 20;
+    box-shadow: 0 -4px 16px rgba(0,0,0,0.6);
+  }
+  .thumb-deck-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    margin-bottom: 8px;
+    font-family: monospace;
+  }
+  .thumb-deck-actions {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 8px;
+  }
+  .thumb-deck-actions .btn {
+    padding: 12px 10px;
+    font-size: 13px;
+    border-radius: 8px;
+  }
+
+  /* MOBILE DRAWER SHEET (Ticket + Inventory) */
+  #mobile-drawer {
+    display: none;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--panel-bg);
+    border-top: 2px solid var(--panel-border);
+    border-radius: 16px 16px 0 0;
+    max-height: 85vh;
+    z-index: 50;
+    overflow-y: auto;
+    padding: 16px;
+    box-shadow: 0 -8px 24px rgba(0,0,0,0.8);
+    animation: slideUp 0.25s ease-out;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  .drawer-handle {
+    width: 40px;
+    height: 4px;
+    background: var(--panel-border);
+    border-radius: 2px;
+    margin: 0 auto 12px auto;
+  }
+  .drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--panel-border);
+  }
+  .drawer-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px 8px;
+  }
+
+  /* MODAL OVERLAY */
+  #inspector-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 100;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  .inspector-card {
+    background: var(--panel-bg);
+    border: 2px solid var(--panel-border);
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 16px;
+    border-radius: 8px;
+  }
+  .param-group { margin-bottom: 12px; }
+  .param-group label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
+  .param-group input[type="range"] { width: 100%; accent-color: var(--accent-green); height: 24px; }
+
+  /* RESPONSIVE MEDIA QUERIES FOR MOBILE */
+  @media (max-width: 768px) {
+    #sidebar { display: none; }
+    #bottom-tray { display: none; }
+    #mobile-thumb-deck { display: block; }
+    #hud { font-size: 12px; padding: 6px 10px; }
+    .hud-badge { padding: 2px 5px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP STATUS HUD -->
+<div id="hud">
+  <div class="hud-stat">
+    <span class="hud-tag">TESTING</span>
+    <span>📅</span> <span id="hud-day">Day 1</span>
+  </div>
+  <div class="hud-stat">🪙 <span id="hud-cash" class="hud-badge">$1,500</span></div>
+  <div class="hud-stat">⚡ <span id="hud-labor">120m</span></div>
+  <div style="display:flex; gap:6px;">
+    <a href="index.html" class="btn" style="padding:2px 7px; font-size:11px;">&larr; Arcade</a>
+    <button class="btn" style="padding:2px 7px; font-size:11px;" onclick="toggleInspector()">⚙️</button>
+  </div>
+</div>
+
+<!-- MAIN VIEWPORT -->
+<div id="main-viewport">
+  <div id="canvas-container">
+    <canvas id="farmMap"></canvas>
+
+    <!-- FLOATING TARGET CALLOUT BANNER -->
+    <div id="target-banner">
+      <div><strong>TARGET:</strong> <span id="tb-coord">[6, 12]</span> (<span id="tb-status">On Station</span>)</div>
+      <div style="color:var(--text-muted);">Est. Chore Time: <span id="tb-time" style="color:var(--accent-amber); font-weight:bold;">20.0m</span></div>
+    </div>
+
+    <!-- FLOATING MAP CONTROLS OVERLAY -->
+    <div id="map-overlay-controls">
+      <button class="map-btn" title="Focus Tractor" onclick="focusOnTractor()">🎯</button>
+      <button class="map-btn" title="Fit Pasture Overview" onclick="fitPasture()">🗺️</button>
+      <button class="map-btn" title="Zoom In" onclick="adjustZoom(1.25)">➕</button>
+      <button class="map-btn" title="Zoom Out" onclick="adjustZoom(0.8)">➖</button>
+    </div>
+  </div>
+
+  <!-- DESKTOP DISPATCH SIDEBAR -->
+  <div id="sidebar">
+    <div class="panel-section">
+      <div class="panel-title">OPERATOR STAMINA BUDGET</div>
+      <div class="gauge-container">
+        <div id="stamina-bar"></div>
+        <div class="gauge-label" id="stamina-label">120m / 120m REMAINING</div>
+      </div>
+    </div>
+
+    <div class="panel-section" style="flex:1;">
+      <div class="panel-title">MOTION STUDY TICKET (TAP TO TARGET)</div>
+      <div class="ticket-row"><span>Target Cell</span><span id="tk-target-cell">[6, 12]</span></div>
+      <div class="ticket-row"><span>Transit Distance</span><span id="tk-dist">0 ft</span></div>
+      <div class="ticket-row"><span>Haul Velocity</span><span id="tk-vel">150 ft/min</span></div>
+      <div class="ticket-row"><span>Transit Burn</span><span id="tk-transit">0.0 mins</span></div>
+      <div class="ticket-row"><span>Water/Feed Service</span><span id="tk-service">12.0 mins</span></div>
+      <div class="ticket-row"><span>Tractor Drag Pull</span><span id="tk-drag">8.0 mins</span></div>
+      <div class="ticket-row" style="color:var(--accent-amber); margin-top:6px; border-top:1px solid #444; padding-top:4px;">
+        <span>Total Chore Time</span><span id="tk-total">20.0 mins</span>
+      </div>
+
+      <div style="margin-top:14px; display:flex; flex-direction:column; gap:8px;">
+        <button class="btn btn-accent" style="width:100%; padding:10px;" onclick="executeChores()">
+          ▶ EXECUTE MOVE &amp; CHORES
+        </button>
+        <button class="btn" style="width:100%;" onclick="resetTargetToTractor()">
+          ↺ Reset Target to Tractor
+        </button>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-title">TRACTOR 1 [50 CORNISH CROSS]</div>
+      <div class="ticket-row"><span>Current Cell</span><span id="flock-cell">[6, 12]</span></div>
+      <div class="ticket-row"><span>Forage Status</span><span id="flock-forage" style="color:var(--accent-green);">Prime Grass</span></div>
+      <div class="ticket-row"><span>Days on Tile</span><span id="flock-days">0 Days</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM INVENTORY TRAY (Desktop) -->
+<div id="bottom-tray">
+  <div class="tray-card">
+    <div class="tray-title">FEED DEPOT (50lb SACKS)</div>
+    <div class="tray-val" id="inv-feed">10 Bags</div>
+    <div style="font-size:10px; color:var(--text-muted);">$18.50/bag • Non-GMO Broiler</div>
+  </div>
+  <div class="tray-card">
+    <div class="tray-title">WATER INFRASTRUCTURE</div>
+    <div class="tray-val">Manual Haul</div>
+    <div style="font-size:10px; color:var(--text-muted);">Spigot at [0, 15] • No Pipe Run</div>
+  </div>
+  <div class="tray-card">
+    <div class="tray-title">COLD STORAGE / FREEZER</div>
+    <div class="tray-val">0 / 250 lbs</div>
+    <div style="font-size:10px; color:var(--text-muted);">Capacity: 50 Harvested Birds</div>
+  </div>
+</div>
+
+<!-- MOBILE STICKY THUMB DECK -->
+<div id="mobile-thumb-deck">
+  <div class="gauge-container" style="height:14px; margin-bottom:8px;">
+    <div id="mobile-stamina-bar" style="height:100%; width:100%; background:linear-gradient(90deg, var(--accent-green), var(--accent-amber));"></div>
+  </div>
+  <div class="thumb-deck-summary">
+    <div>⚡ <span id="m-chore-time">20.0m</span> Chore Burn</div>
+    <div>🎯 Target: <span id="m-target-cell" style="color:var(--accent-amber); font-weight:bold;">[6, 12]</span></div>
+    <div>👣 <span id="m-transit-dist">0 ft</span></div>
+  </div>
+  <div class="thumb-deck-actions">
+    <button class="btn" onclick="openMobileDrawer()">
+      📋 Details
+    </button>
+    <button class="btn btn-accent" id="m-execute-btn" onclick="executeChores()">
+      ▶ EXECUTE CHORES
+    </button>
+  </div>
+</div>
+
+<!-- MOBILE DRAWER SHEET (Deep Ticket & Racks) -->
+<div id="mobile-drawer">
+  <div class="drawer-handle"></div>
+  <div class="drawer-header">
+    <h3 style="font-size:14px; color:var(--accent-green);">DAILY CHORE &amp; RACK MANIFEST</h3>
+    <button class="drawer-close" onclick="closeMobileDrawer()">&times;</button>
+  </div>
+
+  <div class="panel-section" style="padding:8px 0;">
+    <div class="panel-title">MOTION STUDY DETAILS</div>
+    <div class="ticket-row"><span>Target Cell</span><span id="m-drawer-target">[6, 12]</span></div>
+    <div class="ticket-row"><span>Transit Distance</span><span id="m-drawer-dist">0 ft</span></div>
+    <div class="ticket-row"><span>Transit Time</span><span id="m-drawer-transit">0.0 mins</span></div>
+    <div class="ticket-row"><span>Water/Feed Service</span><span id="m-drawer-service">12.0 mins</span></div>
+    <div class="ticket-row"><span>Tractor Drag Pull</span><span id="m-drawer-drag">8.0 mins</span></div>
+    <div class="ticket-row" style="color:var(--accent-amber); font-weight:bold;"><span>Total Chore Time</span><span id="m-drawer-total">20.0 mins</span></div>
+  </div>
+
+  <div class="panel-section" style="padding:10px 0;">
+    <div class="panel-title">PHYSICAL INVENTORY &amp; STOCKS</div>
+    <div class="ticket-row"><span>Feed Depot (50lb Bags)</span><span id="m-drawer-feed">10 Bags</span></div>
+    <div class="ticket-row"><span>Water Spigot</span><span>Wellhead [0, 15] (Manual Haul)</span></div>
+    <div class="ticket-row"><span>Chest Freezer Cap</span><span>0 / 250 lbs (50 Birds)</span></div>
+    <div class="ticket-row"><span>Flock Status</span><span>50 Cornish Cross (Day on tile: <span id="m-drawer-days">0</span>)</span></div>
+  </div>
+
+  <div style="margin-top:14px;">
+    <button class="btn btn-amber" style="width:100%; padding:10px;" onclick="closeMobileDrawer(); toggleInspector();">
+      ⚙️ Open Engine Live Configuration
+    </button>
+  </div>
+</div>
+
+<!-- VARIABLE INSPECTOR (MODAL) -->
+<div id="inspector-overlay">
+  <div class="inspector-card">
+    <div class="panel-title" style="font-size:14px; margin-bottom:12px;">LIVE ENGINE CONFIGURATION (TESTING)</div>
+    
+    <div class="param-group">
+      <label>Loaded Haul Walk Speed: <span id="v-speed-val">150</span> ft/min</label>
+      <input type="range" id="v-speed" min="80" max="300" value="150" oninput="updateConfig()">
+    </div>
+    
+    <div class="param-group">
+      <label>Tractor Pull Time: <span id="v-pull-val">8</span> mins</label>
+      <input type="range" id="v-pull" min="2" max="25" value="8" oninput="updateConfig()">
+    </div>
+
+    <div class="param-group">
+      <label>Stationary Service Time (Feed/Water): <span id="v-serv-val">12</span> mins</label>
+      <input type="range" id="v-serv" min="5" max="30" value="12" oninput="updateConfig()">
+    </div>
+
+    <div class="param-group">
+      <label>OPFOR Threat Aggression: <span id="v-opfor-val">25</span>%</label>
+      <input type="range" id="v-opfor" min="0" max="100" value="25" oninput="updateConfig()">
+    </div>
+
+    <button class="btn" style="width:100%; margin-top:12px; padding:10px;" onclick="toggleInspector()">SAVE &amp; CLOSE</button>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+ * PASTUREOPS - TESTING ENGINE - SPRINT 1.0 (TAP-TO-TARGET MOBILE)
+ * ===================================================================== */
+
+const CONFIG = {
+  gridSize: 30,         // 30x30 tiles
+  cellSizeFt: 20,       // 20ft per cell (600ft x 600ft field)
+  farmsteadWidth: 3,    // First 3 columns are base structures
+  walkSpeedFtMin: 150,  // Loaded walking speed
+  tractorPullMins: 8,   // Base friction to move shelter
+  serviceMins: 12,      // Fixed time to service feed/water
+  dailyBudgetMins: 120, // 2-hour part-time homestead baseline
+  opforAggression: 25,
+  minZoom: 10,
+  maxZoom: 60
+};
+
+const STATE = {
+  day: 1,
+  cash: 1500.00,
+  feedBags: 10,
+  laborRemaining: 120,
+  structures: {
+    garage: { x: 0, y: 14, label: "Garage / Shop", color: "#4a5568", icon: "🏠" },
+    depot:  { x: 1, y: 13, label: "Feed Depot",    color: "#d69e2e", icon: "🌾" },
+    well:   { x: 0, y: 15, label: "Well Spigot",   color: "#3182ce", icon: "💧" }
+  },
+  tractor: {
+    x: 6,
+    y: 12,
+    daysOnTile: 0
+  },
+  target: {
+    x: 6,
+    y: 12
+  },
+  cellWear: {} // Key: "x,y" -> integer days grazed recovery
+};
+
+const canvas = document.getElementById('farmMap');
+const ctx = canvas.getContext('2d');
+let camera = { x: 0, y: 0, zoom: 24 };
+
+let animFrame = 0;
+let reticlePulse = 0;
+
+function init() {
+  resize();
+  window.addEventListener('resize', resize);
+  setupTouchAndMouse();
+  focusOnTractor();
+  recalculateMotion();
+  startAnimationLoop();
+}
+
+function resize() {
+  const container = document.getElementById('canvas-container');
+  canvas.width = container.clientWidth;
+  canvas.height = container.clientHeight;
+  render();
+}
+
+function startAnimationLoop() {
+  function loop() {
+    animFrame++;
+    reticlePulse = (Math.sin(animFrame * 0.08) + 1) / 2; // 0 to 1 pulse
+    render();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+}
+
+function focusOnTractor() {
+  const isMobile = window.innerWidth <= 768;
+  camera.zoom = isMobile ? 32 : 28; // Large tactile tiles
+  camera.x = Math.floor(canvas.width / 2 - (STATE.tractor.x + 0.5) * camera.zoom);
+  camera.y = Math.floor(canvas.height / 2 - (STATE.tractor.y + 0.5) * camera.zoom);
+  render();
+}
+
+function fitPasture() {
+  const fitZoom = Math.floor(Math.min(canvas.width, canvas.height) / (CONFIG.gridSize + 2));
+  camera.zoom = Math.max(CONFIG.minZoom, fitZoom);
+  camera.x = Math.floor((canvas.width - CONFIG.gridSize * camera.zoom) / 2);
+  camera.y = Math.floor((canvas.height - CONFIG.gridSize * camera.zoom) / 2);
+  render();
+}
+
+function adjustZoom(factor) {
+  const newZoom = Math.max(CONFIG.minZoom, Math.min(CONFIG.maxZoom, camera.zoom * factor));
+  const cx = canvas.width / 2;
+  const cy = canvas.height / 2;
+  camera.x = cx - (cx - camera.x) * (newZoom / camera.zoom);
+  camera.y = cy - (cy - camera.y) * (newZoom / camera.zoom);
+  camera.zoom = newZoom;
+  render();
+}
+
+/* TIME MOTION STUDY ENGINE */
+function calculateDistance(x1, y1, x2, y2) {
+  const dx = (x2 - x1) * CONFIG.cellSizeFt;
+  const dy = (y2 - y1) * CONFIG.cellSizeFt;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+function recalculateMotion() {
+  // Destination is the target cell
+  const destX = STATE.target.x;
+  const destY = STATE.target.y;
+
+  const isMove = (destX !== STATE.tractor.x || destY !== STATE.tractor.y);
+
+  // Transit route: Depot -> Target -> Well -> Target -> Garage
+  const d1 = calculateDistance(STATE.structures.depot.x, STATE.structures.depot.y, destX, destY);
+  const d2 = calculateDistance(STATE.structures.well.x, STATE.structures.well.y, destX, destY);
+  const totalDist = Math.round((d1 + d2) * 2); // Round trip runs
+
+  const transitMins = parseFloat((totalDist / CONFIG.walkSpeedFtMin).toFixed(1));
+  const dragMins = isMove ? CONFIG.tractorPullMins : 0; // 0 drag pull time if staying on tile
+  const totalChoreTime = parseFloat((transitMins + CONFIG.serviceMins + dragMins).toFixed(1));
+
+  // Update Target Banner
+  document.getElementById('tb-coord').innerText = `[${destX}, ${destY}]`;
+  const wear = STATE.cellWear[`${destX},${destY}`] || 0;
+  const statusStr = isMove ? (wear > 0 ? `Grazed (Needs ${wear}d)` : `Fresh Grass`) : `Stationary`;
+  document.getElementById('tb-status').innerText = statusStr;
+  document.getElementById('tb-time').innerText = `${totalChoreTime}m`;
+
+  // Update Desktop Ticket Elements
+  document.getElementById('tk-target-cell').innerText = `[${destX}, ${destY}] ${isMove ? '(Plan Move)' : '(Stationary)'}`;
+  document.getElementById('tk-dist').innerText = `${totalDist} ft`;
+  document.getElementById('tk-vel').innerText = `${CONFIG.walkSpeedFtMin} ft/min`;
+  document.getElementById('tk-transit').innerText = `${transitMins} mins`;
+  document.getElementById('tk-service').innerText = `${CONFIG.serviceMins} mins`;
+  document.getElementById('tk-drag').innerText = `${dragMins} mins`;
+  document.getElementById('tk-total').innerText = `${totalChoreTime} mins`;
+  document.getElementById('flock-cell').innerText = `[${STATE.tractor.x}, ${STATE.tractor.y}]`;
+  document.getElementById('flock-days').innerText = `${STATE.tractor.daysOnTile} Days`;
+
+  // Update Mobile Thumb Deck Elements
+  document.getElementById('m-target-cell').innerText = `[${destX}, ${destY}]`;
+  document.getElementById('m-chore-time').innerText = `${totalChoreTime}m`;
+  document.getElementById('m-transit-dist').innerText = `${totalDist} ft`;
+  document.getElementById('m-execute-btn').innerText = isMove ? `▶ PULL & CHORE (${totalChoreTime}m)` : `▶ SERVICE TILE (${totalChoreTime}m)`;
+
+  // Update Drawer Elements
+  document.getElementById('m-drawer-target').innerText = `[${destX}, ${destY}]`;
+  document.getElementById('m-drawer-dist').innerText = `${totalDist} ft`;
+  document.getElementById('m-drawer-transit').innerText = `${transitMins} mins`;
+  document.getElementById('m-drawer-service').innerText = `${CONFIG.serviceMins} mins`;
+  document.getElementById('m-drawer-drag').innerText = `${dragMins} mins`;
+  document.getElementById('m-drawer-total').innerText = `${totalChoreTime} mins`;
+  document.getElementById('m-drawer-feed').innerText = `${STATE.feedBags} Bags`;
+  document.getElementById('m-drawer-days').innerText = `${STATE.tractor.daysOnTile}`;
+
+  // Stamina Gauges
+  const pct = Math.max(0, ((CONFIG.dailyBudgetMins - totalChoreTime) / CONFIG.dailyBudgetMins) * 100);
+  const staminaColor = pct < 25 ? 'var(--accent-red)' : 'linear-gradient(90deg, var(--accent-green), var(--accent-amber))';
+  
+  const dBar = document.getElementById('stamina-bar');
+  if (dBar) {
+    dBar.style.width = `${pct}%`;
+    dBar.style.background = staminaColor;
+    document.getElementById('stamina-label').innerText = `${(CONFIG.dailyBudgetMins - totalChoreTime).toFixed(1)}m / ${CONFIG.dailyBudgetMins}m REMAINING`;
+  }
+  
+  const mBar = document.getElementById('mobile-stamina-bar');
+  if (mBar) {
+    mBar.style.width = `${pct}%`;
+    mBar.style.background = staminaColor;
+  }
+
+  return totalChoreTime;
+}
+
+function setTargetTile(tx, ty) {
+  // Boundary check & must be pasture
+  if (tx >= CONFIG.farmsteadWidth && tx < CONFIG.gridSize && ty >= 0 && ty < CONFIG.gridSize) {
+    STATE.target.x = tx;
+    STATE.target.y = ty;
+    if (navigator.vibrate) {
+      navigator.vibrate(15); // Tactile haptic feedback
+    }
+    recalculateMotion();
+  }
+}
+
+function resetTargetToTractor() {
+  setTargetTile(STATE.tractor.x, STATE.tractor.y);
+}
+
+/* RENDERING ENGINE */
+function render() {
+  ctx.fillStyle = '#090d0b';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const z = camera.zoom;
+  const ox = camera.x;
+  const oy = camera.y;
+
+  // Grid bounds culling
+  const startX = Math.max(0, Math.floor(-ox / z));
+  const endX = Math.min(CONFIG.gridSize, Math.ceil((canvas.width - ox) / z));
+  const startY = Math.max(0, Math.floor(-oy / z));
+  const endY = Math.min(CONFIG.gridSize, Math.ceil((canvas.height - oy) / z));
+
+  // Render Base & Pasture Tiles
+  for (let x = startX; x < endX; x++) {
+    for (let y = startY; y < endY; y++) {
+      const px = ox + x * z;
+      const py = oy + y * z;
+
+      if (x < CONFIG.farmsteadWidth) {
+        ctx.fillStyle = ((x + y) % 2 === 0) ? '#1a221d' : '#1e2621'; // Gravel pattern
+      } else {
+        const wear = STATE.cellWear[`${x},${y}`] || 0;
+        if (wear > 0) {
+          ctx.fillStyle = '#4a3c22'; // Grazed thatch
+        } else {
+          ctx.fillStyle = ((x + y) % 2 === 0) ? '#1e3822' : '#1b331f'; // Lush pasture checker
+        }
+      }
+      ctx.fillRect(px, py, z - 1, z - 1);
+    }
+  }
+
+  // Farmstead Border Line
+  ctx.strokeStyle = '#4a5568';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(ox + CONFIG.farmsteadWidth * z, oy);
+  ctx.lineTo(ox + CONFIG.farmsteadWidth * z, oy + CONFIG.gridSize * z);
+  ctx.stroke();
+
+  // Render Base Structures
+  Object.values(STATE.structures).forEach(struct => {
+    ctx.fillStyle = struct.color;
+    ctx.fillRect(ox + struct.x * z, oy + struct.y * z, z - 1, z - 1);
+    if (z >= 18) {
+      ctx.font = `${Math.floor(z * 0.5)}px sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(struct.icon, ox + (struct.x + 0.5) * z, oy + (struct.y + 0.5) * z);
+    }
+  });
+
+  // Planned Path Vector (From Tractor to Target)
+  const isMove = (STATE.target.x !== STATE.tractor.x || STATE.target.y !== STATE.tractor.y);
+  if (isMove) {
+    const curPx = ox + (STATE.tractor.x + 0.5) * z;
+    const curPy = oy + (STATE.tractor.y + 0.5) * z;
+    const tgtPx = ox + (STATE.target.x + 0.5) * z;
+    const tgtPy = oy + (STATE.target.y + 0.5) * z;
+
+    ctx.strokeStyle = '#ecc94b';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    ctx.moveTo(curPx, curPy);
+    ctx.lineTo(tgtPx, tgtPy);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Chore Transit Path (Well -> Target)
+  const destPx = ox + (STATE.target.x + 0.5) * z;
+  const destPy = oy + (STATE.target.y + 0.5) * z;
+  const wellPx = ox + (STATE.structures.well.x + 0.5) * z;
+  const wellPy = oy + (STATE.structures.well.y + 0.5) * z;
+
+  ctx.strokeStyle = 'rgba(66, 153, 225, 0.45)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(wellPx, wellPy);
+  ctx.lineTo(destPx, destPy);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Render Target Reticle / Ghost
+  if (isMove) {
+    const tpx = ox + STATE.target.x * z;
+    const tpy = oy + STATE.target.y * z;
+
+    // Glowing reticle ring
+    ctx.strokeStyle = `rgba(236, 201, 75, ${0.4 + reticlePulse * 0.6})`;
+    ctx.lineWidth = 3;
+    ctx.strokeRect(tpx - 2, tpy - 2, z + 3, z + 3);
+
+    // Target corner crosshairs
+    const arm = Math.max(4, z * 0.25);
+    ctx.strokeStyle = '#ecc94b';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    // Top-left
+    ctx.moveTo(tpx, tpy + arm); ctx.lineTo(tpx, tpy); ctx.lineTo(tpx + arm, tpy);
+    // Top-right
+    ctx.moveTo(tpx + z - 1 - arm, tpy); ctx.lineTo(tpx + z - 1, tpy); ctx.lineTo(tpx + z - 1, tpy + arm);
+    // Bottom-left
+    ctx.moveTo(tpx, tpy + z - 1 - arm); ctx.lineTo(tpx, tpy + z - 1); ctx.lineTo(tpx + arm, tpy + z - 1);
+    // Bottom-right
+    ctx.moveTo(tpx + z - 1 - arm, tpy + z - 1); ctx.lineTo(tpx + z - 1, tpy + z - 1); ctx.lineTo(tpx + z - 1, tpy + z - 1 - arm);
+    ctx.stroke();
+
+    // Ghost Tractor Glyph
+    ctx.globalAlpha = 0.5 + reticlePulse * 0.3;
+    ctx.font = `${Math.floor(z * 0.6)}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('🚜', tpx + z * 0.5, tpy + z * 0.5);
+    ctx.globalAlpha = 1.0;
+  }
+
+  // Render Current Tractor
+  const trPx = ox + STATE.tractor.x * z;
+  const trPy = oy + STATE.tractor.y * z;
+  ctx.fillStyle = '#e53e3e';
+  ctx.fillRect(trPx, trPy, z - 1, z - 1);
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(trPx, trPy, z - 1, z - 1);
+
+  // Tractor Icon glyph
+  ctx.fillStyle = '#fff';
+  ctx.font = `${Math.floor(z * 0.6)}px sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('🚜', trPx + z * 0.5, trPy + z * 0.5);
+}
+
+/* TAP-TO-TARGET & SMOOTH PAN/ZOOM TOUCH ENGINE */
+function setupTouchAndMouse() {
+  let isPointerDown = false;
+  let startX = 0, startY = 0;
+  let lastX = 0, lastY = 0;
+  let hasMoved = false;
+  let initialPinchDist = null;
+  let initialPinchZoom = 24;
+
+  function getClientPos(e) {
+    if (e.touches && e.touches.length > 0) {
+      return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }
+    return { x: e.clientX, y: e.clientY };
+  }
+
+  function getTileFromPos(clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    const mx = clientX - rect.left - camera.x;
+    const my = clientY - rect.top - camera.y;
+    return {
+      x: Math.floor(mx / camera.zoom),
+      y: Math.floor(my / camera.zoom)
+    };
+  }
+
+  function handleStart(e) {
+    if (e.touches && e.touches.length === 2) {
+      // Pinch to Zoom start
+      const t1 = e.touches[0];
+      const t2 = e.touches[1];
+      initialPinchDist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+      initialPinchZoom = camera.zoom;
+      return;
+    }
+
+    isPointerDown = true;
+    hasMoved = false;
+    const pos = getClientPos(e);
+    startX = pos.x;
+    startY = pos.y;
+    lastX = pos.x;
+    lastY = pos.y;
+  }
+
+  function handleMove(e) {
+    if (e.touches && e.touches.length === 2 && initialPinchDist) {
+      // Handle Pinch to Zoom
+      const t1 = e.touches[0];
+      const t2 = e.touches[1];
+      const currentDist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+      const scale = currentDist / initialPinchDist;
+      camera.zoom = Math.max(CONFIG.minZoom, Math.min(CONFIG.maxZoom, initialPinchZoom * scale));
+      return;
+    }
+
+    if (!isPointerDown) return;
+    const pos = getClientPos(e);
+    const dx = pos.x - lastX;
+    const dy = pos.y - lastY;
+
+    if (Math.hypot(pos.x - startX, pos.y - startY) > 8) {
+      hasMoved = true; // Drag panning
+      camera.x += dx;
+      camera.y += dy;
+      lastX = pos.x;
+      lastY = pos.y;
+    }
+  }
+
+  function handleEnd(e) {
+    if (e.touches && e.touches.length < 2) {
+      initialPinchDist = null;
+    }
+
+    if (!isPointerDown) return;
+    isPointerDown = false;
+
+    // If minimal movement occurred, interpret as TAP TO TARGET!
+    if (!hasMoved) {
+      const tile = getTileFromPos(startX, startY);
+      setTargetTile(tile.x, tile.y);
+    }
+  }
+
+  canvas.addEventListener('mousedown', handleStart);
+  window.addEventListener('mousemove', handleMove);
+  window.addEventListener('mouseup', handleEnd);
+
+  canvas.addEventListener('touchstart', handleStart, { passive: false });
+  window.addEventListener('touchmove', handleMove, { passive: false });
+  window.addEventListener('touchend', handleEnd);
+
+  // Mouse wheel zoom
+  canvas.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const factor = e.deltaY < 0 ? 1.15 : 0.85;
+    adjustZoom(factor);
+  }, { passive: false });
+}
+
+/* DISPATCH & CHORE EXECUTION */
+function executeChores() {
+  const timeExpended = recalculateMotion();
+  if (timeExpended > CONFIG.dailyBudgetMins) {
+    alert("CRITICAL WARNING: Chore routine exceeds daily labor budget! High operator fatigue risk.");
+  }
+
+  // Move tractor to target cell
+  const isMove = (STATE.target.x !== STATE.tractor.x || STATE.target.y !== STATE.tractor.y);
+  STATE.tractor.x = STATE.target.x;
+  STATE.tractor.y = STATE.target.y;
+
+  // Mark tile as grazed (21 day recovery period)
+  const key = `${STATE.tractor.x},${STATE.tractor.y}`;
+  STATE.cellWear[key] = 21;
+
+  // Advance recovery on all grazed tiles
+  Object.keys(STATE.cellWear).forEach(k => {
+    if (k !== key && STATE.cellWear[k] > 0) {
+      STATE.cellWear[k]--;
+    }
+  });
+
+  // Advance day & flock tracking
+  STATE.day++;
+  if (isMove) {
+    STATE.tractor.daysOnTile = 1;
+  } else {
+    STATE.tractor.daysOnTile++;
+  }
+
+  // Feed sack consumption (50 birds burn ~0.35 bags/day)
+  if (STATE.day % 3 === 0 && STATE.feedBags > 0) {
+    STATE.feedBags--;
+    document.getElementById('inv-feed').innerText = `${STATE.feedBags} Bags`;
+  }
+
+  // Update HUD
+  document.getElementById('hud-day').innerText = `Day ${STATE.day}`;
+
+  if (navigator.vibrate) {
+    navigator.vibrate([30, 50, 30]); // Satisfying execution haptic pulse
+  }
+
+  recalculateMotion();
+  closeMobileDrawer();
+}
+
+/* MOBILE DRAWER TOGGLES */
+function openMobileDrawer() {
+  document.getElementById('mobile-drawer').style.display = 'block';
+}
+
+function closeMobileDrawer() {
+  document.getElementById('mobile-drawer').style.display = 'none';
+}
+
+/* VARIABLE INSPECTOR MODAL */
+function toggleInspector() {
+  const el = document.getElementById('inspector-overlay');
+  el.style.display = el.style.display === 'block' ? 'none' : 'block';
+}
+
+function updateConfig() {
+  CONFIG.walkSpeedFtMin = parseInt(document.getElementById('v-speed').value);
+  CONFIG.tractorPullMins = parseInt(document.getElementById('v-pull').value);
+  CONFIG.serviceMins = parseInt(document.getElementById('v-serv').value);
+  CONFIG.opforAggression = parseInt(document.getElementById('v-opfor').value);
+
+  document.getElementById('v-speed-val').innerText = CONFIG.walkSpeedFtMin;
+  document.getElementById('v-pull-val').innerText = CONFIG.tractorPullMins;
+  document.getElementById('v-serv-val').innerText = CONFIG.serviceMins;
+  document.getElementById('v-opfor-val').innerText = CONFIG.opforAggression;
+
+  recalculateMotion();
+}
+
+window.onload = init;
+</script>
+</body>
+</html>

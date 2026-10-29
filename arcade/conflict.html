@@ -1,0 +1,3441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Ages of Constant Conflict: Regional Conflict</title>
+  <style>
+    :root {
+      --bg: #03060f;
+      --card-bg: rgba(9, 14, 28, 0.94);
+      --card-border: rgba(56, 189, 248, 0.28);
+      --card-border-active: #38bdf8;
+      --cyan: #38bdf8;
+      --amber: #fbbf24;
+      --rose: #f43f5e;
+      --emerald: #34d399;
+      --purple: #c084fc;
+      --winter-ice: #a5f3fc;
+      --bio-green: #22c55e;
+      --toxic-purple: #d946ef;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      overflow: hidden;
+      width: 100vw;
+      height: 100%;
+      height: 100dvh;
+      min-height: -webkit-fill-available;
+      position: fixed;
+      inset: 0;
+      touch-action: none;
+    }
+
+    /* Viewport & Canvas */
+    #viewport {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #02040a;
+      z-index: 1;
+    }
+
+    #mainCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      image-rendering: pixelated;
+      cursor: crosshair;
+    }
+
+    /* Tap feedback ripple */
+    .tap-ripple {
+      position: fixed;
+      width: 32px;
+      height: 32px;
+      margin-left: -16px;
+      margin-top: -16px;
+      border-radius: 50%;
+      border: 2px solid var(--cyan);
+      box-shadow: 0 0 12px var(--cyan);
+      pointer-events: none;
+      z-index: 9999;
+      animation: rippleAnim 0.35s ease-out forwards;
+    }
+
+    @keyframes rippleAnim {
+      0% { transform: scale(0.3); opacity: 1; }
+      100% { transform: scale(1.8); opacity: 0; }
+    }
+
+    /* Top Command Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 48px;
+      padding: 0 10px;
+      padding-top: env(safe-area-inset-top, 0);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(180deg, rgba(3, 6, 15, 0.98) 0%, rgba(3, 6, 15, 0.85) 80%, transparent 100%);
+      z-index: 80;
+      pointer-events: none;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+
+    header > * {
+      pointer-events: auto;
+    }
+
+    body.cinema-mode header {
+      transform: translateY(-100%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .arcade-back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 9px;
+      border-radius: 6px;
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid var(--card-border);
+      color: var(--cyan);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .live-pulse {
+      width: 8px;
+      height: 8px;
+      background: var(--cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--cyan);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(0.8); }
+    }
+
+    .title-text {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: #ffffff;
+      white-space: nowrap;
+    }
+
+    .title-text span {
+      color: var(--cyan);
+      font-weight: 400;
+    }
+
+    /* Playback & Controls */
+    .playback-capsule {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      background: rgba(9, 14, 28, 0.9);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 2px 4px;
+    }
+
+    .ctrl-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 5px 7px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      touch-action: manipulation;
+    }
+
+    .ctrl-btn:hover, .ctrl-btn.active {
+      color: #030712;
+      background: var(--cyan);
+    }
+
+    .sim-clock-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--amber);
+      background: rgba(251, 191, 36, 0.12);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      border-radius: 6px;
+      padding: 4px 7px;
+      white-space: nowrap;
+    }
+
+        .macro-focus-btn {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      color: var(--cyan);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      transition: all 0.15s ease;
+      touch-action: manipulation;
+    }
+    .macro-focus-btn:active {
+      background: rgba(56, 189, 248, 0.35);
+      transform: scale(0.95);
+    }
+
+    .recenter-fab {
+      position: fixed;
+      top: 54px;
+      right: 12px;
+      z-index: 105;
+      background: rgba(9, 14, 28, 0.90);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      color: #38bdf8;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 6px 12px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+      transition: all 0.2s ease;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+    .recenter-fab:active {
+      transform: scale(0.92);
+      background: rgba(56, 189, 248, 0.25);
+    }
+
+    .cinema-btn {
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 5px 9px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      touch-action: manipulation;
+    }
+
+    .cinema-btn:hover {
+      color: #fff;
+      border-color: var(--cyan);
+    }
+
+    /* Exit Cinema Pill */
+    #btnExitCinema {
+      position: fixed;
+      top: 14px;
+      right: 14px;
+      z-index: 100;
+      background: rgba(9, 14, 28, 0.95);
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 7px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      display: none;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
+      touch-action: manipulation;
+    }
+
+    body.cinema-mode #btnExitCinema {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Sovereign Player Command HUD */
+    #playerCommandBar {
+      position: fixed;
+      top: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 95vw;
+      max-width: 620px;
+      padding: 6px 12px;
+      border-radius: 12px;
+      background: rgba(9, 14, 28, 0.95);
+      border: 1px solid var(--amber);
+      box-shadow: 0 4px 20px rgba(251, 191, 36, 0.25);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      z-index: 75;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      backdrop-filter: blur(14px);
+    }
+
+    #playerCommandBar.show {
+      display: flex;
+    }
+
+    .treasury-pill {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(251, 191, 36, 0.15);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      color: var(--amber);
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 12px;
+    }
+
+    /* Active Tool Banner */
+    #activeToolBanner {
+      position: fixed;
+      top: 52px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      padding: 7px 16px;
+      border-radius: 24px;
+      background: rgba(15, 23, 42, 0.96);
+      border: 1px solid var(--cyan);
+      box-shadow: 0 6px 24px rgba(56, 189, 248, 0.4);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      z-index: 85;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #activeToolBanner.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    #activeToolBanner .cancel-tool-btn {
+      background: rgba(244, 63, 94, 0.25);
+      border: 1px solid var(--rose);
+      color: var(--rose);
+      padding: 2px 7px;
+      border-radius: 12px;
+      font-size: 10px;
+      cursor: pointer;
+    }
+
+    /* Flash Notice Banner */
+    #hudNotice {
+      position: fixed;
+      top: 96px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      padding: 6px 16px;
+      border-radius: 20px;
+      background: rgba(9, 14, 28, 0.96);
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 800;
+      box-shadow: 0 4px 20px rgba(56, 189, 248, 0.35);
+      pointer-events: none;
+      opacity: 0;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 90;
+      white-space: nowrap;
+    }
+
+    #hudNotice.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ================= NOTION 2: MACRO COMMAND DECK ================= */
+    .macro-command-dock {
+      position: fixed;
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: 96vw;
+      max-width: 660px;
+      z-index: 75;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      pointer-events: none;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+
+    body.cinema-mode .macro-command-dock {
+      transform: translateX(-50%) translateY(180px);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Faction Selector Ribbon */
+    .faction-ribbon {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      overflow-x: auto;
+      padding: 3px 2px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .faction-pill-btn {
+      background: rgba(9, 14, 28, 0.92);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      border-radius: 18px;
+      padding: 6px 11px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      backdrop-filter: blur(12px);
+      transition: all 0.15s ease;
+      touch-action: manipulation;
+    }
+
+    .faction-pill-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .faction-pill-btn.active {
+      border-color: var(--cyan);
+      color: #fff;
+      background: rgba(56, 189, 248, 0.22);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+    }
+
+    .pill-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Active Macro Command Card */
+    .macro-card {
+      pointer-events: auto;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border-active);
+      border-radius: 14px;
+      padding: 10px 12px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 0 16px rgba(56, 189, 248, 0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .macro-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .macro-title-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .macro-badge {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      box-shadow: 0 0 8px currentColor;
+    }
+
+    .macro-title {
+      font-weight: 800;
+      font-size: 13px;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .macro-meta {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .macro-actions-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .macro-action-btn {
+      height: 42px;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      background: rgba(255, 255, 255, 0.04);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      padding: 2px;
+      transition: all 0.15s ease;
+      touch-action: manipulation;
+    }
+
+    .macro-action-btn span:first-child {
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .macro-action-btn span:last-child {
+      font-size: 9px;
+      letter-spacing: 0.2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 95%;
+    }
+
+    .macro-action-btn:hover, .macro-action-btn:active {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--cyan);
+    }
+
+    .macro-action-btn.attack {
+      border-color: rgba(244, 63, 94, 0.45);
+      background: rgba(244, 63, 94, 0.12);
+      color: #fca5a5;
+    }
+
+    .macro-action-btn.attack:hover {
+      background: rgba(244, 63, 94, 0.28);
+      border-color: var(--rose);
+      color: #fff;
+    }
+
+    .macro-action-btn.bridge {
+      border-color: rgba(245, 158, 11, 0.45);
+      background: rgba(245, 158, 11, 0.12);
+      color: #fde68a;
+    }
+
+    .macro-action-btn.bridge:hover {
+      background: rgba(245, 158, 11, 0.28);
+      border-color: var(--amber);
+      color: #fff;
+    }
+
+    .macro-action-btn.command {
+      border-color: rgba(56, 189, 248, 0.5);
+      background: var(--cyan);
+      color: #030712;
+      font-weight: 800;
+    }
+
+    .macro-action-btn.command:hover {
+      background: #7dd3fc;
+    }
+
+    /* Creative Mode Tactical Drawer Button */
+    .creative-bar-toggle {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.94);
+      border: 1px solid var(--purple);
+      border-radius: 12px;
+      padding: 6px 12px;
+      color: var(--purple);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      backdrop-filter: blur(12px);
+    }
+
+    /* Slide-up Drawer for Creative Tools & Intel */
+    .sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(4px);
+      z-index: 110;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .sheet-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .bottom-sheet {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-height: 84vh;
+      background: var(--card-bg);
+      border-top: 1px solid var(--card-border-active);
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      padding: 12px 16px;
+      padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
+      z-index: 120;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.8);
+    }
+
+    .bottom-sheet.open {
+      transform: translateY(0);
+    }
+
+    .sheet-handle {
+      width: 44px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+      margin: 0 auto;
+      cursor: pointer;
+    }
+
+    .sheet-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sheet-title {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .sheet-close-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      color: var(--text-muted);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .sheet-content {
+      overflow-y: auto;
+      max-height: 62vh;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .creative-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .creative-power-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease;
+    }
+
+    .creative-power-btn:hover, .creative-power-btn.active {
+      background: rgba(192, 132, 252, 0.15);
+      border-color: var(--purple);
+    }
+
+    .power-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .power-math-desc {
+      font-size: 9px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      line-height: 1.25;
+    }
+
+    .sheet-roster-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .sheet-roster-card:hover, .sheet-roster-card.active {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--cyan);
+    }
+
+    .diff-pill-group {
+      display: flex;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .diff-pill {
+      flex: 1;
+      padding: 8px 4px;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      text-align: center;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .diff-pill.active {
+      border-color: var(--amber);
+      color: #030712;
+      background: var(--amber);
+    }
+
+    /* Radar Canvas inside Drawer */
+    .sheet-radar-container {
+      width: 100%;
+      aspect-ratio: 1;
+      max-width: 320px;
+      margin: 0 auto;
+      background: #000;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .sheet-radar-container canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    @media (max-width: 500px) {
+      .title-text span {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. VIEWPORT -->
+  <div id="viewport">
+    <canvas id="mainCanvas"></canvas>
+  </div>
+
+  <!-- 2. TOP COMMAND HEADER -->
+  <header>
+    <div class="brand-group">
+      <a href="index.html" class="arcade-back-btn" title="Back to Arcade">
+        <span>◀</span> <span>Arcade</span>
+      </a>
+      <div class="live-pulse"></div>
+      <div class="title-text">
+        Conflict <span>Regional</span>
+      </div>
+    </div>
+
+    <!-- Center Sim Controls with Warp Speed (1x, 2x, 5x, 10x, 25x) -->
+    <div class="playback-capsule">
+      <button id="btnPause" class="ctrl-btn" title="Pause / Play (Space)">❚❚</button>
+      <button id="btnSpeed1" class="ctrl-btn active" title="1x Speed">1x</button>
+      <button id="btnSpeed2" class="ctrl-btn" title="2x Speed">2x</button>
+      <button id="btnSpeed5" class="ctrl-btn" title="5x Speed">5x</button>
+      <button id="btnSpeed10" class="ctrl-btn" title="10x Fast Speed">10x</button>
+      <button id="btnSpeed25" class="ctrl-btn" title="25x Warp Speed">25x</button>
+    </div>
+
+    <!-- Right Controls: Sim Year & Season -->
+    <div style="display: flex; align-items: center; gap: 6px;">
+      <div class="sim-clock-badge" id="simClock">
+        <span class="season-tag" id="seasonIcon">🌱</span>
+        <span id="simDateText">Y1 • Spring</span>
+      </div>
+      <button id="btnRecenter" class="cinema-btn" title="Recenter Map View (R)">🧭</button>
+      <button id="btnResetConflict" class="cinema-btn" title="Generate New Conflict Map">🔄</button>
+      <button id="btnCinemaToggle" class="cinema-btn" title="Cinema Mode (C)">🎬</button>
+    </div>
+  </header>
+
+  <!-- Floating Recenter Action Button -->
+  <button id="btnFloatingRecenter" class="recenter-fab" title="Recenter Map View (R)">
+    <span>🧭</span> <span>Recenter</span>
+  </button>
+
+  <!-- Exit Cinema Mode Button -->
+  <button id="btnExitCinema">
+    <span>✕</span> <span>Exit Cinema</span>
+  </button>
+
+  <!-- Sovereign Player Command HUD (Active when commanding a faction) -->
+  <div id="playerCommandBar">
+    <div style="display: flex; align-items: center; gap: 6px;">
+      <span style="color: var(--amber); font-weight: 800;">👑</span>
+      <span id="playerFactionName" style="font-weight: 800; color: #fff;">LEAVENWORTH CITADEL</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <div class="treasury-pill">
+        <span>🪙</span> <span id="playerTreasury">150</span>
+      </div>
+      <span id="playerObjectiveText" style="color: var(--cyan); font-size: 10px;">[OBJ: TAP ENEMY]</span>
+    </div>
+  </div>
+
+  <!-- Active Tool Banner -->
+  <div id="activeToolBanner">
+    <span id="activeToolText">💥 ARTILLERY READY: Tap map to strike</span>
+    <button class="cancel-tool-btn" id="btnCancelTool">Cancel</button>
+  </div>
+
+  <!-- Flash Notification Notice -->
+  <div id="hudNotice">REGIONAL THEATER INITIALIZED</div>
+
+  <!-- 3. NOTION 2: MACRO COMMAND DECK -->
+  <div class="macro-command-dock">
+    
+    <!-- Faction Fast-Switch Ribbon -->
+    <div class="faction-ribbon" id="factionRibbon"></div>
+
+    <!-- Active Macro Sovereign Command Card (Zero map-tapping needed) -->
+    <div class="macro-card" id="macroCard">
+      <div class="macro-header">
+        <div class="macro-title-group">
+          <div class="macro-badge" id="macroBadge"></div>
+          <div>
+            <div class="macro-title" id="macroTitle">Leavenworth Citadel</div>
+            <div class="macro-meta" id="macroMeta">Territory: 18.2% • 🪖 280 Troops • Supply: 98%</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <div class="treasury-pill" id="macroObjectivePill">
+            <span>🎯</span> <span id="macroObjectiveName">OBJ: NONE</span>
+          </div>
+          <button class="macro-focus-btn" id="btnFocusCapital" title="Center camera on capital">📍 Focus</button>
+        </div>
+      </div>
+
+      <!-- 6 Big Finger-Friendly Smart Actions -->
+      <div class="macro-actions-grid">
+        <button class="macro-action-btn attack" id="macroBtnAttack" title="Auto-Spearhead shortest highway route to nearest rival">
+          <span>⚔️</span>
+          <span>Attack Nearest</span>
+        </button>
+
+        <button class="macro-action-btn bridge" id="macroBtnBridge" title="Auto-detect & span river channel blocking advance">
+          <span>🪵</span>
+          <span>Bridge Ahead</span>
+        </button>
+
+        <button class="macro-action-btn" id="macroBtnBarrage" title="Drop heavy artillery salvo on active combat frontline">
+          <span>💥</span>
+          <span>Barrage Front</span>
+        </button>
+
+        <button class="macro-action-btn" id="macroBtnDraft" title="Draft +150 fresh militia recruits">
+          <span>🪖</span>
+          <span>Draft +150</span>
+        </button>
+
+        <button class="macro-action-btn" id="macroBtnFortify" title="Construct heavy bastions & ridge redoubts">
+          <span>🛡️</span>
+          <span>Fortify Base</span>
+        </button>
+
+        <button class="macro-action-btn command" id="macroBtnCommand" title="Take direct sovereign command of this county">
+          <span>👑</span>
+          <span id="macroCommandText">Play Faction</span>
+        </button>
+      </div>
+
+      <!-- Creative Mode Powers & War Intel Toggle Bar -->
+      <button class="creative-bar-toggle" id="btnOpenCreativeDrawer">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <span>⚡ ☣️ 🌾</span>
+          <span>Creative Mode Mathematical Powers & War Intel</span>
+        </div>
+        <span>▲ Open</span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- 4. SLIDE-UP BOTTOM SHEET (CREATIVE POWERS & INTEL) -->
+  <div class="sheet-backdrop" id="sheetBackdrop"></div>
+  <div class="bottom-sheet" id="bottomSheet">
+    <div class="sheet-handle" id="sheetHandle"></div>
+    <div class="sheet-header">
+      <div class="sheet-title" id="sheetTitle">Creative Mode Powers & Watershed Intel</div>
+      <button class="sheet-close-btn" id="btnCloseSheet">✕ Close</button>
+    </div>
+    <div class="sheet-content" id="sheetContent"></div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       AGES OF CONSTANT CONFLICT: REGIONAL CONFLICT (300x300 HIGH-PERFORMANCE ENGINE)
+       Real-World Mathematical Models: EMP, Famine, SIR Epidemic, River Advection-Dispersion
+       ========================================================================== */
+
+    const W = 300;
+    const H = 300;
+    const TOTAL_CELLS = W * H;
+
+    const TERRAIN = {
+      FIELD: 0,
+      FOREST: 1,
+      RIVER: 2,
+      ROAD: 3,
+      BRIDGE: 4,
+      ICE: 5
+    };
+
+    // PRNG
+    class PRNG {
+      constructor(seedStr) {
+        let h = 1779033703 ^ seedStr.length;
+        for (let i = 0; i < seedStr.length; i++) {
+          h = Math.imul(h ^ seedStr.charCodeAt(i), 3432918353);
+          h = (h << 13) | (h >>> 19);
+        }
+        this.s = h >>> 0;
+      }
+      next() {
+        let t = (this.s += 0x6d2b79f5);
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      }
+      range(min, max) { return min + this.next() * (max - min); }
+      rangeInt(min, max) { return Math.floor(this.range(min, max + 1)); }
+    }
+
+    // Historic Northeast Kansas Watershed (Real USGS Spatial Coordinates & Topography)
+    const REGIONAL_COUNTIES = [
+      { id: 1, name: "Leavenworth Citadel", hex: "#2563eb", rgb: [37, 99, 235], baseAtk: 1.30, baseDef: 1.45, town: "Leavenworth", isGang: false, capitalX: 258, capitalY: 136 },
+      { id: 2, name: "Atchison River Barons", hex: "#dc2626", rgb: [220, 38, 38], baseAtk: 1.40, baseDef: 1.15, town: "Atchison", isGang: false, capitalX: 204, capitalY: 34 },
+      { id: 3, name: "Oskaloosa Coalition", hex: "#16a34a", rgb: [22, 163, 74], baseAtk: 1.20, baseDef: 1.35, town: "Oskaloosa", isGang: false, capitalX: 38, capitalY: 142 },
+      { id: 4, name: "Lansing Ironclad", hex: "#d97706", rgb: [217, 119, 6], baseAtk: 1.25, baseDef: 1.40, town: "Lansing", isGang: false, capitalX: 252, capitalY: 182 },
+      { id: 5, name: "Easton Rangers", hex: "#9333ea", rgb: [147, 51, 234], baseAtk: 1.40, baseDef: 1.50, town: "Easton", isGang: false, capitalX: 126, capitalY: 108 },
+      { id: 6, name: "Tonganoxie Guard", hex: "#0891b2", rgb: [8, 145, 178], baseAtk: 1.15, baseDef: 1.35, town: "Tonganoxie", isGang: false, capitalX: 142, capitalY: 248 }
+    ];
+
+    // Real Kansas Watershed Historic Settlements & Outlaw Gangs
+    const OUTLAW_GANGS = [
+      { id: 101, name: "Stranger Valley Rustlers", hex: "#e11d48", rgb: [225, 29, 72], baseAtk: 0.90, baseDef: 0.80, town: "Jarbalo", isGang: true, x: 138, y: 178 },
+      { id: 102, name: "Timber Ridge Marauders", hex: "#7c2d12", rgb: [124, 45, 18], baseAtk: 0.95, baseDef: 0.85, town: "Lowemont", isGang: true, x: 195, y: 95 },
+      { id: 103, name: "Kickapoo River Bushwhackers", hex: "#475569", rgb: [71, 85, 105], baseAtk: 0.85, baseDef: 0.75, town: "Kickapoo", isGang: true, x: 235, y: 78 },
+      { id: 104, name: "Delaware River Pirates", hex: "#0f766e", rgb: [15, 118, 110], baseAtk: 0.90, baseDef: 0.80, town: "Slough Haven", isGang: true, x: 42, y: 238 }
+    ];
+
+    const state = {
+      elevation: new Uint8Array(TOTAL_CELLS),
+      terrain: new Uint8Array(TOTAL_CELLS),
+      baseTerrain: new Uint8Array(TOTAL_CELLS),
+      owner: new Uint8Array(TOTAL_CELLS),
+      frontline: new Uint8Array(TOTAL_CELLS),
+      supply: new Uint8Array(TOTAL_CELLS),
+
+      // Real Mathematical Phenomena Buffers
+      famine: new Uint8Array(TOTAL_CELLS),       // 0-255: Malthusian Carrying capacity collapse & crop decay
+      epidemic: new Uint8Array(TOTAL_CELLS),     // 0=Susceptible, 1-255=Infected (SIR model with recovery timer)
+      contamination: new Uint8Array(TOTAL_CELLS),// 0-255: Riverine toxic plume concentration C(x,y,t)
+      empTimer: new Uint8Array(TOTAL_CELLS),     // 0-255: Electromagnetic blackout ticks
+
+      factions: new Map(),
+      selectedFactionId: 1,
+      playerFactionId: null, // null = Creative Mode Spectator, 1..6 = Player Sovereign
+      playerTreasury: 150,
+      difficulty: 'veteran',
+
+      season: 'spring',
+      currentYear: 1,
+
+      sparks: [],
+
+      ticks: 0,
+      speed: 1,
+      isPaused: false,
+
+      // Camera State (1:1 unified screen space)
+      camX: 0,
+      camY: 0,
+      initialCamX: 0,
+      initialCamY: 0,
+      zoom: 1.0,
+      isDragging: false,
+      dragStartX: 0,
+      dragStartY: 0,
+
+      touchStartDist: 0,
+      initialTouchZoom: 1.0,
+
+      activeTool: null, // 'strike', 'bridge', 'trench', 'emp', 'famine', 'disease', 'toxin', 'revolt'
+      seed: "EASTON-WATERSHED-2026"
+    };
+
+    // Canvases
+    const mainCanvas = document.getElementById('mainCanvas');
+    const mainCtx = mainCanvas.getContext('2d', { alpha: false });
+
+    // Layer 1: Static Baked Background Canvas (Hillshade + Biomes + Roads)
+    const staticCanvas = document.createElement('canvas');
+    staticCanvas.width = W;
+    staticCanvas.height = H;
+    const staticCtx = staticCanvas.getContext('2d', { alpha: false });
+
+    // Layer 2: Dynamic Territorial Paint Buffer
+    const dynamicCanvas = document.createElement('canvas');
+    dynamicCanvas.width = W;
+    dynamicCanvas.height = H;
+    const dynamicCtx = dynamicCanvas.getContext('2d', { willReadFrequently: true });
+    const territoryImageData = dynamicCtx.createImageData(W, H);
+
+    // Layer 3: Minimap Offscreen
+    const minimapCanvas = document.createElement('canvas');
+    minimapCanvas.width = W;
+    minimapCanvas.height = H;
+    const minimapCtx = minimapCanvas.getContext('2d');
+
+    let rng = new PRNG(state.seed);
+
+    // --- 4. TOPOGRAPHIC & WATERSHED GENERATOR ---
+    function initTheater(seed = null) {
+      state.seed = seed || ("THEATER-" + Math.floor(Math.random() * 999999));
+      rng = new PRNG(state.seed);
+
+      state.ticks = 0;
+      state.sparks = [];
+      state.factions.clear();
+      state.selectedFactionId = 1;
+      state.playerFactionId = null;
+      state.playerTreasury = 150;
+      state.season = 'spring';
+      state.currentYear = 1;
+      setArmedTool(null);
+      updatePlayerHUD();
+
+      state.elevation.fill(0);
+      state.terrain.fill(TERRAIN.FIELD);
+      state.baseTerrain.fill(TERRAIN.FIELD);
+      state.owner.fill(0);
+      state.frontline.fill(0);
+      state.supply.fill(0);
+      state.famine.fill(0);
+      state.epidemic.fill(0);
+      state.contamination.fill(0);
+      state.empTimer.fill(0);
+
+      // Generate Elevation & Limestone Ridges (USGS Kansas Till Plains)
+      for (let y = 0; y < H; y++) {
+        for (let x = 0; x < W; x++) {
+          const idx = y * W + x;
+          const nx = x / 40.0;
+          const ny = y / 40.0;
+          const hill1 = Math.sin(nx * 1.5) * Math.cos(ny * 1.2);
+          const hill2 = Math.sin(nx * 3.4 + 1.2) * Math.cos(ny * 2.8 + 0.4) * 0.5;
+          const hill3 = Math.sin(nx * 7.1) * Math.cos(ny * 6.3) * 0.25;
+          let elev = Math.floor(128 + (hill1 + hill2 + hill3) * 75);
+          elev = Math.max(10, Math.min(245, elev));
+          state.elevation[idx] = elev;
+
+          if (elev > 165 && rng.next() > 0.45) {
+            state.terrain[idx] = TERRAIN.FOREST;
+            state.baseTerrain[idx] = TERRAIN.FOREST;
+          }
+        }
+      }
+
+      carveRivers();
+      spawnCountySeats();
+      spawnOutlawGangs();
+      buildHighwayNetwork();
+      bakeStaticHillshade();
+      renderDynamicTerritoryBuffer();
+      updateAllMinimaps();
+      renderFactionRibbon();
+      updateMacroCard(1);
+
+      showFlashNotice("NORTHEAST KANSAS WATERSHED INITIALIZED (300x300)");
+    }
+
+    function carveRivers() {
+      // 1. Missouri River (East boundary loops)
+      for (let y = 0; y < H; y++) {
+        let rx = 265;
+        if (y < 60) {
+          const t = y / 60.0;
+          rx = Math.floor(235 - Math.sin(t * Math.PI) * 36);
+        } else if (y < 120) {
+          const t = (y - 60) / 60.0;
+          rx = Math.floor(235 + Math.sin(t * Math.PI) * 45);
+        } else if (y < 200) {
+          const t = (y - 120) / 80.0;
+          rx = Math.floor(268 - t * 14 + Math.sin(y / 15.0) * 4);
+        } else {
+          const t = (y - 200) / 100.0;
+          rx = Math.floor(254 + t * 38);
+        }
+
+        for (let ox = -3; ox <= 3; ox++) {
+          const cx = rx + ox;
+          if (cx >= 0 && cx < W) {
+            const idx = y * W + cx;
+            state.terrain[idx] = TERRAIN.RIVER;
+            state.baseTerrain[idx] = TERRAIN.RIVER;
+            state.elevation[idx] = Math.max(8, state.elevation[idx] - 38);
+          }
+        }
+      }
+
+      // 2. Stranger Creek Spine (North to South)
+      for (let y = 0; y < H; y++) {
+        const meander = Math.floor(Math.sin(y / 16.0) * 8 + Math.cos(y / 7.0) * 4);
+        const rx = Math.max(0, Math.min(W - 1, 134 + meander));
+        for (let ox = -2; ox <= 2; ox++) {
+          const cx = rx + ox;
+          if (cx >= 0 && cx < W) {
+            const idx = y * W + cx;
+            state.terrain[idx] = TERRAIN.RIVER;
+            state.baseTerrain[idx] = TERRAIN.RIVER;
+            state.elevation[idx] = Math.max(8, state.elevation[idx] - 28);
+          }
+        }
+      }
+
+      // 3. Delaware River (West edge)
+      for (let y = 0; y < H; y++) {
+        const rx = Math.max(0, Math.min(W - 1, 28 + Math.floor(Math.sin(y / 22.0) * 6)));
+        for (let ox = -1; ox <= 1; ox++) {
+          const cx = rx + ox;
+          if (cx >= 0 && cx < W) {
+            const idx = y * W + cx;
+            state.terrain[idx] = TERRAIN.RIVER;
+            state.baseTerrain[idx] = TERRAIN.RIVER;
+            state.elevation[idx] = Math.max(8, state.elevation[idx] - 22);
+          }
+        }
+      }
+
+      // 4. Salt Creek Tributary
+      for (let x = 145; x <= 265; x++) {
+        const y = Math.floor(108 + ((x - 145) / 120.0) * 22 + Math.sin(x / 8.0) * 3);
+        if (y >= 0 && y < H) {
+          const idx = y * W + x;
+          state.terrain[idx] = TERRAIN.RIVER;
+          state.baseTerrain[idx] = TERRAIN.RIVER;
+        }
+      }
+    }
+
+    function spawnCountySeats() {
+      REGIONAL_COUNTIES.forEach(meta => {
+        const f = {
+          ...meta,
+          troops: 280,
+          territory: 0,
+          alive: true,
+          supplyIndex: 100,
+          offensiveBonus: 1.0,
+          spearheadTarget: null
+        };
+        state.factions.set(meta.id, f);
+
+        const r = 15;
+        for (let dy = -r; dy <= r; dy++) {
+          for (let dx = -r; dx <= r; dx++) {
+            const dist = Math.hypot(dx, dy);
+            if (dist <= r) {
+              const x = meta.capitalX + dx;
+              const y = meta.capitalY + dy;
+              if (x >= 0 && x < W && y >= 0 && y < H) {
+                const idx = y * W + x;
+                if (meta.id === 5 && dist >= 8 && dist <= 14 && state.terrain[idx] !== TERRAIN.RIVER) {
+                  state.terrain[idx] = TERRAIN.FOREST; // Natural timber ridge defense for Easton
+                  state.baseTerrain[idx] = TERRAIN.FOREST;
+                }
+                if (state.terrain[idx] !== TERRAIN.RIVER) {
+                  state.owner[idx] = f.id;
+                  f.territory++;
+                }
+              }
+            }
+          }
+        }
+      });
+
+      // Pre-span K-92 stone bridge across Stranger Creek near Easton
+      for (let bx = 126; bx <= 138; bx++) {
+        const bIdx = 108 * W + bx;
+        if (state.terrain[bIdx] === TERRAIN.RIVER) {
+          state.terrain[bIdx] = TERRAIN.BRIDGE;
+          state.baseTerrain[bIdx] = TERRAIN.BRIDGE;
+        }
+      }
+    }
+
+    function spawnOutlawGangs() {
+      OUTLAW_GANGS.forEach(gang => {
+        const f = {
+          ...gang,
+          capitalX: gang.x,
+          capitalY: gang.y,
+          troops: 65,
+          territory: 0,
+          alive: true,
+          supplyIndex: 70,
+          offensiveBonus: 0.9,
+          spearheadTarget: null
+        };
+        state.factions.set(gang.id, f);
+
+        const r = 9;
+        for (let dy = -r; dy <= r; dy++) {
+          for (let dx = -r; dx <= r; dx++) {
+            if (Math.hypot(dx, dy) <= r) {
+              const x = gang.x + dx;
+              const y = gang.y + dy;
+              if (x >= 0 && x < W && y >= 0 && y < H) {
+                const idx = y * W + x;
+                if (state.terrain[idx] !== TERRAIN.RIVER && state.owner[idx] === 0) {
+                  state.owner[idx] = f.id;
+                  f.territory++;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function buildHighwayNetwork() {
+      layPavedHighway(258, 136, 132, 108); // K-92 Leavenworth -> Easton
+      layPavedHighway(132, 108, 38, 142);  // K-92 Easton -> Oskaloosa
+      layPavedHighway(204, 34, 195, 95);   // US-73 Atchison -> Lowemont
+      layPavedHighway(195, 95, 258, 136);  // US-73 Lowemont -> Leavenworth
+      layPavedHighway(258, 136, 252, 182); // K-7 Leavenworth -> Lansing
+      layPavedHighway(132, 108, 138, 178); // Stranger Road Easton -> Jarbalo
+      layPavedHighway(138, 178, 142, 248); // Stranger Road Jarbalo -> Tonganoxie
+      layPavedHighway(142, 248, 252, 182); // US-24/40 Tonganoxie -> Lansing
+    }
+
+    function layPavedHighway(x0, y0, x1, y1) {
+      let dx = Math.abs(x1 - x0);
+      let dy = Math.abs(y1 - y0);
+      let sx = x0 < x1 ? 1 : -1;
+      let sy = y0 < y1 ? 1 : -1;
+      let err = dx - dy;
+
+      let cx = x0;
+      let cy = y0;
+
+      while (true) {
+        if (cx >= 0 && cx < W && cy >= 0 && cy < H) {
+          const idx = cy * W + cx;
+          if (state.terrain[idx] === TERRAIN.RIVER) {
+            state.terrain[idx] = TERRAIN.BRIDGE;
+            state.baseTerrain[idx] = TERRAIN.BRIDGE;
+          } else {
+            state.terrain[idx] = TERRAIN.ROAD;
+            state.baseTerrain[idx] = TERRAIN.ROAD;
+          }
+        }
+
+        if (cx === x1 && cy === y1) break;
+        let e2 = 2 * err;
+        if (e2 > -dy) { err -= dy; cx += sx; }
+        if (e2 < dx) { err += dx; cy += sy; }
+      }
+    }
+
+    function updateSeasonCycle(month) {
+      let newSeason = 'spring';
+      if (month === 12 || month <= 2) newSeason = 'winter';
+      else if (month >= 3 && month <= 5) newSeason = 'spring';
+      else if (month >= 6 && month <= 8) newSeason = 'summer';
+      else newSeason = 'autumn';
+
+      if (newSeason !== state.season) {
+        state.season = newSeason;
+        handleSeasonTransition(newSeason);
+      }
+    }
+
+    function handleSeasonTransition(season) {
+      if (season === 'winter') {
+        for (let i = 0; i < TOTAL_CELLS; i++) {
+          if (state.baseTerrain[i] === TERRAIN.RIVER) state.terrain[i] = TERRAIN.ICE;
+        }
+        showFlashNotice("❄️ WINTER: WATERWAYS FROZEN OVER! INVASION ROUTES OPEN!");
+      } else {
+        for (let i = 0; i < TOTAL_CELLS; i++) {
+          if (state.baseTerrain[i] === TERRAIN.RIVER) state.terrain[i] = TERRAIN.RIVER;
+        }
+        if (season === 'spring') showFlashNotice("🌱 SPRING: FLOODS RETURN TO WATERWAYS");
+        else if (season === 'summer') showFlashNotice("☀️ SUMMER: HARVEST RECRUITMENT BOOST (+25%)");
+        else showFlashNotice("🍂 AUTUMN: STOCKPILE SUPPLIES BEFORE WINTER");
+      }
+      bakeStaticHillshade();
+    }
+
+    function bakeStaticHillshade() {
+      const img = staticCtx.createImageData(W, H);
+      const data = img.data;
+
+      const lx = -1.0;
+      const ly = -1.0;
+      const lz = 1.4;
+      const lLen = Math.hypot(lx, ly, lz);
+      const nlx = lx / lLen;
+      const nly = ly / lLen;
+      const nlz = lz / lLen;
+
+      const isWinter = state.season === 'winter';
+
+      for (let y = 0; y < H; y++) {
+        for (let x = 0; x < W; x++) {
+          const idx = y * W + x;
+          const pIdx = idx * 4;
+
+          const eLeft  = x > 0 ? state.elevation[y * W + (x - 1)] : state.elevation[idx];
+          const eRight = x < W - 1 ? state.elevation[y * W + (x + 1)] : state.elevation[idx];
+          const eUp    = y > 0 ? state.elevation[(y - 1) * W + x] : state.elevation[idx];
+          const eDown  = y < H - 1 ? state.elevation[(y + 1) * W + x] : state.elevation[idx];
+
+          const dzdx = (eRight - eLeft) / 2.0;
+          const dzdy = (eDown - eUp) / 2.0;
+
+          const nx = -dzdx;
+          const ny = -dzdy;
+          const nz = 1.0;
+          const nLen = Math.hypot(nx, ny, nz);
+          const dot = (nx / nLen) * nlx + (ny / nLen) * nly + (nz / nLen) * nlz;
+          const shade = Math.max(0.2, Math.min(1.0, 0.5 + dot * 0.5));
+
+          const t = state.terrain[idx];
+
+          if (t === TERRAIN.ICE) {
+            data[pIdx]     = Math.floor(165 * shade);
+            data[pIdx + 1] = Math.floor(220 * shade);
+            data[pIdx + 2] = Math.floor(245 * shade);
+            data[pIdx + 3] = 255;
+          } else if (t === TERRAIN.RIVER) {
+            data[pIdx]     = 14;
+            data[pIdx + 1] = 75;
+            data[pIdx + 2] = 125;
+            data[pIdx + 3] = 255;
+          } else if (t === TERRAIN.BRIDGE) {
+            data[pIdx]     = 220;
+            data[pIdx + 1] = 175;
+            data[pIdx + 2] = 85;
+            data[pIdx + 3] = 255;
+          } else if (t === TERRAIN.ROAD) {
+            data[pIdx]     = 180;
+            data[pIdx + 1] = 190;
+            data[pIdx + 2] = 205;
+            data[pIdx + 3] = 255;
+          } else if (t === TERRAIN.FOREST) {
+            if (isWinter) {
+              data[pIdx]     = Math.floor(70 * shade);
+              data[pIdx + 1] = Math.floor(90 * shade);
+              data[pIdx + 2] = Math.floor(85 * shade);
+            } else {
+              data[pIdx]     = Math.floor(18 * shade);
+              data[pIdx + 1] = Math.floor(58 * shade);
+              data[pIdx + 2] = Math.floor(28 * shade);
+            }
+            data[pIdx + 3] = 255;
+          } else {
+            // Field
+            if (isWinter) {
+              data[pIdx]     = Math.floor(140 * shade);
+              data[pIdx + 1] = Math.floor(155 * shade);
+              data[pIdx + 2] = Math.floor(165 * shade);
+            } else {
+              data[pIdx]     = Math.floor(40 * shade);
+              data[pIdx + 1] = Math.floor(52 * shade);
+              data[pIdx + 2] = Math.floor(38 * shade);
+            }
+            data[pIdx + 3] = 255;
+          }
+        }
+      }
+
+      staticCtx.putImageData(img, 0, 0);
+    }
+
+    function renderDynamicTerritoryBuffer() {
+      const data = territoryImageData.data;
+      const fMap = state.factions;
+
+      for (let i = 0; i < TOTAL_CELLS; i++) {
+        const owner = state.owner[i];
+        const pIdx = i * 4;
+
+        // Mathematical Overlays
+        const tox = state.contamination[i];
+        const epi = state.epidemic[i];
+        const fam = state.famine[i];
+        const emp = state.empTimer[i];
+
+        if (tox > 0) {
+          // Riverine Chemical Plume: Iridescent Magenta / Toxic Purple
+          data[pIdx]     = Math.min(255, 180 + tox);
+          data[pIdx + 1] = Math.max(0, 40 - Math.floor(tox * 0.2));
+          data[pIdx + 2] = Math.min(255, 200 + tox);
+          data[pIdx + 3] = 230;
+          continue;
+        }
+
+        if (owner === 0) {
+          if (fam > 0) {
+            // Scorched famine dirt
+            data[pIdx]     = 90;
+            data[pIdx + 1] = 70;
+            data[pIdx + 2] = 40;
+            data[pIdx + 3] = 120;
+          } else {
+            data[pIdx]     = 0;
+            data[pIdx + 1] = 0;
+            data[pIdx + 2] = 0;
+            data[pIdx + 3] = 0;
+          }
+        } else {
+          const f = fMap.get(owner);
+          if (f && f.alive) {
+            const isFront = state.frontline[i] === 1;
+            const sup = state.supply[i];
+
+            if (emp > 0) {
+              // EMP Blackout Glitch
+              data[pIdx]     = 40;
+              data[pIdx + 1] = 80;
+              data[pIdx + 2] = 120;
+              data[pIdx + 3] = 160;
+            } else if (epi > 0) {
+              // SIR Epidemic Contagion Tint (Viridian / Toxic Green)
+              data[pIdx]     = 34;
+              data[pIdx + 1] = 197;
+              data[pIdx + 2] = 94;
+              data[pIdx + 3] = 230;
+            } else if (fam > 0) {
+              // Scorched famine
+              data[pIdx]     = Math.floor(f.rgb[0] * 0.5 + 40);
+              data[pIdx + 1] = Math.floor(f.rgb[1] * 0.5 + 30);
+              data[pIdx + 2] = 30;
+              data[pIdx + 3] = 180;
+            } else if (sup < 15) {
+              data[pIdx]     = Math.floor(f.rgb[0] * 0.4);
+              data[pIdx + 1] = Math.floor(f.rgb[1] * 0.4);
+              data[pIdx + 2] = Math.floor(f.rgb[2] * 0.4);
+              data[pIdx + 3] = 180;
+            } else if (isFront) {
+              data[pIdx]     = Math.min(255, f.rgb[0] + 65);
+              data[pIdx + 1] = Math.min(255, f.rgb[1] + 65);
+              data[pIdx + 2] = Math.min(255, f.rgb[2] + 65);
+              data[pIdx + 3] = 245;
+            } else {
+              data[pIdx]     = f.rgb[0];
+              data[pIdx + 1] = f.rgb[1];
+              data[pIdx + 2] = f.rgb[2];
+              data[pIdx + 3] = 210;
+            }
+          } else {
+            data[pIdx]     = 60;
+            data[pIdx + 1] = 60;
+            data[pIdx + 2] = 60;
+            data[pIdx + 3] = 120;
+          }
+        }
+      }
+
+      dynamicCtx.putImageData(territoryImageData, 0, 0);
+    }
+
+    // --- 7. SIMULATION LOOP (INCLUDING MATHEMATICAL PHENOMENA) ---
+    function stepSimulation() {
+      state.ticks++;
+
+      const year = Math.floor(state.ticks / 120) + 1;
+      const month = (Math.floor(state.ticks / 10) % 12) + 1;
+      state.currentYear = year;
+
+      updateSeasonCycle(month);
+
+      const seasonIcons = { spring: '🌱 Spring', summer: '☀️ Summer', autumn: '🍂 Autumn', winter: '❄️ Winter' };
+      document.getElementById('seasonIcon').innerText = seasonIcons[state.season].split(' ')[0];
+      document.getElementById('simDateText').innerText = `Y${year} • ${seasonIcons[state.season].split(' ')[1]}`;
+
+      // Simulate Real Mathematical Models
+      stepMathematicalPhenomena();
+
+      // Treasury & reinforcements
+      if (state.ticks % 15 === 0) {
+        state.factions.forEach(f => {
+          if (!f.alive) return;
+          const supMult = f.supplyIndex / 100.0;
+          let recruitGain = Math.floor((f.territory / 140) * supMult) + 2;
+
+          if (state.season === 'summer') recruitGain = Math.floor(recruitGain * 1.3);
+
+          if (state.playerFactionId === f.id) {
+            if (state.difficulty === 'recruit') recruitGain = Math.floor(recruitGain * 1.5);
+            state.playerTreasury = Math.min(999, state.playerTreasury + Math.floor(recruitGain * 1.5) + 3);
+            updatePlayerHUD();
+          } else if (state.difficulty === 'ironclad') {
+            recruitGain = Math.floor(recruitGain * 1.35);
+          }
+
+          f.troops = Math.min(3000, f.troops + recruitGain);
+
+          if (f.offensiveBonus > 1.0) {
+            f.offensiveBonus = Math.max(1.0, f.offensiveBonus - 0.02);
+          }
+        });
+      }
+
+      // Decisive Frontline Breakthrough Sweeps
+      resolveFrontlineBreakthroughs();
+
+      // Periodic Supply Lines & Pocket Starvation Check
+      if (state.ticks % 6 === 0) {
+        updateFrontlinesAndPocketing();
+        renderDynamicTerritoryBuffer();
+        updateRoster();
+        updateMacroCard();
+      }
+
+      if (state.ticks % 25 === 0) {
+        updateAllMinimaps();
+      }
+    }
+
+    // Mathematical Phenomenon Execution Loop
+    function stepMathematicalPhenomena() {
+      const dirs = [[0, -1], [0, 1], [-1, 0], [1, 0]];
+
+      // 1. ADVECTION-DISPERSION EQUATION: Riverine Toxic Plume flows downstream with velocity vector v!
+      // Stranger Creek flows South (+Y), Missouri River flows South/Southeast (+Y, +X)
+      if (state.ticks % 2 === 0) {
+        for (let y = H - 2; y >= 0; y--) {
+          for (let x = 0; x < W; x++) {
+            const idx = y * W + x;
+            const conc = state.contamination[idx];
+            if (conc > 0) {
+              // First order decay: C(t+1) = C(t) * e^(-k)
+              const decayed = Math.max(0, Math.floor(conc * 0.985));
+              state.contamination[idx] = decayed;
+
+              // Advection transport downstream (+Y)
+              const downY = y + 1;
+              let downX = x;
+              // Missouri River curves east near Lansing/KC
+              if (x > 220 && rng.next() > 0.4) downX = Math.min(W - 1, x + 1);
+
+              const downIdx = downY * W + downX;
+              if (downY < H && (state.terrain[downIdx] === TERRAIN.RIVER || state.terrain[downIdx] === TERRAIN.ICE || state.terrain[downIdx] === TERRAIN.BRIDGE)) {
+                state.contamination[downIdx] = Math.min(255, Math.max(state.contamination[downIdx], Math.floor(decayed * 0.92)));
+              }
+
+              // Toxic attrition to garrison drinking from stream
+              const owner = state.owner[idx];
+              if (owner > 0 && state.factions.has(owner)) {
+                const f = state.factions.get(owner);
+                if (rng.next() > 0.75) f.troops = Math.max(10, f.troops - 1);
+              }
+            }
+          }
+        }
+      }
+
+      // 2. SIR EPIDEMIC MODEL: Spatial Cellular Automaton Contagion
+      if (state.ticks % 4 === 0) {
+        for (let y = 0; y < H; y += 2) {
+          for (let x = 0; x < W; x += 2) {
+            const idx = y * W + x;
+            const inf = state.epidemic[idx];
+            if (inf > 0) {
+              // Decrement recovery timer
+              state.epidemic[idx]--;
+
+              // Attrition on sickened troops
+              const o = state.owner[idx];
+              if (o > 0 && state.factions.has(o) && rng.next() > 0.85) {
+                const f = state.factions.get(o);
+                f.troops = Math.max(10, f.troops - 1);
+              }
+
+              // Contagion transmission to neighbors (beta transmission boosted 3x along roads!)
+              const roadBoost = (state.terrain[idx] === TERRAIN.ROAD || state.terrain[idx] === TERRAIN.BRIDGE) ? 0.45 : 0.15;
+              if (rng.next() < roadBoost) {
+                const d = dirs[rng.rangeInt(0, 3)];
+                const nx = x + d[0];
+                const ny = y + d[1];
+                if (nx >= 0 && nx < W && ny >= 0 && ny < H) {
+                  const nIdx = ny * W + nx;
+                  if (state.owner[nIdx] > 0 && state.epidemic[nIdx] === 0) {
+                    state.epidemic[nIdx] = 120; // 120 ticks duration
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // 3. MALTHUSIAN FAMINE ATTRITION
+      if (state.ticks % 8 === 0) {
+        for (let y = 0; y < H; y += 3) {
+          for (let x = 0; x < W; x += 3) {
+            const idx = y * W + x;
+            if (state.famine[idx] > 0) {
+              state.famine[idx]--;
+              const o = state.owner[idx];
+              if (o > 0 && state.factions.has(o)) {
+                const f = state.factions.get(o);
+                // Exponential carrying capacity starvation
+                if (rng.next() > 0.5) f.troops = Math.max(5, Math.floor(f.troops * 0.98));
+              }
+            }
+          }
+        }
+      }
+
+      // 4. EMP BLACKOUT DECAY
+      if (state.ticks % 5 === 0) {
+        for (let i = 0; i < TOTAL_CELLS; i += 4) {
+          if (state.empTimer[i] > 0) state.empTimer[i]--;
+        }
+      }
+    }
+
+    function resolveFrontlineBreakthroughs() {
+      const dirs = [[0, -1], [0, 1], [-1, 0], [1, 0]];
+      const sweeps = 350 + Math.floor(state.speed * 60);
+
+      for (let s = 0; s < sweeps; s++) {
+        const x = rng.rangeInt(1, W - 2);
+        const y = rng.rangeInt(1, H - 2);
+        const idx = y * W + x;
+
+        if (state.frontline[idx] !== 1) continue;
+
+        // EMP Blackout freezes frontline movement
+        if (state.empTimer[idx] > 0) continue;
+
+        const atkId = state.owner[idx];
+        const attacker = state.factions.get(atkId);
+        if (!attacker || !attacker.alive || attacker.troops <= 4) continue;
+
+        let dir = dirs[rng.rangeInt(0, 3)];
+        if (attacker.spearheadTarget && state.factions.has(attacker.spearheadTarget)) {
+          const tgt = state.factions.get(attacker.spearheadTarget);
+          if (tgt.alive) {
+            const vx = tgt.capitalX - x;
+            const vy = tgt.capitalY - y;
+            if (Math.abs(vx) > Math.abs(vy)) {
+              dir = [vx > 0 ? 1 : -1, 0];
+            } else {
+              dir = [0, vy > 0 ? 1 : -1];
+            }
+          }
+        }
+
+        const nx = x + dir[0];
+        const ny = y + dir[1];
+        const targetIdx = ny * W + nx;
+        const defId = state.owner[targetIdx];
+
+        if (defId === atkId) continue;
+
+        const targetTerrain = state.terrain[targetIdx];
+        if (targetTerrain === TERRAIN.RIVER) continue;
+
+        let roadBonus = 1.0;
+        if (targetTerrain === TERRAIN.ROAD || targetTerrain === TERRAIN.BRIDGE || targetTerrain === TERRAIN.ICE) {
+          roadBonus = 3.2;
+        }
+
+        const elevDelta = (state.elevation[targetIdx] - state.elevation[idx]);
+        const slopePenalty = elevDelta > 0 ? (elevDelta / 255.0) * 0.75 : 0;
+
+        let bridgePenalty = 0;
+        if (targetTerrain === TERRAIN.BRIDGE) bridgePenalty = 0.25;
+
+        let supplyFactor = (state.supply[idx] / 100.0);
+
+        let objectiveBonus = 1.0;
+        if (attacker.spearheadTarget === defId) {
+          objectiveBonus = 1.7;
+        }
+
+        // Sickness penalty
+        let diseaseAtkPenalty = state.epidemic[idx] > 0 ? 0.65 : 1.0;
+
+        let forceAtk = (attacker.baseAtk * attacker.offensiveBonus * objectiveBonus * roadBonus * supplyFactor * diseaseAtkPenalty * rng.range(0.85, 1.4)) - slopePenalty - bridgePenalty;
+
+        if (defId === 0) {
+          state.owner[targetIdx] = atkId;
+          attacker.territory++;
+          attacker.troops = Math.max(0, attacker.troops - 1);
+        } else {
+          const defender = state.factions.get(defId);
+          if (!defender || !defender.alive) {
+            state.owner[targetIdx] = atkId;
+            attacker.territory++;
+            continue;
+          }
+
+          let defElevBonus = (state.elevation[targetIdx] / 255.0) * 0.5;
+          if (state.difficulty === 'ironclad') defElevBonus *= 1.4;
+
+          const defForestBonus = targetTerrain === TERRAIN.FOREST ? 0.35 : 0;
+          const diseaseDefPenalty = state.epidemic[targetIdx] > 0 ? 0.65 : 1.0;
+          
+          // Capital Seat Last Stand: +40% defense within 16 tiles of capital
+          const distToCap = Math.hypot(nx - defender.capitalX, ny - defender.capitalY);
+          const capitalGarrisonBonus = distToCap <= 16 ? 1.40 : 1.0;
+
+          const moraleFactor = (defender.troops < 50 ? 0.65 : 1.0) * (defender.supplyIndex / 100.0) * diseaseDefPenalty;
+
+          const forceDef = defender.baseDef * (1.0 + defElevBonus + defForestBonus) * capitalGarrisonBonus * moraleFactor * rng.range(0.75, 1.25);
+
+          if (rng.next() > 0.65) {
+            spawnSparks(nx, ny, attacker.rgb);
+          }
+
+          if (forceAtk > forceDef) {
+            captureCell(targetIdx, nx, ny, atkId, defId, attacker, defender);
+
+            // Punch through into adjacent cells on decisive breakthrough
+            if (forceAtk > forceDef * 1.35) {
+              for (const [adx, ady] of dirs) {
+                const ax = nx + adx;
+                const ay = ny + ady;
+                if (ax >= 1 && ax < W - 1 && ay >= 1 && ay < H - 1) {
+                  const aIdx = ay * W + ax;
+                  if (state.owner[aIdx] === defId && state.terrain[aIdx] !== TERRAIN.RIVER) {
+                    captureCell(aIdx, ax, ay, atkId, defId, attacker, defender);
+                    break;
+                  }
+                }
+              }
+            }
+          } else {
+            attacker.troops = Math.max(0, attacker.troops - 2);
+          }
+        }
+      }
+    }
+
+    function captureCell(cIdx, cx, cy, atkId, defId, attacker, defender) {
+      defender.territory = Math.max(0, defender.territory - 1);
+      defender.troops = Math.max(0, defender.troops - 2);
+      attacker.troops = Math.max(0, attacker.troops - 1);
+
+      state.owner[cIdx] = atkId;
+      attacker.territory++;
+
+      if (cx === defender.capitalX && cy === defender.capitalY) {
+        annexCountySeat(defender.id, attacker.id);
+      }
+    }
+
+    function annexCountySeat(loserId, victorId) {
+      const loser = state.factions.get(loserId);
+      const victor = state.factions.get(victorId);
+      if (!loser || !victor) return;
+
+      loser.alive = false;
+
+      if (loser.isGang) {
+        showFlashNotice(`🏆 OUTLAWS CLEARED: ${loser.name.toUpperCase()} ELIMINATED!`);
+        if (victorId === state.playerFactionId) {
+          state.playerTreasury += 100;
+          victor.troops += 80;
+          showFlashNotice(`💰 BOUNTY CLAIMED: +100 SUPPLIES & +80 RECRUITS!`);
+          updatePlayerHUD();
+        }
+      } else {
+        showFlashNotice(`⭐ CITADEL FALLEN: ${loser.name.toUpperCase()} ANNEXED!`);
+      }
+
+      for (let i = 0; i < TOTAL_CELLS; i++) {
+        if (state.owner[i] === loserId) {
+          state.owner[i] = victorId;
+          victor.territory++;
+        }
+      }
+      loser.territory = 0;
+
+      if (loserId === state.playerFactionId) {
+        showFlashNotice("YOUR CITADEL WAS ANNEXED! Switched to Spectator.");
+        state.playerFactionId = null;
+        updatePlayerHUD();
+      } else if (victorId === state.playerFactionId && !loser.isGang) {
+        showFlashNotice(`🎖️ GRAND VICTORY! YOU ANNEXED ${loser.town.toUpperCase()}! (+250 🪙)`);
+        state.playerTreasury += 250;
+        updatePlayerHUD();
+      }
+    }
+
+    function updateFrontlinesAndPocketing() {
+      const dirs = [[0, -1], [0, 1], [-1, 0], [1, 0]];
+      state.frontline.fill(0);
+      state.supply.fill(0);
+
+      for (let y = 0; y < H; y++) {
+        for (let x = 0; x < W; x++) {
+          const idx = y * W + x;
+          const o = state.owner[idx];
+          if (o === 0) continue;
+
+          for (const [dx, dy] of dirs) {
+            const nx = x + dx;
+            const ny = y + dy;
+            if (nx >= 0 && nx < W && ny >= 0 && ny < H) {
+              if (state.owner[ny * W + nx] !== o) {
+                state.frontline[idx] = 1;
+                break;
+              }
+            }
+          }
+        }
+      }
+
+      state.factions.forEach(f => {
+        if (!f.alive) return;
+        const capIdx = f.capitalY * W + f.capitalX;
+        state.supply[capIdx] = 100;
+
+        const queue = [{ x: f.capitalX, y: f.capitalY, sup: 100 }];
+        const visited = new Uint8Array(TOTAL_CELLS);
+        visited[capIdx] = 1;
+
+        let head = 0;
+        let totalFrontlines = 0;
+
+        while (head < queue.length && head < 9000) {
+          const curr = queue[head++];
+          const cIdx = curr.y * W + curr.x;
+
+          if (state.frontline[cIdx] === 1) totalFrontlines++;
+          if (curr.sup <= 5) continue;
+
+          for (const [dx, dy] of dirs) {
+            const nx = curr.x + dx;
+            const ny = curr.y + dy;
+            if (nx >= 0 && nx < W && ny >= 0 && ny < H) {
+              const nIdx = ny * W + nx;
+              if (visited[nIdx] === 0 && state.owner[nIdx] === f.id) {
+                visited[nIdx] = 1;
+                let supLoss = 1;
+                if (state.terrain[nIdx] === TERRAIN.ROAD || state.terrain[nIdx] === TERRAIN.BRIDGE || state.terrain[nIdx] === TERRAIN.ICE) {
+                  supLoss = 0.2;
+                }
+                const nSup = Math.max(0, curr.sup - supLoss);
+                state.supply[nIdx] = Math.floor(nSup);
+                queue.push({ x: nx, y: ny, sup: nSup });
+              }
+            }
+          }
+        }
+
+        f.supplyIndex = Math.min(100, Math.floor((head / Math.max(1, f.territory)) * 100));
+      });
+
+      const starveChance = state.season === 'winter' ? 0.70 : 0.85;
+      for (let i = 0; i < TOTAL_CELLS; i++) {
+        if (state.owner[i] > 0 && state.supply[i] === 0) {
+          if (rng.next() > starveChance) {
+            const victim = state.factions.get(state.owner[i]);
+            if (victim) victim.territory = Math.max(0, victim.territory - 1);
+            state.owner[i] = 0;
+          }
+        }
+      }
+    }
+
+    function spawnSparks(x, y, rgb) {
+      for (let i = 0; i < 3; i++) {
+        state.sparks.push({
+          x: x + 0.5,
+          y: y + 0.5,
+          vx: (rng.next() - 0.5) * 1.6,
+          vy: (rng.next() - 0.5) * 1.6,
+          life: 0,
+          maxLife: 14 + rng.rangeInt(0, 12),
+          color: rng.next() > 0.4 ? '#fde047' : `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`
+        });
+      }
+      if (state.sparks.length > 300) state.sparks.splice(0, 80);
+    }
+
+    // --- 8. RENDER LOOP (60 FPS) ---
+    function renderScene() {
+      mainCtx.fillStyle = '#02040a';
+      mainCtx.fillRect(0, 0, mainCanvas.width, mainCanvas.height);
+
+      mainCtx.save();
+      mainCtx.translate(mainCanvas.width / 2, mainCanvas.height / 2);
+      mainCtx.scale(state.zoom, state.zoom);
+      mainCtx.translate(-mainCanvas.width / 2 + state.camX, -mainCanvas.height / 2 + state.camY);
+
+      mainCtx.imageSmoothingEnabled = false;
+
+      // 1. Static Topographic Hillshade (Layer 1)
+      mainCtx.drawImage(staticCanvas, 0, 0, mainCanvas.width, mainCanvas.height);
+
+      // 2. Dynamic Territorial Paint (Layer 2 @ 65% opacity)
+      mainCtx.globalAlpha = 0.65;
+      mainCtx.drawImage(dynamicCanvas, 0, 0, mainCanvas.width, mainCanvas.height);
+      mainCtx.globalAlpha = 1.0;
+
+      // 3. Top Vector Overlays (Layer 3)
+      drawVectorOverlays(mainCtx);
+
+      mainCtx.restore();
+    }
+
+    function drawVectorOverlays(ctx) {
+      const tileW = mainCanvas.width / W;
+      const tileH = mainCanvas.height / H;
+
+      // Tactical Objective Vectors (Dashed attack lines from capitals to target towns)
+      state.factions.forEach(f => {
+        if (!f.alive || !f.spearheadTarget) return;
+        const target = state.factions.get(f.spearheadTarget);
+        if (!target || !target.alive) return;
+
+        const x1 = f.capitalX * tileW + tileW / 2;
+        const y1 = f.capitalY * tileH + tileH / 2;
+        const x2 = target.capitalX * tileW + tileW / 2;
+        const y2 = target.capitalY * tileH + tileH / 2;
+
+        ctx.save();
+        ctx.strokeStyle = f.hex;
+        ctx.lineWidth = 2.5 / state.zoom;
+        ctx.setLineDash([8 / state.zoom, 6 / state.zoom]);
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+
+        ctx.strokeStyle = '#f43f5e';
+        ctx.lineWidth = 2 / state.zoom;
+        const crossR = 14 / state.zoom;
+        ctx.beginPath();
+        ctx.arc(x2, y2, crossR, 0, Math.PI * 2);
+        ctx.moveTo(x2 - crossR - 4 / state.zoom, y2);
+        ctx.lineTo(x2 + crossR + 4 / state.zoom, y2);
+        ctx.moveTo(x2, y2 - crossR - 4 / state.zoom);
+        ctx.lineTo(x2 + crossR + 4 / state.zoom);
+        ctx.stroke();
+        ctx.restore();
+      });
+
+      // Sparks
+      for (let i = state.sparks.length - 1; i >= 0; i--) {
+        const p = state.sparks[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life++;
+
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = Math.max(0, 1 - (p.life / p.maxLife));
+        ctx.fillRect(p.x * tileW, p.y * tileH, 2.5 / state.zoom, 2.5 / state.zoom);
+
+        if (p.life >= p.maxLife) state.sparks.splice(i, 1);
+      }
+      ctx.globalAlpha = 1.0;
+
+      // County Seat & Outlaw Gang Pins
+      state.factions.forEach(f => {
+        if (!f.alive) return;
+        const cx = f.capitalX * tileW + tileW / 2;
+        const cy = f.capitalY * tileH + tileH / 2;
+
+        const haloR = Math.max(7, 12 / state.zoom);
+        ctx.beginPath();
+        ctx.arc(cx, cy, haloR, 0, Math.PI * 2);
+        ctx.strokeStyle = f.hex;
+        ctx.lineWidth = 1.5 / state.zoom;
+        ctx.stroke();
+
+        ctx.font = `${Math.max(11, 13 / state.zoom)}px monospace`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(f.isGang ? '☠️' : '⭐', cx, cy - (7 / state.zoom));
+
+        ctx.font = `bold ${Math.max(9, 10 / state.zoom)}px ui-monospace, monospace`;
+        ctx.shadowColor = '#000';
+        ctx.shadowBlur = 4;
+        ctx.fillStyle = f.id === state.playerFactionId ? '#fbbf24' : (f.isGang ? '#f87171' : '#f8fafc');
+        ctx.fillText(f.town, cx, cy + (9 / state.zoom));
+        ctx.shadowBlur = 0;
+      });
+
+      // Highlight Selected Faction
+      if (state.selectedFactionId && state.factions.has(state.selectedFactionId)) {
+        const sel = state.factions.get(state.selectedFactionId);
+        const scx = sel.capitalX * tileW + tileW / 2;
+        const scy = sel.capitalY * tileH + tileH / 2;
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 2.5 / state.zoom;
+        ctx.strokeRect(scx - 12 / state.zoom, scy - 12 / state.zoom, 24 / state.zoom, 24 / state.zoom);
+      }
+    }
+
+    function updateAllMinimaps() {
+      minimapCtx.drawImage(staticCanvas, 0, 0);
+      minimapCtx.globalAlpha = 0.65;
+      minimapCtx.drawImage(dynamicCanvas, 0, 0);
+      minimapCtx.globalAlpha = 1.0;
+
+      const sheetCanvas = document.getElementById('sheetMinimapCanvas');
+      if (sheetCanvas) {
+        const sCtx = sheetCanvas.getContext('2d');
+        sCtx.drawImage(minimapCanvas, 0, 0, sheetCanvas.width, sheetCanvas.height);
+      }
+    }
+
+    // --- 9. NOTION 2: MACRO COMMAND DECK LOGIC ---
+    function renderFactionRibbon() {
+      const ribbon = document.getElementById('factionRibbon');
+      if (!ribbon) return;
+
+      const livingCitadels = Array.from(state.factions.values()).filter(f => f.alive && !f.isGang);
+      const activeId = state.selectedFactionId || state.playerFactionId || 1;
+
+      ribbon.innerHTML = livingCitadels.map(f => {
+        const isSel = f.id === activeId;
+        const isPlayer = f.id === state.playerFactionId;
+        return `
+          <button class="faction-pill-btn ${isSel ? 'active' : ''}" data-id="${f.id}">
+            <div class="pill-dot" style="background: ${f.hex};"></div>
+            <span>${f.town}</span>
+            ${isPlayer ? '<span style="color: var(--amber); font-size: 8px;">👑</span>' : ''}
+          </button>
+        `;
+      }).join('');
+
+      ribbon.querySelectorAll('.faction-pill-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = parseInt(btn.dataset.id);
+          selectFaction(id);
+        });
+      });
+    }
+
+    function updateMacroCard(fId) {
+      const id = fId || state.selectedFactionId || state.playerFactionId || 1;
+      const f = state.factions.get(id);
+      if (!f || !f.alive) return;
+
+      state.selectedFactionId = id;
+
+      document.getElementById('macroBadge').style.background = f.hex;
+      document.getElementById('macroBadge').style.color = f.hex;
+      document.getElementById('macroTitle').innerText = f.name.toUpperCase();
+
+      const pct = ((f.territory / TOTAL_CELLS) * 100).toFixed(1);
+      document.getElementById('macroMeta').innerText = `Territory: ${pct}% • 🪖 ${f.troops} Troops • Supply: ${f.supplyIndex}%`;
+
+      const objPill = document.getElementById('macroObjectiveName');
+      if (f.spearheadTarget && state.factions.has(f.spearheadTarget)) {
+        const tgt = state.factions.get(f.spearheadTarget);
+        objPill.innerText = `OBJ: ${tgt.town.toUpperCase()}`;
+      } else {
+        objPill.innerText = "OBJ: NONE";
+      }
+
+      const cmdText = document.getElementById('macroCommandText');
+      cmdText.innerText = f.id === state.playerFactionId ? "Spectate (Creative)" : "Play Faction";
+
+      renderFactionRibbon();
+    }
+
+    function selectFaction(id) {
+      if (!id || !state.factions.has(id)) return;
+      state.selectedFactionId = id;
+      updateMacroCard(id);
+      // NOTE: Deliberately do not auto-pan to prevent disorienting the player's view
+    }
+
+    // Smart Action 1: Attack Nearest Rival along Highway
+    document.getElementById('macroBtnAttack').addEventListener('click', () => {
+      const actorId = state.selectedFactionId || state.playerFactionId || 1;
+      const f = state.factions.get(actorId);
+      if (!f || !f.alive) return;
+
+      let closestTarget = null;
+      let minDistance = 9999;
+
+      state.factions.forEach(other => {
+        if (!other.alive || other.id === f.id) return;
+        const dist = Math.hypot(other.capitalX - f.capitalX, other.capitalY - f.capitalY);
+        if (dist < minDistance) {
+          minDistance = dist;
+          closestTarget = other;
+        }
+      });
+
+      if (closestTarget) {
+        f.spearheadTarget = closestTarget.id;
+        f.offensiveBonus = 2.4;
+        f.troops += 40;
+        spawnSparks(f.capitalX, f.capitalY, f.rgb);
+        showFlashNotice(`🎯 AUTO-SPEARHEAD: ${f.town.toUpperCase()} ➔ ${closestTarget.town.toUpperCase()}`);
+        updateMacroCard(f.id);
+        updatePlayerHUD();
+      }
+    });
+
+    // Smart Action 2: Bridge River Ahead
+    document.getElementById('macroBtnBridge').addEventListener('click', () => {
+      const actorId = state.selectedFactionId || state.playerFactionId || 1;
+      const f = state.factions.get(actorId);
+      if (!f || !f.alive) return;
+
+      let targetX = f.capitalX;
+      let targetY = f.capitalY;
+
+      if (f.spearheadTarget && state.factions.has(f.spearheadTarget)) {
+        const enemy = state.factions.get(f.spearheadTarget);
+        targetX = Math.floor((f.capitalX * 0.4) + (enemy.capitalX * 0.6));
+        targetY = Math.floor((f.capitalY * 0.4) + (enemy.capitalY * 0.6));
+      } else {
+        targetX = Math.floor((f.capitalX + 150) / 2);
+        targetY = Math.floor((f.capitalY + 150) / 2);
+      }
+
+      buildFullRiverSpan(targetX, targetY);
+    });
+
+    // Smart Action 3: Barrage Frontline with Artillery
+    document.getElementById('macroBtnBarrage').addEventListener('click', () => {
+      const actorId = state.selectedFactionId || state.playerFactionId || 1;
+      const f = state.factions.get(actorId);
+      if (!f || !f.alive) return;
+
+      let frontlineCells = [];
+      for (let y = 0; y < H; y += 4) {
+        for (let x = 0; x < W; x += 4) {
+          const idx = y * W + x;
+          if (state.owner[idx] === f.id && state.frontline[idx] === 1) {
+            frontlineCells.push({ x, y });
+          }
+        }
+      }
+
+      if (frontlineCells.length > 0) {
+        const target = frontlineCells[rng.rangeInt(0, frontlineCells.length - 1)];
+        const r = 6;
+        for (let dy = -r; dy <= r; dy++) {
+          for (let dx = -r; dx <= r; dx++) {
+            const bx = target.x + dx;
+            const by = target.y + dy;
+            if (bx >= 0 && bx < W && by >= 0 && by < H) {
+              const bIdx = by * W + bx;
+              if (state.owner[bIdx] !== f.id && state.owner[bIdx] > 0) {
+                const victim = state.factions.get(state.owner[bIdx]);
+                if (victim) victim.territory--;
+                state.owner[bIdx] = 0;
+              }
+            }
+          }
+        }
+        for (let i = 0; i < 30; i++) {
+          spawnSparks(target.x + rng.range(-6, 6), target.y + rng.range(-6, 6), [255, 120, 50]);
+        }
+        bakeStaticHillshade();
+        renderDynamicTerritoryBuffer();
+        showFlashNotice(`💥 HEAVY ARTILLERY SALVO BROKE ENEMY FRONTLINE!`);
+      } else {
+        showFlashNotice("NO ACTIVE COMBAT FRONTLINE DETECTED");
+      }
+    });
+
+    // Smart Action 4: Draft +150 Militia
+    document.getElementById('macroBtnDraft').addEventListener('click', () => {
+      const actorId = state.selectedFactionId || state.playerFactionId || 1;
+      const f = state.factions.get(actorId);
+      if (!f || !f.alive) return;
+
+      if (state.playerFactionId === f.id && state.playerTreasury < 50) {
+        showFlashNotice("INSUFFICIENT SUPPLIES (NEED 50 🪙)");
+        return;
+      }
+      if (state.playerFactionId === f.id) {
+        state.playerTreasury -= 50;
+        updatePlayerHUD();
+      }
+
+      f.troops += 150;
+      spawnSparks(f.capitalX, f.capitalY, [255, 255, 120]);
+      showFlashNotice(`🪖 MILITIA CALLED UP: +150 TROOPS IN ${f.town.toUpperCase()}`);
+      updateMacroCard(f.id);
+      updateRoster();
+    });
+
+    // Smart Action 5: Fortify Base
+    document.getElementById('macroBtnFortify').addEventListener('click', () => {
+      const actorId = state.selectedFactionId || state.playerFactionId || 1;
+      const f = state.factions.get(actorId);
+      if (!f || !f.alive) return;
+
+      if (state.playerFactionId === f.id && state.playerTreasury < 60) {
+        showFlashNotice("INSUFFICIENT SUPPLIES (NEED 60 🪙)");
+        return;
+      }
+      if (state.playerFactionId === f.id) {
+        state.playerTreasury -= 60;
+        updatePlayerHUD();
+      }
+
+      f.baseDef += 0.35;
+      const capIdx = f.capitalY * W + f.capitalX;
+      state.elevation[capIdx] = Math.min(255, state.elevation[capIdx] + 45);
+      bakeStaticHillshade();
+      spawnSparks(f.capitalX, f.capitalY, [120, 200, 255]);
+      showFlashNotice(`🛡️ CITADEL BASTIONS FORTIFIED: ${f.town.toUpperCase()}`);
+    });
+
+    // Smart Action 6: Play / Take Command
+    document.getElementById('macroBtnCommand').addEventListener('click', () => {
+      const actorId = state.selectedFactionId || state.playerFactionId || 1;
+      if (state.playerFactionId === actorId) {
+        state.playerFactionId = null;
+        showFlashNotice("CREATIVE (SPECTATOR) MODE ENGAGED");
+      } else {
+        state.playerFactionId = actorId;
+        const f = state.factions.get(state.playerFactionId);
+        showFlashNotice(`ASSUMED SOVEREIGN COMMAND: ${f.name.toUpperCase()}`);
+      }
+      updatePlayerHUD();
+      updateMacroCard(actorId);
+    });
+
+    function updatePlayerHUD() {
+      const hud = document.getElementById('playerCommandBar');
+      if (state.playerFactionId && state.factions.has(state.playerFactionId)) {
+        const f = state.factions.get(state.playerFactionId);
+        document.getElementById('playerFactionName').innerText = f.name.toUpperCase();
+        document.getElementById('playerTreasury').innerText = state.playerTreasury;
+
+        if (f.spearheadTarget && state.factions.has(f.spearheadTarget)) {
+          const tgt = state.factions.get(f.spearheadTarget);
+          document.getElementById('playerObjectiveText').innerText = `[OBJ: ${tgt.town.toUpperCase()}]`;
+        } else {
+          document.getElementById('playerObjectiveText').innerText = "[OBJ: TAP ENEMY]";
+        }
+        hud.classList.add('show');
+      } else {
+        hud.classList.remove('show');
+      }
+    }
+
+    // --- 10B. POSITIVE CREATIVE POWERS (BLESSINGS & ADVANTAGES) ---
+    // 1. BOUNTEOUS HARVEST: Logistic Growth Surplus (dN/dt = r*N*(1 - N/2K))
+    function triggerBounteousHarvest(cx, cy) {
+      const radius = 26;
+      let totalRecruits = 0;
+      const affectedFactions = new Set();
+
+      for (let dy = -radius; dy <= radius; dy++) {
+        for (let dx = -radius; dx <= radius; dx++) {
+          if (Math.hypot(dx, dy) <= radius) {
+            const tx = cx + dx;
+            const ty = cy + dy;
+            if (tx >= 0 && tx < W && ty >= 0 && ty < H) {
+              const idx = ty * W + tx;
+              state.famine[idx] = 0; // Completely purge famine
+              const o = state.owner[idx];
+              if (o > 0 && state.factions.has(o)) {
+                affectedFactions.add(o);
+                state.supply[idx] = 100;
+              }
+            }
+          }
+        }
+      }
+
+      affectedFactions.forEach(fid => {
+        const f = state.factions.get(fid);
+        f.troops += 160;
+        f.supplyIndex = 100;
+        totalRecruits += 160;
+        if (fid === state.playerFactionId) {
+          state.playerTreasury += 150;
+          updatePlayerHUD();
+        }
+      });
+
+      for (let i = 0; i < 40; i++) {
+        spawnSparks(cx + rng.range(-15, 15), cy + rng.range(-15, 15), [250, 204, 21]);
+      }
+
+      showFlashNotice("🌾 BOUNTEOUS HARVEST: ERADICATED FAMINE & GRANTED +" + (totalRecruits || 160) + " RECRUITS!");
+      renderDynamicTerritoryBuffer();
+      updateRoster();
+      updateMacroCard();
+    }
+
+    // 2. FIELD HOSPITAL & INOCULATION SANCTUARY (SIR Seroconversion)
+    function triggerHospitalCure(cx, cy) {
+      const radius = 28;
+      const affectedFactions = new Set();
+
+      for (let dy = -radius; dy <= radius; dy++) {
+        for (let dx = -radius; dx <= radius; dx++) {
+          if (Math.hypot(dx, dy) <= radius) {
+            const tx = cx + dx;
+            const ty = cy + dy;
+            if (tx >= 0 && tx < W && ty >= 0 && ty < H) {
+              const idx = ty * W + tx;
+              state.epidemic[idx] = 0;       // Purge disease
+              state.contamination[idx] = 0;  // Purge river toxin
+              const o = state.owner[idx];
+              if (o > 0 && state.factions.has(o)) affectedFactions.add(o);
+            }
+          }
+        }
+      }
+
+      affectedFactions.forEach(fid => {
+        const f = state.factions.get(fid);
+        f.troops += 90;
+        f.supplyIndex = 100;
+        if (fid === state.playerFactionId) {
+          state.playerTreasury += 100;
+          updatePlayerHUD();
+        }
+      });
+
+      for (let i = 0; i < 40; i++) {
+        spawnSparks(cx + rng.range(-14, 14), cy + rng.range(-14, 14), [56, 189, 248]);
+      }
+
+      showFlashNotice('🏥 INOCULATION SANCTUARY: PURGED EPIDEMICS & RESTORED MORALE!');
+      renderDynamicTerritoryBuffer();
+      updateRoster();
+      updateMacroCard();
+    }
+
+    // 3. INDUSTRIAL SUPPLY AIRDROP (Max-Flow Logistical Injection)
+    function triggerSupplyAirdrop(cx, cy) {
+      const tile = cy * W + cx;
+      const ownerId = state.owner[tile] || state.selectedFactionId || state.playerFactionId || 1;
+      const f = state.factions.get(ownerId);
+
+      if (f && f.alive) {
+        f.troops += 140;
+        f.supplyIndex = 100;
+        f.offensiveBonus = Math.max(f.offensiveBonus, 1.8);
+        if (ownerId === state.playerFactionId) {
+          state.playerTreasury += 200;
+          updatePlayerHUD();
+        }
+
+        for (let i = 0; i < TOTAL_CELLS; i++) {
+          if (state.owner[i] === f.id) {
+            state.supply[i] = 100;
+          }
+        }
+
+        for (let i = 0; i < 45; i++) {
+          spawnSparks(cx + rng.range(-10, 10), cy + rng.range(-10, 10), [251, 146, 60]);
+        }
+
+        showFlashNotice("📦 AIRDROP DELIVERED TO " + f.town.toUpperCase() + ": +140 VETERANS & 100% SUPPLY!");
+        updateRoster();
+        updateMacroCard();
+      } else {
+        showFlashNotice('📦 AIRDROP DROPPED IN UNCLAIMED WILDERNESS (+CACHE)');
+      }
+    }
+
+    // 4. HEROIC RALLY & ADRENALINE BLITZ (Lanchester Force Surge alpha -> 2.5*alpha)
+    function triggerHeroicRally(cx, cy) {
+      const tile = cy * W + cx;
+      const ownerId = state.owner[tile] || state.selectedFactionId || state.playerFactionId || 1;
+      const f = state.factions.get(ownerId);
+
+      if (f && f.alive) {
+        f.offensiveBonus = 3.2;
+        f.baseDef += 0.20;
+        f.troops += 120;
+        f.supplyIndex = 100;
+
+        for (let i = 0; i < 50; i++) {
+          spawnSparks(cx + rng.range(-15, 15), cy + rng.range(-15, 15), [239, 68, 68]);
+        }
+
+        showFlashNotice("⚡ HEROIC RALLY: " + f.name.toUpperCase() + " GRANTED +3.2x COMBAT SURGE!");
+        updateRoster();
+        updateMacroCard();
+      }
+    }
+
+    // 5. BASTION CITADEL & STONE REDOUBTS (Permanent Hardening)
+    function triggerBastionCitadel(cx, cy) {
+      const radius = 10;
+      for (let dy = -radius; dy <= radius; dy++) {
+        for (let dx = -radius; dx <= radius; dx++) {
+          if (Math.hypot(dx, dy) <= radius) {
+            const tx = cx + dx;
+            const ty = cy + dy;
+            if (tx >= 0 && tx < W && ty >= 0 && ty < H) {
+              const idx = ty * W + tx;
+              state.elevation[idx] = Math.min(255, state.elevation[idx] + 55);
+              if (state.terrain[idx] !== TERRAIN.RIVER && state.terrain[idx] !== TERRAIN.BRIDGE) {
+                if (Math.hypot(dx, dy) >= 6) {
+                  state.terrain[idx] = TERRAIN.FOREST;
+                  state.baseTerrain[idx] = TERRAIN.FOREST;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      const nearestSeat = findNearestCountySeat(cx, cy, 15);
+      if (nearestSeat) {
+        nearestSeat.baseDef += 0.30;
+        nearestSeat.troops += 100;
+        showFlashNotice("🛡️ BASTION CITADEL ERECTED AT " + nearestSeat.town.toUpperCase() + " (+0.30 DEFENSE)!");
+      } else {
+        showFlashNotice('🛡️ BASTION FORTRESS ELEVATED ON HIGH GROUND (+DEFENSE)');
+      }
+
+      for (let i = 0; i < 40; i++) {
+        spawnSparks(cx + rng.range(-12, 12), cy + rng.range(-12, 12), [168, 85, 247]);
+      }
+
+      bakeStaticHillshade();
+      renderScene();
+    }
+
+    // --- 10. REAL MATHEMATICAL CREATIVE MODE POWERS ---
+    function triggerEMP(tx, ty) {
+      const radius = 24;
+      for (let dy = -radius; dy <= radius; dy++) {
+        for (let dx = -radius; dx <= radius; dx++) {
+          const r = Math.hypot(dx, dy);
+          if (r <= radius) {
+            const cx = tx + dx;
+            const cy = ty + dy;
+            if (cx >= 0 && cx < W && cy >= 0 && cy < H) {
+              const idx = cy * W + cx;
+              // Electric field attenuation E(r) = E0 * (1 - r/R)
+              state.empTimer[idx] = Math.floor(180 * (1 - r / radius));
+              state.supply[idx] = 0;
+            }
+          }
+        }
+      }
+      // Electrical discharge sparks
+      for (let i = 0; i < 40; i++) {
+        spawnSparks(tx + rng.range(-20, 20), ty + rng.range(-20, 20), [56, 189, 248]);
+      }
+      showFlashNotice("⚡ HIGH-ALTITUDE EMP DETONATED: LOGISTICS & COMMS BLACKOUT (1.5 YRS)");
+      updateFrontlinesAndPocketing();
+      renderDynamicTerritoryBuffer();
+    }
+
+    function triggerFamine(tx, ty) {
+      const radius = 25;
+      for (let dy = -radius; dy <= radius; dy++) {
+        for (let dx = -radius; dx <= radius; dx++) {
+          if (Math.hypot(dx, dy) <= radius) {
+            const cx = tx + dx;
+            const cy = ty + dy;
+            if (cx >= 0 && cx < W && cy >= 0 && cy < H) {
+              const idx = cy * W + cx;
+              // Carrying capacity shock K(t) drops by 90%
+              state.famine[idx] = 200;
+            }
+          }
+        }
+      }
+      showFlashNotice("🌾 MALTHUSIAN FAMINE DEPLOYED: CROP BLIGHT & EXPONENTIAL STARVATION");
+      renderDynamicTerritoryBuffer();
+    }
+
+    function triggerEpidemic(tx, ty) {
+      const radius = 12;
+      for (let dy = -radius; dy <= radius; dy++) {
+        for (let dx = -radius; dx <= radius; dx++) {
+          if (Math.hypot(dx, dy) <= radius) {
+            const cx = tx + dx;
+            const cy = ty + dy;
+            if (cx >= 0 && cx < W && cy >= 0 && cy < H) {
+              const idx = cy * W + cx;
+              if (state.owner[idx] > 0) state.epidemic[idx] = 160;
+            }
+          }
+        }
+      }
+      showFlashNotice("🦠 SIR CONTAGION RELEASED: PATHOGEN DIFFUSING ALONG HIGHWAYS");
+      renderDynamicTerritoryBuffer();
+    }
+
+    function triggerRiverContamination(tx, ty) {
+      // Find closest river cell within 12 cells
+      let bestX = -1, bestY = -1, bestD = 999;
+      for (let dy = -12; dy <= 12; dy++) {
+        for (let dx = -12; dx <= 12; dx++) {
+          const cx = tx + dx;
+          const cy = ty + dy;
+          if (cx >= 0 && cx < W && cy >= 0 && cy < H) {
+            const idx = cy * W + cx;
+            if (state.terrain[idx] === TERRAIN.RIVER || state.terrain[idx] === TERRAIN.ICE) {
+              const d = Math.hypot(dx, dy);
+              if (d < bestD) { bestD = d; bestX = cx; bestY = cy; }
+            }
+          }
+        }
+      }
+
+      if (bestX === -1) {
+        showFlashNotice("CAN ONLY INJECT TOXIN INTO RIVER / STREAM");
+        return;
+      }
+
+      // Initial chemical concentration C0 = 255
+      for (let dy = -4; dy <= 4; dy++) {
+        for (let dx = -4; dx <= 4; dx++) {
+          const cx = bestX + dx;
+          const cy = bestY + dy;
+          if (cx >= 0 && cx < W && cy >= 0 && cy < H) {
+            const idx = cy * W + cx;
+            if (state.terrain[idx] === TERRAIN.RIVER || state.terrain[idx] === TERRAIN.ICE) {
+              state.contamination[idx] = 255;
+            }
+          }
+        }
+      }
+
+      showFlashNotice("☣️ TOXIC CHEMICAL PLUME INJECTED: FLOWING DOWNSTREAM WITH CURRENT");
+      renderDynamicTerritoryBuffer();
+    }
+
+    function triggerArtilleryStrike(tx, ty) {
+      const r = 6;
+      for (let dy = -r; dy <= r; dy++) {
+        for (let dx = -r; dx <= r; dx++) {
+          const x = tx + dx;
+          const y = ty + dy;
+          if (x >= 0 && x < W && y >= 0 && y < H) {
+            const i = y * W + x;
+            const o = state.owner[i];
+            if (o > 0 && state.factions.has(o)) state.factions.get(o).territory--;
+            state.owner[i] = 0;
+            spawnSparks(x, y, [255, 120, 60]);
+          }
+        }
+      }
+      showFlashNotice("💥 SECTOR DECIMATED BY HEAVY ARTILLERY");
+      bakeStaticHillshade();
+      renderDynamicTerritoryBuffer();
+      updateAllMinimaps();
+    }
+
+    function buildFullRiverSpan(targetX, targetY) {
+      let bestX = -1, bestY = -1, bestDist = 999;
+      for (let dy = -14; dy <= 14; dy++) {
+        for (let dx = -14; dx <= 14; dx++) {
+          const cx = targetX + dx;
+          const cy = targetY + dy;
+          if (cx >= 0 && cx < W && cy >= 0 && cy < H) {
+            const cIdx = cy * W + cx;
+            const t = state.terrain[cIdx];
+            if (t === TERRAIN.RIVER || t === TERRAIN.ICE) {
+              const d = Math.hypot(dx, dy);
+              if (d < bestDist) {
+                bestDist = d;
+                bestX = cx;
+                bestY = cy;
+              }
+            }
+          }
+        }
+      }
+
+      if (bestX === -1) {
+        showFlashNotice("NO WATERWAY CURRENTLY BLOCKING THIS SECTOR");
+        return false;
+      }
+
+      let hSpan = 0;
+      for (let dx = -8; dx <= 8; dx++) {
+        const x = bestX + dx;
+        if (x >= 0 && x < W) {
+          const t = state.terrain[bestY * W + x];
+          if (t === TERRAIN.RIVER || t === TERRAIN.ICE) hSpan++;
+        }
+      }
+
+      let vSpan = 0;
+      for (let dy = -8; dy <= 8; dy++) {
+        const y = bestY + dy;
+        if (y >= 0 && y < H) {
+          const t = state.terrain[y * W + bestX];
+          if (t === TERRAIN.RIVER || t === TERRAIN.ICE) vSpan++;
+        }
+      }
+
+      let spannedCount = 0;
+      if (hSpan <= vSpan) {
+        for (let dx = -8; dx <= 8; dx++) {
+          const x = bestX + dx;
+          if (x >= 0 && x < W) {
+            const idx = bestY * W + x;
+            const t = state.terrain[idx];
+            if (t === TERRAIN.RIVER || t === TERRAIN.ICE) {
+              state.terrain[idx] = TERRAIN.BRIDGE;
+              state.baseTerrain[idx] = TERRAIN.BRIDGE;
+              spannedCount++;
+              spawnSparks(x, bestY, [245, 158, 11]);
+            }
+          }
+        }
+        for (let r = 1; r <= 3; r++) {
+          const leftX = bestX - hSpan - r;
+          const rightX = bestX + hSpan + r;
+          if (leftX >= 0 && leftX < W && state.terrain[bestY * W + leftX] !== TERRAIN.RIVER) {
+            state.terrain[bestY * W + leftX] = TERRAIN.ROAD;
+            state.baseTerrain[bestY * W + leftX] = TERRAIN.ROAD;
+          }
+          if (rightX >= 0 && rightX < W && state.terrain[bestY * W + rightX] !== TERRAIN.RIVER) {
+            state.terrain[bestY * W + rightX] = TERRAIN.ROAD;
+            state.baseTerrain[bestY * W + rightX] = TERRAIN.ROAD;
+          }
+        }
+      } else {
+        for (let dy = -8; dy <= 8; dy++) {
+          const y = bestY + dy;
+          if (y >= 0 && y < H) {
+            const idx = y * W + bestX;
+            const t = state.terrain[idx];
+            if (t === TERRAIN.RIVER || t === TERRAIN.ICE) {
+              state.terrain[idx] = TERRAIN.BRIDGE;
+              state.baseTerrain[idx] = TERRAIN.BRIDGE;
+              spannedCount++;
+              spawnSparks(bestX, y, [245, 158, 11]);
+            }
+          }
+        }
+        for (let r = 1; r <= 3; r++) {
+          const topY = bestY - vSpan - r;
+          const botY = bestY + vSpan + r;
+          if (topY >= 0 && topY < H && state.terrain[topY * W + bestX] !== TERRAIN.RIVER) {
+            state.terrain[topY * W + bestX] = TERRAIN.ROAD;
+            state.baseTerrain[topY * W + bestX] = TERRAIN.ROAD;
+          }
+          if (botY >= 0 && botY < H && state.terrain[botY * W + bestX] !== TERRAIN.RIVER) {
+            state.terrain[botY * W + bestX] = TERRAIN.ROAD;
+            state.baseTerrain[botY * W + bestX] = TERRAIN.ROAD;
+          }
+        }
+      }
+
+      bakeStaticHillshade();
+      renderDynamicTerritoryBuffer();
+      updateAllMinimaps();
+      showFlashNotice(`🪵 PONTOON BRIDGE COMPLETE (${spannedCount} TILES SPANNED)`);
+      return true;
+    }
+
+    let nextRebelId = 200;
+    const REBEL_FACTION_ROSTER = [
+      { hex: "#f43f5e", rgb: [244, 63, 94], name: "Crimson Partisans", town: "Fort Liberty" },
+      { hex: "#e11d48", rgb: [225, 29, 72], name: "Red Guard Insurgency", town: "Redoubt Zero" },
+      { hex: "#8b5cf6", rgb: [139, 92, 246], name: "Free Watershed Militia", town: "Union Hold" },
+      { hex: "#ec4899", rgb: [236, 72, 153], name: "Iron Rebel Brigade", town: "Iron Bastion" }
+    ];
+
+    function spawnRebellionAt(x, y) {
+      let rx = Math.max(15, Math.min(W - 15, x));
+      let ry = Math.max(15, Math.min(H - 15, y));
+
+      const deadCitadels = Array.from(state.factions.values()).filter(f => !f.alive && !f.isGang);
+      if (deadCitadels.length > 0) {
+        const lib = deadCitadels[rng.rangeInt(0, deadCitadels.length - 1)];
+        lib.alive = true;
+        lib.troops = 420;
+        lib.baseAtk = 1.60;
+        lib.offensiveBonus = 3.0;
+
+        rx = lib.capitalX;
+        ry = lib.capitalY;
+
+        const rad = 24;
+        for (let dy = -rad; dy <= rad; dy++) {
+          for (let dx = -rad; dx <= rad; dx++) {
+            if (Math.hypot(dx, dy) <= rad) {
+              const cx = rx + dx;
+              const cy = ry + dy;
+              if (cx >= 0 && cx < W && cy >= 0 && cy < H) {
+                const idx = cy * W + cx;
+                if (state.terrain[idx] !== TERRAIN.RIVER) {
+                  const oldO = state.owner[idx];
+                  if (oldO > 0 && state.factions.has(oldO)) state.factions.get(oldO).territory--;
+                  state.owner[idx] = lib.id;
+                  lib.territory++;
+                }
+              }
+            }
+          }
+        }
+
+        for (let i = 0; i < 45; i++) {
+          spawnSparks(rx + rng.range(-12, 12), ry + rng.range(-12, 12), [255, 60, 60]);
+        }
+
+        showFlashNotice(`⚡ LIBERATION: ${lib.name.toUpperCase()} RE-ARMED AND FREE!`);
+        updateFrontlinesAndPocketing();
+        renderDynamicTerritoryBuffer();
+        updateRoster();
+        updateAllMinimaps();
+        return;
+      }
+
+      const rebelMeta = REBEL_FACTION_ROSTER[(nextRebelId - 200) % REBEL_FACTION_ROSTER.length];
+      const rebId = nextRebelId++;
+
+      const rebelFaction = {
+        id: rebId,
+        name: rebelMeta.name,
+        hex: rebelMeta.hex,
+        rgb: rebelMeta.rgb,
+        baseAtk: 1.65,
+        baseDef: 1.35,
+        town: rebelMeta.town,
+        isGang: false,
+        capitalX: rx,
+        capitalY: ry,
+        troops: 400,
+        territory: 0,
+        alive: true,
+        supplyIndex: 100,
+        offensiveBonus: 3.2,
+        spearheadTarget: null
+      };
+
+      state.factions.set(rebId, rebelFaction);
+
+      const rad = 22;
+      for (let dy = -rad; dy <= rad; dy++) {
+        for (let dx = -rad; dx <= rad; dx++) {
+          if (Math.hypot(dx, dy) <= rad) {
+            const cx = rx + dx;
+            const cy = ry + dy;
+            if (cx >= 0 && cx < W && cy >= 0 && cy < H) {
+              const idx = cy * W + cx;
+              if (state.terrain[idx] !== TERRAIN.RIVER) {
+                const oldO = state.owner[idx];
+                if (oldO > 0 && state.factions.has(oldO)) state.factions.get(oldO).territory--;
+                state.owner[idx] = rebId;
+                rebelFaction.territory++;
+              }
+            }
+          }
+        }
+      }
+
+      for (let i = 0; i < 45; i++) {
+        spawnSparks(rx + rng.range(-12, 12), ry + rng.range(-12, 12), [255, 80, 80]);
+      }
+
+      showFlashNotice(`⚡ REVOLT: ${rebelFaction.name.toUpperCase()} HAS RISEN!`);
+      updateFrontlinesAndPocketing();
+      renderDynamicTerritoryBuffer();
+      updateRoster();
+      updateAllMinimaps();
+    }
+
+    // --- 11. CREATIVE POWERS & INTEL DRAWER ---
+    const sheetBackdrop = document.getElementById('sheetBackdrop');
+    const bottomSheet = document.getElementById('bottomSheet');
+    const sheetTitle = document.getElementById('sheetTitle');
+    const sheetContent = document.getElementById('sheetContent');
+
+    document.getElementById('btnOpenCreativeDrawer').addEventListener('click', openCreativeDrawer);
+
+    function openCreativeDrawer() {
+      sheetTitle.innerText = "Creative Mathematical Powers & War Intel";
+      sheetContent.innerHTML = `
+        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--purple); font-weight: 800; letter-spacing: 0.5px;">
+          CREATIVE MODE POWERS (REAL-WORLD MATHEMATICAL MODELS):
+        </div>
+        
+        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--emerald); font-weight: 800; letter-spacing: 0.5px; margin-bottom: 4px;">
+          🌿 BENEVOLENT POWERS (BLESS, HEAL & ACCELERATE):
+        </div>
+        <div class="creative-grid">
+          <button class="creative-power-btn" data-power="harvest" style="border-color: rgba(52, 211, 153, 0.45);">
+            <div class="power-title"><span style="color: #34d399;">🌾 Bounteous Harvest</span></div>
+            <div class="power-math-desc">K → 2K carrying capacity expansion. Purges famine & grants +160 recruits.</div>
+          </button>
+
+          <button class="creative-power-btn" data-power="hospital" style="border-color: rgba(56, 189, 248, 0.45);">
+            <div class="power-title"><span style="color: #38bdf8;">🏥 Inoculation Sanctuary</span></div>
+            <div class="power-math-desc">dI/dt = -γI seroconversion. Purges SIR disease & river toxins; heals troops.</div>
+          </button>
+
+          <button class="creative-power-btn" data-power="airdrop" style="border-color: rgba(251, 191, 36, 0.45);">
+            <div class="power-title"><span style="color: #fbbf24;">📦 Emergency Airdrop</span></div>
+            <div class="power-math-desc">Graph flow max-injection. Floods 100% supply across pockets & +140 veterans.</div>
+          </button>
+
+          <button class="creative-power-btn" data-power="rally" style="border-color: rgba(244, 63, 94, 0.45);">
+            <div class="power-title"><span style="color: #f43f5e;">⚡ Heroic Adrenaline Blitz</span></div>
+            <div class="power-math-desc">Lanchester force concentration: +3.2x attack surge & decisive break.</div>
+          </button>
+
+          <button class="creative-power-btn" data-power="citadel" style="border-color: rgba(192, 132, 252, 0.45);">
+            <div class="power-title"><span style="color: #c084fc;">🛡️ Bastion Citadel</span></div>
+            <div class="power-math-desc">Permanent structural fortification. +55 elevation, forest ring & +0.30 defense.</div>
+          </button>
+        </div>
+
+        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--rose); font-weight: 800; letter-spacing: 0.5px; margin-top: 12px; margin-bottom: 4px;">
+          ⚡ DISRUPTIVE & TACTICAL POWERS (SHOCK, PENALIZE & CRATER):
+        </div>
+        <div class="creative-grid">
+          <button class="creative-power-btn" data-power="emp">
+            <div class="power-title"><span>⚡ High-Altitude EMP</span></div>
+            <div class="power-math-desc">E(r) field surge. Collapses supply logistics & freezes frontlines (1.5 yrs).</div>
+          </button>
+
+          <button class="creative-power-btn" data-power="famine">
+            <div class="power-title"><span>🌾 Malthusian Famine</span></div>
+            <div class="power-math-desc">dN/dt = -λN. Carrying capacity shock K drops 90%. Starvation attrition.</div>
+          </button>
+
+          <button class="creative-power-btn" data-power="disease">
+            <div class="power-title"><span>🦠 SIR Epidemic</span></div>
+            <div class="power-math-desc">∂I/∂t = βSI/N. Pathogen diffuses 3x faster along highways & armies.</div>
+          </button>
+
+          <button class="creative-power-btn" data-power="toxin">
+            <div class="power-title"><span>☣️ River Toxic Plume</span></div>
+            <div class="power-math-desc">∂C/∂t + v·∇C = D∇²C - kC. Flows downstream; poisons drinking supplies.</div>
+          </button>
+
+          <button class="creative-power-btn" data-power="strike">
+            <div class="power-title"><span>💥 Artillery Barrage</span></div>
+            <div class="power-math-desc">Instant kinetic cratering. Decimates frontlines and opens breach.</div>
+          </button>
+
+          <button class="creative-power-btn" data-power="bridge">
+            <div class="power-title"><span>🪵 Pontoon Engineer</span></div>
+            <div class="power-math-desc">Auto-spans river channels bank-to-bank with paved road ramps.</div>
+          </button>
+
+          <button class="creative-power-btn" data-power="revolt">
+            <div class="power-title"><span>⚡ Armed Insurgency</span></div>
+            <div class="power-math-desc">Civil war detonation: carves 22-cell homeland for veteran partisans.</div>
+          </button>
+
+          <button class="creative-power-btn" data-power="trench">
+            <div class="power-title"><span>🛡️ Ridge Trenchline</span></div>
+            <div class="power-math-desc">Raises topographic elevation (+slope defense penalty against attackers).</div>
+          </button>
+        </div>
+
+        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--amber); font-weight: 800; margin-top: 10px;">
+          CAMPAIGN DIFFICULTY:
+        </div>
+        <div class="diff-pill-group">
+          <div class="diff-pill ${state.difficulty === 'recruit' ? 'active' : ''}" data-diff="recruit">🟢 Recruit</div>
+          <div class="diff-pill ${state.difficulty === 'veteran' ? 'active' : ''}" data-diff="veteran">🟡 Veteran</div>
+          <div class="diff-pill ${state.difficulty === 'ironclad' ? 'active' : ''}" data-diff="ironclad">🔴 Ironclad</div>
+        </div>
+
+        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--cyan); margin-top: 10px; font-weight: 800;">
+          REGIONAL FACTIONS & GANGS:
+        </div>
+        <div id="drawerRosterList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        
+        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--cyan); margin-top: 10px; font-weight: 800;">
+          TOPOGRAPHIC RADAR (300x300)
+        </div>
+        <div class="sheet-radar-container">
+          <canvas id="sheetMinimapCanvas" width="300" height="300"></canvas>
+        </div>
+      `;
+
+      sheetContent.querySelectorAll('.creative-power-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const power = btn.dataset.power;
+          closeSheet();
+          armCreativePower(power);
+        });
+      });
+
+      sheetContent.querySelectorAll('.diff-pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+          state.difficulty = pill.dataset.diff;
+          sheetContent.querySelectorAll('.diff-pill').forEach(p => p.classList.toggle('active', p === pill));
+          showFlashNotice(`DIFFICULTY SET TO: ${state.difficulty.toUpperCase()}`);
+        });
+      });
+
+      updateRoster();
+      updateAllMinimaps();
+
+      sheetBackdrop.classList.add('open');
+      bottomSheet.classList.add('open');
+    }
+
+    function closeSheet() {
+      sheetBackdrop.classList.remove('open');
+      bottomSheet.classList.remove('open');
+    }
+
+    sheetBackdrop.addEventListener('click', closeSheet);
+    document.getElementById('btnCloseSheet').addEventListener('click', closeSheet);
+    document.getElementById('sheetHandle').addEventListener('click', closeSheet);
+
+    function armCreativePower(power) {
+      if (power === 'harvest') {
+        setArmedTool('harvest', '🌾 BOUNTEOUS HARVEST: Tap agricultural sector to eradicate famine & grant +160 recruits');
+      } else if (power === 'hospital') {
+        setArmedTool('hospital', '🏥 INOCULATION SANCTUARY: Tap sector to purge epidemics, cleanse toxins & heal morale');
+      } else if (power === 'airdrop') {
+        setArmedTool('airdrop', '📦 INDUSTRIAL AIRDROP: Tap faction territory to restore 100% supply & drop +140 veterans');
+      } else if (power === 'rally') {
+        setArmedTool('rally', '⚡ HEROIC RALLY: Tap faction to unleash +3.2x combat surge & break encirclement');
+      } else if (power === 'citadel') {
+        setArmedTool('citadel', '🛡️ BASTION CITADEL: Tap sector to erect stone redoubts, elevation & +0.30 base defense');
+      } else if (power === 'emp') {
+        setArmedTool('emp', '⚡ EMP READY: Tap map to detonate electromagnetic blackout shockwave');
+      } else if (power === 'famine') {
+        setArmedTool('famine', '🌾 FAMINE READY: Tap agricultural sector to cause Malthusian crop failure');
+      } else if (power === 'disease') {
+        setArmedTool('disease', '🦠 SIR EPIDEMIC READY: Tap troops to release contagious pathogen');
+      } else if (power === 'toxin') {
+        setArmedTool('toxin', '☣️ RIVER TOXIN READY: Tap river to inject downstream chemical plume');
+      } else if (power === 'strike') {
+        setArmedTool('strike', '💥 ARTILLERY READY: Tap map sector to strike');
+      } else if (power === 'bridge') {
+        setArmedTool('bridge', '🪵 PONTOON ENGINEER: Tap near river to span bank-to-bank');
+      } else if (power === 'revolt') {
+        setArmedTool('revolt', '⚡ REVOLT READY: Tap map to ignite armed civil war');
+      } else if (power === 'trench') {
+        setArmedTool('trench', '🛡️ TRENCH READY: Tap sector to elevate ridge defense');
+      }
+    }
+
+    function setArmedTool(toolName, promptText = '') {
+      state.activeTool = toolName;
+      const banner = document.getElementById('activeToolBanner');
+      if (toolName) {
+        document.getElementById('activeToolText').innerText = promptText;
+        banner.classList.add('show');
+      } else {
+        banner.classList.remove('show');
+      }
+    }
+
+    document.getElementById('btnCancelTool').addEventListener('click', () => {
+      setArmedTool(null);
+    });
+
+    function updateRoster() {
+      const living = Array.from(state.factions.values()).filter(f => f.alive);
+      living.sort((a, b) => b.territory - a.territory);
+
+      const html = living.map((f, idx) => {
+        const pct = ((f.territory / TOTAL_CELLS) * 100).toFixed(1);
+        const isSel = f.id === state.selectedFactionId;
+        const isPlayer = f.id === state.playerFactionId;
+        const tag = f.isGang ? '<span style="color: var(--rose); font-size: 9px; font-weight: 800;">[OUTLAW GANG]</span>' : (isPlayer ? '<span style="color: var(--amber); font-size: 9px; font-weight: 800;">[YOU]</span>' : '');
+        return `
+          <div data-id="${f.id}" class="sheet-roster-card ${f.isGang ? 'gang' : ''} ${isSel ? 'active' : ''}">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="color: #64748b; font-family: var(--font-mono); font-size: 11px; width: 14px;">#${idx + 1}</span>
+              <div style="width: 12px; height: 12px; border-radius: 50%; background: ${f.hex};"></div>
+              <div>
+                <div style="font-weight: 700; color: #fff; font-size: 12px;">${f.town}</div>
+                <div style="color: #94a3b8; font-size: 10px; font-family: var(--font-mono);">${tag} Supply: ${f.supplyIndex}%</div>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: 11px;">
+              <span style="color: var(--cyan); font-weight: 800;">${pct}%</span>
+              <span>🪖 ${f.troops}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const drawerList = document.getElementById('drawerRosterList');
+      if (drawerList) {
+        drawerList.innerHTML = html;
+        drawerList.querySelectorAll('.sheet-roster-card').forEach(el => {
+          el.addEventListener('click', () => {
+            const id = parseInt(el.dataset.id);
+            selectFaction(id);
+            closeSheet();
+          });
+        });
+      }
+    }
+
+    function clampCamera() {
+      const maxPanX = mainCanvas.width * 0.70;
+      const maxPanY = mainCanvas.height * 0.70;
+      state.camX = Math.max(-maxPanX, Math.min(maxPanX, state.camX));
+      state.camY = Math.max(-maxPanY, Math.min(maxPanY, state.camY));
+      state.zoom = Math.max(0.65, Math.min(5.0, state.zoom));
+    }
+
+    function resetCamera() {
+      state.camX = 0;
+      state.camY = 0;
+      state.zoom = 1.0;
+      showFlashNotice("🧭 VIEW RECENTERED");
+    }
+
+    function panTo(x, y) {
+      const tileW = mainCanvas.width / W;
+      const tileH = mainCanvas.height / H;
+      state.camX = (mainCanvas.width / 2) - (x * tileW);
+      state.camY = (mainCanvas.height / 2) - (y * tileH);
+      clampCamera();
+    }
+
+    function showFlashNotice(msg) {
+      const el = document.getElementById('hudNotice');
+      el.innerText = msg;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 2400);
+    }
+
+    function spawnClickRipple(x, y) {
+      const r = document.createElement('div');
+      r.className = 'tap-ripple';
+      r.style.left = x + 'px';
+      r.style.top = y + 'px';
+      document.body.appendChild(r);
+      setTimeout(() => r.remove(), 400);
+    }
+
+    // --- 12. CINEMA MODE ---
+    function toggleCinemaMode(force) {
+      const isCinema = force !== undefined ? force : !document.body.classList.contains('cinema-mode');
+      document.body.classList.toggle('cinema-mode', isCinema);
+      closeSheet();
+    }
+
+    document.getElementById('btnCinemaToggle').addEventListener('click', () => toggleCinemaMode(true));
+    document.getElementById('btnExitCinema').addEventListener('click', () => toggleCinemaMode(false));
+
+    window.addEventListener('keydown', e => {
+      if (e.key === 'c' || e.key === 'C') {
+        toggleCinemaMode();
+      } else if (e.key === 'r' || e.key === 'R') {
+        resetCamera();
+      } else if (e.key === ' ') {
+        e.preventDefault();
+        togglePlayPause();
+      }
+    });
+
+    document.getElementById('btnRecenter').addEventListener('click', resetCamera);
+    document.getElementById('btnFloatingRecenter').addEventListener('click', resetCamera);
+    document.getElementById('btnFocusCapital').addEventListener('click', () => {
+      const fid = state.selectedFactionId || state.playerFactionId || 1;
+      const f = state.factions.get(fid);
+      if (f) {
+        panTo(f.capitalX, f.capitalY);
+        showFlashNotice(`📍 FOCUSED ON ${f.town.toUpperCase()}`);
+      }
+    });
+
+    function togglePlayPause() {
+      state.isPaused = !state.isPaused;
+      document.getElementById('btnPause').innerText = state.isPaused ? '▶' : '❚❚';
+    }
+
+    document.getElementById('btnPause').addEventListener('click', togglePlayPause);
+
+    const spdMap = [
+      { id: 'btnSpeed1', v: 1 },
+      { id: 'btnSpeed2', v: 2 },
+      { id: 'btnSpeed5', v: 5 },
+      { id: 'btnSpeed10', v: 10 },
+      { id: 'btnSpeed25', v: 25 }
+    ];
+    spdMap.forEach(s => {
+      document.getElementById(s.id).addEventListener('click', () => {
+        state.speed = s.v;
+        state.isPaused = false;
+        document.getElementById('btnPause').innerText = '❚❚';
+        spdMap.forEach(o => document.getElementById(o.id).classList.toggle('active', o.v === s.v));
+      });
+    });
+
+    document.getElementById('btnResetConflict').addEventListener('click', () => {
+      initTheater();
+    });
+
+    // --- 13. EXACT TOUCH & POINTER INTERACTIONS ---
+    function getTileFromEvent(clientX, clientY) {
+      const rect = mainCanvas.getBoundingClientRect();
+      const mouseX = clientX - rect.left;
+      const mouseY = clientY - rect.top;
+
+      const screenCenterX = mainCanvas.width / 2;
+      const screenCenterY = mainCanvas.height / 2;
+
+      const worldX = (mouseX - screenCenterX) / state.zoom + screenCenterX - state.camX;
+      const worldY = (mouseY - screenCenterY) / state.zoom + screenCenterY - state.camY;
+
+      const tx = Math.floor((worldX / mainCanvas.width) * W);
+      const ty = Math.floor((worldY / mainCanvas.height) * H);
+
+      if (tx >= 0 && tx < W && ty >= 0 && ty < H) {
+        return { x: tx, y: ty, idx: ty * W + tx };
+      }
+      return null;
+    }
+
+    function findNearestCountySeat(tx, ty, tolerance = 14) {
+      let nearest = null;
+      let minDist = tolerance;
+      state.factions.forEach(f => {
+        if (!f.alive) return;
+        const d = Math.hypot(f.capitalX - tx, f.capitalY - ty);
+        if (d < minDist) {
+          minDist = d;
+          nearest = f;
+        }
+      });
+      return nearest;
+    }
+
+    // Mouse Listeners (Accurate 1:1 screen-to-world drag with clamping)
+    mainCanvas.addEventListener('mousedown', e => {
+      if (e.button === 0) {
+        state.isDragging = true;
+        state.dragStartX = e.clientX;
+        state.dragStartY = e.clientY;
+        state.initialCamX = state.camX;
+        state.initialCamY = state.camY;
+      }
+    });
+
+    window.addEventListener('mousemove', e => {
+      if (state.isDragging) {
+        const dx = (e.clientX - state.dragStartX) / state.zoom;
+        const dy = (e.clientY - state.dragStartY) / state.zoom;
+        state.camX = state.initialCamX + dx;
+        state.camY = state.initialCamY + dy;
+        clampCamera();
+      }
+    });
+
+    window.addEventListener('mouseup', e => {
+      if (state.isDragging) {
+        state.isDragging = false;
+        const d = Math.hypot(e.clientX - state.dragStartX, e.clientY - state.dragStartY);
+        if (d < 6) handleTap(e.clientX, e.clientY);
+      }
+    });
+
+    mainCanvas.addEventListener('wheel', e => {
+      e.preventDefault();
+      const f = e.deltaY < 0 ? 1.15 : 0.85;
+      state.zoom = Math.min(5.0, Math.max(0.65, state.zoom * f));
+      clampCamera();
+    }, { passive: false });
+
+    // Touch Listeners for iPhone / Mobile (1:1 Drag, Pinch-Zoom, & Double-Tap Recenter)
+    let lastTapTime = 0;
+    mainCanvas.addEventListener('touchstart', e => {
+      if (e.touches.length === 1) {
+        state.isDragging = true;
+        state.dragStartX = e.touches[0].clientX;
+        state.dragStartY = e.touches[0].clientY;
+        state.initialCamX = state.camX;
+        state.initialCamY = state.camY;
+      } else if (e.touches.length === 2) {
+        state.isDragging = false;
+        state.touchStartDist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        state.initialTouchZoom = state.zoom;
+      }
+    }, { passive: true });
+
+    mainCanvas.addEventListener('touchmove', e => {
+      if (e.touches.length === 1 && state.isDragging) {
+        const dx = (e.touches[0].clientX - state.dragStartX) / state.zoom;
+        const dy = (e.touches[0].clientY - state.dragStartY) / state.zoom;
+        state.camX = state.initialCamX + dx;
+        state.camY = state.initialCamY + dy;
+        clampCamera();
+      } else if (e.touches.length === 2 && state.touchStartDist > 0) {
+        const currentDist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        const scale = currentDist / state.touchStartDist;
+        state.zoom = Math.min(5.0, Math.max(0.65, state.initialTouchZoom * scale));
+        clampCamera();
+      }
+    }, { passive: true });
+
+    mainCanvas.addEventListener('touchend', e => {
+      if (state.isDragging && e.changedTouches.length === 1) {
+        state.isDragging = false;
+        const t = e.changedTouches[0];
+        const d = Math.hypot(t.clientX - state.dragStartX, t.clientY - state.dragStartY);
+        if (d < 8) {
+          const now = Date.now();
+          if (now - lastTapTime < 320) {
+            // Quick Double-Tap on map: Instant Recenter
+            resetCamera();
+          } else {
+            handleTap(t.clientX, t.clientY);
+          }
+          lastTapTime = now;
+        }
+      }
+      if (e.touches.length < 2) {
+        state.touchStartDist = 0;
+      }
+    }, { passive: true });
+
+    function handleTap(clientX, clientY) {
+      spawnClickRipple(clientX, clientY);
+      const tile = getTileFromEvent(clientX, clientY);
+      if (!tile) return;
+
+      // Handle Creative Mode Mathematical Powers
+      if (state.activeTool) {
+        if (state.activeTool === 'harvest') {
+          triggerBounteousHarvest(tile.x, tile.y);
+          setArmedTool(null);
+          return;
+        } else if (state.activeTool === 'hospital') {
+          triggerHospitalCure(tile.x, tile.y);
+          setArmedTool(null);
+          return;
+        } else if (state.activeTool === 'airdrop') {
+          triggerSupplyAirdrop(tile.x, tile.y);
+          setArmedTool(null);
+          return;
+        } else if (state.activeTool === 'rally') {
+          triggerHeroicRally(tile.x, tile.y);
+          setArmedTool(null);
+          return;
+        } else if (state.activeTool === 'citadel') {
+          triggerBastionCitadel(tile.x, tile.y);
+          setArmedTool(null);
+          return;
+        } else if (state.activeTool === 'emp') {
+          triggerEMP(tile.x, tile.y);
+          setArmedTool(null);
+          return;
+        } else if (state.activeTool === 'famine') {
+          triggerFamine(tile.x, tile.y);
+          setArmedTool(null);
+          return;
+        } else if (state.activeTool === 'disease') {
+          triggerEpidemic(tile.x, tile.y);
+          setArmedTool(null);
+          return;
+        } else if (state.activeTool === 'toxin') {
+          triggerRiverContamination(tile.x, tile.y);
+          setArmedTool(null);
+          return;
+        } else if (state.activeTool === 'strike') {
+          triggerArtilleryStrike(tile.x, tile.y);
+          setArmedTool(null);
+          return;
+        } else if (state.activeTool === 'bridge') {
+          buildFullRiverSpan(tile.x, tile.y);
+          return;
+        } else if (state.activeTool === 'revolt') {
+          spawnRebellionAt(tile.x, tile.y);
+          setArmedTool(null);
+          return;
+        } else if (state.activeTool === 'trench') {
+          state.elevation[tile.idx] = Math.min(255, state.elevation[tile.idx] + 70);
+          bakeStaticHillshade();
+          showFlashNotice("🛡️ RIDGE TRENCH ELEVATED (+DEFENSE)");
+          setArmedTool(null);
+          return;
+        }
+      }
+
+      // Default: inspect closest county seat or territory
+      const nearestSeat = findNearestCountySeat(tile.x, tile.y, 14);
+      if (nearestSeat) {
+        selectFaction(nearestSeat.id);
+      } else {
+        const ownerId = state.owner[tile.idx];
+        if (ownerId > 0 && state.factions.has(ownerId)) {
+          selectFaction(ownerId);
+        }
+      }
+    }
+
+    // --- 14. RESPONSIVE RESIZE (1:1 Unified Coordinates) ---
+    function resizeCanvas() {
+      mainCanvas.width = window.innerWidth;
+      mainCanvas.height = window.innerHeight;
+      mainCanvas.style.width = window.innerWidth + 'px';
+      mainCanvas.style.height = window.innerHeight + 'px';
+      clampCamera();
+      renderScene();
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('orientationchange', () => {
+      setTimeout(resizeCanvas, 200);
+    });
+
+    let lastSimTime = 0;
+    function loop(now) {
+      if (!state.isPaused) {
+        const interval = 1000 / (18 * state.speed);
+        if (now - lastSimTime >= interval) {
+          stepSimulation();
+          lastSimTime = now;
+        }
+      }
+
+      renderScene();
+      requestAnimationFrame(loop);
+    }
+
+    // Startup Initialization
+    window.addEventListener('DOMContentLoaded', () => {
+      resizeCanvas();
+      initTheater();
+      requestAnimationFrame(loop);
+    });
+  </script>
+</body>
+</html>

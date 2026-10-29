@@ -1,0 +1,1848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Thread Jam - Untangle 3D Ropes</title>
+  <style>
+    :root {
+      --bg-dark: #1f140e;
+      --wood-rim: #442a1d;
+      --wood-plate: #2c1a11;
+      --peg-brass: #d4af37;
+      --fabric-linen: #f7f1e5;
+      --ui-text: #2a1b12;
+      --ui-muted: #7c6859;
+      --accent-coral: #ef476f;
+      --accent-gold: #ffd166;
+      --accent-mint: #06d6a0;
+      --accent-blue: #118ab2;
+      --accent-purple: #8338ec;
+      --accent-orange: #f77f00;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      margin: 0;
+      padding: 0;
+      touch-action: manipulation;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 30%, #301f16 0%, #120a06 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Quicksand", "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--ui-text);
+    }
+
+    #game-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      max-width: 460px;
+      max-height: 900px;
+      background: radial-gradient(circle at 50% 40%, #fbf8f0 0%, #eee3ce 100%);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.75);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Top HUD */
+    header {
+      padding: 10px 14px 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 20;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      background: #ffffff;
+      border: 1.5px solid rgba(212, 163, 115, 0.5);
+      border-radius: 14px;
+      padding: 6px 11px;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--ui-text);
+      text-decoration: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      display: flex;
+      align-items: center;
+      transition: transform 0.1s, background 0.15s;
+    }
+    .nav-btn:active { transform: scale(0.92); background: #faedcd; }
+
+    .level-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.92);
+      padding: 5px 12px;
+      border-radius: 16px;
+      border: 1.5px solid rgba(212, 163, 115, 0.5);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .level-badge:active { transform: scale(0.96); }
+
+    .level-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #3e271a;
+      line-height: 1.1;
+    }
+    .level-sub {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--ui-muted);
+      line-height: 1.1;
+    }
+
+    .header-right {
+      display: flex;
+      gap: 5px;
+    }
+
+    .action-pill {
+      padding: 6px 10px;
+      border-radius: 12px;
+      background: #ffffff;
+      border: 1.5px solid rgba(212, 163, 115, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ui-text);
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      transition: transform 0.1s, background 0.15s;
+    }
+    .action-pill:active { transform: scale(0.92); background: #faedcd; }
+
+    /* Top Stitching Gallery (Embroidery Preview Banner) */
+    #embroidery-tray {
+      margin: 0 14px 4px;
+      background: #ffffff;
+      border: 2px solid #d4a373;
+      border-radius: 18px;
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 12px rgba(60, 40, 20, 0.08);
+      z-index: 15;
+    }
+
+    .embroidery-label-box {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .embroidery-tag {
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--ui-muted);
+    }
+
+    .embroidery-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #3e271a;
+    }
+
+    .progress-bar-wrap {
+      flex: 1;
+      max-width: 140px;
+      height: 10px;
+      background: #eee3ce;
+      border-radius: 6px;
+      overflow: hidden;
+      margin: 0 10px;
+      position: relative;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #06d6a0, #ef476f);
+      border-radius: 6px;
+      transition: width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .stitch-preview-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: #faf6ee;
+      border: 1.5px solid #d4a373;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Main 3D Knot Pegboard Canvas */
+    #canvas-container {
+      position: relative;
+      flex: 1;
+      margin: 2px 14px 4px;
+      border-radius: 26px;
+      background: radial-gradient(circle at 50% 50%, #2f1d13 0%, #1a0f09 100%);
+      border: 6px solid #442a1d;
+      box-shadow: inset 0 4px 16px rgba(0,0,0,0.6), 0 8px 24px rgba(0,0,0,0.15);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;
+    }
+
+    /* Bottom Spool Dock & Match Area */
+    footer {
+      padding: 8px 14px 16px;
+      background: linear-gradient(to top, rgba(251, 248, 240, 0.98), rgba(251, 248, 240, 0.88));
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-top: 1px solid rgba(212, 163, 115, 0.35);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 20;
+    }
+
+    .dock-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 2px;
+    }
+
+    .dock-title {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--ui-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .boosters-wrap {
+      display: flex;
+      gap: 6px;
+    }
+
+    .booster-btn {
+      padding: 5px 11px;
+      border-radius: 12px;
+      background: #ffffff;
+      border: 1.5px solid rgba(212, 163, 115, 0.5);
+      font-size: 11px;
+      font-weight: 800;
+      color: #3e271a;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      transition: transform 0.1s, background 0.15s, opacity 0.2s;
+    }
+    .booster-btn:active { transform: scale(0.92); background: #fefae0; }
+    .booster-btn.active {
+      background: var(--accent-coral);
+      color: #fff;
+      border-color: var(--accent-coral);
+      box-shadow: 0 0 10px rgba(239, 71, 111, 0.5);
+    }
+    .booster-btn.cooldown {
+      opacity: 0.5;
+      background: #e8ded2;
+      color: #8a7767;
+      border-color: rgba(180, 160, 140, 0.4);
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    .booster-badge {
+      font-size: 9px;
+      font-weight: 800;
+      background: #8a7767;
+      color: #ffffff;
+      padding: 1px 5px;
+      border-radius: 8px;
+    }
+
+    /* 5 Spool Dock Slots */
+    .spool-slots {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 7px;
+    }
+
+    .spool-slot {
+      aspect-ratio: 1 / 1.25;
+      background: rgba(225, 210, 190, 0.5);
+      border: 2px dashed rgba(180, 150, 125, 0.55);
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .spool-slot.occupied {
+      background: #ffffff;
+      border: 2px solid rgba(212, 163, 115, 0.6);
+      box-shadow: 0 4px 10px rgba(60, 40, 20, 0.1);
+    }
+
+    .spool-slot.spinning {
+      transform: scale(1.05);
+      box-shadow: 0 0 14px rgba(254, 198, 1, 0.6);
+    }
+
+    .spool-bobbin {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      box-shadow: inset 0 -4px 6px rgba(0,0,0,0.35), 0 3px 6px rgba(0,0,0,0.18);
+    }
+
+    .spool-core {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #faedcd;
+      border: 2px solid #b5835a;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .spool-counter {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--ui-text);
+      margin-top: 3px;
+    }
+
+    /* Modals */
+    .modal-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(25, 15, 10, 0.8);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      padding: 24px;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: auto; }
+
+    .modal-sheet {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 24px 20px;
+      max-width: 320px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+      border: 3px solid #faedcd;
+    }
+
+    .modal-title {
+      font-size: 21px;
+      font-weight: 800;
+      color: #3e271a;
+      margin: 4px 0 6px;
+    }
+
+    .modal-desc {
+      font-size: 13px;
+      color: #7b6555;
+      line-height: 1.45;
+      margin-bottom: 20px;
+    }
+
+    .modal-btn {
+      width: 100%;
+      padding: 12px 18px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent-coral), #f72585);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 800;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(255, 89, 100, 0.4);
+      transition: transform 0.1s;
+    }
+    .modal-btn:active { transform: scale(0.96); }
+
+    .level-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin: 14px 0 18px;
+      max-height: 240px;
+      overflow-y: auto;
+    }
+
+    .lvl-card-btn {
+      padding: 10px 8px;
+      border-radius: 12px;
+      background: #fdfaf3;
+      border: 2px solid #e9d8c0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: #3e271a;
+      cursor: pointer;
+      transition: transform 0.15s, background 0.15s;
+    }
+    .lvl-card-btn:active { transform: scale(0.94); }
+    .lvl-card-btn.active {
+      background: var(--accent-coral);
+      color: #fff;
+      border-color: var(--accent-coral);
+    }
+    .lvl-card-sub {
+      font-size: 10px;
+      font-weight: 600;
+      opacity: 0.85;
+      margin-top: 2px;
+    }
+
+    /* Toast */
+    .toast {
+      position: absolute;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: rgba(43, 29, 20, 0.94);
+      color: #fff;
+      padding: 7px 16px;
+      border-radius: 18px;
+      font-size: 12px;
+      font-weight: 700;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s ease;
+      z-index: 50;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+      white-space: nowrap;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+  <script src="telemetry.js"></script>
+</head>
+<body>
+  <div id="game-wrapper">
+    <header>
+      <div class="header-left">
+        <a href="index.html" class="nav-btn" title="Back to 449 Field Arcade">Arcade</a>
+        <div class="level-badge" id="btn-open-levels">
+          <div>
+            <div class="level-title" id="hud-level-num">Level 1</div>
+            <div class="level-sub" id="hud-level-name">Cozy Heart</div>
+          </div>
+          <span style="font-size: 9px; color: var(--ui-muted);">&#9660;</span>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <button class="action-pill" id="btn-undo" title="Undo Last Move">Undo</button>
+        <button class="action-pill" id="btn-restart" title="Restart Level">Reset</button>
+        <button class="action-pill" id="btn-sound" title="Toggle Sound">Sound</button>
+      </div>
+    </header>
+
+    <!-- Top Embroidery Art Stitching Banner -->
+    <div id="embroidery-tray">
+      <div class="embroidery-label-box">
+        <span class="embroidery-tag">Embroidery Canvas</span>
+        <span class="embroidery-title" id="canvas-art-name">Cozy Heart</span>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progress-bar-fill"></div>
+      </div>
+      <div class="stitch-preview-icon" id="stitch-preview-icon">
+        <canvas id="thumb-canvas" width="40" height="40"></canvas>
+      </div>
+    </div>
+
+    <div class="toast" id="toast-msg">Tap free top ropes to untangle!</div>
+
+    <!-- 3D Tangled Knot Pegboard Canvas -->
+    <div id="canvas-container">
+      <canvas id="main-canvas"></canvas>
+    </div>
+
+    <!-- Spool Match Dock -->
+    <footer>
+      <div class="dock-header">
+        <span class="dock-title">Spool Dock (<span id="slot-usage-count">0</span>/5)</span>
+        <div class="boosters-wrap">
+          <button class="booster-btn" id="btn-scissors" title="Snip a blocking rope">Snip</button>
+          <button class="booster-btn" id="btn-rainbow" title="Rainbow Wild Spool">Wild Spool</button>
+        </div>
+      </div>
+
+      <div class="spool-slots">
+        <div class="spool-slot" data-slot="0"></div>
+        <div class="spool-slot" data-slot="1"></div>
+        <div class="spool-slot" data-slot="2"></div>
+        <div class="spool-slot" data-slot="3"></div>
+        <div class="spool-slot" data-slot="4"></div>
+      </div>
+    </footer>
+
+    <!-- Level Select Modal -->
+    <div class="modal-overlay" id="modal-levels">
+      <div class="modal-sheet">
+        <div class="modal-title">Select Tangled Pattern</div>
+        <div class="modal-desc">Choose any knot puzzle from the workshop:</div>
+        <div class="level-grid" id="level-grid-container"></div>
+        <button class="modal-btn" id="btn-close-levels">Resume Untangling</button>
+      </div>
+    </div>
+
+    <!-- Win Modal -->
+    <div class="modal-overlay" id="modal-win">
+      <div class="modal-sheet">
+        <div class="modal-title" id="win-title">Untangled &amp; Stitched!</div>
+        <div class="modal-desc" id="win-desc">All ropes cleared and embroidered with snug perfection!</div>
+        <button class="modal-btn" id="btn-next-level">Next Knitted Art &rarr;</button>
+      </div>
+    </div>
+
+    <!-- Jammed Modal -->
+    <div class="modal-overlay" id="modal-jam">
+      <div class="modal-sheet">
+        <div class="modal-title">Spool Dock Jammed!</div>
+        <div class="modal-desc">All 5 spool slots are full with no matching free ropes. Use Snip, Undo, or retry!</div>
+        <button class="modal-btn" id="btn-retry">Try Again</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================================
+       Thread Jam: Untangle 3D Ropes - Pure Tactile Engine
+       ========================================================================= */
+
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.ctx = new AudioContext();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      toggle() {
+        this.enabled = !this.enabled;
+        return this.enabled;
+      }
+
+      // Slithering rope untangling pull
+      ropeSlide() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(320, now);
+        osc.frequency.exponentialRampToValueAtTime(540, now + 0.12);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.15);
+      }
+
+      // Elastic tension twang when rope is trapped/blocked
+      twang() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(160, now);
+        osc.frequency.linearRampToValueAtTime(110, now + 0.15);
+        gain.gain.setValueAtTime(0.22, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.16);
+      }
+
+      // Spool collection ratchet
+      spoolSpin() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(440, now);
+        osc.frequency.exponentialRampToValueAtTime(660, now + 0.08);
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.09);
+      }
+
+      // Spool full pop
+      pop() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const notes = [587.33, 739.99, 880];
+        notes.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.04);
+          gain.gain.setValueAtTime(0.22, now + idx * 0.04);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.04 + 0.25);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + idx * 0.04);
+          osc.stop(now + idx * 0.04 + 0.28);
+        });
+      }
+
+      // Scissor Snip
+      snip() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const bufferSize = this.ctx.sampleRate * 0.06;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.25));
+        }
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'highpass';
+        filter.frequency.setValueAtTime(1400, now);
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.06);
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+        noise.start(now);
+      }
+
+      // Victory Fanfare
+      victory() {
+        if (!this.enabled) return;
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, idx) => {
+          setTimeout(() => {
+            this.init();
+            if (!this.ctx) return;
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now);
+            gain.gain.setValueAtTime(0.25, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.45);
+          }, idx * 100);
+        });
+      }
+
+      buzz() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(130, now);
+        osc.frequency.linearRampToValueAtTime(80, now + 0.2);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.22);
+      }
+    }
+
+    // Distance from point (px, py) to line segment (x1, y1) -> (x2, y2)
+    function distToSegment(px, py, x1, y1, x2, y2) {
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const l2 = dx * dx + dy * dy;
+      if (l2 === 0) return Math.hypot(px - x1, py - y1);
+      let t = ((px - x1) * dx + (py - y1) * dy) / l2;
+      t = Math.max(0, Math.min(1, t));
+      return Math.hypot(px - (x1 + t * dx), py - (y1 + t * dy));
+    }
+
+    // 12 Tangled Rope Puzzle Levels (Carefully balanced 3-strand spool sets)
+    const LEVELS = [
+      {
+        id: 1,
+        title: "Cozy Heart",
+        spoolTarget: 3,
+        pegs: [
+          { id: 'p1', x: 0.22, y: 0.25 },
+          { id: 'p2', x: 0.50, y: 0.35 },
+          { id: 'p3', x: 0.78, y: 0.25 },
+          { id: 'p4', x: 0.20, y: 0.58 },
+          { id: 'p5', x: 0.50, y: 0.82 },
+          { id: 'p6', x: 0.80, y: 0.58 }
+        ],
+        ropes: [
+          // 3 Ruby Pink, 3 Goldenrod
+          { id: 'r1', color: '#ef476f', name: 'Ruby Pink', layer: 0, blockedBy: ['r3', 'r4'], pegA: 'p1', pegB: 'p5', path: [{x:0.22,y:0.25},{x:0.32,y:0.55},{x:0.50,y:0.82}] },
+          { id: 'r2', color: '#ffd166', name: 'Goldenrod', layer: 0, blockedBy: ['r4', 'r5'], pegA: 'p3', pegB: 'p5', path: [{x:0.78,y:0.25},{x:0.68,y:0.55},{x:0.50,y:0.82}] },
+          { id: 'r3', color: '#ef476f', name: 'Ruby Pink', layer: 1, blockedBy: ['r5'], pegA: 'p4', pegB: 'p6', path: [{x:0.20,y:0.58},{x:0.50,y:0.52},{x:0.80,y:0.58}] },
+          { id: 'r4', color: '#ffd166', name: 'Goldenrod', layer: 1, blockedBy: ['r6'], pegA: 'p1', pegB: 'p6', path: [{x:0.22,y:0.25},{x:0.50,y:0.42},{x:0.80,y:0.58}] },
+          { id: 'r5', color: '#ef476f', name: 'Ruby Pink', layer: 2, blockedBy: [], pegA: 'p2', pegB: 'p4', path: [{x:0.50,y:0.35},{x:0.30,y:0.42},{x:0.20,y:0.58}] },
+          { id: 'r6', color: '#ffd166', name: 'Goldenrod', layer: 2, blockedBy: [], pegA: 'p2', pegB: 'p6', path: [{x:0.50,y:0.35},{x:0.70,y:0.42},{x:0.80,y:0.58}] }
+        ]
+      },
+      {
+        id: 2,
+        title: "Juicy Strawberry",
+        spoolTarget: 3,
+        pegs: [
+          { id: 'p1', x: 0.25, y: 0.25 },
+          { id: 'p2', x: 0.50, y: 0.20 },
+          { id: 'p3', x: 0.75, y: 0.25 },
+          { id: 'p4', x: 0.22, y: 0.52 },
+          { id: 'p5', x: 0.50, y: 0.85 },
+          { id: 'p6', x: 0.78, y: 0.52 }
+        ],
+        ropes: [
+          // 3 Berry Red, 3 Yellow Seed, 3 Mint Leaf
+          { id: 'r1', color: '#ef476f', name: 'Berry Red', layer: 0, blockedBy: ['r4', 'r5'], pegA: 'p4', pegB: 'p5', path: [{x:0.22,y:0.52},{x:0.35,y:0.72},{x:0.50,y:0.85}] },
+          { id: 'r2', color: '#ffd166', name: 'Yellow Seed', layer: 0, blockedBy: ['r4', 'r6'], pegA: 'p6', pegB: 'p5', path: [{x:0.78,y:0.52},{x:0.65,y:0.72},{x:0.50,y:0.85}] },
+          { id: 'r3', color: '#ef476f', name: 'Berry Red', layer: 0, blockedBy: ['r5'], pegA: 'p1', pegB: 'p5', path: [{x:0.25,y:0.25},{x:0.40,y:0.60},{x:0.50,y:0.85}] },
+          { id: 'r4', color: '#ffd166', name: 'Yellow Seed', layer: 1, blockedBy: ['r7', 'r8'], pegA: 'p1', pegB: 'p6', path: [{x:0.25,y:0.25},{x:0.50,y:0.52},{x:0.78,y:0.52}] },
+          { id: 'r5', color: '#ef476f', name: 'Berry Red', layer: 1, blockedBy: ['r8', 'r9'], pegA: 'p3', pegB: 'p4', path: [{x:0.75,y:0.25},{x:0.50,y:0.52},{x:0.22,y:0.52}] },
+          { id: 'r6', color: '#ffd166', name: 'Yellow Seed', layer: 1, blockedBy: ['r9'], pegA: 'p4', pegB: 'p6', path: [{x:0.22,y:0.52},{x:0.50,y:0.58},{x:0.78,y:0.52}] },
+          { id: 'r7', color: '#06d6a0', name: 'Mint Leaf', layer: 2, blockedBy: [], pegA: 'p1', pegB: 'p2', path: [{x:0.25,y:0.25},{x:0.38,y:0.18},{x:0.50,y:0.20}] },
+          { id: 'r8', color: '#06d6a0', name: 'Mint Leaf', layer: 2, blockedBy: [], pegA: 'p3', pegB: 'p2', path: [{x:0.75,y:0.25},{x:0.62,y:0.18},{x:0.50,y:0.20}] },
+          { id: 'r9', color: '#06d6a0', name: 'Mint Leaf', layer: 2, blockedBy: [], pegA: 'p2', pegB: 'p5', path: [{x:0.50,y:0.20},{x:0.50,y:0.45},{x:0.50,y:0.85}] }
+        ]
+      },
+      {
+        id: 3,
+        title: "Sunny Avocado",
+        spoolTarget: 3,
+        pegs: [
+          { id: 'p1', x: 0.35, y: 0.22 },
+          { id: 'p2', x: 0.65, y: 0.22 },
+          { id: 'p3', x: 0.20, y: 0.58 },
+          { id: 'p4', x: 0.80, y: 0.58 },
+          { id: 'p5', x: 0.50, y: 0.84 },
+          { id: 'p6', x: 0.50, y: 0.54 }
+        ],
+        ropes: [
+          // 3 Brown Pit, 3 Custard Yellow, 3 Avocado Green
+          { id: 'r1', color: '#5c3d28', name: 'Brown Pit', layer: 0, blockedBy: ['r4', 'r5'], pegA: 'p6', pegB: 'p5', path: [{x:0.50,y:0.54},{x:0.44,y:0.68},{x:0.50,y:0.84}] },
+          { id: 'r2', color: '#5c3d28', name: 'Brown Pit', layer: 0, blockedBy: ['r5'], pegA: 'p6', pegB: 'p5', path: [{x:0.50,y:0.54},{x:0.56,y:0.68},{x:0.50,y:0.84}] },
+          { id: 'r3', color: '#5c3d28', name: 'Brown Pit', layer: 0, blockedBy: ['r6'], pegA: 'p3', pegB: 'p6', path: [{x:0.20,y:0.58},{x:0.35,y:0.56},{x:0.50,y:0.54}] },
+          { id: 'r4', color: '#ffd166', name: 'Custard Yellow', layer: 1, blockedBy: ['r7'], pegA: 'p1', pegB: 'p4', path: [{x:0.35,y:0.22},{x:0.55,y:0.42},{x:0.80,y:0.58}] },
+          { id: 'r5', color: '#ffd166', name: 'Custard Yellow', layer: 1, blockedBy: ['r8'], pegA: 'p2', pegB: 'p3', path: [{x:0.65,y:0.22},{x:0.45,y:0.42},{x:0.20,y:0.58}] },
+          { id: 'r6', color: '#ffd166', name: 'Custard Yellow', layer: 1, blockedBy: ['r9'], pegA: 'p1', pegB: 'p2', path: [{x:0.35,y:0.22},{x:0.50,y:0.30},{x:0.65,y:0.22}] },
+          { id: 'r7', color: '#06d6a0', name: 'Avocado Green', layer: 2, blockedBy: [], pegA: 'p1', pegB: 'p3', path: [{x:0.35,y:0.22},{x:0.18,y:0.40},{x:0.20,y:0.58}] },
+          { id: 'r8', color: '#06d6a0', name: 'Avocado Green', layer: 2, blockedBy: [], pegA: 'p2', pegB: 'p4', path: [{x:0.65,y:0.22},{x:0.82,y:0.40},{x:0.80,y:0.58}] },
+          { id: 'r9', color: '#06d6a0', name: 'Avocado Green', layer: 2, blockedBy: [], pegA: 'p3', pegB: 'p5', path: [{x:0.20,y:0.58},{x:0.32,y:0.75},{x:0.50,y:0.84}] }
+        ]
+      },
+      {
+        id: 4,
+        title: "Little Duckling",
+        spoolTarget: 3,
+        pegs: [
+          { id: 'p1', x: 0.45, y: 0.22 },
+          { id: 'p2', x: 0.72, y: 0.32 },
+          { id: 'p3', x: 0.25, y: 0.52 },
+          { id: 'p4', x: 0.75, y: 0.52 },
+          { id: 'p5', x: 0.20, y: 0.78 },
+          { id: 'p6', x: 0.80, y: 0.78 }
+        ],
+        ropes: [
+          // 3 Water Blue, 3 Duckling Yellow, 3 Orange Beak
+          { id: 'r1', color: '#118ab2', name: 'Water Blue', layer: 0, blockedBy: ['r4', 'r5'], pegA: 'p5', pegB: 'p6', path: [{x:0.20,y:0.78},{x:0.50,y:0.82},{x:0.80,y:0.78}] },
+          { id: 'r2', color: '#118ab2', name: 'Water Blue', layer: 0, blockedBy: ['r5'], pegA: 'p3', pegB: 'p6', path: [{x:0.25,y:0.52},{x:0.50,y:0.68},{x:0.80,y:0.78}] },
+          { id: 'r3', color: '#118ab2', name: 'Water Blue', layer: 0, blockedBy: ['r6'], pegA: 'p4', pegB: 'p5', path: [{x:0.75,y:0.52},{x:0.48,y:0.68},{x:0.20,y:0.78}] },
+          { id: 'r4', color: '#ffd166', name: 'Duckling Yellow', layer: 1, blockedBy: ['r7'], pegA: 'p3', pegB: 'p4', path: [{x:0.25,y:0.52},{x:0.50,y:0.60},{x:0.75,y:0.52}] },
+          { id: 'r5', color: '#ffd166', name: 'Duckling Yellow', layer: 1, blockedBy: ['r8'], pegA: 'p1', pegB: 'p4', path: [{x:0.45,y:0.22},{x:0.58,y:0.40},{x:0.75,y:0.52}] },
+          { id: 'r6', color: '#ffd166', name: 'Duckling Yellow', layer: 1, blockedBy: ['r9'], pegA: 'p1', pegB: 'p3', path: [{x:0.45,y:0.22},{x:0.32,y:0.38},{x:0.25,y:0.52}] },
+          { id: 'r7', color: '#f77f00', name: 'Orange Beak', layer: 2, blockedBy: [], pegA: 'p1', pegB: 'p2', path: [{x:0.45,y:0.22},{x:0.62,y:0.25},{x:0.72,y:0.32}] },
+          { id: 'r8', color: '#f77f00', name: 'Orange Beak', layer: 2, blockedBy: [], pegA: 'p2', pegB: 'p4', path: [{x:0.72,y:0.32},{x:0.78,y:0.42},{x:0.75,y:0.52}] },
+          { id: 'r9', color: '#f77f00', name: 'Orange Beak', layer: 2, blockedBy: [], pegA: 'p3', pegB: 'p5', path: [{x:0.25,y:0.52},{x:0.35,y:0.68},{x:0.20,y:0.78}] }
+        ]
+      },
+      {
+        id: 5,
+        title: "Sunflower Bloom",
+        spoolTarget: 3,
+        pegs: [
+          { id: 'p1', x: 0.50, y: 0.20 },
+          { id: 'p2', x: 0.80, y: 0.45 },
+          { id: 'p3', x: 0.50, y: 0.75 },
+          { id: 'p4', x: 0.20, y: 0.45 },
+          { id: 'p5', x: 0.50, y: 0.45 }
+        ],
+        ropes: [
+          // 3 Seed Brown, 3 Sun Petal, 3 Stem Green, 3 Honey Gold (12 ropes)
+          { id: 'r1', color: '#4a2810', name: 'Seed Brown', layer: 0, blockedBy: ['r4', 'r5'], pegA: 'p4', pegB: 'p2', path: [{x:0.20,y:0.45},{x:0.50,y:0.45},{x:0.80,y:0.45}] },
+          { id: 'r2', color: '#4a2810', name: 'Seed Brown', layer: 0, blockedBy: ['r5', 'r6'], pegA: 'p1', pegB: 'p3', path: [{x:0.50,y:0.20},{x:0.50,y:0.45},{x:0.50,y:0.75}] },
+          { id: 'r3', color: '#4a2810', name: 'Seed Brown', layer: 0, blockedBy: ['r6'], pegA: 'p5', pegB: 'p3', path: [{x:0.50,y:0.45},{x:0.44,y:0.62},{x:0.50,y:0.75}] },
+          { id: 'r4', color: '#ffd166', name: 'Sun Petal', layer: 1, blockedBy: ['r7', 'r8'], pegA: 'p1', pegB: 'p2', path: [{x:0.50,y:0.20},{x:0.68,y:0.30},{x:0.80,y:0.45}] },
+          { id: 'r5', color: '#ffd166', name: 'Sun Petal', layer: 1, blockedBy: ['r8', 'r9'], pegA: 'p2', pegB: 'p3', path: [{x:0.80,y:0.45},{x:0.68,y:0.62},{x:0.50,y:0.75}] },
+          { id: 'r6', color: '#ffd166', name: 'Sun Petal', layer: 1, blockedBy: ['r9'], pegA: 'p3', pegB: 'p4', path: [{x:0.50,y:0.75},{x:0.32,y:0.62},{x:0.20,y:0.45}] },
+          { id: 'r7', color: '#06d6a0', name: 'Stem Green', layer: 1, blockedBy: ['r10'], pegA: 'p3', pegB: 'p1', path: [{x:0.50,y:0.75},{x:0.35,y:0.45},{x:0.50,y:0.20}] },
+          { id: 'r8', color: '#06d6a0', name: 'Stem Green', layer: 1, blockedBy: ['r11'], pegA: 'p3', pegB: 'p2', path: [{x:0.50,y:0.75},{x:0.65,y:0.78},{x:0.80,y:0.45}] },
+          { id: 'r9', color: '#06d6a0', name: 'Stem Green', layer: 1, blockedBy: ['r12'], pegA: 'p3', pegB: 'p4', path: [{x:0.50,y:0.75},{x:0.30,y:0.78},{x:0.20,y:0.45}] },
+          { id: 'r10', color: '#f77f00', name: 'Honey Gold', layer: 2, blockedBy: [], pegA: 'p4', pegB: 'p1', path: [{x:0.20,y:0.45},{x:0.32,y:0.30},{x:0.50,y:0.20}] },
+          { id: 'r11', color: '#f77f00', name: 'Honey Gold', layer: 2, blockedBy: [], pegA: 'p1', pegB: 'p5', path: [{x:0.50,y:0.20},{x:0.58,y:0.32},{x:0.50,y:0.45}] },
+          { id: 'r12', color: '#f77f00', name: 'Honey Gold', layer: 2, blockedBy: [], pegA: 'p4', pegB: 'p5', path: [{x:0.20,y:0.45},{x:0.35,y:0.40},{x:0.50,y:0.45}] }
+        ]
+      },
+      {
+        id: 6,
+        title: "Glazed Donut",
+        spoolTarget: 3,
+        pegs: [
+          { id: 'p1', x: 0.25, y: 0.32 },
+          { id: 'p2', x: 0.75, y: 0.32 },
+          { id: 'p3', x: 0.75, y: 0.68 },
+          { id: 'p4', x: 0.25, y: 0.68 }
+        ],
+        ropes: [
+          // 3 Baked Dough, 3 Pink Glaze, 3 Blue Sprinkle, 3 Mint Sprinkle (12 ropes)
+          { id: 'r1', color: '#d4a373', name: 'Baked Dough', layer: 0, blockedBy: ['r4', 'r5'], pegA: 'p1', pegB: 'p3', path: [{x:0.25,y:0.32},{x:0.50,y:0.50},{x:0.75,y:0.68}] },
+          { id: 'r2', color: '#d4a373', name: 'Baked Dough', layer: 0, blockedBy: ['r5', 'r6'], pegA: 'p2', pegB: 'p4', path: [{x:0.75,y:0.32},{x:0.50,y:0.50},{x:0.25,y:0.68}] },
+          { id: 'r3', color: '#d4a373', name: 'Baked Dough', layer: 0, blockedBy: ['r6'], pegA: 'p1', pegB: 'p4', path: [{x:0.25,y:0.32},{x:0.22,y:0.50},{x:0.25,y:0.68}] },
+          { id: 'r4', color: '#f72585', name: 'Pink Glaze', layer: 1, blockedBy: ['r7', 'r8'], pegA: 'p1', pegB: 'p2', path: [{x:0.25,y:0.32},{x:0.50,y:0.24},{x:0.75,y:0.32}] },
+          { id: 'r5', color: '#f72585', name: 'Pink Glaze', layer: 1, blockedBy: ['r8', 'r9'], pegA: 'p3', pegB: 'p4', path: [{x:0.75,y:0.68},{x:0.50,y:0.76},{x:0.25,y:0.68}] },
+          { id: 'r6', color: '#f72585', name: 'Pink Glaze', layer: 1, blockedBy: ['r9'], pegA: 'p2', pegB: 'p3', path: [{x:0.75,y:0.32},{x:0.78,y:0.50},{x:0.75,y:0.68}] },
+          { id: 'r7', color: '#118ab2', name: 'Blue Sprinkle', layer: 1, blockedBy: ['r10'], pegA: 'p1', pegB: 'p4', path: [{x:0.25,y:0.32},{x:0.16,y:0.50},{x:0.25,y:0.68}] },
+          { id: 'r8', color: '#118ab2', name: 'Blue Sprinkle', layer: 1, blockedBy: ['r11'], pegA: 'p2', pegB: 'p3', path: [{x:0.75,y:0.32},{x:0.84,y:0.50},{x:0.75,y:0.68}] },
+          { id: 'r9', color: '#118ab2', name: 'Blue Sprinkle', layer: 1, blockedBy: ['r12'], pegA: 'p1', pegB: 'p3', path: [{x:0.25,y:0.32},{x:0.42,y:0.62},{x:0.75,y:0.68}] },
+          { id: 'r10', color: '#06d6a0', name: 'Mint Sprinkle', layer: 2, blockedBy: [], pegA: 'p1', pegB: 'p2', path: [{x:0.25,y:0.32},{x:0.50,y:0.18},{x:0.75,y:0.32}] },
+          { id: 'r11', color: '#06d6a0', name: 'Mint Sprinkle', layer: 2, blockedBy: [], pegA: 'p3', pegB: 'p4', path: [{x:0.75,y:0.68},{x:0.50,y:0.82},{x:0.25,y:0.68}] },
+          { id: 'r12', color: '#06d6a0', name: 'Mint Sprinkle', layer: 2, blockedBy: [], pegA: 'p2', pegB: 'p4', path: [{x:0.75,y:0.32},{x:0.58,y:0.62},{x:0.25,y:0.68}] }
+        ]
+      },
+      {
+        id: 7,
+        title: "Midnight Owl",
+        spoolTarget: 3,
+        pegs: [
+          { id: 'p1', x: 0.30, y: 0.25 },
+          { id: 'p2', x: 0.70, y: 0.25 },
+          { id: 'p3', x: 0.20, y: 0.65 },
+          { id: 'p4', x: 0.80, y: 0.65 },
+          { id: 'p5', x: 0.50, y: 0.45 }
+        ],
+        ropes: [
+          // 3 Night Navy, 3 Feather Teal, 3 Owl Eyes, 3 Amber Beak (12 ropes)
+          { id: 'r1', color: '#073b4c', name: 'Night Navy', layer: 0, blockedBy: ['r4', 'r5'], pegA: 'p1', pegB: 'p4', path: [{x:0.30,y:0.25},{x:0.55,y:0.45},{x:0.80,y:0.65}] },
+          { id: 'r2', color: '#073b4c', name: 'Night Navy', layer: 0, blockedBy: ['r5', 'r6'], pegA: 'p2', pegB: 'p3', path: [{x:0.70,y:0.25},{x:0.45,y:0.45},{x:0.20,y:0.65}] },
+          { id: 'r3', color: '#073b4c', name: 'Night Navy', layer: 0, blockedBy: ['r6'], pegA: 'p3', pegB: 'p4', path: [{x:0.20,y:0.65},{x:0.50,y:0.72},{x:0.80,y:0.65}] },
+          { id: 'r4', color: '#118ab2', name: 'Feather Teal', layer: 1, blockedBy: ['r7', 'r8'], pegA: 'p1', pegB: 'p3', path: [{x:0.30,y:0.25},{x:0.18,y:0.45},{x:0.20,y:0.65}] },
+          { id: 'r5', color: '#118ab2', name: 'Feather Teal', layer: 1, blockedBy: ['r8', 'r9'], pegA: 'p2', pegB: 'p4', path: [{x:0.70,y:0.25},{x:0.82,y:0.45},{x:0.80,y:0.65}] },
+          { id: 'r6', color: '#118ab2', name: 'Feather Teal', layer: 1, blockedBy: ['r9'], pegA: 'p1', pegB: 'p2', path: [{x:0.30,y:0.25},{x:0.50,y:0.35},{x:0.70,y:0.25}] },
+          { id: 'r7', color: '#ffd166', name: 'Owl Eyes', layer: 1, blockedBy: ['r10'], pegA: 'p1', pegB: 'p5', path: [{x:0.30,y:0.25},{x:0.40,y:0.35},{x:0.50,y:0.45}] },
+          { id: 'r8', color: '#ffd166', name: 'Owl Eyes', layer: 1, blockedBy: ['r11'], pegA: 'p2', pegB: 'p5', path: [{x:0.70,y:0.25},{x:0.60,y:0.35},{x:0.50,y:0.45}] },
+          { id: 'r9', color: '#ffd166', name: 'Owl Eyes', layer: 1, blockedBy: ['r12'], pegA: 'p3', pegB: 'p5', path: [{x:0.20,y:0.65},{x:0.35,y:0.55},{x:0.50,y:0.45}] },
+          { id: 'r10', color: '#f77f00', name: 'Amber Beak', layer: 2, blockedBy: [], pegA: 'p5', pegB: 'p4', path: [{x:0.50,y:0.45},{x:0.65,y:0.55},{x:0.80,y:0.65}] },
+          { id: 'r11', color: '#f77f00', name: 'Amber Beak', layer: 2, blockedBy: [], pegA: 'p1', pegB: 'p2', path: [{x:0.30,y:0.25},{x:0.50,y:0.20},{x:0.70,y:0.25}] },
+          { id: 'r12', color: '#f77f00', name: 'Amber Beak', layer: 2, blockedBy: [], pegA: 'p3', pegB: 'p4', path: [{x:0.20,y:0.65},{x:0.50,y:0.80},{x:0.80,y:0.65}] }
+        ]
+      },
+      {
+        id: 8,
+        title: "Rainbow Mandala",
+        spoolTarget: 3,
+        pegs: [
+          { id: 'p1', x: 0.50, y: 0.20 },
+          { id: 'p2', x: 0.80, y: 0.50 },
+          { id: 'p3', x: 0.50, y: 0.80 },
+          { id: 'p4', x: 0.20, y: 0.50 }
+        ],
+        ropes: [
+          // 3 Violet Core, 3 Aqua Ring, 3 Emerald Ring, 3 Coral Flare (12 ropes)
+          { id: 'r1', color: '#8338ec', name: 'Violet Core', layer: 0, blockedBy: ['r4', 'r5'], pegA: 'p1', pegB: 'p3', path: [{x:0.50,y:0.20},{x:0.50,y:0.80}] },
+          { id: 'r2', color: '#8338ec', name: 'Violet Core', layer: 0, blockedBy: ['r5', 'r6'], pegA: 'p4', pegB: 'p2', path: [{x:0.20,y:0.50},{x:0.80,y:0.50}] },
+          { id: 'r3', color: '#8338ec', name: 'Violet Core', layer: 0, blockedBy: ['r6'], pegA: 'p1', pegB: 'p3', path: [{x:0.50,y:0.20},{x:0.42,y:0.50},{x:0.50,y:0.80}] },
+          { id: 'r4', color: '#118ab2', name: 'Aqua Ring', layer: 1, blockedBy: ['r7', 'r8'], pegA: 'p1', pegB: 'p2', path: [{x:0.50,y:0.20},{x:0.72,y:0.30},{x:0.80,y:0.50}] },
+          { id: 'r5', color: '#118ab2', name: 'Aqua Ring', layer: 1, blockedBy: ['r8', 'r9'], pegA: 'p2', pegB: 'p3', path: [{x:0.80,y:0.50},{x:0.72,y:0.70},{x:0.50,y:0.80}] },
+          { id: 'r6', color: '#118ab2', name: 'Aqua Ring', layer: 1, blockedBy: ['r9'], pegA: 'p3', pegB: 'p4', path: [{x:0.50,y:0.80},{x:0.28,y:0.70},{x:0.20,y:0.50}] },
+          { id: 'r7', color: '#06d6a0', name: 'Emerald Ring', layer: 1, blockedBy: ['r10'], pegA: 'p4', pegB: 'p1', path: [{x:0.20,y:0.50},{x:0.28,y:0.30},{x:0.50,y:0.20}] },
+          { id: 'r8', color: '#06d6a0', name: 'Emerald Ring', layer: 1, blockedBy: ['r11'], pegA: 'p1', pegB: 'p3', path: [{x:0.50,y:0.20},{x:0.22,y:0.35},{x:0.50,y:0.80}] },
+          { id: 'r9', color: '#06d6a0', name: 'Emerald Ring', layer: 1, blockedBy: ['r12'], pegA: 'p4', pegB: 'p2', path: [{x:0.20,y:0.50},{x:0.50,y:0.65},{x:0.80,y:0.50}] },
+          { id: 'r10', color: '#ef476f', name: 'Coral Flare', layer: 2, blockedBy: [], pegA: 'p1', pegB: 'p2', path: [{x:0.50,y:0.20},{x:0.62,y:0.22},{x:0.80,y:0.50}] },
+          { id: 'r11', color: '#ef476f', name: 'Coral Flare', layer: 2, blockedBy: [], pegA: 'p2', pegB: 'p3', path: [{x:0.80,y:0.50},{x:0.78,y:0.75},{x:0.50,y:0.80}] },
+          { id: 'r12', color: '#ef476f', name: 'Coral Flare', layer: 2, blockedBy: [], pegA: 'p3', pegB: 'p4', path: [{x:0.50,y:0.80},{x:0.22,y:0.75},{x:0.20,y:0.50}] }
+        ]
+      },
+      {
+        id: 9,
+        title: "Prairie Daisy",
+        spoolTarget: 3,
+        pegs: [
+          { id: 'p1', x: 0.50, y: 0.18 },
+          { id: 'p2', x: 0.82, y: 0.38 },
+          { id: 'p3', x: 0.70, y: 0.78 },
+          { id: 'p4', x: 0.30, y: 0.78 },
+          { id: 'p5', x: 0.18, y: 0.38 },
+          { id: 'p6', x: 0.50, y: 0.48 }
+        ],
+        ropes: [
+          // 3 Golden Core, 3 White Petal, 3 Meadow Green, 3 Sky Breeze (12 ropes)
+          { id: 'r1', color: '#ffd166', name: 'Golden Core', layer: 0, blockedBy: ['r4', 'r5'], pegA: 'p6', pegB: 'p3', path: [{x:0.50,y:0.48},{x:0.60,y:0.63},{x:0.70,y:0.78}] },
+          { id: 'r2', color: '#ffd166', name: 'Golden Core', layer: 0, blockedBy: ['r5', 'r6'], pegA: 'p6', pegB: 'p4', path: [{x:0.50,y:0.48},{x:0.40,y:0.63},{x:0.30,y:0.78}] },
+          { id: 'r3', color: '#ffd166', name: 'Golden Core', layer: 0, blockedBy: ['r6'], pegA: 'p1', pegB: 'p6', path: [{x:0.50,y:0.18},{x:0.50,y:0.33},{x:0.50,y:0.48}] },
+          { id: 'r4', color: '#ffffff', name: 'White Petal', layer: 1, blockedBy: ['r7', 'r8'], pegA: 'p1', pegB: 'p3', path: [{x:0.50,y:0.18},{x:0.68,y:0.45},{x:0.70,y:0.78}] },
+          { id: 'r5', color: '#ffffff', name: 'White Petal', layer: 1, blockedBy: ['r8', 'r9'], pegA: 'p2', pegB: 'p4', path: [{x:0.82,y:0.38},{x:0.55,y:0.62},{x:0.30,y:0.78}] },
+          { id: 'r6', color: '#ffffff', name: 'White Petal', layer: 1, blockedBy: ['r9'], pegA: 'p5', pegB: 'p2', path: [{x:0.18,y:0.38},{x:0.50,y:0.32},{x:0.82,y:0.38}] },
+          { id: 'r7', color: '#06d6a0', name: 'Meadow Green', layer: 1, blockedBy: ['r10'], pegA: 'p4', pegB: 'p3', path: [{x:0.30,y:0.78},{x:0.50,y:0.84},{x:0.70,y:0.78}] },
+          { id: 'r8', color: '#06d6a0', name: 'Meadow Green', layer: 1, blockedBy: ['r11'], pegA: 'p5', pegB: 'p4', path: [{x:0.18,y:0.38},{x:0.20,y:0.62},{x:0.30,y:0.78}] },
+          { id: 'r9', color: '#06d6a0', name: 'Meadow Green', layer: 1, blockedBy: ['r12'], pegA: 'p2', pegB: 'p3', path: [{x:0.82,y:0.38},{x:0.80,y:0.62},{x:0.70,y:0.78}] },
+          { id: 'r10', color: '#118ab2', name: 'Sky Breeze', layer: 2, blockedBy: [], pegA: 'p5', pegB: 'p1', path: [{x:0.18,y:0.38},{x:0.32,y:0.22},{x:0.50,y:0.18}] },
+          { id: 'r11', color: '#118ab2', name: 'Sky Breeze', layer: 2, blockedBy: [], pegA: 'p1', pegB: 'p2', path: [{x:0.50,y:0.18},{x:0.68,y:0.22},{x:0.82,y:0.38}] },
+          { id: 'r12', color: '#118ab2', name: 'Sky Breeze', layer: 2, blockedBy: [], pegA: 'p5', pegB: 'p6', path: [{x:0.18,y:0.38},{x:0.35,y:0.44},{x:0.50,y:0.48}] }
+        ]
+      },
+      {
+        id: 10,
+        title: "Autumn Fox",
+        spoolTarget: 3,
+        pegs: [
+          { id: 'p1', x: 0.25, y: 0.22 },
+          { id: 'p2', x: 0.75, y: 0.22 },
+          { id: 'p3', x: 0.50, y: 0.45 },
+          { id: 'p4', x: 0.20, y: 0.75 },
+          { id: 'p5', x: 0.80, y: 0.75 }
+        ],
+        ropes: [
+          // 3 Rust Orange, 3 Forest Pine, 3 Birch White, 3 Night Umber (12 ropes)
+          { id: 'r1', color: '#f77f00', name: 'Rust Orange', layer: 0, blockedBy: ['r4', 'r5'], pegA: 'p1', pegB: 'p5', path: [{x:0.25,y:0.22},{x:0.55,y:0.50},{x:0.80,y:0.75}] },
+          { id: 'r2', color: '#f77f00', name: 'Rust Orange', layer: 0, blockedBy: ['r5', 'r6'], pegA: 'p2', pegB: 'p4', path: [{x:0.75,y:0.22},{x:0.45,y:0.50},{x:0.20,y:0.75}] },
+          { id: 'r3', color: '#f77f00', name: 'Rust Orange', layer: 0, blockedBy: ['r6'], pegA: 'p4', pegB: 'p5', path: [{x:0.20,y:0.75},{x:0.50,y:0.72},{x:0.80,y:0.75}] },
+          { id: 'r4', color: '#2d6a4f', name: 'Forest Pine', layer: 1, blockedBy: ['r7', 'r8'], pegA: 'p1', pegB: 'p4', path: [{x:0.25,y:0.22},{x:0.18,y:0.48},{x:0.20,y:0.75}] },
+          { id: 'r5', color: '#2d6a4f', name: 'Forest Pine', layer: 1, blockedBy: ['r8', 'r9'], pegA: 'p2', pegB: 'p5', path: [{x:0.75,y:0.22},{x:0.82,y:0.48},{x:0.80,y:0.75}] },
+          { id: 'r6', color: '#2d6a4f', name: 'Forest Pine', layer: 1, blockedBy: ['r9'], pegA: 'p1', pegB: 'p3', path: [{x:0.25,y:0.22},{x:0.38,y:0.35},{x:0.50,y:0.45}] },
+          { id: 'r7', color: '#ffffff', name: 'Birch White', layer: 1, blockedBy: ['r10'], pegA: 'p2', pegB: 'p3', path: [{x:0.75,y:0.22},{x:0.62,y:0.35},{x:0.50,y:0.45}] },
+          { id: 'r8', color: '#ffffff', name: 'Birch White', layer: 1, blockedBy: ['r11'], pegA: 'p3', pegB: 'p4', path: [{x:0.50,y:0.45},{x:0.32,y:0.62},{x:0.20,y:0.75}] },
+          { id: 'r9', color: '#ffffff', name: 'Birch White', layer: 1, blockedBy: ['r12'], pegA: 'p3', pegB: 'p5', path: [{x:0.50,y:0.45},{x:0.68,y:0.62},{x:0.80,y:0.75}] },
+          { id: 'r10', color: '#3d1c06', name: 'Night Umber', layer: 2, blockedBy: [], pegA: 'p1', pegB: 'p2', path: [{x:0.25,y:0.22},{x:0.50,y:0.18},{x:0.75,y:0.22}] },
+          { id: 'r11', color: '#3d1c06', name: 'Night Umber', layer: 2, blockedBy: [], pegA: 'p4', pegB: 'p5', path: [{x:0.20,y:0.75},{x:0.50,y:0.82},{x:0.80,y:0.75}] },
+          { id: 'r12', color: '#3d1c06', name: 'Night Umber', layer: 2, blockedBy: [], pegA: 'p1', pegB: 'p2', path: [{x:0.25,y:0.22},{x:0.50,y:0.30},{x:0.75,y:0.22}] }
+        ]
+      },
+      {
+        id: 11,
+        title: "Cozy Teapot",
+        spoolTarget: 3,
+        pegs: [
+          { id: 'p1', x: 0.30, y: 0.22 },
+          { id: 'p2', x: 0.70, y: 0.22 },
+          { id: 'p3', x: 0.15, y: 0.45 },
+          { id: 'p4', x: 0.85, y: 0.45 },
+          { id: 'p5', x: 0.30, y: 0.78 },
+          { id: 'p6', x: 0.70, y: 0.78 }
+        ],
+        ropes: [
+          // 3 Porcelain Blue, 3 Chamomile Gold, 3 Steam Silver, 3 Rose Petal, 3 Berry Jam (15 ropes)
+          { id: 'r1', color: '#118ab2', name: 'Porcelain Blue', layer: 0, blockedBy: ['r4', 'r5'], pegA: 'p5', pegB: 'p6', path: [{x:0.30,y:0.78},{x:0.50,y:0.82},{x:0.70,y:0.78}] },
+          { id: 'r2', color: '#118ab2', name: 'Porcelain Blue', layer: 0, blockedBy: ['r5', 'r6'], pegA: 'p1', pegB: 'p6', path: [{x:0.30,y:0.22},{x:0.55,y:0.52},{x:0.70,y:0.78}] },
+          { id: 'r3', color: '#118ab2', name: 'Porcelain Blue', layer: 0, blockedBy: ['r6'], pegA: 'p2', pegB: 'p5', path: [{x:0.70,y:0.22},{x:0.45,y:0.52},{x:0.30,y:0.78}] },
+          { id: 'r4', color: '#ffd166', name: 'Chamomile Gold', layer: 1, blockedBy: ['r7', 'r8'], pegA: 'p3', pegB: 'p4', path: [{x:0.15,y:0.45},{x:0.50,y:0.48},{x:0.85,y:0.45}] },
+          { id: 'r5', color: '#ffd166', name: 'Chamomile Gold', layer: 1, blockedBy: ['r8', 'r9'], pegA: 'p1', pegB: 'p5', path: [{x:0.30,y:0.22},{x:0.24,y:0.50},{x:0.30,y:0.78}] },
+          { id: 'r6', color: '#ffd166', name: 'Chamomile Gold', layer: 1, blockedBy: ['r9'], pegA: 'p2', pegB: 'p6', path: [{x:0.70,y:0.22},{x:0.76,y:0.50},{x:0.70,y:0.78}] },
+          { id: 'r7', color: '#adb5bd', name: 'Steam Silver', layer: 1, blockedBy: ['r10', 'r11'], pegA: 'p1', pegB: 'p2', path: [{x:0.30,y:0.22},{x:0.50,y:0.16},{x:0.70,y:0.22}] },
+          { id: 'r8', color: '#adb5bd', name: 'Steam Silver', layer: 1, blockedBy: ['r11', 'r12'], pegA: 'p3', pegB: 'p1', path: [{x:0.15,y:0.45},{x:0.20,y:0.30},{x:0.30,y:0.22}] },
+          { id: 'r9', color: '#adb5bd', name: 'Steam Silver', layer: 1, blockedBy: ['r12'], pegA: 'p4', pegB: 'p2', path: [{x:0.85,y:0.45},{x:0.80,y:0.30},{x:0.70,y:0.22}] },
+          { id: 'r10', color: '#ef476f', name: 'Rose Petal', layer: 2, blockedBy: ['r13'], pegA: 'p3', pegB: 'p5', path: [{x:0.15,y:0.45},{x:0.20,y:0.65},{x:0.30,y:0.78}] },
+          { id: 'r11', color: '#ef476f', name: 'Rose Petal', layer: 2, blockedBy: ['r14'], pegA: 'p4', pegB: 'p6', path: [{x:0.85,y:0.45},{x:0.80,y:0.65},{x:0.70,y:0.78}] },
+          { id: 'r12', color: '#ef476f', name: 'Rose Petal', layer: 2, blockedBy: ['r15'], pegA: 'p1', pegB: 'p4', path: [{x:0.30,y:0.22},{x:0.60,y:0.32},{x:0.85,y:0.45}] },
+          { id: 'r13', color: '#8338ec', name: 'Berry Jam', layer: 3, blockedBy: [], pegA: 'p2', pegB: 'p3', path: [{x:0.70,y:0.22},{x:0.40,y:0.32},{x:0.15,y:0.45}] },
+          { id: 'r14', color: '#8338ec', name: 'Berry Jam', layer: 3, blockedBy: [], pegA: 'p1', pegB: 'p2', path: [{x:0.30,y:0.22},{x:0.50,y:0.28},{x:0.70,y:0.22}] },
+          { id: 'r15', color: '#8338ec', name: 'Berry Jam', layer: 3, blockedBy: [], pegA: 'p5', pegB: 'p6', path: [{x:0.30,y:0.78},{x:0.50,y:0.72},{x:0.70,y:0.78}] }
+        ]
+      },
+      {
+        id: 12,
+        title: "Barnyard Rooster",
+        spoolTarget: 3,
+        pegs: [
+          { id: 'p1', x: 0.25, y: 0.20 },
+          { id: 'p2', x: 0.75, y: 0.20 },
+          { id: 'p3', x: 0.50, y: 0.45 },
+          { id: 'p4', x: 0.20, y: 0.70 },
+          { id: 'p5', x: 0.50, y: 0.85 },
+          { id: 'p6', x: 0.80, y: 0.70 }
+        ],
+        ropes: [
+          // 3 Crimson Crest, 3 Golden Plumage, 3 Emerald Tail, 3 Midnight Indigo, 3 Sunrise Copper (15 ropes)
+          { id: 'r1', color: '#ef476f', name: 'Crimson Crest', layer: 0, blockedBy: ['r4', 'r5'], pegA: 'p1', pegB: 'p6', path: [{x:0.25,y:0.20},{x:0.55,y:0.48},{x:0.80,y:0.70}] },
+          { id: 'r2', color: '#ef476f', name: 'Crimson Crest', layer: 0, blockedBy: ['r5', 'r6'], pegA: 'p2', pegB: 'p4', path: [{x:0.75,y:0.20},{x:0.45,y:0.48},{x:0.20,y:0.70}] },
+          { id: 'r3', color: '#ef476f', name: 'Crimson Crest', layer: 0, blockedBy: ['r6'], pegA: 'p4', pegB: 'p6', path: [{x:0.20,y:0.70},{x:0.50,y:0.65},{x:0.80,y:0.70}] },
+          { id: 'r4', color: '#ffd166', name: 'Golden Plumage', layer: 1, blockedBy: ['r7', 'r8'], pegA: 'p1', pegB: 'p3', path: [{x:0.25,y:0.20},{x:0.35,y:0.32},{x:0.50,y:0.45}] },
+          { id: 'r5', color: '#ffd166', name: 'Golden Plumage', layer: 1, blockedBy: ['r8', 'r9'], pegA: 'p2', pegB: 'p3', path: [{x:0.75,y:0.20},{x:0.65,y:0.32},{x:0.50,y:0.45}] },
+          { id: 'r6', color: '#ffd166', name: 'Golden Plumage', layer: 1, blockedBy: ['r9'], pegA: 'p3', pegB: 'p5', path: [{x:0.50,y:0.45},{x:0.50,y:0.65},{x:0.50,y:0.85}] },
+          { id: 'r7', color: '#06d6a0', name: 'Emerald Tail', layer: 1, blockedBy: ['r10', 'r11'], pegA: 'p4', pegB: 'p5', path: [{x:0.20,y:0.70},{x:0.32,y:0.80},{x:0.50,y:0.85}] },
+          { id: 'r8', color: '#06d6a0', name: 'Emerald Tail', layer: 1, blockedBy: ['r11', 'r12'], pegA: 'p6', pegB: 'p5', path: [{x:0.80,y:0.70},{x:0.68,y:0.80},{x:0.50,y:0.85}] },
+          { id: 'r9', color: '#06d6a0', name: 'Emerald Tail', layer: 1, blockedBy: ['r12'], pegA: 'p1', pegB: 'p4', path: [{x:0.25,y:0.20},{x:0.18,y:0.45},{x:0.20,y:0.70}] },
+          { id: 'r10', color: '#073b4c', name: 'Midnight Indigo', layer: 2, blockedBy: ['r13'], pegA: 'p2', pegB: 'p6', path: [{x:0.75,y:0.20},{x:0.82,y:0.45},{x:0.80,y:0.70}] },
+          { id: 'r11', color: '#073b4c', name: 'Midnight Indigo', layer: 2, blockedBy: ['r14'], pegA: 'p1', pegB: 'p2', path: [{x:0.25,y:0.20},{x:0.50,y:0.14},{x:0.75,y:0.20}] },
+          { id: 'r12', color: '#073b4c', name: 'Midnight Indigo', layer: 2, blockedBy: ['r15'], pegA: 'p3', pegB: 'p4', path: [{x:0.50,y:0.45},{x:0.32,y:0.58},{x:0.20,y:0.70}] },
+          { id: 'r13', color: '#f77f00', name: 'Sunrise Copper', layer: 3, blockedBy: [], pegA: 'p3', pegB: 'p6', path: [{x:0.50,y:0.45},{x:0.68,y:0.58},{x:0.80,y:0.70}] },
+          { id: 'r14', color: '#f77f00', name: 'Sunrise Copper', layer: 3, blockedBy: [], pegA: 'p1', pegB: 'p5', path: [{x:0.25,y:0.20},{x:0.32,y:0.55},{x:0.50,y:0.85}] },
+          { id: 'r15', color: '#f77f00', name: 'Sunrise Copper', layer: 3, blockedBy: [], pegA: 'p2', pegB: 'p5', path: [{x:0.75,y:0.20},{x:0.68,y:0.55},{x:0.50,y:0.85}] }
+        ]
+      }
+    ];
+
+    class ThreadJamGame {
+      constructor() {
+        this.mainCanvas = document.getElementById('main-canvas');
+        this.ctx = this.mainCanvas.getContext('2d');
+        this.thumbCanvas = document.getElementById('thumb-canvas');
+        this.thumbCtx = this.thumbCanvas.getContext('2d');
+        this.sfx = new SoundEngine();
+
+        this.ui = {
+          hudLevelNum: document.getElementById('hud-level-num'),
+          hudLevelName: document.getElementById('hud-level-name'),
+          canvasArtName: document.getElementById('canvas-art-name'),
+          progressBarFill: document.getElementById('progress-bar-fill'),
+          slotUsageCount: document.getElementById('slot-usage-count'),
+          toast: document.getElementById('toast-msg'),
+          dockSlotEls: Array.from(document.querySelectorAll('.spool-slot')),
+          btnScissors: document.getElementById('btn-scissors'),
+          btnRainbow: document.getElementById('btn-rainbow'),
+          btnUndo: document.getElementById('btn-undo'),
+          btnRestart: document.getElementById('btn-restart'),
+          btnSound: document.getElementById('btn-sound'),
+          btnOpenLevels: document.getElementById('btn-open-levels'),
+          modalLevels: document.getElementById('modal-levels'),
+          levelGridContainer: document.getElementById('level-grid-container'),
+          btnCloseLevels: document.getElementById('btn-close-levels'),
+          modalWin: document.getElementById('modal-win'),
+          winTitle: document.getElementById('win-title'),
+          winDesc: document.getElementById('win-desc'),
+          btnNextLevel: document.getElementById('btn-next-level'),
+          modalJam: document.getElementById('modal-jam'),
+          btnRetry: document.getElementById('btn-retry')
+        };
+
+        this.currentLevelIdx = 0;
+        this.pegs = [];
+        this.ropes = [];
+        this.untangledRopes = [];
+        this.slots = [null, null, null, null, null]; // 5 spool dock slots
+        this.flyingRopes = [];
+        this.particles = [];
+        this.shakeTimer = 0;
+        this.shakingRope = null;
+        this.highlightRope = null;
+        this.scissorMode = false;
+        this.levelCompleted = false;
+
+        this.snipCooldown = 0;
+        this.wildCooldown = 0;
+        this.COOLDOWN_TURNS = 2;
+
+        this.initCanvasSize();
+        this.buildLevelGrid();
+        this.bindEvents();
+        this.loadLevel(0);
+
+        this.loop = this.loop.bind(this);
+        requestAnimationFrame(this.loop);
+      }
+
+      initCanvasSize() {
+        const resize = () => {
+          const rect = this.mainCanvas.parentElement.getBoundingClientRect();
+          const dpr = window.devicePixelRatio || 1;
+          this.width = rect.width;
+          this.height = rect.height;
+          this.mainCanvas.width = this.width * dpr;
+          this.mainCanvas.height = this.height * dpr;
+          this.ctx.resetTransform();
+          this.ctx.scale(dpr, dpr);
+        };
+        window.addEventListener('resize', resize);
+        resize();
+      }
+
+      showToast(text) {
+        this.ui.toast.textContent = text;
+        this.ui.toast.classList.add('show');
+        clearTimeout(this._toastTimeout);
+        this._toastTimeout = setTimeout(() => {
+          this.ui.toast.classList.remove('show');
+        }, 2200);
+      }
+
+      buildLevelGrid() {
+        this.ui.levelGridContainer.innerHTML = '';
+        LEVELS.forEach((lvl, idx) => {
+          const btn = document.createElement('div');
+          btn.className = `lvl-card-btn ${idx === this.currentLevelIdx ? 'active' : ''}`;
+          btn.innerHTML = `
+            <div>Level ${idx + 1}</div>
+            <div class="lvl-card-sub">${lvl.title}</div>
+          `;
+          btn.addEventListener('click', () => {
+            this.loadLevel(idx);
+            this.ui.modalLevels.classList.remove('open');
+          });
+          this.ui.levelGridContainer.appendChild(btn);
+        });
+      }
+
+      loadLevel(idx) {
+        this.currentLevelIdx = idx % LEVELS.length;
+        const lvl = LEVELS[this.currentLevelIdx];
+        this.levelCompleted = false;
+        this.scissorMode = false;
+        this.ui.btnScissors.classList.remove('active');
+        this.slots = [null, null, null, null, null];
+        this.untangledRopes = [];
+        this.flyingRopes = [];
+        this.particles = [];
+        this.shakingRope = null;
+        this.highlightRope = null;
+
+        this.ui.modalWin.classList.remove('open');
+        this.ui.modalJam.classList.remove('open');
+        this.ui.hudLevelNum.textContent = `Level ${this.currentLevelIdx + 1}`;
+        this.ui.hudLevelName.textContent = lvl.title;
+        this.ui.canvasArtName.textContent = lvl.title;
+
+        // Clone pegs
+        this.pegs = JSON.parse(JSON.stringify(lvl.pegs));
+
+        // Clone ropes
+        this.ropes = JSON.parse(JSON.stringify(lvl.ropes)).map(r => ({
+          ...r,
+          isUntangling: false,
+          shakeX: 0
+        }));
+
+        this.buildLevelGrid();
+        this.snipCooldown = 0;
+        this.wildCooldown = 0;
+        this.renderBoosters();
+        this.renderSlots();
+        this.updateProgress();
+        this.renderEmbroideryThumbnail();
+        this.showToast("Tap untangled top ropes to stitch!");
+      }
+
+      updateProgress() {
+        const total = this.ropes.length;
+        const cleared = this.untangledRopes.length;
+        const pct = Math.round((cleared / total) * 100);
+        this.ui.progressBarFill.style.width = `${pct}%`;
+      }
+
+      renderEmbroideryThumbnail() {
+        this.thumbCtx.clearRect(0, 0, 40, 40);
+        const untangledIds = new Set(this.untangledRopes.map(r => r.id));
+
+        // Draw stitched thumbnail on linen cloth
+        this.thumbCtx.fillStyle = '#fefae0';
+        this.thumbCtx.fillRect(0, 0, 40, 40);
+
+        // Draw faint outline of all stitches
+        this.thumbCtx.strokeStyle = 'rgba(180, 150, 120, 0.35)';
+        this.thumbCtx.lineWidth = 2.5;
+        this.thumbCtx.lineCap = 'round';
+        this.thumbCtx.lineJoin = 'round';
+        for (let r of this.ropes) {
+          this.thumbCtx.beginPath();
+          this.drawSpline(this.thumbCtx, r.path, 40, 40, 0);
+          this.thumbCtx.stroke();
+        }
+
+        // Draw colored embroidery fills for completed stitches
+        this.thumbCtx.lineWidth = 3.5;
+        for (let r of this.ropes) {
+          if (untangledIds.has(r.id)) {
+            this.thumbCtx.strokeStyle = r.color;
+            this.thumbCtx.beginPath();
+            this.drawSpline(this.thumbCtx, r.path, 40, 40, 0);
+            this.thumbCtx.stroke();
+          }
+        }
+      }
+
+      tickTurn() {
+        let changed = false;
+        if (this.snipCooldown > 0) {
+          this.snipCooldown--;
+          changed = true;
+        }
+        if (this.wildCooldown > 0) {
+          this.wildCooldown--;
+          changed = true;
+        }
+        if (changed) {
+          this.renderBoosters();
+        }
+      }
+
+      renderBoosters() {
+        if (this.snipCooldown > 0) {
+          this.ui.btnScissors.classList.add('cooldown');
+          this.ui.btnScissors.classList.remove('active');
+          this.ui.btnScissors.innerHTML = `Snip <span class="booster-badge">${this.snipCooldown}</span>`;
+        } else {
+          this.ui.btnScissors.classList.remove('cooldown');
+          this.ui.btnScissors.classList.toggle('active', this.scissorMode);
+          this.ui.btnScissors.innerHTML = `Snip`;
+        }
+
+        if (this.wildCooldown > 0) {
+          this.ui.btnRainbow.classList.add('cooldown');
+          this.ui.btnRainbow.innerHTML = `Wild Spool <span class="booster-badge">${this.wildCooldown}</span>`;
+        } else {
+          this.ui.btnRainbow.classList.remove('cooldown');
+          this.ui.btnRainbow.innerHTML = `Wild Spool`;
+        }
+      }
+
+      // Check if a rope is free (no untangled blockers)
+      isRopeFree(rope) {
+        const untangledIds = new Set(this.untangledRopes.map(r => r.id));
+        return rope.blockedBy.every(bId => untangledIds.has(bId));
+      }
+
+      // Draw smooth quadratic curved spline between path points
+      drawSpline(context, path, w, h, offsetX) {
+        if (!path || path.length === 0) return;
+        const pts = path.map(p => ({ x: p.x * w + offsetX, y: p.y * h }));
+        context.moveTo(pts[0].x, pts[0].y);
+
+        if (pts.length === 2) {
+          context.lineTo(pts[1].x, pts[1].y);
+          return;
+        }
+
+        for (let i = 0; i < pts.length - 1; i++) {
+          const pCurrent = pts[i];
+          const pNext = pts[i + 1];
+          const midX = (pCurrent.x + pNext.x) / 2;
+          const midY = (pCurrent.y + pNext.y) / 2;
+          context.quadraticCurveTo(pCurrent.x, pCurrent.y, midX, midY);
+        }
+        const last = pts[pts.length - 1];
+        context.lineTo(last.x, last.y);
+      }
+
+      // Player taps a rope
+      handleRopeTap(rope) {
+        this.sfx.init();
+
+        // 1. Scissor Mode: Cut immediately
+        if (this.scissorMode) {
+          this.sfx.snip();
+          this.untangledRopes.push(rope);
+          this.scissorMode = false;
+          this.snipCooldown = this.COOLDOWN_TURNS;
+          this.renderBoosters();
+          this.showToast(`Snipped ${rope.name}!`);
+
+          const midPt = rope.path[Math.floor(rope.path.length / 2)];
+          for (let p = 0; p < 20; p++) {
+            const angle = Math.random() * Math.PI * 2;
+            const spd = 2 + Math.random() * 4;
+            this.particles.push({
+              x: midPt.x * this.width,
+              y: midPt.y * this.height,
+              vx: Math.cos(angle) * spd,
+              vy: Math.sin(angle) * spd,
+              color: rope.color,
+              alpha: 1,
+              radius: 3 + Math.random() * 3
+            });
+          }
+
+          this.updateProgress();
+          this.renderEmbroideryThumbnail();
+          this.checkWinCondition();
+          return;
+        }
+
+        // 2. Untangle Check
+        if (this.isRopeFree(rope)) {
+          // Find matching or empty slot in Spool Dock
+          let targetSlot = this.slots.findIndex(s => s && (s.isRainbow || s.color === rope.color) && s.count < s.capacity);
+          if (targetSlot === -1) {
+            targetSlot = this.slots.findIndex(s => s === null);
+          }
+
+          if (targetSlot === -1) {
+            this.sfx.buzz();
+            this.showToast("Spool Dock is full!");
+            this.checkJamCondition();
+            return;
+          }
+
+          const lvl = LEVELS[this.currentLevelIdx];
+          if (!this.slots[targetSlot]) {
+            this.slots[targetSlot] = {
+              color: rope.color,
+              isRainbow: false,
+              count: 0,
+              capacity: lvl.spoolTarget || 3,
+              isSpinning: false,
+              rotation: 0
+            };
+          }
+
+          rope.isUntangling = true;
+          this.sfx.ropeSlide();
+          if (navigator.vibrate) navigator.vibrate(12);
+          this.tickTurn();
+          this.animateRopeToSlot(rope, targetSlot);
+        } else {
+          // Tangled / Blocked: Elastic tension twang and shake
+          this.sfx.twang();
+          if (navigator.vibrate) navigator.vibrate([20, 40, 20]);
+          this.shakingRope = rope;
+          this.shakeTimer = 14;
+
+          // Highlight the first blocking rope on top
+          const untangledIds = new Set(this.untangledRopes.map(r => r.id));
+          const topBlockerId = rope.blockedBy.find(bId => !untangledIds.has(bId));
+          this.highlightRope = this.ropes.find(r => r.id === topBlockerId);
+
+          this.showToast("Tangled! Clear overlapping ropes first.");
+        }
+      }
+
+      animateRopeToSlot(rope, slotIndex) {
+        const slotEl = this.ui.dockSlotEls[slotIndex];
+        const slotRect = slotEl.getBoundingClientRect();
+        const canvasRect = this.mainCanvas.getBoundingClientRect();
+
+        const targetX = (slotRect.left + slotRect.width / 2) - canvasRect.left;
+        const targetY = (slotRect.top + slotRect.height / 2) - canvasRect.top;
+
+        this.flyingRopes.push({
+          rope,
+          slotIndex,
+          targetX,
+          targetY,
+          progress: 0,
+          speed: 0.055
+        });
+      }
+
+      onRopeArrived(item) {
+        const { rope, slotIndex } = item;
+        this.untangledRopes.push(rope);
+        const spool = this.slots[slotIndex];
+
+        if (spool) {
+          spool.count++;
+          this.sfx.spoolSpin();
+          if (navigator.vibrate) navigator.vibrate(22);
+
+          // Particles into spool
+          const slotEl = this.ui.dockSlotEls[slotIndex];
+          const slotRect = slotEl.getBoundingClientRect();
+          const canvasRect = this.mainCanvas.getBoundingClientRect();
+          const sx = (slotRect.left + slotRect.width / 2) - canvasRect.left;
+          const sy = (slotRect.top + slotRect.height / 2) - canvasRect.top;
+
+          for (let p = 0; p < 16; p++) {
+            const angle = Math.random() * Math.PI * 2;
+            const spd = 2 + Math.random() * 4;
+            this.particles.push({
+              x: sx, y: sy,
+              vx: Math.cos(angle) * spd,
+              vy: Math.sin(angle) * spd,
+              color: rope.color,
+              alpha: 1,
+              radius: 3 + Math.random() * 3
+            });
+          }
+
+          if (spool.count >= spool.capacity) {
+            this.sfx.pop();
+            this.showToast(`${rope.name} Spool Completed!`);
+            this.slots[slotIndex] = null;
+          } else {
+            spool.isSpinning = false;
+          }
+        }
+
+        this.renderSlots();
+        this.updateProgress();
+        this.renderEmbroideryThumbnail();
+        this.checkWinCondition();
+      }
+
+      checkWinCondition() {
+        if (this.untangledRopes.length === this.ropes.length && !this.levelCompleted) {
+          this.levelCompleted = true;
+          this.sfx.victory();
+          if (navigator.vibrate) navigator.vibrate([40, 60, 80, 100]);
+          const lvl = LEVELS[this.currentLevelIdx];
+          this.ui.winTitle.textContent = `${lvl.title} Untangled!`;
+          this.ui.winDesc.textContent = `All ropes cleared and embroidered onto canvas!`;
+          setTimeout(() => {
+            this.ui.modalWin.classList.add('open');
+          }, 450);
+        } else {
+          this.checkJamCondition();
+        }
+      }
+
+      checkJamCondition() {
+        if (this.levelCompleted) return;
+        const activeOccupied = this.slots.filter(s => s !== null);
+
+        if (activeOccupied.length === 5) {
+          const untangledIds = new Set(this.untangledRopes.map(r => r.id));
+          const freeRopes = this.ropes.filter(r => !untangledIds.has(r.id) && this.isRopeFree(r));
+
+          const canMatch = activeOccupied.some(spool =>
+            freeRopes.some(r => (spool.isRainbow || r.color === spool.color) && spool.count < spool.capacity)
+          );
+
+          if (!canMatch && this.flyingRopes.length === 0) {
+            this.sfx.buzz();
+            setTimeout(() => {
+              this.ui.modalJam.classList.add('open');
+            }, 600);
+          }
+        }
+      }
+
+      renderSlots() {
+        this.slots.forEach((spool, i) => {
+          const el = this.ui.dockSlotEls[i];
+          el.innerHTML = '';
+          el.className = 'spool-slot';
+
+          if (spool) {
+            el.classList.add('occupied');
+            if (spool.isSpinning) el.classList.add('spinning');
+
+            const bgGrad = spool.isRainbow
+              ? 'linear-gradient(135deg, #ef476f, #ffd166, #06d6a0, #118ab2, #8338ec)'
+              : `radial-gradient(circle at 35% 35%, #ffffff 0%, ${spool.color} 55%, #1a1a1a 100%)`;
+
+            el.innerHTML = `
+              <div class="spool-bobbin" style="background: ${bgGrad};">
+                <div class="spool-core"></div>
+              </div>
+              <div class="spool-counter">${spool.count}/${spool.capacity}</div>
+            `;
+          }
+        });
+
+        this.ui.slotUsageCount.textContent = this.slots.filter(s => s !== null).length;
+      }
+
+      bindEvents() {
+        this.ui.btnScissors.addEventListener('click', () => {
+          if (this.snipCooldown > 0) {
+            this.sfx.buzz();
+            const turnWord = this.snipCooldown === 1 ? 'turn' : 'turns';
+            this.showToast(`Snip is recharging (${this.snipCooldown} ${turnWord} left)!`);
+            return;
+          }
+          this.scissorMode = !this.scissorMode;
+          this.renderBoosters();
+          if (this.scissorMode) {
+            this.showToast("Tap ANY rope to snip it!");
+          }
+        });
+
+        this.ui.btnRainbow.addEventListener('click', () => {
+          if (this.wildCooldown > 0) {
+            this.sfx.buzz();
+            const turnWord = this.wildCooldown === 1 ? 'turn' : 'turns';
+            this.showToast(`Wild Spool is recharging (${this.wildCooldown} ${turnWord} left)!`);
+            return;
+          }
+          // Deploy rainbow spool into first empty slot
+          let targetSlot = this.slots.findIndex(s => s === null);
+          if (targetSlot === -1) {
+            this.sfx.buzz();
+            this.showToast("Spool dock is full!");
+            return;
+          }
+          const lvl = LEVELS[this.currentLevelIdx];
+          this.slots[targetSlot] = {
+            color: '#ffffff',
+            isRainbow: true,
+            count: 0,
+            capacity: lvl.spoolTarget || 3,
+            isSpinning: false,
+            rotation: 0
+          };
+          this.wildCooldown = this.COOLDOWN_TURNS;
+          this.renderBoosters();
+          this.renderSlots();
+          this.showToast("Wild Rainbow Spool Ready!");
+        });
+
+        this.ui.btnUndo.addEventListener('click', () => {
+          if (this.untangledRopes.length > 0) {
+            const restored = this.untangledRopes.pop();
+            restored.isUntangling = false;
+            this.renderEmbroideryThumbnail();
+            this.updateProgress();
+            this.showToast(`Restored ${restored.name}!`);
+          }
+        });
+
+        this.ui.btnRestart.addEventListener('click', () => this.loadLevel(this.currentLevelIdx));
+        this.ui.btnSound.addEventListener('click', () => {
+          const on = this.sfx.toggle();
+          this.ui.btnSound.textContent = on ? 'Sound' : 'Muted';
+        });
+
+        this.ui.btnOpenLevels.addEventListener('click', () => {
+          this.ui.modalLevels.classList.add('open');
+        });
+        this.ui.btnCloseLevels.addEventListener('click', () => {
+          this.ui.modalLevels.classList.remove('open');
+        });
+
+        this.ui.btnNextLevel.addEventListener('click', () => this.loadLevel(this.currentLevelIdx + 1));
+        this.ui.btnRetry.addEventListener('click', () => this.loadLevel(this.currentLevelIdx));
+
+        // High-precision tap detection along entire rope curve/body
+        const handleTapAt = (clientX, clientY) => {
+          const rect = this.mainCanvas.getBoundingClientRect();
+          const clickX = clientX - rect.left;
+          const clickY = clientY - rect.top;
+
+          const untangledIds = new Set(this.untangledRopes.map(r => r.id));
+          const activeRopes = this.ropes.filter(r => !untangledIds.has(r.id) && !r.isUntangling);
+
+          // Sort descending by layer so top ropes get hit first
+          activeRopes.sort((a, b) => b.layer - a.layer);
+
+          for (let rope of activeRopes) {
+            // Check distance to all segments of rope path
+            for (let i = 0; i < rope.path.length - 1; i++) {
+              const p1 = rope.path[i];
+              const p2 = rope.path[i + 1];
+              const x1 = p1.x * this.width;
+              const y1 = p1.y * this.height;
+              const x2 = p2.x * this.width;
+              const y2 = p2.y * this.height;
+
+              const d = distToSegment(clickX, clickY, x1, y1, x2, y2);
+              if (d < 24) { // 24px hit tolerance
+                this.handleRopeTap(rope);
+                return;
+              }
+            }
+          }
+        };
+
+        this.mainCanvas.addEventListener('pointerdown', (e) => {
+          handleTapAt(e.clientX, e.clientY);
+        });
+      }
+
+      update() {
+        // Shake physics
+        if (this.shakeTimer > 0) {
+          this.shakeTimer--;
+          if (this.shakingRope) {
+            this.shakingRope.shakeX = Math.sin(this.shakeTimer * 1.5) * 6;
+          }
+        } else {
+          if (this.shakingRope) {
+            this.shakingRope.shakeX = 0;
+            this.shakingRope = null;
+          }
+          this.highlightRope = null;
+        }
+
+        // Flying ropes into dock
+        for (let i = this.flyingRopes.length - 1; i >= 0; i--) {
+          const fr = this.flyingRopes[i];
+          fr.progress += fr.speed;
+          if (fr.progress >= 1) {
+            this.flyingRopes.splice(i, 1);
+            this.onRopeArrived(fr);
+          }
+        }
+
+        // Particles
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+          const p = this.particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.alpha *= 0.94;
+          if (p.alpha <= 0.04) {
+            this.particles.splice(i, 1);
+          }
+        }
+      }
+
+      draw() {
+        this.ctx.clearRect(0, 0, this.width, this.height);
+
+        // 1. Pegboard Wooden Surface with Perforations
+        this.ctx.fillStyle = '#22140c';
+        this.ctx.fillRect(0, 0, this.width, this.height);
+
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+        const step = 24;
+        for (let x = 12; x < this.width; x += step) {
+          for (let y = 12; y < this.height; y += step) {
+            this.ctx.beginPath();
+            this.ctx.arc(x, y, 1.8, 0, Math.PI * 2);
+            this.ctx.fill();
+          }
+        }
+
+        const untangledIds = new Set(this.untangledRopes.map(r => r.id));
+        const visibleRopes = this.ropes.filter(r => !untangledIds.has(r.id) && !r.isUntangling);
+
+        // Sort by layer ascending for realistic 3D stacking
+        visibleRopes.sort((a, b) => a.layer - b.layer);
+
+        // 2. Draw 3D Ropes
+        for (let rope of visibleRopes) {
+          const isFree = this.isRopeFree(rope);
+          const isHighlighted = this.highlightRope && this.highlightRope.id === rope.id;
+          const shakeOffsetX = rope.shakeX || 0;
+
+          // A. Drop Shadow (Height dependent on layer)
+          const shadowOffset = 4 + rope.layer * 3;
+          this.ctx.save();
+          this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.45)';
+          this.ctx.lineWidth = 18;
+          this.ctx.lineCap = 'round';
+          this.ctx.lineJoin = 'round';
+
+          this.ctx.beginPath();
+          this.drawSpline(this.ctx, rope.path, this.width, this.height, shadowOffset + shakeOffsetX);
+          this.ctx.stroke();
+          this.ctx.restore();
+
+          // B. 3D Cylindrical Rope Base (Thick colored tube)
+          this.ctx.save();
+          this.ctx.strokeStyle = rope.color;
+          this.ctx.lineWidth = 16;
+          this.ctx.lineCap = 'round';
+          this.ctx.lineJoin = 'round';
+
+          this.ctx.beginPath();
+          this.drawSpline(this.ctx, rope.path, this.width, this.height, shakeOffsetX);
+          this.ctx.stroke();
+
+          // C. 3D Specular Highlight Ridge
+          this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+          this.ctx.lineWidth = 5;
+          this.ctx.stroke();
+
+          // D. Braided Rope Texture (Diagonal twisted fiber hatches)
+          this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.28)';
+          this.ctx.lineWidth = 3;
+          this.ctx.setLineDash([6, 7]);
+          this.ctx.stroke();
+
+          // E. If Rope is Free to Untangle, add glowing golden pulse markers on ends
+          if (isFree) {
+            const startPt = rope.path[0];
+            const endPt = rope.path[rope.path.length - 1];
+
+            this.ctx.fillStyle = '#ffffff';
+            this.ctx.beginPath();
+            this.ctx.arc(startPt.x * this.width + shakeOffsetX, startPt.y * this.height, 5, 0, Math.PI * 2);
+            this.ctx.arc(endPt.x * this.width + shakeOffsetX, endPt.y * this.height, 5, 0, Math.PI * 2);
+            this.ctx.fill();
+
+            this.ctx.strokeStyle = '#ffd166';
+            this.ctx.lineWidth = 2.5;
+            this.ctx.setLineDash([]);
+            this.ctx.stroke();
+          }
+
+          // F. Highlight Warning if this rope is blocking another rope
+          if (isHighlighted) {
+            this.ctx.strokeStyle = '#ffffff';
+            this.ctx.lineWidth = 4;
+            this.ctx.setLineDash([4, 4]);
+            this.ctx.stroke();
+          }
+
+          this.ctx.restore();
+        }
+
+        // 3. Draw Brass Peg Pins on Pegboard
+        for (let peg of this.pegs) {
+          const px = peg.x * this.width;
+          const py = peg.y * this.height;
+
+          // Peg Shadow
+          this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+          this.ctx.beginPath();
+          this.ctx.arc(px + 3, py + 4, 10, 0, Math.PI * 2);
+          this.ctx.fill();
+
+          // Brass Peg Metallic Shading
+          const pegGrad = this.ctx.createRadialGradient(px - 3, py - 3, 2, px, py, 9);
+          pegGrad.addColorStop(0, '#fff3a8');
+          pegGrad.addColorStop(0.5, '#d4af37');
+          pegGrad.addColorStop(1, '#664d14');
+
+          this.ctx.fillStyle = pegGrad;
+          this.ctx.beginPath();
+          this.ctx.arc(px, py, 9, 0, Math.PI * 2);
+          this.ctx.fill();
+
+          // Rivet Rim
+          this.ctx.strokeStyle = '#2a1a08';
+          this.ctx.lineWidth = 1.5;
+          this.ctx.stroke();
+        }
+
+        // 4. In-Flight Slithering Untangled Ropes
+        for (let fr of this.flyingRopes) {
+          const rope = fr.rope;
+          const midPt = rope.path[Math.floor(rope.path.length / 2)];
+          const sx = midPt.x * this.width;
+          const sy = midPt.y * this.height;
+
+          const cx = (sx + fr.targetX) / 2 + 30;
+          const cy = (sy + fr.targetY) / 2;
+
+          this.ctx.save();
+          this.ctx.strokeStyle = rope.color;
+          this.ctx.lineWidth = 14 * (1 - fr.progress * 0.4);
+          this.ctx.lineCap = 'round';
+
+          this.ctx.beginPath();
+          this.ctx.moveTo(sx, sy);
+          this.ctx.quadraticCurveTo(cx, cy, fr.targetX, fr.targetY);
+          this.ctx.stroke();
+
+          // White highlight along flying thread
+          this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+          this.ctx.lineWidth = 4;
+          this.ctx.stroke();
+
+          // Traveling yarn bobbin
+          const currX = (1 - fr.progress) * (1 - fr.progress) * sx + 2 * (1 - fr.progress) * fr.progress * cx + fr.progress * fr.progress * fr.targetX;
+          const currY = (1 - fr.progress) * (1 - fr.progress) * sy + 2 * (1 - fr.progress) * fr.progress * cy + fr.progress * fr.progress * fr.targetY;
+
+          this.ctx.fillStyle = '#ffffff';
+          this.ctx.beginPath();
+          this.ctx.arc(currX, currY, 7, 0, Math.PI * 2);
+          this.ctx.fill();
+
+          this.ctx.restore();
+        }
+
+        // 5. Particles
+        for (let p of this.particles) {
+          this.ctx.save();
+          this.ctx.globalAlpha = p.alpha;
+          this.ctx.fillStyle = p.color;
+          this.ctx.beginPath();
+          this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          this.ctx.fill();
+          this.ctx.restore();
+        }
+      }
+
+      loop() {
+        this.update();
+        this.draw();
+        requestAnimationFrame(this.loop);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      window.game = new ThreadJamGame();
+      if (window.GazetteTelemetry) {
+        window.GazetteTelemetry.track('game_launch', { game: 'thread_jam_3d' });
+      }
+    });
+  </script>
+</body>
+</html>
