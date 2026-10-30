@@ -431,8 +431,8 @@
             <span class="roster-highlight" id="roster-chores-trooper">0/17</span>
           </div>
           <div class="roster-metric-line">
-            <span>Bank:</span>
-            <span class="roster-highlight" id="roster-bank-trooper" style="color: #f59e0b;">$0.00</span>
+            <span>Total XP:</span>
+            <span class="roster-highlight" id="roster-xp-trooper" style="color: #f59e0b;">0 XP</span>
           </div>
         </div>
 
@@ -447,8 +447,8 @@
             <span class="roster-highlight" id="roster-chores-peacemaker">0/11</span>
           </div>
           <div class="roster-metric-line">
-            <span>Bank:</span>
-            <span class="roster-highlight" id="roster-bank-peacemaker" style="color: #c084fc;">$0.00</span>
+            <span>Total XP:</span>
+            <span class="roster-highlight" id="roster-xp-peacemaker" style="color: #c084fc;">0 XP</span>
           </div>
         </div>
 
@@ -463,8 +463,8 @@
             <span class="roster-highlight" id="roster-stars-birdie">⭐ 0</span>
           </div>
           <div class="roster-metric-line">
-            <span>Bank:</span>
-            <span class="roster-highlight" id="roster-bank-birdie" style="color: #f472b6;">$0.00</span>
+            <span>Streak:</span>
+            <span class="roster-highlight" id="roster-streak-birdie" style="color: #f472b6;">1d</span>
           </div>
         </div>
       </div>
@@ -475,7 +475,7 @@
       <button class="tab-btn trooper active" id="tab-btn-trooper" onclick="switchTab('trooper')">🤠 Trooper</button>
       <button class="tab-btn peacemaker" id="tab-btn-peacemaker" onclick="switchTab('peacemaker')">🌸 Peacemaker 9</button>
       <button class="tab-btn birdie" id="tab-btn-birdie" onclick="switchTab('birdie')">🐣 Birdie</button>
-      <button class="tab-btn bank" id="tab-btn-bank" onclick="switchTab('bank')">🏦 Bank & Treasury</button>
+      
       <button class="tab-btn telemetry" id="tab-btn-telemetry" onclick="switchTab('telemetry')">⚡ Telemetry (<span id="total-telemetry-count">0</span>)</button>
     </div>
 
@@ -501,8 +501,8 @@
             <div class="stat-lbl">Chests Ready</div>
           </div>
           <div class="stat-pill">
-            <div class="stat-val" id="t-bank" style="color: #34d399;">$0.00</div>
-            <div class="stat-lbl">Bank Balance</div>
+            <div class="stat-val" id="t-lvl" style="color: #f59e0b;">Lvl 2</div>
+            <div class="stat-lbl">Hero Rank</div>
           </div>
         </div>
 
@@ -510,7 +510,7 @@
           <button class="btn btn-amber" onclick="adjustKidXP('trooper', 50)">+50 Bonus XP</button>
           <button class="btn btn-muted" onclick="adjustKidChests('trooper', 1)">+1 Mystery Chest</button>
           <button class="btn btn-muted" onclick="adjustKidStreak('trooper', 1)">+1 Day Streak</button>
-          <button class="btn btn-green" onclick="quickCreditKid('op_ldog', 1.00, 'Trooper Morning Chore Bounty')">+$1.00 Chore Bounty</button>
+          
           <button class="btn btn-red" onclick="resetKidChecks('trooper')">Clear Today's Checks</button>
         </div>
       </div>
@@ -576,8 +576,8 @@
             <div class="stat-lbl">Sparks Ready</div>
           </div>
           <div class="stat-pill">
-            <div class="stat-val" id="p-bank" style="color: #34d399;">$0.00</div>
-            <div class="stat-lbl">Bank Balance</div>
+            <div class="stat-val" id="p-lvl" style="color: #c084fc;">Lvl 1</div>
+            <div class="stat-lbl">Hero Rank</div>
           </div>
         </div>
 
@@ -585,7 +585,7 @@
           <button class="btn btn-purple" onclick="adjustKidXP('peacemaker', 50)">+50 Bonus XP</button>
           <button class="btn btn-muted" onclick="adjustKidChests('peacemaker', 1)">+1 Daily Spark</button>
           <button class="btn btn-muted" onclick="adjustKidStreak('peacemaker', 1)">+1 Day Streak</button>
-          <button class="btn btn-green" onclick="quickCreditKid('op_peacemaker9', 1.00, 'Peacemaker Morning Chore Bounty')">+$1.00 Chore Bounty</button>
+          
           <button class="btn btn-red" onclick="resetKidChecks('peacemaker')">Clear Today's Checks</button>
         </div>
       </div>
@@ -624,8 +624,8 @@
             <div class="stat-lbl">Streak</div>
           </div>
           <div class="stat-pill">
-            <div class="stat-val" id="b-bank" style="color: #34d399;">$0.00</div>
-            <div class="stat-lbl">Bank Balance</div>
+            <div class="stat-val" id="b-mode" style="color: #f472b6;">Age 4</div>
+            <div class="stat-lbl">Tactile Mode</div>
           </div>
         </div>
 
@@ -633,7 +633,7 @@
           <button class="btn btn-amber" onclick="adjustBirdieStars(1)">+1 Star</button>
           <button class="btn btn-amber" onclick="fillBirdieJar()">⭐ Fill Star Jar (6)</button>
           <button class="btn btn-muted" onclick="adjustKidStreak('birdie', 1)">+1 Day Streak</button>
-          <button class="btn btn-green" onclick="quickCreditKid('op_rainbow4', 0.50, 'Birdie Star Jar Bounty')">+$0.50 Star Reward</button>
+          
           <button class="btn btn-red" onclick="resetKidChecks('birdie')">Clear Today's Cards</button>
         </div>
       </div>
@@ -649,54 +649,7 @@
       </div>
     </div>
 
-    <!-- ==================== PANEL 4: BANK & TREASURY BRIDGE ==================== -->
-    <div class="panel" id="panel-bank">
-      <div class="card">
-        <div class="card-title">
-          <span>🏦 HOUSEHOLD TREASURY BRIDGE</span>
-          <a href="/bank/" target="_blank" class="nav-btn">Open Full Bank ↗</a>
-        </div>
-
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-          <div class="stat-pill">
-            <div class="stat-val" id="bank-op-ldog" style="color: #f59e0b;">$0.00</div>
-            <div class="stat-lbl">🤠 Trooper (L-Dog)</div>
-          </div>
-          <div class="stat-pill">
-            <div class="stat-val" id="bank-op-peacemaker9" style="color: #c084fc;">$0.00</div>
-            <div class="stat-lbl">🌸 Peacemaker 9</div>
-          </div>
-          <div class="stat-pill">
-            <div class="stat-val" id="bank-op-rainbow4" style="color: #f472b6;">$0.00</div>
-            <div class="stat-lbl">🐣 Birdie (Rainbow-4)</div>
-          </div>
-        </div>
-
-        <p style="font-size: 11px; color: var(--text-muted); line-height: 1.4;">
-          Credit chore rewards or weekly allowance directly to each operative's ledger.
-        </p>
-
-        <!-- Quick Transaction Form -->
-        <div style="background: #090d16; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
-          <div style="font-size: 11px; font-weight: 800; color: #f1f5f9;">QUICK CREDIT / BOUNTY DISPATCH</div>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-            <select id="quick-credit-op" class="input-field">
-              <option value="op_ldog">🤠 Trooper (L-Dog)</option>
-              <option value="op_peacemaker9">🌸 Peacemaker 9</option>
-              <option value="op_rainbow4">🐣 Birdie (Rainbow-4)</option>
-            </select>
-            <input type="number" id="quick-credit-amt" class="input-field" placeholder="Amount ($ e.g. 2.00)" step="0.25" min="0.25">
-          </div>
-          <input type="text" id="quick-credit-memo" class="input-field" placeholder="Memo / Description (e.g. Excellent morning routine)">
-          <div style="display: flex; gap: 8px;">
-            <button class="btn btn-green" style="flex: 1;" onclick="submitQuickCredit()">+ Credit to Ledger</button>
-            <button class="btn btn-red" style="flex: 1;" onclick="submitQuickDebit()">- Debit Expense</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ==================== PANEL 5: UNIFIED TELEMETRY ==================== -->
+    <!-- ==================== PANEL 4: UNIFIED TELEMETRY ==================== -->
     <div class="panel" id="panel-telemetry">
       <div class="card">
         <div class="card-title">
@@ -752,7 +705,7 @@
       document.getElementById('roster-card-birdie').className = 'roster-card' + (tabId === 'birdie' ? ' birdie-active' : '');
 
       // Update Tab buttons
-      ['trooper', 'peacemaker', 'birdie', 'bank', 'telemetry'].forEach(t => {
+      ['trooper', 'peacemaker', 'birdie', 'telemetry'].forEach(t => {
         const btn = document.getElementById(`tab-btn-${t}`);
         const panel = document.getElementById(`panel-${t}`);
         if (btn) btn.classList.toggle('active', t === tabId);
@@ -804,6 +757,7 @@
       alert(`Lincoln's active theme is now set to ${themeKey}! His app will display this theme on next load.`);
     }
 
+    
     function refreshHQ() {
       // 1. Trooper Refresh
       try {
@@ -826,6 +780,11 @@
         document.getElementById('p-xp').innerText = d.xp || 0;
         document.getElementById('p-streak').innerText = (d.streak || 1) + 'd';
         document.getElementById('p-chests').innerText = d.pendingChests || 0;
+        const xpP = d.xp || 0;
+        let lvlP = 1;
+        if (xpP >= 2000) lvlP = 6; else if (xpP >= 1300) lvlP = 5; else if (xpP >= 850) lvlP = 4; else if (xpP >= 500) lvlP = 3; else if (xpP >= 250) lvlP = 2;
+        document.getElementById('p-lvl').innerText = 'Lvl ' + lvlP;
+        document.getElementById('roster-xp-peacemaker').innerText = xpP + ' XP';
         const done = d.completedChores ? Object.keys(d.completedChores).length : 0;
         document.getElementById('roster-chores-peacemaker').innerText = `${done}/11`;
 
@@ -860,15 +819,11 @@
         const rain4 = ops.op_rainbow4?.balance || 0;
 
         document.getElementById('roster-bank-trooper').innerText = `$${ldog.toFixed(2)}`;
-        document.getElementById('t-bank').innerText = `$${ldog.toFixed(2)}`;
-        document.getElementById('bank-op-ldog').innerText = `$${ldog.toFixed(2)}`;
-
-        document.getElementById('roster-bank-peacemaker').innerText = `$${pm9.toFixed(2)}`;
-        document.getElementById('p-bank').innerText = `$${pm9.toFixed(2)}`;
-        document.getElementById('bank-op-peacemaker9').innerText = `$${pm9.toFixed(2)}`;
-
-        document.getElementById('roster-bank-birdie').innerText = `$${rain4.toFixed(2)}`;
-        document.getElementById('b-bank').innerText = `$${rain4.toFixed(2)}`;
+        const xpT = d.xp || 0;
+        let lvlT = 1;
+        if (xpT >= 2000) lvlT = 6; else if (xpT >= 1300) lvlT = 5; else if (xpT >= 850) lvlT = 4; else if (xpT >= 500) lvlT = 3; else if (xpT >= 250) lvlT = 2;
+        document.getElementById('t-lvl').innerText = 'Lvl ' + lvlT;
+        document.getElementById('roster-xp-trooper').innerText = xpT + ' XP';
         document.getElementById('bank-op-rainbow4').innerText = `$${rain4.toFixed(2)}`;
       } catch(e) {}
 
@@ -1037,76 +992,6 @@
         localStorage.setItem(key, JSON.stringify(d));
         refreshHQ();
       } catch(e) {}
-    }
-
-    // --- BANK BRIDGE HANDLERS ---
-    function quickCreditKid(opId, amount, memo) {
-      try {
-        let t = JSON.parse(localStorage.getItem(TREASURY_KEY) || '{}');
-        if (!t.operatives) t.operatives = {};
-        if (!t.operatives[opId]) t.operatives[opId] = { balance: 0 };
-        t.operatives[opId].balance = (t.operatives[opId].balance || 0) + amount;
-
-        if (!t.transactions) t.transactions = [];
-        t.transactions.unshift({
-          id: 'tx_' + Date.now(),
-          type: 'credit',
-          operativeId: opId,
-          amount: amount,
-          description: memo || 'HQ Chore Credit',
-          timestamp: new Date().toISOString()
-        });
-
-        localStorage.setItem(TREASURY_KEY, JSON.stringify(t));
-        refreshHQ();
-        alert(`Successfully credited +$${amount.toFixed(2)} to ${opId}!`);
-      } catch(e) {
-        alert("Error updating treasury: " + e.message);
-      }
-    }
-
-    function submitQuickCredit() {
-      const opId = document.getElementById('quick-credit-op').value;
-      const amt = parseFloat(document.getElementById('quick-credit-amt').value);
-      const memo = document.getElementById('quick-credit-memo').value || 'Manual HQ Bounty';
-
-      if (isNaN(amt) || amt <= 0) return alert("Please enter a valid amount.");
-      quickCreditKid(opId, amt, memo);
-      document.getElementById('quick-credit-amt').value = '';
-      document.getElementById('quick-credit-memo').value = '';
-    }
-
-    function submitQuickDebit() {
-      const opId = document.getElementById('quick-credit-op').value;
-      const amt = parseFloat(document.getElementById('quick-credit-amt').value);
-      const memo = document.getElementById('quick-credit-memo').value || 'HQ Expense Debit';
-
-      if (isNaN(amt) || amt <= 0) return alert("Please enter a valid amount.");
-
-      try {
-        let t = JSON.parse(localStorage.getItem(TREASURY_KEY) || '{}');
-        if (!t.operatives) t.operatives = {};
-        if (!t.operatives[opId]) t.operatives[opId] = { balance: 0 };
-        t.operatives[opId].balance = Math.max(0, (t.operatives[opId].balance || 0) - amt);
-
-        if (!t.transactions) t.transactions = [];
-        t.transactions.unshift({
-          id: 'tx_' + Date.now(),
-          type: 'debit',
-          operativeId: opId,
-          amount: amt,
-          description: memo,
-          timestamp: new Date().toISOString()
-        });
-
-        localStorage.setItem(TREASURY_KEY, JSON.stringify(t));
-        refreshHQ();
-        alert(`Debited -$${amt.toFixed(2)} from ${opId}.`);
-        document.getElementById('quick-credit-amt').value = '';
-        document.getElementById('quick-credit-memo').value = '';
-      } catch(e) {
-        alert("Error: " + e.message);
-      }
     }
 
     function exportCombinedCSV() {

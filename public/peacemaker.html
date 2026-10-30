@@ -703,7 +703,7 @@
       <div class="stats-footer">
         <div class="stats-counts">
           <div>TASKS: <span class="teal-val" id="completed-count">0/11</span></div>
-          <div>POINTS: <span class="lavender-val" id="coin-count">✨ 0</span> <span style="font-size: 11px; color: #2dd4bf; font-weight: 700; margin-left: 4px;" id="caballero-bucks-equivalent">(≈ 0 C$)</span></div>
+          <div>POINTS: <span class="lavender-val" id="coin-count">✨ 0</span></div>
         </div>
 
         <button id="chest-btn" onclick="claimLootChest()" class="btn-3d loot-claim-btn" style="display: none;">
@@ -1095,9 +1095,7 @@
 
       document.getElementById('completed-count').innerText = `${totalCompleted}/${tasks.length}`;
       document.getElementById('coin-count').innerText = `✨ ${state.coins}`;
-      const bucksVal = Math.floor(state.coins * 0.8);
-      const bucksEl = document.getElementById('caballero-bucks-equivalent');
-      if (bucksEl) bucksEl.innerText = `(≈ ${bucksVal} C$)`;
+      
       document.getElementById('streak-count').innerText = state.streak;
 
       const { currentRank, prevXp, nextXp } = getRankInfo(state.xp);

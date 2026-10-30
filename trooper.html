@@ -719,14 +719,7 @@
   <div class="container">
 
     <!-- Top Dashboard Header (Clean, Zero Settings Glitch) -->
-        <!-- DYNAMIC THEME SELECTOR BAR -->
-    <div class="theme-bar" id="theme-selector-bar">
-      <span class="theme-bar-label">🎨 THEME:</span>
-      <button class="theme-chip active" id="chip-cyber-western" onclick="switchTheme('cyber-western')">🤠 Ranch Quest</button>
-      <button class="theme-chip" id="chip-space-starfleet" onclick="switchTheme('space-starfleet')">🚀 Starfleet</button>
-      <button class="theme-chip" id="chip-pixel-miner" onclick="switchTheme('pixel-miner')">⛏️ Pixel Miner</button>
-      <button class="theme-chip" id="chip-woodland-scout" onclick="switchTheme('woodland-scout')">🦊 Woodland</button>
-    </div>
+        
 
     <header class="header-card">
       <div class="hero-profile">
@@ -1310,6 +1303,7 @@
 
       document.getElementById('completed-count').innerText = `${totalCompleted}/${tasks.length}`;
       document.getElementById('coin-count').innerText = `🪙 ${state.coins}`;
+      
       document.getElementById('streak-count').innerText = state.streak;
 
       const { currentRank, prevXp, nextXp } = getRankInfo(state.xp);
