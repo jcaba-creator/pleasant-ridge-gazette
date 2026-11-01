@@ -447,6 +447,31 @@
     }
 =======
 >>>>>>> origin/main
+    .plate-parent {
+      background-color: #121519;
+      background-image: radial-gradient(#f59e0b 0.85px, transparent 0.85px);
+      background-size: 14px 14px;
+    }
+    .plate-stamp-parent {
+      border: 2px solid #f59e0b;
+      padding: 6px 16px;
+      background: #1b2028;
+      color: #fbbf24;
+      font-family: var(--font-serif);
+      font-size: 20px;
+      font-weight: 800;
+      box-shadow: 3px 3px 0px #111111;
+      user-select: none;
+      letter-spacing: 1px;
+    }
+    .btn-parent {
+      background: #d97706;
+      color: #ffffff;
+      border: 2px solid #111111;
+    }
+    .btn-parent:hover {
+      background: #b45309;
+    }
   </style>
   <script src="telemetry.js"></script>
 </head>
@@ -701,6 +726,25 @@
         </div>
       </article>
 >>>>>>> origin/main
+      <!-- Card: Parent Command Station -->
+      <article class="flashcard">
+        <div class="card-header-strip">
+          <span class="card-plate-no">Plate XII &bull; Household Command &amp; Duty Dispatch</span>
+          <span class="card-category" style="color: #d97706; border-color: #d97706;">Tactical Audio Soundboard &bull; Male Voice Engine</span>
+        </div>
+        <div class="card-plate plate-parent">
+          <div class="plate-stamp plate-stamp-parent">🎙️ PARENT COMMAND</div>
+        </div>
+        <div class="card-body">
+          <div class="card-info">
+            <h2 class="card-title">Parent Command Station</h2>
+            <p class="card-desc">Rapid tactile shortcut parent soundboard with authoritative male voice announcements. One-touch tactical broadcasts for morning kickoffs, teeth brushing checks, chore drills, classic dad emergency alerts, and interactive chore roulette with countdown inspection timers.</p>
+          </div>
+          <a href="parent_commands.html" onclick="if(window.GazetteTelemetry)window.GazetteTelemetry.track('game_launch',{game:'parent_commands'});" class="btn-action btn-parent">
+            Launch Command Station &rarr;
+          </a>
+        </div>
+      </article>
     </main>
 
     <!-- Institutional Covenant -->

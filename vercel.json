@@ -4,6 +4,38 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/arcade/parent_commands/",
+      "destination": "/arcade/parent_commands.html"
+    },
+    {
+      "source": "/arcade/parent_commands",
+      "destination": "/arcade/parent_commands.html"
+    },
+    {
+      "source": "/arcade/parent/",
+      "destination": "/arcade/parent_commands.html"
+    },
+    {
+      "source": "/arcade/parent",
+      "destination": "/arcade/parent_commands.html"
+    },
+    {
+      "source": "/commands/",
+      "destination": "/arcade/parent_commands.html"
+    },
+    {
+      "source": "/commands",
+      "destination": "/arcade/parent_commands.html"
+    },
+    {
+      "source": "/parent/",
+      "destination": "/arcade/parent_commands.html"
+    },
+    {
+      "source": "/parent",
+      "destination": "/arcade/parent_commands.html"
+    },
+    {
       "source": "/arcade",
       "destination": "/arcade/index.html"
     },

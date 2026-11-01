@@ -1,0 +1,1910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Parent Command Station | 449 Field Arcade</title>
+  <style>
+    :root {
+      --bg-chassis: #121519;
+      --bg-panel: #1b2028;
+      --bg-card: #242c37;
+      --border-panel: #333d4d;
+      --border-accent: #f59e0b;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --led-green: #10b981;
+      --led-amber: #f59e0b;
+      --led-red: #ef4444;
+      --led-blue: #38bdf8;
+      --btn-gold: #d97706;
+      --btn-gold-hover: #b45309;
+      --btn-blue: #0284c7;
+      --btn-emerald: #059669;
+      --btn-crimson: #dc2626;
+      --btn-purple: #7c3aed;
+      --font-display: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      --shadow-hard: 0 4px 0 #0b0d10;
+      --shadow-press: 0 1px 0 #0b0d10;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-chassis);
+      background-image: 
+        radial-gradient(rgba(245, 158, 11, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, #121519, #0d1013);
+      background-size: 20px 20px, 100% 100%;
+      color: var(--text-main);
+      font-family: var(--font-display);
+      min-height: 100vh;
+      padding: 12px 12px 60px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .station-container {
+      width: 100%;
+      max-width: 980px;
+    }
+
+    /* Top Utility Header */
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-panel);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #1e242d;
+      color: #cbd5e1;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 6px;
+      border: 1px solid #334155;
+      box-shadow: 0 2px 0 #0f172a;
+      transition: all 0.1s;
+    }
+    .back-btn:active {
+      transform: translateY(2px);
+      box-shadow: none;
+    }
+
+    .station-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--led-amber);
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      padding: 4px 10px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--led-amber);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--led-amber);
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    /* Station Masthead Console */
+    .masthead-console {
+      background: var(--bg-panel);
+      border: 2px solid var(--border-panel);
+      border-top: 4px solid var(--border-accent);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      position: relative;
+    }
+
+    .title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .station-title {
+      font-size: clamp(22px, 4vw, 32px);
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .station-title span.ico {
+      font-size: 1.2em;
+    }
+
+    .station-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Score & Mission Status */
+    .trophy-rack {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #11151a;
+      padding: 8px 14px;
+      border-radius: 6px;
+      border: 1px solid #2d3748;
+    }
+
+    .trophy-stars {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 800;
+      font-size: 16px;
+      color: #fbbf24;
+    }
+
+    .reset-stars-btn {
+      background: none;
+      border: none;
+      color: #64748b;
+      cursor: pointer;
+      font-size: 11px;
+      text-decoration: underline;
+    }
+
+    /* Audio VU Visualizer & Status Strip */
+    .broadcast-monitor {
+      background: #0f1318;
+      border: 1px solid #26303d;
+      border-radius: 6px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .active-speaker-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .speaker-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #374151;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    .speaker-indicator.speaking {
+      background: var(--led-green);
+      box-shadow: 0 0 12px var(--led-green);
+      animation: blink-speak 0.4s infinite alternate;
+    }
+    @keyframes blink-speak {
+      from { opacity: 0.6; }
+      to { opacity: 1; }
+    }
+
+    .live-transcript {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: #38bdf8;
+      max-width: 550px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Visualizer Bars */
+    .vu-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 20px;
+    }
+    .vu-bar {
+      width: 4px;
+      background: #334155;
+      height: 4px;
+      border-radius: 1px;
+      transition: height 0.08s ease;
+    }
+    .speaking .vu-bar {
+      background: var(--led-green);
+    }
+
+    /* Tactical Console Controls */
+    .console-settings-deck {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid #283340;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .deck-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .deck-label {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #94a3b8;
+    }
+
+    .persona-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .persona-btn {
+      background: #202732;
+      border: 1px solid #334155;
+      color: #cbd5e1;
+      padding: 5px 9px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .persona-btn.active {
+      background: var(--btn-gold);
+      color: #fff;
+      border-color: #f59e0b;
+      box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+    }
+
+    select.voice-select {
+      background: #181f27;
+      color: #e2e8f0;
+      border: 1px solid #334155;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      outline: none;
+      width: 100%;
+    }
+
+    .sound-effects-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .fx-toggle {
+      background: #1e2530;
+      color: #94a3b8;
+      border: 1px solid #334155;
+      padding: 5px 9px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .fx-toggle.active {
+      background: #0369a1;
+      color: #fff;
+      border-color: #38bdf8;
+    }
+
+    /* Drill Timer Display (Conditional Alert Banner) */
+    .drill-banner {
+      display: none;
+      background: #450a0a;
+      border: 2px solid #ef4444;
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin-bottom: 18px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      animation: alert-flash 1s infinite alternate;
+    }
+    @keyframes alert-flash {
+      from { border-color: #ef4444; }
+      to { border-color: #f87171; }
+    }
+    .drill-banner.active {
+      display: flex;
+    }
+    .drill-timer-display {
+      font-family: var(--font-mono);
+      font-size: 26px;
+      font-weight: 900;
+      color: #fecaca;
+    }
+    .drill-cancel-btn {
+      background: #dc2626;
+      color: white;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 4px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    /* Chore Roulette Feature */
+    .roulette-strip {
+      background: linear-gradient(90deg, #1e1b4b 0%, #312e81 100%);
+      border: 1px solid #4338ca;
+      border-radius: 6px;
+      padding: 10px 16px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .roulette-btn {
+      background: #e11d48;
+      color: #fff;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      box-shadow: 0 3px 0 #881337;
+      transition: all 0.1s;
+    }
+    .roulette-btn:active {
+      transform: translateY(2px);
+      box-shadow: none;
+    }
+
+    /* Section Headers */
+    .section-title-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 22px 0 10px 0;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #2d3748;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-count {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: #64748b;
+    }
+
+    /* Tactical Command Button Grid */
+    .command-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    /* Command Card */
+    .cmd-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-panel);
+      border-radius: 8px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+      box-shadow: var(--shadow-hard);
+      transition: transform 0.1s ease, border-color 0.15s, box-shadow 0.1s;
+      position: relative;
+    }
+    .cmd-card:hover {
+      border-color: #475569;
+    }
+    .cmd-card.highlight {
+      border-color: #fbbf24 !important;
+      background: #2d2616 !important;
+      transform: scale(1.02);
+      box-shadow: 0 0 16px rgba(251, 191, 36, 0.4);
+    }
+
+    .cmd-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .cmd-icon {
+      font-size: 24px;
+      line-height: 1;
+      background: #1a202c;
+      padding: 6px;
+      border-radius: 6px;
+      border: 1px solid #334155;
+    }
+
+    .cmd-info {
+      flex: 1;
+    }
+
+    .cmd-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.25;
+      margin-bottom: 4px;
+    }
+
+    .cmd-preview {
+      font-size: 12px;
+      color: #94a3b8;
+      line-height: 1.35;
+      font-style: italic;
+    }
+
+    .cmd-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      margin-top: 4px;
+    }
+
+    .btn-fire {
+      flex: 1;
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 9px 12px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      box-shadow: 0 3px 0 #1d4ed8;
+      transition: all 0.08s ease;
+    }
+    .btn-fire:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #1d4ed8;
+    }
+
+    .btn-fire.btn-amber {
+      background: #d97706;
+      box-shadow: 0 3px 0 #b45309;
+    }
+    .btn-fire.btn-amber:active {
+      box-shadow: 0 1px 0 #b45309;
+    }
+
+    .btn-fire.btn-crimson {
+      background: #dc2626;
+      box-shadow: 0 3px 0 #991b1b;
+    }
+    .btn-fire.btn-crimson:active {
+      box-shadow: 0 1px 0 #991b1b;
+    }
+
+    .btn-fire.btn-emerald {
+      background: #059669;
+      box-shadow: 0 3px 0 #047857;
+    }
+    .btn-fire.btn-emerald:active {
+      box-shadow: 0 1px 0 #047857;
+    }
+
+    .btn-fire.btn-purple {
+      background: #7c3aed;
+      box-shadow: 0 3px 0 #6d28d9;
+    }
+    .btn-fire.btn-purple:active {
+      box-shadow: 0 1px 0 #6d28d9;
+    }
+
+    .btn-mini {
+      background: #1e242d;
+      color: #94a3b8;
+      border: 1px solid #334155;
+      padding: 8px 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+    .btn-mini:hover {
+      color: #fff;
+      border-color: #475569;
+    }
+    .btn-mini:active {
+      transform: translateY(2px);
+    }
+
+    .btn-done {
+      color: #10b981;
+      border-color: #065f46;
+      background: rgba(16, 185, 129, 0.1);
+    }
+    .btn-done:hover {
+      background: rgba(16, 185, 129, 0.25);
+      border-color: #10b981;
+    }
+
+    /* Custom Command Studio */
+    .custom-studio {
+      background: #182029;
+      border: 1px solid #2d3748;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .studio-inputs {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    .studio-text {
+      flex: 1;
+      min-width: 240px;
+      background: #0f141a;
+      border: 1px solid #334155;
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 14px;
+      outline: none;
+    }
+    .studio-text:focus {
+      border-color: #f59e0b;
+    }
+
+    /* Confetti Canvas */
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* Footer Note */
+    .footer-stamp {
+      text-align: center;
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 40px;
+      padding-top: 16px;
+      border-top: 1px dashed #26303d;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="station-container">
+    <!-- Top Utility Header -->
+    <header class="top-header">
+      <a href="index.html" class="back-btn">
+        <span>&larr;</span> 449 Field Arcade
+      </a>
+      <div class="station-badge">
+        <span class="pulse-dot"></span>
+        DISPATCH LINK READY &bull; PLATE XII
+      </div>
+    </header>
+
+    <!-- Masthead Console -->
+    <section class="masthead-console">
+      <div class="title-row">
+        <div>
+          <h1 class="station-title">
+            <span class="ico">🎙️</span> Parent Command Station
+          </h1>
+          <p class="station-subtitle">Tactical Shortcut Audio Soundboard &bull; Household Duty Announcer &bull; Male Voice Engine</p>
+        </div>
+
+        <div class="trophy-rack">
+          <div class="trophy-stars">
+            <span>⭐</span>
+            <span id="star-count">0</span>
+            <span style="font-size: 11px; color: #94a3b8; font-weight: normal; margin-left: 2px;">Tasks Done</span>
+          </div>
+          <button class="reset-stars-btn" onclick="resetStars()" title="Reset Counter">reset</button>
+        </div>
+      </div>
+
+      <!-- Broadcast Monitor & Visualizer -->
+      <div class="broadcast-monitor">
+        <div class="active-speaker-status">
+          <div class="speaker-indicator" id="speaker-led"></div>
+          <span id="speaker-status-text">Station Idle (Ready to Broadcast)</span>
+        </div>
+        <div class="live-transcript" id="live-transcript">&ldquo;Awaiting dispatch directive...&rdquo;</div>
+        <div class="vu-bars" id="vu-bars">
+          <div class="vu-bar"></div>
+          <div class="vu-bar"></div>
+          <div class="vu-bar"></div>
+          <div class="vu-bar"></div>
+          <div class="vu-bar"></div>
+          <div class="vu-bar"></div>
+          <div class="vu-bar"></div>
+          <div class="vu-bar"></div>
+        </div>
+      </div>
+
+      <!-- Tactical Settings Deck -->
+      <div class="console-settings-deck">
+        <div class="deck-group">
+          <span class="deck-label">Tactical Voice Persona</span>
+          <div class="persona-pills">
+            <button class="persona-btn active" data-persona="commanding" onclick="setPersona('commanding')">👔 Commanding Dad</button>
+            <button class="persona-btn" data-persona="sergeant" onclick="setPersona('sergeant')">🪖 Drill Sergeant</button>
+            <button class="persona-btn" data-persona="chill" onclick="setPersona('chill')">🤠 Homestead Dad</button>
+            <button class="persona-btn" data-persona="robot" onclick="setPersona('robot')">🤖 ParentBot 9000</button>
+            <button class="persona-btn" data-persona="urgent" onclick="setPersona('urgent')">🚨 Departure Siren</button>
+          </div>
+        </div>
+
+        <div class="deck-group">
+          <span class="deck-label">Hardware Voice Device (Male Preferred)</span>
+          <select id="voice-select" class="voice-select" onchange="onVoiceChange()">
+            <option value="">Searching for Male Voices...</option>
+          </select>
+        </div>
+
+        <div class="deck-group">
+          <span class="deck-label">Audio Chime / Alert Sound FX</span>
+          <div class="sound-effects-row">
+            <button class="fx-toggle active" id="fx-tone-beep" onclick="toggleFx('beep')">📣 Megaphone</button>
+            <button class="fx-toggle active" id="fx-tone-radio" onclick="toggleFx('radio')">📻 Dispatch Chime</button>
+            <button class="fx-toggle" id="fx-tone-buzzer" onclick="toggleFx('buzzer')">⏰ Buzzer</button>
+            <button class="fx-toggle" id="fx-tone-none" onclick="toggleFx('none')">Off</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Active Drill Banner (Hidden unless drill active) -->
+    <div class="drill-banner" id="drill-banner">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="font-size: 24px;">🚨</span>
+        <div>
+          <div style="font-weight: 800; text-transform: uppercase; font-size: 13px;" id="drill-task-name">2-Minute Tidy Drill Active</div>
+          <div style="font-size: 11px; color: #fca5a5;">All hands on deck! Move fast!</div>
+        </div>
+      </div>
+      <div class="drill-timer-display" id="drill-timer-text">02:00</div>
+      <button class="drill-cancel-btn" onclick="cancelDrill()">Abord Drill</button>
+    </div>
+
+    <!-- Chore Roulette Feature Strip -->
+    <div class="roulette-strip">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="font-size: 26px;">🎲</span>
+        <div>
+          <div style="font-weight: 800; font-size: 14px; text-transform: uppercase; color: #fff;">Chore Roulette / Surprise Mission</div>
+          <div style="font-size: 12px; color: #c7d2fe;">Can't decide what needs doing? Spin the tactical chore wheel!</div>
+        </div>
+      </div>
+      <button class="roulette-btn" onclick="spinChoreRoulette()">Spin the Wheel!</button>
+    </div>
+
+    <!-- MAIN SOUNDBOARD: CATEGORY 1: MORNING LAUNCHPAD -->
+    <div class="section-title-bar">
+      <h2 class="section-title"><span>🌅</span> Morning Mobilization</h2>
+      <span class="section-count">6 Directives</span>
+    </div>
+    <div class="command-grid">
+      <!-- Start Your Day -->
+      <article class="cmd-card" data-cmd-id="start-day">
+        <div class="cmd-header">
+          <div class="cmd-icon">☀️</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">Start Your Day!</h3>
+            <p class="cmd-preview">&ldquo;Feet on the floor, eyes open! The morning train is leaving!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire btn-amber" onclick="fireCommand('Start your day! Feet on the floor, eyes open! The morning train is rolling, let\'s get moving!')">
+            <span>📢</span> Announce
+          </button>
+          <button class="btn-mini" title="2-Minute Countdown Drill" onclick="startDrill('Start Your Day', 120, 'Start your day right now! You have two minutes to get out of bed and report for duty!')">⏱️ 2m</button>
+          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Start Your Day')">✅ Done</button>
+        </div>
+      </article>
+
+      <!-- Brush Teeth -->
+      <article class="cmd-card" data-cmd-id="brush-teeth">
+        <div class="cmd-header">
+          <div class="cmd-icon">🪥</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">Did You Brush Your Teeth?</h3>
+            <p class="cmd-preview">&ldquo;Top, bottom, front, and back molars. Two full minutes!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire" onclick="fireCommand('Did you brush your teeth yet? Top, bottom, front, and back molars! Two full minutes, I will be conducting a minty freshness inspection!')">
+            <span>📢</span> Announce
+          </button>
+          <button class="btn-mini" title="2-Minute Tooth Drill" onclick="startDrill('Brush Teeth Drill', 120, 'Toothbrush drill activated! Two full minutes of brushing starts right now!')">⏱️ 2m</button>
+          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Brush Teeth')">✅ Done</button>
+        </div>
+      </article>
+
+      <!-- Make Your Bed -->
+      <article class="cmd-card" data-cmd-id="make-bed">
+        <div class="cmd-header">
+          <div class="cmd-icon">🛏️</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">Make Your Bed!</h3>
+            <p class="cmd-preview">&ldquo;Pull those blankets tight and straighten the pillow!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire" onclick="fireCommand('Go make your bed! Pull up the sheets, straighten the comforter, and fluff the pillow. A tidy bed is a disciplined mind!')">
+            <span>📢</span> Announce
+          </button>
+          <button class="btn-mini" title="1-Minute Bed Drill" onclick="startDrill('Make Bed Drill', 60, 'One minute bed drill! Get those sheets tucked and square!')">⏱️ 1m</button>
+          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Make Bed')">✅ Done</button>
+        </div>
+      </article>
+
+      <!-- Get Dressed -->
+      <article class="cmd-card" data-cmd-id="get-dressed">
+        <div class="cmd-header">
+          <div class="cmd-icon">👕</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">Get Dressed!</h3>
+            <p class="cmd-preview">&ldquo;Real daytime clothes. Pajamas do not count as an outfit!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire btn-amber" onclick="fireCommand('Get dressed into actual outside clothes! No, pajamas do not count as an outfit for the day!')">
+            <span>📢</span> Announce
+          </button>
+          <button class="btn-mini" title="2-Minute Dress Drill" onclick="startDrill('Get Dressed Drill', 120, 'Two minutes to get fully dressed, socks included!')">⏱️ 2m</button>
+          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Get Dressed')">✅ Done</button>
+        </div>
+      </article>
+
+      <!-- Where Are Your Shoes -->
+      <article class="cmd-card" data-cmd-id="shoes">
+        <div class="cmd-header">
+          <div class="cmd-icon">👟</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">Where Are Your Shoes?!</h3>
+            <p class="cmd-preview">&ldquo;Why is one in the bedroom and one behind the couch?&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire btn-crimson" onclick="fireCommand('Where are your shoes?! Why is there always one shoe in the closet and one shoe behind the couch? Find both shoes right now!')">
+            <span>📢</span> Announce
+          </button>
+          <button class="btn-mini" title="Shoe Recovery Drill" onclick="startDrill('Shoe Recovery Drill', 90, 'Ninety seconds to locate and put on both shoes!')">⏱️ 90s</button>
+          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Find Shoes')">✅ Done</button>
+        </div>
+      </article>
+
+      <!-- Eat Breakfast -->
+      <article class="cmd-card" data-cmd-id="breakfast">
+        <div class="cmd-header">
+          <div class="cmd-icon">🥞</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">Eat Your Breakfast!</h3>
+            <p class="cmd-preview">&ldquo;Sit down, eat your food, fuel up for the day!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire btn-emerald" onclick="fireCommand('Sit down and eat your breakfast! You cannot conquer the day on an empty stomach!')">
+            <span>📢</span> Announce
+          </button>
+          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Eat Breakfast')">✅ Done</button>
+        </div>
+      </article>
+    </div>
+
+    <!-- MAIN SOUNDBOARD: CATEGORY 2: HYGIENE & BATHROOM -->
+    <div class="section-title-bar">
+      <h2 class="section-title"><span>🧼</span> Bathroom &amp; Cleanliness Protocol</h2>
+      <span class="section-count">5 Directives</span>
+    </div>
+    <div class="command-grid">
+      <!-- Wash Hands -->
+      <article class="cmd-card" data-cmd-id="wash-hands">
+        <div class="cmd-header">
+          <div class="cmd-icon">🫧</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">Wash Your Hands With Soap!</h3>
+            <p class="cmd-preview">&ldquo;Rinsing fingertips for half a second does not count!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire" onclick="fireCommand('Wash your hands with actual warm water and soap! Rinsing your fingertips for half a second does not count as washing!')">
+            <span>📢</span> Announce
+          </button>
+          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Wash Hands')">✅ Done</button>
+        </div>
+      </article>
+
+      <!-- Flush Toilet -->
+      <article class="cmd-card" data-cmd-id="flush-toilet">
+        <div class="cmd-header">
+          <div class="cmd-icon">🚽</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">Flush The Toilet!</h3>
+            <p class="cmd-preview">&ldquo;Push the handle down! We live in a civilized society!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire btn-amber" onclick="fireCommand('Flush the toilet! Push the lever down! We are living in a civilized society!')">
+            <span>📢</span> Announce
+          </button>
+          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Flush Toilet')">✅ Done</button>
+        </div>
+      </article>
+
+      <!-- Comb Hair -->
+      <article class="cmd-card" data-cmd-id="comb-hair">
+        <div class="cmd-header">
+          <div class="cmd-icon">🪮</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">Brush Your Hair!</h3>
+            <p class="cmd-preview">&ldquo;You look like you just wrestled a family of raccoons!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire" onclick="fireCommand('Go brush your hair! You look like you just survived a category five windstorm on the prairie!')">
+            <span>📢</span> Announce
+          </button>
+          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Brush Hair')">✅ Done</button>
+        </div>
+      </article>
+
+      <!-- Dirty Clothes Hamper -->
+      <article class="cmd-card" data-cmd-id="hamper">
+        <div class="cmd-header">
+          <div class="cmd-icon">🧺</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">Clothes In The Hamper!</h3>
+            <p class="cmd-preview">&ldquo;The bedroom floor is not a classified laundry repository!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire" onclick="fireCommand('The bedroom floor is not a hamper! Pick up your dirty clothes and drop them in the laundry basket right now!')">
+            <span>📢</span> Announce
+          </button>
+          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Clothes in Hamper')">✅ Done</button>
+        </div>
+      </article>
+
+      <!-- Vitamins & Water -->
+      <article class="cmd-card" data-cmd-id="vitamins">
+        <div class="cmd-header">
+          <div class="cmd-icon">💊</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">Vitamins &amp; Big Glass of Water!</h3>
+            <p class="cmd-preview">&ldquo;Hydrate and take your vitamins!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire btn-emerald" onclick="fireCommand('Take your daily vitamins and drink a full glass of water! Stay hydrated!')">
+            <span>📢</span> Announce
+          </button>
+          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Vitamins & Water')">✅ Done</button>
+        </div>
+      </article>
+    </div>
+
+    <!-- MAIN SOUNDBOARD: CATEGORY 3: DAILY MISSIONS & CHORES -->
+    <div class="section-title-bar">
+      <h2 class="section-title"><span>📋</span> Daily Missions &amp; 449 Homestead Chores</h2>
+      <span class="section-count">6 Directives</span>
+    </div>
+    <div class="command-grid">
+      <!-- Backpack by the Door -->
+      <article class="cmd-card" data-cmd-id="backpack">
+        <div class="cmd-header">
+          <div class="cmd-icon">🎒</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">Backpack Staged By The Door!</h3>
+            <p class="cmd-preview">&ldquo;Folders packed, water bottle inside, staged at the checkpoint!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire btn-blue" onclick="fireCommand('Backpack check! Zip it up, pack your folders, and stage that bag right by the front door!')">
+            <span>📢</span> Announce
+          </button>
+          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Backpack Staged')">✅ Done</button>
+        </div>
+      </article>
+
+      <!-- Dishes in Sink / Dishwasher -->
+      <article class="cmd-card" data-cmd-id="dishes">
+        <div class="cmd-header">
+          <div class="cmd-icon">🍽️</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">Clear Your Plate &amp; Dish!</h3>
+            <p class="cmd-preview">&ldquo;Rinse it, clear the scraps, and put it in the dishwasher!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire btn-amber" onclick="fireCommand('Do not leave your plate on the table! Pick it up, rinse the crumbs, and put it in the dishwasher!')">
+            <span>📢</span> Announce
+          </button>
+          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Clear Plate')">✅ Done</button>
+        </div>
+      </article>
+
+      <!-- Feed Critters / Pets -->
+      <article class="cmd-card" data-cmd-id="critters">
+        <div class="cmd-header">
+          <div class="cmd-icon">🐾</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">Feed The Animals!</h3>
+            <p class="cmd-preview">&ldquo;The critters are staring at me like I forgot breakfast!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire btn-emerald" onclick="fireCommand('Go feed the animals and check their water bowls! They are staring at me like I am the one who forgot breakfast!')">
+            <span>📢</span> Announce
+          </button>
+          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Feed Animals')">✅ Done</button>
+        </div>
+      </article>
+
+      <!-- Lego & Toy Hazard Clearance -->
+      <article class="cmd-card" data-cmd-id="lego-sweep">
+        <div class="cmd-header">
+          <div class="cmd-icon">🧱</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">Lego &amp; Floor Hazard Sweep!</h3>
+            <p class="cmd-preview">&ldquo;Walking across this room barefoot is high-risk!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire btn-crimson" onclick="fireCommand('Pick up your Legos and toys off the floor right now! Walking across this room barefoot is classified as high-risk hazardous duty!')">
+            <span>📢</span> Announce
+          </button>
+          <button class="btn-mini" title="3-Minute Floor Sweep" onclick="startDrill('Lego Hazard Sweep', 180, 'Three minute toy hazard drill! Pick up every block off the carpet!')">⏱️ 3m</button>
+          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Lego Sweep')">✅ Done</button>
+        </div>
+      </article>
+
+      <!-- Trash Run -->
+      <article class="cmd-card" data-cmd-id="trash">
+        <div class="cmd-header">
+          <div class="cmd-icon">🗑️</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">Take Out The Trash!</h3>
+            <p class="cmd-preview">&ldquo;Before it develops its own independent ecosystem!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire" onclick="fireCommand('Take out the trash before that bin develops its own independent ecosystem! Tie the bag and take it to the bin!')">
+            <span>📢</span> Announce
+          </button>
+          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Trash Run')">✅ Done</button>
+        </div>
+      </article>
+
+      <!-- Room Inspection -->
+      <article class="cmd-card" data-cmd-id="room-inspection">
+        <div class="cmd-header">
+          <div class="cmd-icon">🧹</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">Five-Minute Room Inspection!</h3>
+            <p class="cmd-preview">&ldquo;Desk clear, clothes hung, ground inspection in five!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire btn-purple" onclick="fireCommand('Attention! Ground level room inspection commences in five minutes! Tidy your desk, clear the floor, straighten up!')">
+            <span>📢</span> Announce
+          </button>
+          <button class="btn-mini" title="5-Minute Room Drill" onclick="startDrill('Room Inspection Drill', 300, 'Five minute room inspection countdown has begun! Everything off the floor!')">⏱️ 5m</button>
+          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Room Clean')">✅ Done</button>
+        </div>
+      </article>
+    </div>
+
+    <!-- MAIN SOUNDBOARD: CATEGORY 4: FOCUS, HOMEWORK & SCREENS -->
+    <div class="section-title-bar">
+      <h2 class="section-title"><span>📚</span> Focus, Homework &amp; Screen Discipline</h2>
+      <span class="section-count">4 Directives</span>
+    </div>
+    <div class="command-grid">
+      <!-- Screen Time Over -->
+      <article class="cmd-card" data-cmd-id="screens-off">
+        <div class="cmd-header">
+          <div class="cmd-icon">📱</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">Screen Time Is OVER!</h3>
+            <p class="cmd-preview">&ldquo;Power down the device, shut the screen, return to reality!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire btn-crimson" onclick="fireCommand('Screen time is over! Shut down the tablet, turn off the television, and return to the physical world!')">
+            <span>📢</span> Announce
+          </button>
+          <button class="btn-mini" title="1-Minute Warning" onclick="startDrill('Screen Shutdown Drill', 60, 'One minute final screen warning! Save your game and power down!')">⏱️ 1m</button>
+          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Screens Off')">✅ Done</button>
+        </div>
+      </article>
+
+      <!-- Homework Drill -->
+      <article class="cmd-card" data-cmd-id="homework">
+        <div class="cmd-header">
+          <div class="cmd-icon">✏️</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">Homework Time!</h3>
+            <p class="cmd-preview">&ldquo;Pencils sharpened, folders out, focus and get it done!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire btn-blue" onclick="fireCommand('Homework time! Pencils out, notebooks open, let\'s focus and knock it out so you can enjoy your evening!')">
+            <span>📢</span> Announce
+          </button>
+          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Homework Done')">✅ Done</button>
+        </div>
+      </article>
+
+      <!-- 20 Min Reading -->
+      <article class="cmd-card" data-cmd-id="reading">
+        <div class="cmd-header">
+          <div class="cmd-icon">📖</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">20 Minutes Of Reading!</h3>
+            <p class="cmd-preview">&ldquo;Grab a book, find a comfy spot, clock is ticking!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire btn-emerald" onclick="fireCommand('Time for twenty minutes of reading! Grab a good book, find a spot, let\'s see some chapters read!')">
+            <span>📢</span> Announce
+          </button>
+          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Reading Done')">✅ Done</button>
+        </div>
+      </article>
+
+      <!-- Outside Free Play -->
+      <article class="cmd-card" data-cmd-id="outside">
+        <div class="cmd-header">
+          <div class="cmd-icon">🏃</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">Go Outside &amp; Run Around!</h3>
+            <p class="cmd-preview">&ldquo;Fresh air, grass under your feet, burn some energy!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire btn-amber" onclick="fireCommand('Go outside and play! Get some sunshine, run around in the yard, and burn off some of that energy!')">
+            <span>📢</span> Announce
+          </button>
+          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Outside Play')">✅ Done</button>
+        </div>
+      </article>
+    </div>
+
+    <!-- MAIN SOUNDBOARD: CATEGORY 5: EVENING & BEDTIME LOCKDOWN -->
+    <div class="section-title-bar">
+      <h2 class="section-title"><span>🌙</span> Evening &amp; Bedtime Lockdown</h2>
+      <span class="section-count">4 Directives</span>
+    </div>
+    <div class="command-grid">
+      <!-- Pajama Drill -->
+      <article class="cmd-card" data-cmd-id="pajamas">
+        <div class="cmd-header">
+          <div class="cmd-icon">💤</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">Pajama Drill!</h3>
+            <p class="cmd-preview">&ldquo;Into your PJs, dirty clothes in basket, bedtime approaching!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire btn-purple" onclick="fireCommand('Pajama drill! Into your pajamas, dirty clothes into the hamper, let\'s start winding down!')">
+            <span>📢</span> Announce
+          </button>
+          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Pajamas On')">✅ Done</button>
+        </div>
+      </article>
+
+      <!-- Night Teeth -->
+      <article class="cmd-card" data-cmd-id="night-teeth">
+        <div class="cmd-header">
+          <div class="cmd-icon">✨</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">Nighttime Teeth Check!</h3>
+            <p class="cmd-preview">&ldquo;Brush off all the day\'s snacks! Minty fresh for bed!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire" onclick="fireCommand('Nighttime dental inspection! Go brush those teeth and wash your face! Minty fresh before hitting the pillow!')">
+            <span>📢</span> Announce
+          </button>
+          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Night Teeth')">✅ Done</button>
+        </div>
+      </article>
+
+      <!-- 5 Minute Bedtime Warning -->
+      <article class="cmd-card" data-cmd-id="bed-warning">
+        <div class="cmd-header">
+          <div class="cmd-icon">⏳</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">5-Minute Bedtime Warning!</h3>
+            <p class="cmd-preview">&ldquo;Final water cup, final bathroom visit, boarding call!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire btn-amber" onclick="fireCommand('This is your five-minute bedtime warning! Get your drink of water, make your last bathroom trip, and get tucked in!')">
+            <span>📢</span> Announce
+          </button>
+          <button class="btn-mini" title="5-Minute Countdown" onclick="startDrill('Final Bedtime Boarding Call', 300, 'Five minutes until lights out! Final boarding call for dreamland!')">⏱️ 5m</button>
+          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Tucked In')">✅ Done</button>
+        </div>
+      </article>
+
+      <!-- Lights Out -->
+      <article class="cmd-card" data-cmd-id="lights-out">
+        <div class="cmd-header">
+          <div class="cmd-icon">🔦</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">Lights Out &amp; Go To Sleep!</h3>
+            <p class="cmd-preview">&ldquo;Eyes closed, head on pillow, adventure resumes tomorrow!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire btn-crimson" onclick="fireCommand('Lights out! Head on the pillow, eyes closed, cease all talking! Adventure resumes tomorrow morning!')">
+            <span>📢</span> Announce
+          </button>
+          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Lights Out')">✅ Done</button>
+        </div>
+      </article>
+    </div>
+
+    <!-- MAIN SOUNDBOARD: CATEGORY 6: CLASSIC DAD HOTLINE (HUMOROUS) -->
+    <div class="section-title-bar">
+      <h2 class="section-title"><span>📢</span> Classic Dad Emergency Hotline</h2>
+      <span class="section-count">6 Directives</span>
+    </div>
+    <div class="command-grid">
+      <!-- Refrigerator Door -->
+      <article class="cmd-card" data-cmd-id="fridge">
+        <div class="cmd-header">
+          <div class="cmd-icon">🧊</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">Shut The Refrigerator Door!</h3>
+            <p class="cmd-preview">&ldquo;We are not paying to air-condition the whole county!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire btn-crimson" onclick="fireCommand('Shut that refrigerator door! We are not paying to air-condition the entire county of Leavenworth!')">
+            <span>📢</span> Announce
+          </button>
+        </div>
+      </article>
+
+      <!-- Counting to 3 -->
+      <article class="cmd-card" data-cmd-id="count-to-three">
+        <div class="cmd-header">
+          <div class="cmd-icon">🚨</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">I Am Counting To Three!</h3>
+            <p class="cmd-preview">&ldquo;One... Two... Do not make me say three!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire btn-crimson" onclick="fireCommand('I am counting to three! One... Two... Two and a half... Do not make me say three!')">
+            <span>📢</span> Announce
+          </button>
+        </div>
+      </article>
+
+      <!-- Because I Said So -->
+      <article class="cmd-card" data-cmd-id="because-said-so">
+        <div class="cmd-header">
+          <div class="cmd-icon">⚖️</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">Because I Said So!</h3>
+            <p class="cmd-preview">&ldquo;End of discussion. Supreme Court ruling finalized!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire btn-amber" onclick="fireCommand('Because I said so! That is why, case closed, end of discussion!')">
+            <span>📢</span> Announce
+          </button>
+        </div>
+      </article>
+
+      <!-- Lights Left On -->
+      <article class="cmd-card" data-cmd-id="lights-left-on">
+        <div class="cmd-header">
+          <div class="cmd-icon">💡</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">Turn Off The Lights!</h3>
+            <p class="cmd-preview">&ldquo;Why does this house look like the Las Vegas strip?!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire" onclick="fireCommand('Who left the lights on in five different empty rooms?! Turn them off! This house looks like the Las Vegas strip!')">
+            <span>📢</span> Announce
+          </button>
+        </div>
+      </article>
+
+      <!-- Get In The Car -->
+      <article class="cmd-card" data-cmd-id="car-departure">
+        <div class="cmd-header">
+          <div class="cmd-icon">🚗</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">Everyone In The Car!</h3>
+            <p class="cmd-preview">&ldquo;Shoes on, buckled up, wheels roll in sixty seconds!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire btn-amber" onclick="fireCommand('Everyone in the vehicle right now! Shoes on, seatbelts clicked, the wheels are rolling in sixty seconds!')">
+            <span>📢</span> Announce
+          </button>
+        </div>
+      </article>
+
+      <!-- Cease Hostilities -->
+      <article class="cmd-card" data-cmd-id="cease-fire">
+        <div class="cmd-header">
+          <div class="cmd-icon">🛑</div>
+          <div class="cmd-info">
+            <h3 class="cmd-title">Cease Hostilities!</h3>
+            <p class="cmd-preview">&ldquo;Stop poking your sibling! Immediate ceasefire!&rdquo;</p>
+          </div>
+        </div>
+        <div class="cmd-actions">
+          <button class="btn-fire btn-crimson" onclick="fireCommand('Immediate ceasefire! Stop wrestling, stop poking your sibling, hands to yourself!')">
+            <span>📢</span> Announce
+          </button>
+        </div>
+      </article>
+    </div>
+
+    <!-- CUSTOM COMMAND STUDIO (DYNAMIC MAKER) -->
+    <section class="custom-studio">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+        <h3 style="font-size: 14px; font-weight: 800; text-transform: uppercase; color: #fbbf24;">
+          🛠️ Custom Household Dispatch Studio
+        </h3>
+        <span style="font-size: 11px; color: #94a3b8;">Type any custom message for instant male voice broadcast</span>
+      </div>
+      <div class="studio-inputs">
+        <input type="text" id="custom-text-input" class="studio-text" placeholder="e.g. Lucas, put the milk back in the fridge right now!" onkeydown="if(event.key==='Enter')broadcastCustom()">
+        <button class="btn-fire btn-amber" style="flex: none; min-width: 140px;" onclick="broadcastCustom()">
+          <span>🎙️</span> Broadcast
+        </button>
+        <button class="btn-mini" style="flex: none;" onclick="saveCustomCard()" title="Pin to Custom Deck">
+          📌 Pin Button
+        </button>
+      </div>
+      <div id="custom-pins-grid" class="command-grid" style="margin-top: 14px;"></div>
+    </section>
+
+    <!-- Footer Stamp -->
+    <footer class="footer-stamp">
+      <strong>449 Field Arcade &bull; Parent Command Station (Plate XII)</strong><br>
+      Designed for rapid physical household dispatch &bull; Powered by Pleasant Ridge Gazette OS
+    </footer>
+  </div>
+
+  <script>
+    /* =========================================================
+       AUDIO & SPEECH SYNTHESIS ENGINE
+       ========================================================= */
+    const synth = window.speechSynthesis;
+    let availableVoices = [];
+    let selectedVoice = null;
+    let audioCtx = null;
+    let activeFx = 'beep'; // 'beep', 'radio', 'buzzer', 'none'
+    let currentPersona = 'commanding';
+    let drillInterval = null;
+    let drillSecondsRemaining = 0;
+
+    // Tactical Voice Personas configuration
+    const PERSONAS = {
+      commanding: { pitch: 0.88, rate: 1.05, desc: 'Commanding Dad (Deep, steady)' },
+      sergeant:   { pitch: 0.78, rate: 1.25, desc: 'Drill Sergeant (Brisk, stern)' },
+      chill:      { pitch: 0.98, rate: 0.95, desc: 'Homestead Dad (Warm, patient)' },
+      robot:      { pitch: 0.65, rate: 0.90, desc: 'ParentBot 9000 (Monotone)' },
+      urgent:     { pitch: 1.10, rate: 1.35, desc: 'Departure Siren (High urgency)' }
+    };
+
+    function initAudioContext() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) {
+          audioCtx = new AudioContextClass();
+        }
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    // Synthesize Retro Tactile Sound FX via Web Audio API
+    function playTactileFx(type) {
+      try {
+        initAudioContext();
+        if (!audioCtx || type === 'none') return;
+        const now = audioCtx.currentTime;
+
+        if (type === 'beep') {
+          // Megaphone dual-chirp alert (880Hz -> 1760Hz)
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(750, now);
+          osc.frequency.exponentialRampToValueAtTime(1400, now + 0.08);
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.16);
+
+          // Second chirp
+          const osc2 = audioCtx.createOscillator();
+          const gain2 = audioCtx.createGain();
+          osc2.type = 'sawtooth';
+          osc2.frequency.setValueAtTime(950, now + 0.12);
+          osc2.frequency.exponentialRampToValueAtTime(1750, now + 0.20);
+          gain2.gain.setValueAtTime(0.18, now + 0.12);
+          gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+          osc2.connect(gain2);
+          gain2.connect(audioCtx.destination);
+          osc2.start(now + 0.12);
+          osc2.stop(now + 0.28);
+        } else if (type === 'radio') {
+          // 80s Dispatch Radio Beep (Two-tone Ding-Dong)
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(800, now);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.12);
+
+          const osc2 = audioCtx.createOscillator();
+          const gain2 = audioCtx.createGain();
+          osc2.type = 'sine';
+          osc2.frequency.setValueAtTime(600, now + 0.12);
+          gain2.gain.setValueAtTime(0.2, now + 0.12);
+          gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.30);
+          osc2.connect(gain2);
+          gain2.connect(audioCtx.destination);
+          osc2.start(now + 0.12);
+          osc2.stop(now + 0.30);
+        } else if (type === 'buzzer') {
+          // Tactical Warning Buzzer
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(130, now);
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.35);
+        } else if (type === 'fanfare') {
+          // Victory level-up chime
+          const notes = [523.25, 659.25, 783.99, 1046.50]; // C E G C
+          notes.forEach((freq, idx) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            const t = now + idx * 0.08;
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, t);
+            gain.gain.setValueAtTime(0.22, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(t);
+            osc.stop(t + 0.25);
+          });
+        }
+      } catch (err) {
+        console.warn('Audio FX error:', err);
+      }
+    }
+
+    // Populate and prioritize Male voices
+    function populateVoiceList() {
+      if (!synth) return;
+      availableVoices = synth.getVoices() || [];
+      const voiceSelect = document.getElementById('voice-select');
+      if (!voiceSelect || availableVoices.length === 0) return;
+
+      voiceSelect.innerHTML = '';
+
+      // English voices first
+      const englishVoices = availableVoices.filter(v => v.lang.startsWith('en'));
+      const otherVoices = availableVoices.filter(v => !v.lang.startsWith('en'));
+
+      // Male names heuristics
+      const maleKeywords = ['david', 'mark', 'george', 'guy', 'james', 'daniel', 'oliver', 'john', 'paul', 'brian', 'andrew', 'ryan', 'alex', 'fred', 'richard', 'male', 'google us english male'];
+
+      function isMaleHeuristic(voice) {
+        const name = voice.name.toLowerCase();
+        return maleKeywords.some(kw => name.includes(kw));
+      }
+
+      const maleEnglish = [];
+      const standardEnglish = [];
+
+      englishVoices.forEach(v => {
+        if (isMaleHeuristic(v)) {
+          maleEnglish.push(v);
+        } else {
+          standardEnglish.push(v);
+        }
+      });
+
+      // Group 1: Preferred Male Voices
+      if (maleEnglish.length > 0) {
+        const optGroupMale = document.createElement('optgroup');
+        optGroupMale.label = '★ Preferred Male Voices';
+        maleEnglish.forEach(v => {
+          const opt = document.createElement('option');
+          opt.value = v.name;
+          opt.textContent = `${v.name} (${v.lang}) [Male]`;
+          optGroupMale.appendChild(opt);
+        });
+        voiceSelect.appendChild(optGroupMale);
+      }
+
+      // Group 2: All Other English Voices
+      if (standardEnglish.length > 0) {
+        const optGroupEng = document.createElement('optgroup');
+        optGroupEng.label = 'Other English Voices';
+        standardEnglish.forEach(v => {
+          const opt = document.createElement('option');
+          opt.value = v.name;
+          opt.textContent = `${v.name} (${v.lang})`;
+          optGroupEng.appendChild(opt);
+        });
+        voiceSelect.appendChild(optGroupEng);
+      }
+
+      // Auto-select preferred male voice if available
+      const savedVoiceName = localStorage.getItem('parent_cmd_voice');
+      if (savedVoiceName && availableVoices.find(v => v.name === savedVoiceName)) {
+        voiceSelect.value = savedVoiceName;
+        selectedVoice = availableVoices.find(v => v.name === savedVoiceName);
+      } else if (maleEnglish.length > 0) {
+        voiceSelect.value = maleEnglish[0].name;
+        selectedVoice = maleEnglish[0];
+      } else if (englishVoices.length > 0) {
+        voiceSelect.value = englishVoices[0].name;
+        selectedVoice = englishVoices[0];
+      } else {
+        selectedVoice = availableVoices[0] || null;
+      }
+    }
+
+    if (synth) {
+      populateVoiceList();
+      if (synth.onvoiceschanged !== undefined) {
+        synth.onvoiceschanged = populateVoiceList;
+      }
+    }
+
+    function onVoiceChange() {
+      const voiceSelect = document.getElementById('voice-select');
+      const val = voiceSelect.value;
+      selectedVoice = availableVoices.find(v => v.name === val) || null;
+      if (selectedVoice) {
+        localStorage.setItem('parent_cmd_voice', selectedVoice.name);
+      }
+    }
+
+    function setPersona(personaKey) {
+      if (!PERSONAS[personaKey]) return;
+      currentPersona = personaKey;
+      document.querySelectorAll('.persona-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.persona === personaKey);
+      });
+      playTactileFx('radio');
+    }
+
+    function toggleFx(type) {
+      activeFx = type;
+      document.querySelectorAll('.fx-toggle').forEach(btn => {
+        btn.classList.toggle('active', btn.id === `fx-tone-${type}`);
+      });
+      playTactileFx(type);
+    }
+
+    // Core Voice Announce Function
+    function fireCommand(text, customFx) {
+      if (!synth) {
+        alert("Speech synthesis is not supported on this browser.");
+        return;
+      }
+
+      initAudioContext();
+      synth.cancel(); // Stop any pending speech
+
+      // Play Sound FX first
+      const fx = customFx || activeFx;
+      playTactileFx(fx);
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      }
+
+      const pConfig = PERSONAS[currentPersona] || PERSONAS.commanding;
+      utterance.pitch = pConfig.pitch;
+      utterance.rate = pConfig.rate;
+      utterance.volume = 1.0;
+
+      // Update Visualizer & Speaker LED
+      const led = document.getElementById('speaker-led');
+      const statusText = document.getElementById('speaker-status-text');
+      const transcript = document.getElementById('live-transcript');
+      const monitor = document.querySelector('.broadcast-monitor');
+
+      transcript.textContent = `“${text}”`;
+
+      let vuAnimTimer = null;
+      const vuBars = document.querySelectorAll('.vu-bar');
+
+      utterance.onstart = () => {
+        led.classList.add('speaking');
+        monitor.classList.add('speaking');
+        statusText.textContent = `Broadcasting (${pConfig.desc.split(' ')[0]})...`;
+
+        // Animate VU bars
+        vuAnimTimer = setInterval(() => {
+          vuBars.forEach(b => {
+            const h = Math.floor(Math.random() * 16) + 4;
+            b.style.height = `${h}px`;
+          });
+        }, 80);
+      };
+
+      utterance.onend = utterance.onerror = () => {
+        led.classList.remove('speaking');
+        monitor.classList.remove('speaking');
+        statusText.textContent = 'Station Idle (Ready to Broadcast)';
+        if (vuAnimTimer) clearInterval(vuAnimTimer);
+        vuBars.forEach(b => b.style.height = '4px');
+      };
+
+      // Slight delay to let sound FX trigger
+      const delay = (fx === 'none') ? 0 : 250;
+      setTimeout(() => {
+        synth.speak(utterance);
+      }, delay);
+
+      // Track telemetry if present
+      if (window.GazetteTelemetry) {
+        window.GazetteTelemetry.track('parent_command_fired', { text: text.substring(0, 30), persona: currentPersona });
+      }
+    }
+
+    /* =========================================================
+       COUNTDOWN DRILL TIMER
+       ========================================================= */
+    function startDrill(taskName, durationSeconds, speechPrompt) {
+      cancelDrill();
+      drillSecondsRemaining = durationSeconds;
+
+      document.getElementById('drill-banner').classList.add('active');
+      document.getElementById('drill-task-name').textContent = `${taskName} - Active Countdown Drill`;
+      updateDrillDisplay();
+
+      // Announce the drill loudly with buzzer
+      fireCommand(speechPrompt, 'buzzer');
+
+      drillInterval = setInterval(() => {
+        drillSecondsRemaining--;
+        updateDrillDisplay();
+
+        if (drillSecondsRemaining === 10) {
+          fireCommand('Ten seconds remaining! Hurry up!', 'beep');
+        }
+
+        if (drillSecondsRemaining <= 0) {
+          clearInterval(drillInterval);
+          drillInterval = null;
+          document.getElementById('drill-timer-text').textContent = 'TIME UP!';
+          fireCommand('Time is up! Cease all activity! Stand by for inspection!', 'buzzer');
+          setTimeout(() => {
+            cancelDrill();
+          }, 6000);
+        }
+      }, 1000);
+    }
+
+    function updateDrillDisplay() {
+      const mins = Math.floor(drillSecondsRemaining / 60);
+      const secs = drillSecondsRemaining % 60;
+      const str = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      document.getElementById('drill-timer-text').textContent = str;
+    }
+
+    function cancelDrill() {
+      if (drillInterval) {
+        clearInterval(drillInterval);
+        drillInterval = null;
+      }
+      document.getElementById('drill-banner').classList.remove('active');
+    }
+
+    /* =========================================================
+       TASK COMPLETION & REWARD / CONFETTI
+       ========================================================= */
+    let stars = parseInt(localStorage.getItem('parent_cmd_stars') || '0', 10);
+    document.getElementById('star-count').textContent = stars;
+
+    const PRAISES = [
+      "Outstanding work! Mission accomplished!",
+      "Five stars! That is how a pro gets it done!",
+      "Duty completed! You are officially promoted to captain!",
+      "Look at that speed! Absolutely first-rate job!",
+      "Checked and verified! Outstanding discipline!"
+    ];
+
+    function markTaskDone(taskName) {
+      stars++;
+      localStorage.setItem('parent_cmd_stars', stars);
+      document.getElementById('star-count').textContent = stars;
+
+      // Random dad praise in male voice
+      const praise = PRAISES[Math.floor(Math.random() * PRAISES.length)];
+      fireCommand(`${taskName} is complete! ${praise}`, 'fanfare');
+
+      // Trigger Confetti
+      launchConfetti();
+    }
+
+    function resetStars() {
+      if (confirm('Reset stars back to 0?')) {
+        stars = 0;
+        localStorage.setItem('parent_cmd_stars', '0');
+        document.getElementById('star-count').textContent = '0';
+      }
+    }
+
+    /* =========================================================
+       CHORE ROULETTE WHEEL
+       ========================================================= */
+    let isSpinning = false;
+    function spinChoreRoulette() {
+      if (isSpinning) return;
+      const cards = Array.from(document.querySelectorAll('.cmd-card'));
+      if (cards.length === 0) return;
+
+      isSpinning = true;
+      let currentIndex = 0;
+      let spins = 0;
+      const maxSpins = 20 + Math.floor(Math.random() * 10);
+      let speed = 70;
+
+      // Clear any prior highlight
+      cards.forEach(c => c.classList.remove('highlight'));
+
+      function step() {
+        cards.forEach(c => c.classList.remove('highlight'));
+        currentIndex = (currentIndex + 1) % cards.length;
+        const targetCard = cards[currentIndex];
+        targetCard.classList.add('highlight');
+        playTactileFx('beep');
+
+        spins++;
+        if (spins < maxSpins) {
+          speed += 12; // Decelerate
+          setTimeout(step, speed);
+        } else {
+          // Landed!
+          isSpinning = false;
+          targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          const title = targetCard.querySelector('.cmd-title').textContent;
+          const fireBtn = targetCard.querySelector('.btn-fire');
+          setTimeout(() => {
+            if (fireBtn) fireBtn.click();
+          }, 300);
+        }
+      }
+
+      step();
+    }
+
+    /* =========================================================
+       CUSTOM COMMAND STUDIO
+       ========================================================= */
+    function broadcastCustom() {
+      const input = document.getElementById('custom-text-input');
+      const val = input.value.trim();
+      if (!val) return;
+      fireCommand(val);
+    }
+
+    function saveCustomCard() {
+      const input = document.getElementById('custom-text-input');
+      const val = input.value.trim();
+      if (!val) return;
+
+      let saved = JSON.parse(localStorage.getItem('parent_cmd_custom_pins') || '[]');
+      saved.push(val);
+      localStorage.setItem('parent_cmd_custom_pins', JSON.stringify(saved));
+      renderCustomPins();
+      input.value = '';
+    }
+
+    function renderCustomPins() {
+      const container = document.getElementById('custom-pins-grid');
+      container.innerHTML = '';
+      const saved = JSON.parse(localStorage.getItem('parent_cmd_custom_pins') || '[]');
+      saved.forEach((text, idx) => {
+        const card = document.createElement('article');
+        card.className = 'cmd-card';
+        card.innerHTML = `
+          <div class="cmd-header">
+            <div class="cmd-icon">📌</div>
+            <div class="cmd-info">
+              <h3 class="cmd-title">${escapeHtml(text.length > 28 ? text.substring(0, 25) + '...' : text)}</h3>
+              <p class="cmd-preview">&ldquo;${escapeHtml(text)}&rdquo;</p>
+            </div>
+          </div>
+          <div class="cmd-actions">
+            <button class="btn-fire btn-amber" onclick="fireCommand('${escapeJs(text)}')">
+              <span>📢</span> Announce
+            </button>
+            <button class="btn-mini" style="color: #ef4444;" onclick="deleteCustomPin(${idx})" title="Delete Pin">🗑️</button>
+            <button class="btn-mini btn-done" onclick="markTaskDone('Custom Task')">✅ Done</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function deleteCustomPin(idx) {
+      let saved = JSON.parse(localStorage.getItem('parent_cmd_custom_pins') || '[]');
+      saved.splice(idx, 1);
+      localStorage.setItem('parent_cmd_custom_pins', JSON.stringify(saved));
+      renderCustomPins();
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    function escapeJs(str) {
+      return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"');
+    }
+
+    renderCustomPins();
+
+    /* =========================================================
+       VICTORY CONFETTI CANNON
+       ========================================================= */
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    let confetti = [];
+    let confettiAnim = null;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function launchConfetti() {
+      const colors = ['#f59e0b', '#10b981', '#38bdf8', '#ec4899', '#8b5cf6', '#ef4444'];
+      for (let i = 0; i < 90; i++) {
+        confetti.push({
+          x: canvas.width / 2 + (Math.random() - 0.5) * 200,
+          y: canvas.height * 0.4 + (Math.random() - 0.5) * 100,
+          w: Math.random() * 8 + 6,
+          h: Math.random() * 8 + 6,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          vx: (Math.random() - 0.5) * 14,
+          vy: (Math.random() - 0.7) * 14,
+          rot: Math.random() * 360,
+          vrot: (Math.random() - 0.5) * 10,
+          alpha: 1
+        });
+      }
+      if (!confettiAnim) updateConfetti();
+    }
+
+    function updateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      confetti = confetti.filter(p => p.alpha > 0.05 && p.y < canvas.height + 20);
+
+      confetti.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.35; // gravity
+        p.rot += p.vrot;
+        p.alpha -= 0.012;
+
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, p.alpha);
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rot * Math.PI) / 180);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      });
+
+      if (confetti.length > 0) {
+        confettiAnim = requestAnimationFrame(updateConfetti);
+      } else {
+        confettiAnim = null;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+  </script>
+</body>
+</html>
