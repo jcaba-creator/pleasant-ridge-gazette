@@ -65,6 +65,14 @@
       margin-bottom: 14px;
       padding-bottom: 8px;
       border-bottom: 1px solid var(--border-panel);
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .back-btn {
@@ -85,6 +93,27 @@
     .back-btn:active {
       transform: translateY(2px);
       box-shadow: none;
+    }
+
+    .manage-deck-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #312e81;
+      color: #e0e7ff;
+      border: 1px solid #6366f1;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 0 2px 0 #1e1b4b;
+      transition: all 0.1s;
+    }
+    .manage-deck-btn:active, .manage-deck-btn.active {
+      background: #4338ca;
+      border-color: #a5b4fc;
+      transform: translateY(1px);
     }
 
     .station-badge {
@@ -334,7 +363,7 @@
       border-color: #38bdf8;
     }
 
-    /* Drill Timer Display (Conditional Alert Banner) */
+    /* Drill Timer Display */
     .drill-banner {
       display: none;
       background: #450a0a;
@@ -407,7 +436,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin: 22px 0 10px 0;
+      margin: 24px 0 12px 0;
       padding-bottom: 6px;
       border-bottom: 1px solid #2d3748;
     }
@@ -421,6 +450,23 @@
       display: flex;
       align-items: center;
       gap: 8px;
+    }
+
+    .section-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .add-category-cmd-btn {
+      background: #1f2937;
+      color: #38bdf8;
+      border: 1px solid #0284c7;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
     }
 
     .section-count {
@@ -474,10 +520,12 @@
       padding: 6px;
       border-radius: 6px;
       border: 1px solid #334155;
+      flex-shrink: 0;
     }
 
     .cmd-info {
       flex: 1;
+      min-width: 0;
     }
 
     .cmd-title {
@@ -486,6 +534,7 @@
       color: #fff;
       line-height: 1.25;
       margin-bottom: 4px;
+      word-wrap: break-word;
     }
 
     .cmd-preview {
@@ -493,6 +542,7 @@
       color: #94a3b8;
       line-height: 1.35;
       font-style: italic;
+      word-wrap: break-word;
     }
 
     .cmd-actions {
@@ -500,10 +550,12 @@
       gap: 6px;
       align-items: center;
       margin-top: 4px;
+      flex-wrap: wrap;
     }
 
     .btn-fire {
       flex: 1;
+      min-width: 90px;
       background: #2563eb;
       color: white;
       border: none;
@@ -587,34 +639,192 @@
       border-color: #10b981;
     }
 
-    /* Custom Command Studio */
-    .custom-studio {
-      background: #182029;
-      border: 1px solid #2d3748;
-      border-radius: 8px;
+    .btn-card-edit {
+      color: #f59e0b;
+      border-color: #78350f;
+    }
+    .btn-card-edit:hover {
+      color: #fff;
+      background: #78350f;
+    }
+
+    .btn-card-del {
+      color: #ef4444;
+      border-color: #7f1d1d;
+    }
+    .btn-card-del:hover {
+      color: #fff;
+      background: #7f1d1d;
+    }
+
+    /* Modal / Drawer Overlay for Command Management */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(4px);
+      z-index: 10000;
+      justify-content: center;
+      align-items: center;
       padding: 16px;
-      margin-top: 24px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
-    .studio-inputs {
+    .modal-overlay.active {
       display: flex;
-      gap: 10px;
-      margin-top: 10px;
-      flex-wrap: wrap;
     }
-    .studio-text {
-      flex: 1;
-      min-width: 240px;
+
+    .modal-box {
+      background: #1b2028;
+      border: 2px solid var(--border-panel);
+      border-top: 4px solid #6366f1;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 680px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 16px 20px;
+      background: #141820;
+      border-bottom: 1px solid var(--border-panel);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 900;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-close-btn {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 22px;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .modal-close-btn:hover {
+      color: #fff;
+    }
+
+    .modal-body {
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #cbd5e1;
+    }
+
+    .form-input, .form-textarea, .form-select {
       background: #0f141a;
       border: 1px solid #334155;
       color: #fff;
-      padding: 10px 14px;
+      padding: 10px 12px;
       border-radius: 6px;
       font-size: 14px;
       outline: none;
+      width: 100%;
+      font-family: inherit;
     }
-    .studio-text:focus {
-      border-color: #f59e0b;
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+    }
+
+    .form-textarea {
+      min-height: 80px;
+      resize: vertical;
+      line-height: 1.4;
+    }
+
+    .form-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 500px) {
+      .form-row-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .modal-footer {
+      padding: 14px 20px;
+      background: #141820;
+      border-top: 1px solid var(--border-panel);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-modal-save {
+      background: #4f46e5;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: 800;
+      font-size: 13px;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 2px 0 #3730a3;
+    }
+    .btn-modal-save:active {
+      transform: translateY(2px);
+      box-shadow: none;
+    }
+
+    .btn-modal-test {
+      background: #1e293b;
+      color: #38bdf8;
+      border: 1px solid #0284c7;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-weight: 800;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    /* JSON Backup & Config Hub Card */
+    .config-hub-banner {
+      background: #1a1e26;
+      border: 1px dashed #334155;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
     }
 
     /* Confetti Canvas */
@@ -646,12 +856,21 @@
   <div class="station-container">
     <!-- Top Utility Header -->
     <header class="top-header">
-      <a href="index.html" class="back-btn">
-        <span>&larr;</span> 449 Field Arcade
-      </a>
+      <div class="nav-left">
+        <a href="index.html" class="back-btn">
+          <span>&larr;</span> 449 Field Arcade
+        </a>
+        <button class="manage-deck-btn" onclick="openAddCommandModal()">
+          <span>➕</span> Add New Command
+        </button>
+        <button class="manage-deck-btn" style="background: #1e293b; border-color: #475569;" onclick="openConfigHubModal()">
+          <span>⚙️</span> Config Hub (Backup/Restore)
+        </button>
+      </div>
+
       <div class="station-badge">
         <span class="pulse-dot"></span>
-        DISPATCH LINK READY &bull; PLATE XII
+        CUSTOM COMMAND ENGINE ACTIVE &bull; PLATE XII
       </div>
     </header>
 
@@ -662,7 +881,7 @@
           <h1 class="station-title">
             <span class="ico">🎙️</span> Parent Command Station
           </h1>
-          <p class="station-subtitle">Tactical Shortcut Audio Soundboard &bull; Household Duty Announcer &bull; Male Voice Engine</p>
+          <p class="station-subtitle">Tactical Shortcut Audio Soundboard &bull; Fully Customizable Chore Dispatch &bull; Male Voice Engine</p>
         </div>
 
         <div class="trophy-rack">
@@ -736,7 +955,7 @@
         </div>
       </div>
       <div class="drill-timer-display" id="drill-timer-text">02:00</div>
-      <button class="drill-cancel-btn" onclick="cancelDrill()">Abord Drill</button>
+      <button class="drill-cancel-btn" onclick="cancelDrill()">Abort Drill</button>
     </div>
 
     <!-- Chore Roulette Feature Strip -->
@@ -745,603 +964,27 @@
         <span style="font-size: 26px;">🎲</span>
         <div>
           <div style="font-weight: 800; font-size: 14px; text-transform: uppercase; color: #fff;">Chore Roulette / Surprise Mission</div>
-          <div style="font-size: 12px; color: #c7d2fe;">Can't decide what needs doing? Spin the tactical chore wheel!</div>
+          <div style="font-size: 12px; color: #c7d2fe;">Spin the wheel to randomly call out any task on your soundboard!</div>
         </div>
       </div>
       <button class="roulette-btn" onclick="spinChoreRoulette()">Spin the Wheel!</button>
     </div>
 
-    <!-- MAIN SOUNDBOARD: CATEGORY 1: MORNING LAUNCHPAD -->
-    <div class="section-title-bar">
-      <h2 class="section-title"><span>🌅</span> Morning Mobilization</h2>
-      <span class="section-count">6 Directives</span>
-    </div>
-    <div class="command-grid">
-      <!-- Start Your Day -->
-      <article class="cmd-card" data-cmd-id="start-day">
-        <div class="cmd-header">
-          <div class="cmd-icon">☀️</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">Start Your Day!</h3>
-            <p class="cmd-preview">&ldquo;Feet on the floor, eyes open! The morning train is leaving!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire btn-amber" onclick="fireCommand('Start your day! Feet on the floor, eyes open! The morning train is rolling, let\'s get moving!')">
-            <span>📢</span> Announce
-          </button>
-          <button class="btn-mini" title="2-Minute Countdown Drill" onclick="startDrill('Start Your Day', 120, 'Start your day right now! You have two minutes to get out of bed and report for duty!')">⏱️ 2m</button>
-          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Start Your Day')">✅ Done</button>
-        </div>
-      </article>
+    <!-- DYNAMIC SOUNDBOARD MOUNT CONTAINER -->
+    <main id="soundboard-mount"></main>
 
-      <!-- Brush Teeth -->
-      <article class="cmd-card" data-cmd-id="brush-teeth">
-        <div class="cmd-header">
-          <div class="cmd-icon">🪥</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">Did You Brush Your Teeth?</h3>
-            <p class="cmd-preview">&ldquo;Top, bottom, front, and back molars. Two full minutes!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire" onclick="fireCommand('Did you brush your teeth yet? Top, bottom, front, and back molars! Two full minutes, I will be conducting a minty freshness inspection!')">
-            <span>📢</span> Announce
-          </button>
-          <button class="btn-mini" title="2-Minute Tooth Drill" onclick="startDrill('Brush Teeth Drill', 120, 'Toothbrush drill activated! Two full minutes of brushing starts right now!')">⏱️ 2m</button>
-          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Brush Teeth')">✅ Done</button>
-        </div>
-      </article>
-
-      <!-- Make Your Bed -->
-      <article class="cmd-card" data-cmd-id="make-bed">
-        <div class="cmd-header">
-          <div class="cmd-icon">🛏️</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">Make Your Bed!</h3>
-            <p class="cmd-preview">&ldquo;Pull those blankets tight and straighten the pillow!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire" onclick="fireCommand('Go make your bed! Pull up the sheets, straighten the comforter, and fluff the pillow. A tidy bed is a disciplined mind!')">
-            <span>📢</span> Announce
-          </button>
-          <button class="btn-mini" title="1-Minute Bed Drill" onclick="startDrill('Make Bed Drill', 60, 'One minute bed drill! Get those sheets tucked and square!')">⏱️ 1m</button>
-          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Make Bed')">✅ Done</button>
-        </div>
-      </article>
-
-      <!-- Get Dressed -->
-      <article class="cmd-card" data-cmd-id="get-dressed">
-        <div class="cmd-header">
-          <div class="cmd-icon">👕</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">Get Dressed!</h3>
-            <p class="cmd-preview">&ldquo;Real daytime clothes. Pajamas do not count as an outfit!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire btn-amber" onclick="fireCommand('Get dressed into actual outside clothes! No, pajamas do not count as an outfit for the day!')">
-            <span>📢</span> Announce
-          </button>
-          <button class="btn-mini" title="2-Minute Dress Drill" onclick="startDrill('Get Dressed Drill', 120, 'Two minutes to get fully dressed, socks included!')">⏱️ 2m</button>
-          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Get Dressed')">✅ Done</button>
-        </div>
-      </article>
-
-      <!-- Where Are Your Shoes -->
-      <article class="cmd-card" data-cmd-id="shoes">
-        <div class="cmd-header">
-          <div class="cmd-icon">👟</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">Where Are Your Shoes?!</h3>
-            <p class="cmd-preview">&ldquo;Why is one in the bedroom and one behind the couch?&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire btn-crimson" onclick="fireCommand('Where are your shoes?! Why is there always one shoe in the closet and one shoe behind the couch? Find both shoes right now!')">
-            <span>📢</span> Announce
-          </button>
-          <button class="btn-mini" title="Shoe Recovery Drill" onclick="startDrill('Shoe Recovery Drill', 90, 'Ninety seconds to locate and put on both shoes!')">⏱️ 90s</button>
-          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Find Shoes')">✅ Done</button>
-        </div>
-      </article>
-
-      <!-- Eat Breakfast -->
-      <article class="cmd-card" data-cmd-id="breakfast">
-        <div class="cmd-header">
-          <div class="cmd-icon">🥞</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">Eat Your Breakfast!</h3>
-            <p class="cmd-preview">&ldquo;Sit down, eat your food, fuel up for the day!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire btn-emerald" onclick="fireCommand('Sit down and eat your breakfast! You cannot conquer the day on an empty stomach!')">
-            <span>📢</span> Announce
-          </button>
-          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Eat Breakfast')">✅ Done</button>
-        </div>
-      </article>
-    </div>
-
-    <!-- MAIN SOUNDBOARD: CATEGORY 2: HYGIENE & BATHROOM -->
-    <div class="section-title-bar">
-      <h2 class="section-title"><span>🧼</span> Bathroom &amp; Cleanliness Protocol</h2>
-      <span class="section-count">5 Directives</span>
-    </div>
-    <div class="command-grid">
-      <!-- Wash Hands -->
-      <article class="cmd-card" data-cmd-id="wash-hands">
-        <div class="cmd-header">
-          <div class="cmd-icon">🫧</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">Wash Your Hands With Soap!</h3>
-            <p class="cmd-preview">&ldquo;Rinsing fingertips for half a second does not count!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire" onclick="fireCommand('Wash your hands with actual warm water and soap! Rinsing your fingertips for half a second does not count as washing!')">
-            <span>📢</span> Announce
-          </button>
-          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Wash Hands')">✅ Done</button>
-        </div>
-      </article>
-
-      <!-- Flush Toilet -->
-      <article class="cmd-card" data-cmd-id="flush-toilet">
-        <div class="cmd-header">
-          <div class="cmd-icon">🚽</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">Flush The Toilet!</h3>
-            <p class="cmd-preview">&ldquo;Push the handle down! We live in a civilized society!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire btn-amber" onclick="fireCommand('Flush the toilet! Push the lever down! We are living in a civilized society!')">
-            <span>📢</span> Announce
-          </button>
-          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Flush Toilet')">✅ Done</button>
-        </div>
-      </article>
-
-      <!-- Comb Hair -->
-      <article class="cmd-card" data-cmd-id="comb-hair">
-        <div class="cmd-header">
-          <div class="cmd-icon">🪮</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">Brush Your Hair!</h3>
-            <p class="cmd-preview">&ldquo;You look like you just wrestled a family of raccoons!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire" onclick="fireCommand('Go brush your hair! You look like you just survived a category five windstorm on the prairie!')">
-            <span>📢</span> Announce
-          </button>
-          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Brush Hair')">✅ Done</button>
-        </div>
-      </article>
-
-      <!-- Dirty Clothes Hamper -->
-      <article class="cmd-card" data-cmd-id="hamper">
-        <div class="cmd-header">
-          <div class="cmd-icon">🧺</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">Clothes In The Hamper!</h3>
-            <p class="cmd-preview">&ldquo;The bedroom floor is not a classified laundry repository!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire" onclick="fireCommand('The bedroom floor is not a hamper! Pick up your dirty clothes and drop them in the laundry basket right now!')">
-            <span>📢</span> Announce
-          </button>
-          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Clothes in Hamper')">✅ Done</button>
-        </div>
-      </article>
-
-      <!-- Vitamins & Water -->
-      <article class="cmd-card" data-cmd-id="vitamins">
-        <div class="cmd-header">
-          <div class="cmd-icon">💊</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">Vitamins &amp; Big Glass of Water!</h3>
-            <p class="cmd-preview">&ldquo;Hydrate and take your vitamins!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire btn-emerald" onclick="fireCommand('Take your daily vitamins and drink a full glass of water! Stay hydrated!')">
-            <span>📢</span> Announce
-          </button>
-          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Vitamins & Water')">✅ Done</button>
-        </div>
-      </article>
-    </div>
-
-    <!-- MAIN SOUNDBOARD: CATEGORY 3: DAILY MISSIONS & CHORES -->
-    <div class="section-title-bar">
-      <h2 class="section-title"><span>📋</span> Daily Missions &amp; 449 Homestead Chores</h2>
-      <span class="section-count">6 Directives</span>
-    </div>
-    <div class="command-grid">
-      <!-- Backpack by the Door -->
-      <article class="cmd-card" data-cmd-id="backpack">
-        <div class="cmd-header">
-          <div class="cmd-icon">🎒</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">Backpack Staged By The Door!</h3>
-            <p class="cmd-preview">&ldquo;Folders packed, water bottle inside, staged at the checkpoint!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire btn-blue" onclick="fireCommand('Backpack check! Zip it up, pack your folders, and stage that bag right by the front door!')">
-            <span>📢</span> Announce
-          </button>
-          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Backpack Staged')">✅ Done</button>
-        </div>
-      </article>
-
-      <!-- Dishes in Sink / Dishwasher -->
-      <article class="cmd-card" data-cmd-id="dishes">
-        <div class="cmd-header">
-          <div class="cmd-icon">🍽️</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">Clear Your Plate &amp; Dish!</h3>
-            <p class="cmd-preview">&ldquo;Rinse it, clear the scraps, and put it in the dishwasher!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire btn-amber" onclick="fireCommand('Do not leave your plate on the table! Pick it up, rinse the crumbs, and put it in the dishwasher!')">
-            <span>📢</span> Announce
-          </button>
-          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Clear Plate')">✅ Done</button>
-        </div>
-      </article>
-
-      <!-- Feed Critters / Pets -->
-      <article class="cmd-card" data-cmd-id="critters">
-        <div class="cmd-header">
-          <div class="cmd-icon">🐾</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">Feed The Animals!</h3>
-            <p class="cmd-preview">&ldquo;The critters are staring at me like I forgot breakfast!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire btn-emerald" onclick="fireCommand('Go feed the animals and check their water bowls! They are staring at me like I am the one who forgot breakfast!')">
-            <span>📢</span> Announce
-          </button>
-          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Feed Animals')">✅ Done</button>
-        </div>
-      </article>
-
-      <!-- Lego & Toy Hazard Clearance -->
-      <article class="cmd-card" data-cmd-id="lego-sweep">
-        <div class="cmd-header">
-          <div class="cmd-icon">🧱</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">Lego &amp; Floor Hazard Sweep!</h3>
-            <p class="cmd-preview">&ldquo;Walking across this room barefoot is high-risk!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire btn-crimson" onclick="fireCommand('Pick up your Legos and toys off the floor right now! Walking across this room barefoot is classified as high-risk hazardous duty!')">
-            <span>📢</span> Announce
-          </button>
-          <button class="btn-mini" title="3-Minute Floor Sweep" onclick="startDrill('Lego Hazard Sweep', 180, 'Three minute toy hazard drill! Pick up every block off the carpet!')">⏱️ 3m</button>
-          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Lego Sweep')">✅ Done</button>
-        </div>
-      </article>
-
-      <!-- Trash Run -->
-      <article class="cmd-card" data-cmd-id="trash">
-        <div class="cmd-header">
-          <div class="cmd-icon">🗑️</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">Take Out The Trash!</h3>
-            <p class="cmd-preview">&ldquo;Before it develops its own independent ecosystem!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire" onclick="fireCommand('Take out the trash before that bin develops its own independent ecosystem! Tie the bag and take it to the bin!')">
-            <span>📢</span> Announce
-          </button>
-          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Trash Run')">✅ Done</button>
-        </div>
-      </article>
-
-      <!-- Room Inspection -->
-      <article class="cmd-card" data-cmd-id="room-inspection">
-        <div class="cmd-header">
-          <div class="cmd-icon">🧹</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">Five-Minute Room Inspection!</h3>
-            <p class="cmd-preview">&ldquo;Desk clear, clothes hung, ground inspection in five!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire btn-purple" onclick="fireCommand('Attention! Ground level room inspection commences in five minutes! Tidy your desk, clear the floor, straighten up!')">
-            <span>📢</span> Announce
-          </button>
-          <button class="btn-mini" title="5-Minute Room Drill" onclick="startDrill('Room Inspection Drill', 300, 'Five minute room inspection countdown has begun! Everything off the floor!')">⏱️ 5m</button>
-          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Room Clean')">✅ Done</button>
-        </div>
-      </article>
-    </div>
-
-    <!-- MAIN SOUNDBOARD: CATEGORY 4: FOCUS, HOMEWORK & SCREENS -->
-    <div class="section-title-bar">
-      <h2 class="section-title"><span>📚</span> Focus, Homework &amp; Screen Discipline</h2>
-      <span class="section-count">4 Directives</span>
-    </div>
-    <div class="command-grid">
-      <!-- Screen Time Over -->
-      <article class="cmd-card" data-cmd-id="screens-off">
-        <div class="cmd-header">
-          <div class="cmd-icon">📱</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">Screen Time Is OVER!</h3>
-            <p class="cmd-preview">&ldquo;Power down the device, shut the screen, return to reality!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire btn-crimson" onclick="fireCommand('Screen time is over! Shut down the tablet, turn off the television, and return to the physical world!')">
-            <span>📢</span> Announce
-          </button>
-          <button class="btn-mini" title="1-Minute Warning" onclick="startDrill('Screen Shutdown Drill', 60, 'One minute final screen warning! Save your game and power down!')">⏱️ 1m</button>
-          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Screens Off')">✅ Done</button>
-        </div>
-      </article>
-
-      <!-- Homework Drill -->
-      <article class="cmd-card" data-cmd-id="homework">
-        <div class="cmd-header">
-          <div class="cmd-icon">✏️</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">Homework Time!</h3>
-            <p class="cmd-preview">&ldquo;Pencils sharpened, folders out, focus and get it done!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire btn-blue" onclick="fireCommand('Homework time! Pencils out, notebooks open, let\'s focus and knock it out so you can enjoy your evening!')">
-            <span>📢</span> Announce
-          </button>
-          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Homework Done')">✅ Done</button>
-        </div>
-      </article>
-
-      <!-- 20 Min Reading -->
-      <article class="cmd-card" data-cmd-id="reading">
-        <div class="cmd-header">
-          <div class="cmd-icon">📖</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">20 Minutes Of Reading!</h3>
-            <p class="cmd-preview">&ldquo;Grab a book, find a comfy spot, clock is ticking!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire btn-emerald" onclick="fireCommand('Time for twenty minutes of reading! Grab a good book, find a spot, let\'s see some chapters read!')">
-            <span>📢</span> Announce
-          </button>
-          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Reading Done')">✅ Done</button>
-        </div>
-      </article>
-
-      <!-- Outside Free Play -->
-      <article class="cmd-card" data-cmd-id="outside">
-        <div class="cmd-header">
-          <div class="cmd-icon">🏃</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">Go Outside &amp; Run Around!</h3>
-            <p class="cmd-preview">&ldquo;Fresh air, grass under your feet, burn some energy!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire btn-amber" onclick="fireCommand('Go outside and play! Get some sunshine, run around in the yard, and burn off some of that energy!')">
-            <span>📢</span> Announce
-          </button>
-          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Outside Play')">✅ Done</button>
-        </div>
-      </article>
-    </div>
-
-    <!-- MAIN SOUNDBOARD: CATEGORY 5: EVENING & BEDTIME LOCKDOWN -->
-    <div class="section-title-bar">
-      <h2 class="section-title"><span>🌙</span> Evening &amp; Bedtime Lockdown</h2>
-      <span class="section-count">4 Directives</span>
-    </div>
-    <div class="command-grid">
-      <!-- Pajama Drill -->
-      <article class="cmd-card" data-cmd-id="pajamas">
-        <div class="cmd-header">
-          <div class="cmd-icon">💤</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">Pajama Drill!</h3>
-            <p class="cmd-preview">&ldquo;Into your PJs, dirty clothes in basket, bedtime approaching!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire btn-purple" onclick="fireCommand('Pajama drill! Into your pajamas, dirty clothes into the hamper, let\'s start winding down!')">
-            <span>📢</span> Announce
-          </button>
-          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Pajamas On')">✅ Done</button>
-        </div>
-      </article>
-
-      <!-- Night Teeth -->
-      <article class="cmd-card" data-cmd-id="night-teeth">
-        <div class="cmd-header">
-          <div class="cmd-icon">✨</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">Nighttime Teeth Check!</h3>
-            <p class="cmd-preview">&ldquo;Brush off all the day\'s snacks! Minty fresh for bed!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire" onclick="fireCommand('Nighttime dental inspection! Go brush those teeth and wash your face! Minty fresh before hitting the pillow!')">
-            <span>📢</span> Announce
-          </button>
-          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Night Teeth')">✅ Done</button>
-        </div>
-      </article>
-
-      <!-- 5 Minute Bedtime Warning -->
-      <article class="cmd-card" data-cmd-id="bed-warning">
-        <div class="cmd-header">
-          <div class="cmd-icon">⏳</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">5-Minute Bedtime Warning!</h3>
-            <p class="cmd-preview">&ldquo;Final water cup, final bathroom visit, boarding call!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire btn-amber" onclick="fireCommand('This is your five-minute bedtime warning! Get your drink of water, make your last bathroom trip, and get tucked in!')">
-            <span>📢</span> Announce
-          </button>
-          <button class="btn-mini" title="5-Minute Countdown" onclick="startDrill('Final Bedtime Boarding Call', 300, 'Five minutes until lights out! Final boarding call for dreamland!')">⏱️ 5m</button>
-          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Tucked In')">✅ Done</button>
-        </div>
-      </article>
-
-      <!-- Lights Out -->
-      <article class="cmd-card" data-cmd-id="lights-out">
-        <div class="cmd-header">
-          <div class="cmd-icon">🔦</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">Lights Out &amp; Go To Sleep!</h3>
-            <p class="cmd-preview">&ldquo;Eyes closed, head on pillow, adventure resumes tomorrow!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire btn-crimson" onclick="fireCommand('Lights out! Head on the pillow, eyes closed, cease all talking! Adventure resumes tomorrow morning!')">
-            <span>📢</span> Announce
-          </button>
-          <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('Lights Out')">✅ Done</button>
-        </div>
-      </article>
-    </div>
-
-    <!-- MAIN SOUNDBOARD: CATEGORY 6: CLASSIC DAD HOTLINE (HUMOROUS) -->
-    <div class="section-title-bar">
-      <h2 class="section-title"><span>📢</span> Classic Dad Emergency Hotline</h2>
-      <span class="section-count">6 Directives</span>
-    </div>
-    <div class="command-grid">
-      <!-- Refrigerator Door -->
-      <article class="cmd-card" data-cmd-id="fridge">
-        <div class="cmd-header">
-          <div class="cmd-icon">🧊</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">Shut The Refrigerator Door!</h3>
-            <p class="cmd-preview">&ldquo;We are not paying to air-condition the whole county!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire btn-crimson" onclick="fireCommand('Shut that refrigerator door! We are not paying to air-condition the entire county of Leavenworth!')">
-            <span>📢</span> Announce
-          </button>
-        </div>
-      </article>
-
-      <!-- Counting to 3 -->
-      <article class="cmd-card" data-cmd-id="count-to-three">
-        <div class="cmd-header">
-          <div class="cmd-icon">🚨</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">I Am Counting To Three!</h3>
-            <p class="cmd-preview">&ldquo;One... Two... Do not make me say three!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire btn-crimson" onclick="fireCommand('I am counting to three! One... Two... Two and a half... Do not make me say three!')">
-            <span>📢</span> Announce
-          </button>
-        </div>
-      </article>
-
-      <!-- Because I Said So -->
-      <article class="cmd-card" data-cmd-id="because-said-so">
-        <div class="cmd-header">
-          <div class="cmd-icon">⚖️</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">Because I Said So!</h3>
-            <p class="cmd-preview">&ldquo;End of discussion. Supreme Court ruling finalized!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire btn-amber" onclick="fireCommand('Because I said so! That is why, case closed, end of discussion!')">
-            <span>📢</span> Announce
-          </button>
-        </div>
-      </article>
-
-      <!-- Lights Left On -->
-      <article class="cmd-card" data-cmd-id="lights-left-on">
-        <div class="cmd-header">
-          <div class="cmd-icon">💡</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">Turn Off The Lights!</h3>
-            <p class="cmd-preview">&ldquo;Why does this house look like the Las Vegas strip?!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire" onclick="fireCommand('Who left the lights on in five different empty rooms?! Turn them off! This house looks like the Las Vegas strip!')">
-            <span>📢</span> Announce
-          </button>
-        </div>
-      </article>
-
-      <!-- Get In The Car -->
-      <article class="cmd-card" data-cmd-id="car-departure">
-        <div class="cmd-header">
-          <div class="cmd-icon">🚗</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">Everyone In The Car!</h3>
-            <p class="cmd-preview">&ldquo;Shoes on, buckled up, wheels roll in sixty seconds!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire btn-amber" onclick="fireCommand('Everyone in the vehicle right now! Shoes on, seatbelts clicked, the wheels are rolling in sixty seconds!')">
-            <span>📢</span> Announce
-          </button>
-        </div>
-      </article>
-
-      <!-- Cease Hostilities -->
-      <article class="cmd-card" data-cmd-id="cease-fire">
-        <div class="cmd-header">
-          <div class="cmd-icon">🛑</div>
-          <div class="cmd-info">
-            <h3 class="cmd-title">Cease Hostilities!</h3>
-            <p class="cmd-preview">&ldquo;Stop poking your sibling! Immediate ceasefire!&rdquo;</p>
-          </div>
-        </div>
-        <div class="cmd-actions">
-          <button class="btn-fire btn-crimson" onclick="fireCommand('Immediate ceasefire! Stop wrestling, stop poking your sibling, hands to yourself!')">
-            <span>📢</span> Announce
-          </button>
-        </div>
-      </article>
-    </div>
-
-    <!-- CUSTOM COMMAND STUDIO (DYNAMIC MAKER) -->
-    <section class="custom-studio">
-      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-        <h3 style="font-size: 14px; font-weight: 800; text-transform: uppercase; color: #fbbf24;">
-          🛠️ Custom Household Dispatch Studio
-        </h3>
-        <span style="font-size: 11px; color: #94a3b8;">Type any custom message for instant male voice broadcast</span>
+    <!-- CONFIG HUB BANNER -->
+    <div class="config-hub-banner">
+      <div>
+        <div style="font-weight: 800; font-size: 13px; color: #f1f5f9;">🛠️ Household Command Customizer</div>
+        <div style="font-size: 11px; color: #94a3b8;">All changes save immediately in your browser. Back up or restore your commands anytime.</div>
       </div>
-      <div class="studio-inputs">
-        <input type="text" id="custom-text-input" class="studio-text" placeholder="e.g. Lucas, put the milk back in the fridge right now!" onkeydown="if(event.key==='Enter')broadcastCustom()">
-        <button class="btn-fire btn-amber" style="flex: none; min-width: 140px;" onclick="broadcastCustom()">
-          <span>🎙️</span> Broadcast
-        </button>
-        <button class="btn-mini" style="flex: none;" onclick="saveCustomCard()" title="Pin to Custom Deck">
-          📌 Pin Button
-        </button>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn-mini" onclick="openAddCommandModal()">➕ Add Command</button>
+        <button class="btn-mini" onclick="openConfigHubModal()">📦 Export / Import JSON</button>
+        <button class="btn-mini" style="color: #ef4444;" onclick="resetToFactoryDefaults()">🔄 Reset Defaults</button>
       </div>
-      <div id="custom-pins-grid" class="command-grid" style="margin-top: 14px;"></div>
-    </section>
+    </div>
 
     <!-- Footer Stamp -->
     <footer class="footer-stamp">
@@ -1350,7 +993,740 @@
     </footer>
   </div>
 
+  <!-- =========================================================
+       MODAL 1: ADD / EDIT COMMAND
+       ========================================================= -->
+  <div class="modal-overlay" id="edit-command-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-heading"><span>✏️</span> Edit Command</h3>
+        <button class="modal-close-btn" onclick="closeEditModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-cmd-id">
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label">Button Title</label>
+            <input type="text" id="edit-cmd-title" class="form-input" placeholder="e.g. Did You Brush Your Teeth?">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Emoji Icon</label>
+            <input type="text" id="edit-cmd-icon" class="form-input" placeholder="e.g. 🪥" style="font-size: 18px;">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Spoken Broadcast Phrase (What Dad / Male Voice Says)</label>
+          <textarea id="edit-cmd-phrase" class="form-textarea" placeholder="Type the exact announcement sentence here..."></textarea>
+          <div style="font-size: 11px; color: #94a3b8; margin-top: 2px;">Tip: Be as specific or funny as you want! Punctuation like exclamation marks adds stern dad emphasis.</div>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <select id="edit-cmd-category" class="form-select">
+              <option value="morning">🌅 Morning Mobilization</option>
+              <option value="hygiene">🧼 Bathroom &amp; Cleanliness</option>
+              <option value="chores">📋 Daily Missions &amp; Chores</option>
+              <option value="focus">📚 Focus, Homework &amp; Screens</option>
+              <option value="evening">🌙 Evening &amp; Bedtime Lockdown</option>
+              <option value="hotline">📢 Classic Dad Hotline</option>
+              <option value="custom">⭐ Custom Household Tasks</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Button Color Theme</label>
+            <select id="edit-cmd-color" class="form-select">
+              <option value="btn-blue">Tactical Blue</option>
+              <option value="btn-amber">Warning Amber</option>
+              <option value="btn-crimson">Red Alert (Stern)</option>
+              <option value="btn-emerald">Mission Green</option>
+              <option value="btn-purple">Night Purple</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label">Countdown Drill Timer</label>
+            <select id="edit-cmd-drill" class="form-select">
+              <option value="0">No Drill Timer</option>
+              <option value="60">1-Minute Speed Drill (60s)</option>
+              <option value="90">90-Second Sprint (90s)</option>
+              <option value="120">2-Minute Drill (120s)</option>
+              <option value="180">3-Minute Drill (180s)</option>
+              <option value="300">5-Minute Inspection (300s)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Card Subtitle / Preview Text</label>
+            <input type="text" id="edit-cmd-preview" class="form-input" placeholder="Short quick summary text for the card...">
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-modal-test" onclick="testCurrentModalSpeech()">
+          <span>🔊</span> Test Voice
+        </button>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn-mini" onclick="closeEditModal()">Cancel</button>
+          <button class="btn-modal-save" onclick="saveCommandFromModal()">Save Command</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       MODAL 2: CONFIG HUB (IMPORT / EXPORT JSON)
+       ========================================================= -->
+  <div class="modal-overlay" id="config-hub-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title"><span>📦</span> Household Command Config Hub</h3>
+        <button class="modal-close-btn" onclick="closeConfigModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 13px; color: #cbd5e1; line-height: 1.4;">
+          You can copy your entire household command setup to save it, or paste a customized JSON deck here to sync across your phone, tablet, and computer.
+        </p>
+        <div class="form-group">
+          <label class="form-label">Full Command Deck JSON</label>
+          <textarea id="config-json-area" class="form-textarea" style="height: 220px; font-family: var(--font-mono); font-size: 11px;"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div style="display: flex; gap: 8px;">
+          <button class="btn-mini" onclick="copyConfigJson()">📋 Copy JSON</button>
+          <button class="btn-mini" style="color: #ef4444;" onclick="resetToFactoryDefaults()">🔄 Reset Defaults</button>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn-mini" onclick="closeConfigModal()">Close</button>
+          <button class="btn-modal-save" onclick="importConfigJson()">Import &amp; Apply</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       SCRIPT: STATE & COMMAND ENGINE
+       ========================================================= */ -->
   <script>
+    // Canonical Default Command Deck
+    const DEFAULT_COMMANDS = [
+      // MORNING MOBILIZATION
+      {
+        id: "start-day",
+        title: "Start Your Day!",
+        phrase: "Start your day! Feet on the floor, eyes open! The morning train is rolling, let's get moving!",
+        preview: "Feet on the floor, eyes open! Morning train is leaving!",
+        category: "morning",
+        icon: "☀️",
+        color: "btn-amber",
+        drillSec: 120,
+        drillLabel: "2m"
+      },
+      {
+        id: "brush-teeth",
+        title: "Did You Brush Your Teeth?",
+        phrase: "Did you brush your teeth yet? Top, bottom, front, and back molars! Two full minutes, I will be conducting a minty freshness inspection!",
+        preview: "Top, bottom, front, and back molars. Two full minutes!",
+        category: "morning",
+        icon: "🪥",
+        color: "btn-blue",
+        drillSec: 120,
+        drillLabel: "2m"
+      },
+      {
+        id: "make-bed",
+        title: "Make Your Bed!",
+        phrase: "Go make your bed! Pull up the sheets, straighten the comforter, and fluff the pillow. A tidy bed is a disciplined mind!",
+        preview: "Pull those blankets tight and straighten the pillow!",
+        category: "morning",
+        icon: "🛏️",
+        color: "btn-blue",
+        drillSec: 60,
+        drillLabel: "1m"
+      },
+      {
+        id: "get-dressed",
+        title: "Get Dressed!",
+        phrase: "Get dressed into actual outside clothes! No, pajamas do not count as an outfit for the day!",
+        preview: "Real daytime clothes. Pajamas do not count as an outfit!",
+        category: "morning",
+        icon: "👕",
+        color: "btn-amber",
+        drillSec: 120,
+        drillLabel: "2m"
+      },
+      {
+        id: "shoes",
+        title: "Where Are Your Shoes?!",
+        phrase: "Where are your shoes?! Why is there always one shoe in the closet and one shoe behind the couch? Find both shoes right now!",
+        preview: "Why is one in the bedroom and one behind the couch?",
+        category: "morning",
+        icon: "👟",
+        color: "btn-crimson",
+        drillSec: 90,
+        drillLabel: "90s"
+      },
+      {
+        id: "breakfast",
+        title: "Eat Your Breakfast!",
+        phrase: "Sit down and eat your breakfast! You cannot conquer the day on an empty stomach!",
+        preview: "Sit down, eat your food, fuel up for the day!",
+        category: "morning",
+        icon: "🥞",
+        color: "btn-emerald",
+        drillSec: 0,
+        drillLabel: ""
+      },
+
+      // HYGIENE & CLEANLINESS
+      {
+        id: "wash-hands",
+        title: "Wash Your Hands With Soap!",
+        phrase: "Wash your hands with actual warm water and soap! Rinsing your fingertips for half a second does not count as washing!",
+        preview: "Rinsing fingertips for half a second does not count!",
+        category: "hygiene",
+        icon: "🫧",
+        color: "btn-blue",
+        drillSec: 0,
+        drillLabel: ""
+      },
+      {
+        id: "flush-toilet",
+        title: "Flush The Toilet!",
+        phrase: "Flush the toilet! Push the lever down! We are living in a civilized society!",
+        preview: "Push the handle down! We live in a civilized society!",
+        category: "hygiene",
+        icon: "🚽",
+        color: "btn-amber",
+        drillSec: 0,
+        drillLabel: ""
+      },
+      {
+        id: "comb-hair",
+        title: "Brush Your Hair!",
+        phrase: "Go brush your hair! You look like you just survived a category five windstorm on the prairie!",
+        preview: "You look like you just wrestled a family of raccoons!",
+        category: "hygiene",
+        icon: "🪮",
+        color: "btn-blue",
+        drillSec: 0,
+        drillLabel: ""
+      },
+      {
+        id: "hamper",
+        title: "Clothes In The Hamper!",
+        phrase: "The bedroom floor is not a hamper! Pick up your dirty clothes and drop them in the laundry basket right now!",
+        preview: "The bedroom floor is not a classified laundry repository!",
+        category: "hygiene",
+        icon: "🧺",
+        color: "btn-blue",
+        drillSec: 0,
+        drillLabel: ""
+      },
+      {
+        id: "vitamins",
+        title: "Vitamins & Water!",
+        phrase: "Take your daily vitamins and drink a full glass of water! Stay hydrated!",
+        preview: "Hydrate and take your vitamins!",
+        category: "hygiene",
+        icon: "💊",
+        color: "btn-emerald",
+        drillSec: 0,
+        drillLabel: ""
+      },
+
+      // MISSIONS & CHORES
+      {
+        id: "backpack",
+        title: "Backpack Staged By The Door!",
+        phrase: "Backpack check! Zip it up, pack your folders, and stage that bag right by the front door!",
+        preview: "Folders packed, water bottle inside, staged at the checkpoint!",
+        category: "chores",
+        icon: "🎒",
+        color: "btn-blue",
+        drillSec: 0,
+        drillLabel: ""
+      },
+      {
+        id: "dishes",
+        title: "Clear Your Plate & Dish!",
+        phrase: "Do not leave your plate on the table! Pick it up, rinse the crumbs, and put it in the dishwasher!",
+        preview: "Rinse it, clear the scraps, and put it in the dishwasher!",
+        category: "chores",
+        icon: "🍽️",
+        color: "btn-amber",
+        drillSec: 0,
+        drillLabel: ""
+      },
+      {
+        id: "critters",
+        title: "Feed The Animals!",
+        phrase: "Go feed the animals and check their water bowls! They are staring at me like I am the one who forgot breakfast!",
+        preview: "The critters are staring at me like I forgot breakfast!",
+        category: "chores",
+        icon: "🐾",
+        color: "btn-emerald",
+        drillSec: 0,
+        drillLabel: ""
+      },
+      {
+        id: "lego-sweep",
+        title: "Lego & Floor Hazard Sweep!",
+        phrase: "Pick up your Legos and toys off the floor right now! Walking across this room barefoot is classified as high-risk hazardous duty!",
+        preview: "Walking across this room barefoot is high-risk!",
+        category: "chores",
+        icon: "🧱",
+        color: "btn-crimson",
+        drillSec: 180,
+        drillLabel: "3m"
+      },
+      {
+        id: "trash",
+        title: "Take Out The Trash!",
+        phrase: "Take out the trash before that bin develops its own independent ecosystem! Tie the bag and take it to the bin!",
+        preview: "Before it develops its own independent ecosystem!",
+        category: "chores",
+        icon: "🗑️",
+        color: "btn-blue",
+        drillSec: 0,
+        drillLabel: ""
+      },
+      {
+        id: "room-inspection",
+        title: "Five-Minute Room Inspection!",
+        phrase: "Attention! Ground level room inspection commences in five minutes! Tidy your desk, clear the floor, straighten up!",
+        preview: "Desk clear, clothes hung, ground inspection in five!",
+        category: "chores",
+        icon: "🧹",
+        color: "btn-purple",
+        drillSec: 300,
+        drillLabel: "5m"
+      },
+
+      // FOCUS & SCREENS
+      {
+        id: "screens-off",
+        title: "Screen Time Is OVER!",
+        phrase: "Screen time is over! Shut down the tablet, turn off the television, and return to the physical world!",
+        preview: "Power down the device, shut the screen, return to reality!",
+        category: "focus",
+        icon: "📱",
+        color: "btn-crimson",
+        drillSec: 60,
+        drillLabel: "1m"
+      },
+      {
+        id: "homework",
+        title: "Homework Time!",
+        phrase: "Homework time! Pencils out, notebooks open, let's focus and knock it out so you can enjoy your evening!",
+        preview: "Pencils sharpened, folders out, focus and get it done!",
+        category: "focus",
+        icon: "✏️",
+        color: "btn-blue",
+        drillSec: 0,
+        drillLabel: ""
+      },
+      {
+        id: "reading",
+        title: "20 Minutes Of Reading!",
+        phrase: "Time for twenty minutes of reading! Grab a good book, find a spot, let's see some chapters read!",
+        preview: "Grab a book, find a comfy spot, clock is ticking!",
+        category: "focus",
+        icon: "📖",
+        color: "btn-emerald",
+        drillSec: 0,
+        drillLabel: ""
+      },
+
+      // EVENING LOCKDOWN
+      {
+        id: "pajamas",
+        title: "Pajama Drill!",
+        phrase: "Pajama drill! Into your pajamas, dirty clothes into the hamper, let's start winding down!",
+        preview: "Into your PJs, dirty clothes in basket, bedtime approaching!",
+        category: "evening",
+        icon: "💤",
+        color: "btn-purple",
+        drillSec: 0,
+        drillLabel: ""
+      },
+      {
+        id: "night-teeth",
+        title: "Nighttime Teeth Check!",
+        phrase: "Nighttime dental inspection! Go brush those teeth and wash your face! Minty fresh before hitting the pillow!",
+        preview: "Brush off all the day's snacks! Minty fresh for bed!",
+        category: "evening",
+        icon: "✨",
+        color: "btn-blue",
+        drillSec: 120,
+        drillLabel: "2m"
+      },
+      {
+        id: "bed-warning",
+        title: "5-Minute Bedtime Warning!",
+        phrase: "This is your five-minute bedtime warning! Get your drink of water, make your last bathroom trip, and get tucked in!",
+        preview: "Final water cup, final bathroom visit, boarding call!",
+        category: "evening",
+        icon: "⏳",
+        color: "btn-amber",
+        drillSec: 300,
+        drillLabel: "5m"
+      },
+      {
+        id: "lights-out",
+        title: "Lights Out & Go To Sleep!",
+        phrase: "Lights out! Head on the pillow, eyes closed, cease all talking! Adventure resumes tomorrow morning!",
+        preview: "Eyes closed, head on pillow, adventure resumes tomorrow!",
+        category: "evening",
+        icon: "🔦",
+        color: "btn-crimson",
+        drillSec: 0,
+        drillLabel: ""
+      },
+
+      // DAD EMERGENCY HOTLINE
+      {
+        id: "fridge",
+        title: "Shut The Refrigerator Door!",
+        phrase: "Shut that refrigerator door! We are not paying to air-condition the entire county of Leavenworth!",
+        preview: "We are not paying to air-condition the whole county!",
+        category: "hotline",
+        icon: "🧊",
+        color: "btn-crimson",
+        drillSec: 0,
+        drillLabel: ""
+      },
+      {
+        id: "count-to-three",
+        title: "I Am Counting To Three!",
+        phrase: "I am counting to three! One... Two... Two and a half... Do not make me say three!",
+        preview: "One... Two... Do not make me say three!",
+        category: "hotline",
+        icon: "🚨",
+        color: "btn-crimson",
+        drillSec: 0,
+        drillLabel: ""
+      },
+      {
+        id: "because-said-so",
+        title: "Because I Said So!",
+        phrase: "Because I said so! That is why, case closed, end of discussion!",
+        preview: "End of discussion. Supreme Court ruling finalized!",
+        category: "hotline",
+        icon: "⚖️",
+        color: "btn-amber",
+        drillSec: 0,
+        drillLabel: ""
+      },
+      {
+        id: "lights-left-on",
+        title: "Turn Off The Lights!",
+        phrase: "Who left the lights on in five different empty rooms?! Turn them off! This house looks like the Las Vegas strip!",
+        preview: "Why does this house look like the Las Vegas strip?!",
+        category: "hotline",
+        icon: "💡",
+        color: "btn-blue",
+        drillSec: 0,
+        drillLabel: ""
+      },
+      {
+        id: "car-departure",
+        title: "Everyone In The Car!",
+        phrase: "Everyone in the vehicle right now! Shoes on, seatbelts clicked, the wheels are rolling in sixty seconds!",
+        preview: "Shoes on, buckled up, wheels roll in sixty seconds!",
+        category: "hotline",
+        icon: "🚗",
+        color: "btn-amber",
+        drillSec: 60,
+        drillLabel: "1m"
+      },
+      {
+        id: "cease-fire",
+        title: "Cease Hostilities!",
+        phrase: "Immediate ceasefire! Stop wrestling, stop poking your sibling, hands to yourself!",
+        preview: "Stop poking your sibling! Immediate ceasefire!",
+        category: "hotline",
+        icon: "🛑",
+        color: "btn-crimson",
+        drillSec: 0,
+        drillLabel: ""
+      }
+    ];
+
+    const CATEGORY_META = {
+      morning: { title: "Morning Mobilization", icon: "🌅" },
+      hygiene: { title: "Bathroom & Cleanliness Protocol", icon: "🧼" },
+      chores:  { title: "Daily Missions & 449 Homestead Chores", icon: "📋" },
+      focus:   { title: "Focus, Homework & Screen Discipline", icon: "📚" },
+      evening: { title: "Evening & Bedtime Lockdown", icon: "🌙" },
+      hotline: { title: "Classic Dad Emergency Hotline", icon: "📢" },
+      custom:  { title: "Custom Household Tasks", icon: "⭐" }
+    };
+
+    // State
+    let commandDeck = [];
+    const STORAGE_KEY = 'parent_commands_data_v2';
+
+    function loadCommands() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try {
+          commandDeck = JSON.parse(saved);
+        } catch (e) {
+          console.error("Failed to parse saved commands, reverting to defaults", e);
+          commandDeck = JSON.parse(JSON.stringify(DEFAULT_COMMANDS));
+        }
+      } else {
+        commandDeck = JSON.parse(JSON.stringify(DEFAULT_COMMANDS));
+      }
+    }
+
+    function saveCommands() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(commandDeck));
+      renderSoundboard();
+    }
+
+    function resetToFactoryDefaults() {
+      if (confirm("Reset all commands back to factory defaults? Any custom edits will be replaced.")) {
+        commandDeck = JSON.parse(JSON.stringify(DEFAULT_COMMANDS));
+        saveCommands();
+        closeConfigModal();
+        fireCommand("All commands reset to factory defaults!", "beep");
+      }
+    }
+
+    // Render Soundboard UI
+    function renderSoundboard() {
+      const mount = document.getElementById('soundboard-mount');
+      mount.innerHTML = '';
+
+      // Group commands by category in ordered list
+      const catOrder = ['morning', 'hygiene', 'chores', 'focus', 'evening', 'hotline', 'custom'];
+      
+      // Also discover any unexpected categories
+      commandDeck.forEach(c => {
+        const cat = c.category || 'custom';
+        if (!catOrder.includes(cat)) {
+          catOrder.push(cat);
+        }
+      });
+
+      catOrder.forEach(catId => {
+        const cmdsInCat = commandDeck.filter(c => (c.category || 'custom') === catId);
+        if (cmdsInCat.length === 0 && catId === 'custom') return; // Don't show empty custom group
+
+        const meta = CATEGORY_META[catId] || { title: catId.toUpperCase(), icon: "📁" };
+
+        const secBar = document.createElement('div');
+        secBar.className = 'section-title-bar';
+        secBar.innerHTML = `
+          <h2 class="section-title"><span>${meta.icon}</span> ${escapeHtml(meta.title)}</h2>
+          <div class="section-actions">
+            <button class="add-category-cmd-btn" onclick="openAddCommandModal('${escapeJs(catId)}')">+ Add to ${escapeHtml(meta.title.split(' ')[0])}</button>
+            <span class="section-count">${cmdsInCat.length} Directives</span>
+          </div>
+        `;
+        mount.appendChild(secBar);
+
+        const grid = document.createElement('div');
+        grid.className = 'command-grid';
+
+        cmdsInCat.forEach(cmd => {
+          const card = document.createElement('article');
+          card.className = 'cmd-card';
+          card.id = `card-${cmd.id}`;
+
+          const colorClass = cmd.color || 'btn-blue';
+          const drillBtnHtml = cmd.drillSec > 0 
+            ? `<button class="btn-mini" title="${cmd.drillSec}s Drill Timer" onclick="startDrill('${escapeJs(cmd.title)}', ${cmd.drillSec}, '${escapeJs(cmd.phrase)}')">⏱️ ${cmd.drillLabel || (cmd.drillSec + 's')}</button>`
+            : '';
+
+          card.innerHTML = `
+            <div class="cmd-header">
+              <div class="cmd-icon">${cmd.icon || '📢'}</div>
+              <div class="cmd-info">
+                <h3 class="cmd-title">${escapeHtml(cmd.title)}</h3>
+                <p class="cmd-preview">&ldquo;${escapeHtml(cmd.preview || cmd.phrase)}&rdquo;</p>
+              </div>
+            </div>
+            <div class="cmd-actions">
+              <button class="btn-fire ${colorClass}" onclick="fireCommand('${escapeJs(cmd.phrase)}')">
+                <span>📢</span> Announce
+              </button>
+              ${drillBtnHtml}
+              <button class="btn-mini btn-done" title="Mark Done (+1 Star)" onclick="markTaskDone('${escapeJs(cmd.title)}')">✅</button>
+              <button class="btn-mini btn-card-edit" title="Edit this command" onclick="openEditCommandModal('${escapeJs(cmd.id)}')">✏️</button>
+              <button class="btn-mini btn-card-del" title="Delete this command" onclick="deleteCommand('${escapeJs(cmd.id)}')">🗑️</button>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+
+        mount.appendChild(grid);
+      });
+    }
+
+    // Modal Control: Add / Edit
+    function openAddCommandModal(preselectedCategory) {
+      document.getElementById('modal-heading').innerHTML = `<span>➕</span> Add New Command`;
+      document.getElementById('edit-cmd-id').value = '';
+      document.getElementById('edit-cmd-title').value = '';
+      document.getElementById('edit-cmd-icon').value = '📢';
+      document.getElementById('edit-cmd-phrase').value = '';
+      document.getElementById('edit-cmd-preview').value = '';
+      document.getElementById('edit-cmd-category').value = preselectedCategory || 'morning';
+      document.getElementById('edit-cmd-color').value = 'btn-blue';
+      document.getElementById('edit-cmd-drill').value = '0';
+      document.getElementById('edit-command-modal').classList.add('active');
+      document.getElementById('edit-cmd-title').focus();
+    }
+
+    function openEditCommandModal(cmdId) {
+      const cmd = commandDeck.find(c => c.id === cmdId);
+      if (!cmd) return;
+
+      document.getElementById('modal-heading').innerHTML = `<span>✏️</span> Edit Command`;
+      document.getElementById('edit-cmd-id').value = cmd.id;
+      document.getElementById('edit-cmd-title').value = cmd.title || '';
+      document.getElementById('edit-cmd-icon').value = cmd.icon || '📢';
+      document.getElementById('edit-cmd-phrase').value = cmd.phrase || '';
+      document.getElementById('edit-cmd-preview').value = cmd.preview || '';
+      document.getElementById('edit-cmd-category').value = cmd.category || 'morning';
+      document.getElementById('edit-cmd-color').value = cmd.color || 'btn-blue';
+      document.getElementById('edit-cmd-drill').value = cmd.drillSec ? String(cmd.drillSec) : '0';
+      document.getElementById('edit-command-modal').classList.add('active');
+    }
+
+    function closeEditModal() {
+      document.getElementById('edit-command-modal').classList.remove('active');
+    }
+
+    function testCurrentModalSpeech() {
+      const phrase = document.getElementById('edit-cmd-phrase').value.trim() || document.getElementById('edit-cmd-title').value.trim();
+      if (!phrase) {
+        alert("Please enter a spoken phrase to test.");
+        return;
+      }
+      fireCommand(phrase);
+    }
+
+    function saveCommandFromModal() {
+      const id = document.getElementById('edit-cmd-id').value.trim();
+      const title = document.getElementById('edit-cmd-title').value.trim();
+      const phrase = document.getElementById('edit-cmd-phrase').value.trim();
+      const icon = document.getElementById('edit-cmd-icon').value.trim() || '📢';
+      const category = document.getElementById('edit-cmd-category').value;
+      const color = document.getElementById('edit-cmd-color').value;
+      const drillSec = parseInt(document.getElementById('edit-cmd-drill').value, 10) || 0;
+      let preview = document.getElementById('edit-cmd-preview').value.trim();
+
+      if (!title || !phrase) {
+        alert("Please fill in both the button title and the spoken broadcast phrase.");
+        return;
+      }
+
+      if (!preview) {
+        preview = phrase.length > 55 ? phrase.substring(0, 52) + '...' : phrase;
+      }
+
+      let drillLabel = '';
+      if (drillSec >= 60) {
+        drillLabel = (drillSec / 60) + 'm';
+      } else if (drillSec > 0) {
+        drillLabel = drillSec + 's';
+      }
+
+      if (id) {
+        // Edit existing
+        const idx = commandDeck.findIndex(c => c.id === id);
+        if (idx !== -1) {
+          commandDeck[idx] = {
+            ...commandDeck[idx],
+            title,
+            phrase,
+            preview,
+            category,
+            icon,
+            color,
+            drillSec,
+            drillLabel
+          };
+        }
+      } else {
+        // New command
+        const newId = 'cmd-' + Date.now();
+        commandDeck.unshift({
+          id: newId,
+          title,
+          phrase,
+          preview,
+          category,
+          icon,
+          color,
+          drillSec,
+          drillLabel
+        });
+      }
+
+      saveCommands();
+      closeEditModal();
+      playTactileFx('radio');
+    }
+
+    function deleteCommand(cmdId) {
+      const cmd = commandDeck.find(c => c.id === cmdId);
+      if (!cmd) return;
+      if (confirm(`Delete the command "${cmd.title}"?`)) {
+        commandDeck = commandDeck.filter(c => c.id !== cmdId);
+        saveCommands();
+        playTactileFx('buzzer');
+      }
+    }
+
+    // Config Hub Modal (JSON Export / Import)
+    function openConfigHubModal() {
+      document.getElementById('config-json-area').value = JSON.stringify(commandDeck, null, 2);
+      document.getElementById('config-hub-modal').classList.add('active');
+    }
+
+    function closeConfigModal() {
+      document.getElementById('config-hub-modal').classList.remove('active');
+    }
+
+    function copyConfigJson() {
+      const area = document.getElementById('config-json-area');
+      area.select();
+      navigator.clipboard.writeText(area.value).then(() => {
+        alert("Command deck JSON copied to clipboard!");
+      }).catch(() => {
+        document.execCommand('copy');
+        alert("Command deck JSON copied!");
+      });
+    }
+
+    function importConfigJson() {
+      const raw = document.getElementById('config-json-area').value.trim();
+      try {
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) {
+          throw new Error("JSON must be an array of command objects.");
+        }
+        commandDeck = parsed;
+        saveCommands();
+        closeConfigModal();
+        alert("Command deck successfully imported and saved!");
+        playTactileFx('radio');
+      } catch (err) {
+        alert("Invalid JSON: " + err.message);
+      }
+    }
+
     /* =========================================================
        AUDIO & SPEECH SYNTHESIS ENGINE
        ========================================================= */
@@ -1358,12 +1734,11 @@
     let availableVoices = [];
     let selectedVoice = null;
     let audioCtx = null;
-    let activeFx = 'beep'; // 'beep', 'radio', 'buzzer', 'none'
+    let activeFx = 'beep';
     let currentPersona = 'commanding';
     let drillInterval = null;
     let drillSecondsRemaining = 0;
 
-    // Tactical Voice Personas configuration
     const PERSONAS = {
       commanding: { pitch: 0.88, rate: 1.05, desc: 'Commanding Dad (Deep, steady)' },
       sergeant:   { pitch: 0.78, rate: 1.25, desc: 'Drill Sergeant (Brisk, stern)' },
@@ -1384,7 +1759,6 @@
       }
     }
 
-    // Synthesize Retro Tactile Sound FX via Web Audio API
     function playTactileFx(type) {
       try {
         initAudioContext();
@@ -1392,7 +1766,6 @@
         const now = audioCtx.currentTime;
 
         if (type === 'beep') {
-          // Megaphone dual-chirp alert (880Hz -> 1760Hz)
           const osc = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
           osc.type = 'sawtooth';
@@ -1405,7 +1778,6 @@
           osc.start(now);
           osc.stop(now + 0.16);
 
-          // Second chirp
           const osc2 = audioCtx.createOscillator();
           const gain2 = audioCtx.createGain();
           osc2.type = 'sawtooth';
@@ -1418,7 +1790,6 @@
           osc2.start(now + 0.12);
           osc2.stop(now + 0.28);
         } else if (type === 'radio') {
-          // 80s Dispatch Radio Beep (Two-tone Ding-Dong)
           const osc = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
           osc.type = 'sine';
@@ -1441,7 +1812,6 @@
           osc2.start(now + 0.12);
           osc2.stop(now + 0.30);
         } else if (type === 'buzzer') {
-          // Tactical Warning Buzzer
           const osc = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
           osc.type = 'square';
@@ -1453,8 +1823,7 @@
           osc.start(now);
           osc.stop(now + 0.35);
         } else if (type === 'fanfare') {
-          // Victory level-up chime
-          const notes = [523.25, 659.25, 783.99, 1046.50]; // C E G C
+          const notes = [523.25, 659.25, 783.99, 1046.50];
           notes.forEach((freq, idx) => {
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
@@ -1474,7 +1843,6 @@
       }
     }
 
-    // Populate and prioritize Male voices
     function populateVoiceList() {
       if (!synth) return;
       availableVoices = synth.getVoices() || [];
@@ -1483,11 +1851,7 @@
 
       voiceSelect.innerHTML = '';
 
-      // English voices first
       const englishVoices = availableVoices.filter(v => v.lang.startsWith('en'));
-      const otherVoices = availableVoices.filter(v => !v.lang.startsWith('en'));
-
-      // Male names heuristics
       const maleKeywords = ['david', 'mark', 'george', 'guy', 'james', 'daniel', 'oliver', 'john', 'paul', 'brian', 'andrew', 'ryan', 'alex', 'fred', 'richard', 'male', 'google us english male'];
 
       function isMaleHeuristic(voice) {
@@ -1506,7 +1870,6 @@
         }
       });
 
-      // Group 1: Preferred Male Voices
       if (maleEnglish.length > 0) {
         const optGroupMale = document.createElement('optgroup');
         optGroupMale.label = '★ Preferred Male Voices';
@@ -1519,7 +1882,6 @@
         voiceSelect.appendChild(optGroupMale);
       }
 
-      // Group 2: All Other English Voices
       if (standardEnglish.length > 0) {
         const optGroupEng = document.createElement('optgroup');
         optGroupEng.label = 'Other English Voices';
@@ -1532,7 +1894,6 @@
         voiceSelect.appendChild(optGroupEng);
       }
 
-      // Auto-select preferred male voice if available
       const savedVoiceName = localStorage.getItem('parent_cmd_voice');
       if (savedVoiceName && availableVoices.find(v => v.name === savedVoiceName)) {
         voiceSelect.value = savedVoiceName;
@@ -1581,7 +1942,6 @@
       playTactileFx(type);
     }
 
-    // Core Voice Announce Function
     function fireCommand(text, customFx) {
       if (!synth) {
         alert("Speech synthesis is not supported on this browser.");
@@ -1589,9 +1949,8 @@
       }
 
       initAudioContext();
-      synth.cancel(); // Stop any pending speech
+      synth.cancel();
 
-      // Play Sound FX first
       const fx = customFx || activeFx;
       playTactileFx(fx);
 
@@ -1605,7 +1964,6 @@
       utterance.rate = pConfig.rate;
       utterance.volume = 1.0;
 
-      // Update Visualizer & Speaker LED
       const led = document.getElementById('speaker-led');
       const statusText = document.getElementById('speaker-status-text');
       const transcript = document.getElementById('live-transcript');
@@ -1621,7 +1979,6 @@
         monitor.classList.add('speaking');
         statusText.textContent = `Broadcasting (${pConfig.desc.split(' ')[0]})...`;
 
-        // Animate VU bars
         vuAnimTimer = setInterval(() => {
           vuBars.forEach(b => {
             const h = Math.floor(Math.random() * 16) + 4;
@@ -1638,13 +1995,11 @@
         vuBars.forEach(b => b.style.height = '4px');
       };
 
-      // Slight delay to let sound FX trigger
       const delay = (fx === 'none') ? 0 : 250;
       setTimeout(() => {
         synth.speak(utterance);
       }, delay);
 
-      // Track telemetry if present
       if (window.GazetteTelemetry) {
         window.GazetteTelemetry.track('parent_command_fired', { text: text.substring(0, 30), persona: currentPersona });
       }
@@ -1661,7 +2016,6 @@
       document.getElementById('drill-task-name').textContent = `${taskName} - Active Countdown Drill`;
       updateDrillDisplay();
 
-      // Announce the drill loudly with buzzer
       fireCommand(speechPrompt, 'buzzer');
 
       drillInterval = setInterval(() => {
@@ -1718,11 +2072,8 @@
       localStorage.setItem('parent_cmd_stars', stars);
       document.getElementById('star-count').textContent = stars;
 
-      // Random dad praise in male voice
       const praise = PRAISES[Math.floor(Math.random() * PRAISES.length)];
       fireCommand(`${taskName} is complete! ${praise}`, 'fanfare');
-
-      // Trigger Confetti
       launchConfetti();
     }
 
@@ -1749,7 +2100,6 @@
       const maxSpins = 20 + Math.floor(Math.random() * 10);
       let speed = 70;
 
-      // Clear any prior highlight
       cards.forEach(c => c.classList.remove('highlight'));
 
       function step() {
@@ -1761,13 +2111,11 @@
 
         spins++;
         if (spins < maxSpins) {
-          speed += 12; // Decelerate
+          speed += 12;
           setTimeout(step, speed);
         } else {
-          // Landed!
           isSpinning = false;
           targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          const title = targetCard.querySelector('.cmd-title').textContent;
           const fireBtn = targetCard.querySelector('.btn-fire');
           setTimeout(() => {
             if (fireBtn) fireBtn.click();
@@ -1778,71 +2126,15 @@
       step();
     }
 
-    /* =========================================================
-       CUSTOM COMMAND STUDIO
-       ========================================================= */
-    function broadcastCustom() {
-      const input = document.getElementById('custom-text-input');
-      const val = input.value.trim();
-      if (!val) return;
-      fireCommand(val);
-    }
-
-    function saveCustomCard() {
-      const input = document.getElementById('custom-text-input');
-      const val = input.value.trim();
-      if (!val) return;
-
-      let saved = JSON.parse(localStorage.getItem('parent_cmd_custom_pins') || '[]');
-      saved.push(val);
-      localStorage.setItem('parent_cmd_custom_pins', JSON.stringify(saved));
-      renderCustomPins();
-      input.value = '';
-    }
-
-    function renderCustomPins() {
-      const container = document.getElementById('custom-pins-grid');
-      container.innerHTML = '';
-      const saved = JSON.parse(localStorage.getItem('parent_cmd_custom_pins') || '[]');
-      saved.forEach((text, idx) => {
-        const card = document.createElement('article');
-        card.className = 'cmd-card';
-        card.innerHTML = `
-          <div class="cmd-header">
-            <div class="cmd-icon">📌</div>
-            <div class="cmd-info">
-              <h3 class="cmd-title">${escapeHtml(text.length > 28 ? text.substring(0, 25) + '...' : text)}</h3>
-              <p class="cmd-preview">&ldquo;${escapeHtml(text)}&rdquo;</p>
-            </div>
-          </div>
-          <div class="cmd-actions">
-            <button class="btn-fire btn-amber" onclick="fireCommand('${escapeJs(text)}')">
-              <span>📢</span> Announce
-            </button>
-            <button class="btn-mini" style="color: #ef4444;" onclick="deleteCustomPin(${idx})" title="Delete Pin">🗑️</button>
-            <button class="btn-mini btn-done" onclick="markTaskDone('Custom Task')">✅ Done</button>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    function deleteCustomPin(idx) {
-      let saved = JSON.parse(localStorage.getItem('parent_cmd_custom_pins') || '[]');
-      saved.splice(idx, 1);
-      localStorage.setItem('parent_cmd_custom_pins', JSON.stringify(saved));
-      renderCustomPins();
-    }
-
     function escapeHtml(str) {
-      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+      if (!str) return '';
+      return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
     }
 
     function escapeJs(str) {
-      return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"');
+      if (!str) return '';
+      return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"');
     }
-
-    renderCustomPins();
 
     /* =========================================================
        VICTORY CONFETTI CANNON
@@ -1885,7 +2177,7 @@
       confetti.forEach(p => {
         p.x += p.vx;
         p.y += p.vy;
-        p.vy += 0.35; // gravity
+        p.vy += 0.35;
         p.rot += p.vrot;
         p.alpha -= 0.012;
 
@@ -1905,6 +2197,10 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
     }
+
+    // Initialize on page load
+    loadCommands();
+    renderSoundboard();
   </script>
 </body>
 </html>
