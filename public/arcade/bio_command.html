@@ -1,0 +1,1352 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>BIO-COMMAND: The Human Engine Simulator</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #030712;
+      color: #f0fdf4;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    #game-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      cursor: crosshair;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* TOP COMMAND HUD */
+    .top-hud {
+      position: absolute;
+      top: 14px;
+      left: 20px;
+      right: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+      z-index: 20;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(8, 20, 16, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(34, 197, 94, 0.35);
+      padding: 8px 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6), inset 0 0 12px rgba(34, 197, 94, 0.1);
+      pointer-events: auto;
+    }
+    .brand-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #22c55e, #15803d 70%, #052e16);
+      box-shadow: 0 0 14px rgba(34, 197, 94, 0.8);
+      position: relative;
+    }
+    .brand-icon::after {
+      content: '';
+      position: absolute;
+      top: -3px;
+      left: -3px;
+      right: -3px;
+      bottom: -3px;
+      border-radius: 50%;
+      border: 1.5px dashed rgba(34, 197, 94, 0.6);
+      animation: spin 12s linear infinite;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    .brand-text h1 {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: #f0fdf4;
+    }
+    .brand-text p {
+      font-size: 10px;
+      color: #86efac;
+      opacity: 0.85;
+      letter-spacing: 0.5px;
+    }
+
+    /* TELEMETRY READOUT BAR */
+    .telemetry-bar {
+      display: flex;
+      gap: 18px;
+      background: rgba(8, 20, 16, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(34, 197, 94, 0.25);
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-family: monospace;
+      font-size: 12px;
+      pointer-events: auto;
+    }
+    .tel-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .tel-label {
+      color: #9ca3af;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .tel-val {
+      font-weight: bold;
+      color: #22c55e;
+    }
+    .tel-val.warn { color: #f59e0b; }
+    .tel-val.crit { color: #ef4444; animation: blink 1s infinite; }
+    @keyframes blink { 50% { opacity: 0.4; } }
+
+    /* GLASS PANELS */
+    .glass-panel {
+      background: rgba(8, 20, 16, 0.85);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(34, 197, 94, 0.25);
+      border-radius: 14px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+      pointer-events: auto;
+    }
+
+    /* LEFT SIDEBAR: NEURO-BIOMETRICS CONSOLE */
+    .left-hud {
+      position: absolute;
+      left: 20px;
+      top: 80px;
+      width: 250px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 20;
+    }
+    .panel-heading {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #86efac;
+      border-bottom: 1px solid rgba(34, 197, 94, 0.2);
+      padding-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .bio-gauge {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .gauge-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-family: monospace;
+    }
+    .gauge-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: #111827;
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+    }
+    .gauge-bar-fill {
+      height: 100%;
+      width: 50%;
+      transition: width 0.15s ease-out;
+      border-radius: 3px;
+    }
+    .gauge-desc {
+      font-size: 9px;
+      color: #9ca3af;
+    }
+
+    /* RIGHT SIDEBAR: SCENARIOS & ENGINE TUNING */
+    .right-hud {
+      position: absolute;
+      right: 20px;
+      top: 80px;
+      width: 240px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 20;
+      max-height: calc(100vh - 170px);
+      overflow-y: auto;
+    }
+    .scenario-btn {
+      width: 100%;
+      text-align: left;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: rgba(17, 24, 39, 0.6);
+      border: 1px solid rgba(34, 197, 94, 0.15);
+      color: #cbd5e1;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .scenario-btn:hover {
+      background: rgba(34, 197, 94, 0.15);
+      color: #ffffff;
+      border-color: #22c55e;
+    }
+    .scenario-btn.active {
+      background: rgba(34, 197, 94, 0.25);
+      border-color: #22c55e;
+      color: #86efac;
+      font-weight: bold;
+    }
+
+    /* BOTTOM TACTICAL TOOLBAR */
+    .bottom-hud {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 20px;
+      z-index: 20;
+    }
+    .tool-btn {
+      background: rgba(17, 24, 39, 0.8);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: #f0fdf4;
+      padding: 9px 15px;
+      border-radius: 10px;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      transition: all 0.15s;
+      min-width: 105px;
+    }
+    .tool-btn:hover {
+      background: rgba(34, 197, 94, 0.2);
+      border-color: #22c55e;
+      box-shadow: 0 0 14px rgba(34, 197, 94, 0.3);
+      transform: translateY(-2px);
+    }
+    .tool-btn.active {
+      background: #15803d;
+      border-color: #4ade80;
+      box-shadow: 0 0 16px rgba(74, 222, 128, 0.5);
+    }
+    .tool-hotkey {
+      font-size: 9px;
+      color: #86efac;
+      font-family: monospace;
+    }
+
+    /* ACTION BUTTONS */
+    .btn-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: rgba(17, 24, 39, 0.8);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: #22c55e;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.15s;
+    }
+    .btn-icon:hover {
+      background: rgba(34, 197, 94, 0.25);
+      box-shadow: 0 0 12px rgba(34, 197, 94, 0.4);
+    }
+    .btn-icon.muted {
+      color: #64748b;
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    /* IN-CANVAS TIP */
+    .tip-banner {
+      position: absolute;
+      bottom: 84px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      color: #86efac;
+      background: rgba(8, 20, 16, 0.75);
+      padding: 6px 18px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      border: 1px solid rgba(34, 197, 94, 0.2);
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    /* FLOW STATE BANNER */
+    .flow-banner {
+      position: absolute;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(234, 179, 8, 0.2);
+      border: 1px solid #eab308;
+      box-shadow: 0 0 30px rgba(234, 179, 8, 0.4);
+      color: #fef08a;
+      padding: 6px 20px;
+      border-radius: 20px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-size: 12px;
+      display: none;
+      animation: pulse-flow 1.5s infinite;
+      pointer-events: none;
+    }
+    @keyframes pulse-flow {
+      0%, 100% { opacity: 0.8; transform: translateX(-50%) scale(1); }
+      50% { opacity: 1; transform: translateX(-50%) scale(1.05); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIMULATION CANVAS -->
+  <div id="game-container">
+    <canvas id="bioCanvas"></canvas>
+  </div>
+
+  <!-- TOP HUD -->
+  <div class="top-hud">
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <a href="index.html" style="text-decoration: none; color: #86efac; background: rgba(8, 20, 16, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(34, 197, 94, 0.35); padding: 8px 14px; border-radius: 12px; font-size: 11px; font-weight: bold; pointer-events: auto; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+        &larr; 449 Field Arcade
+      </a>
+      <div class="brand">
+        <div class="brand-icon"></div>
+        <div class="brand-text">
+          <h1>BIO-COMMAND</h1>
+          <p>The Human Engine Simulator</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="telemetry-bar">
+      <div class="tel-item">
+        <span class="tel-label">Heart Rate</span>
+        <span class="tel-val" id="tel-hr">68 BPM</span>
+      </div>
+      <div class="tel-item">
+        <span class="tel-label">Mind State</span>
+        <span class="tel-val" id="tel-state">BASELINE</span>
+      </div>
+      <div class="tel-item">
+        <span class="tel-label">Tasks Crushed</span>
+        <span class="tel-val" id="tel-tasks">0</span>
+      </div>
+      <div class="tel-item">
+        <span class="tel-label">System Score</span>
+        <span class="tel-val" id="tel-score">0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOW STATE OVERLAY INDICATOR -->
+  <div class="flow-banner" id="flow-banner">âš¡ HYPER-DRIVE FLOW STATE ACTIVE âš¡</div>
+
+  <!-- LEFT HUD: NEURO-TELEMETRY GAUGES -->
+  <div class="left-hud glass-panel">
+    <div class="panel-heading">
+      <span>Neural Telemetry</span>
+      <span style="font-size: 9px; opacity: 0.6;">Subject Alpha</span>
+    </div>
+
+    <!-- Dopamine -->
+    <div class="bio-gauge">
+      <div class="gauge-header">
+        <span style="color: #60a5fa;">Dopamine (Pursuit)</span>
+        <span id="val-dopamine" style="color: #60a5fa;">65%</span>
+      </div>
+      <div class="gauge-bar-bg">
+        <div class="gauge-bar-fill" id="bar-dopamine" style="background: linear-gradient(90deg, #2563eb, #60a5fa); width: 65%;"></div>
+      </div>
+      <span class="gauge-desc">Reward drive &amp; friction tolerance</span>
+    </div>
+
+    <!-- Acetylcholine -->
+    <div class="bio-gauge">
+      <div class="gauge-header">
+        <span style="color: #34d399;">Acetylcholine (Focus)</span>
+        <span id="val-ach" style="color: #34d399;">50%</span>
+      </div>
+      <div class="gauge-bar-bg">
+        <div class="gauge-bar-fill" id="bar-ach" style="background: linear-gradient(90deg, #059669, #34d399); width: 50%;"></div>
+      </div>
+      <span class="gauge-desc">Visual attention tunnel &amp; distraction shield</span>
+    </div>
+
+    <!-- Adrenaline -->
+    <div class="bio-gauge">
+      <div class="gauge-header">
+        <span style="color: #f59e0b;">Adrenaline (Energy)</span>
+        <span id="val-adrenaline" style="color: #f59e0b;">40%</span>
+      </div>
+      <div class="gauge-bar-bg">
+        <div class="gauge-bar-fill" id="bar-adrenaline" style="background: linear-gradient(90deg, #d97706, #fbbf24); width: 40%;"></div>
+      </div>
+      <span class="gauge-desc">Physical speed &amp; task engagement power</span>
+    </div>
+
+    <!-- Cortisol -->
+    <div class="bio-gauge">
+      <div class="gauge-header">
+        <span style="color: #f87171;">Cortisol (Panic / Alarm)</span>
+        <span id="val-cortisol" style="color: #f87171;">20%</span>
+      </div>
+      <div class="gauge-bar-bg">
+        <div class="gauge-bar-fill" id="bar-cortisol" style="background: linear-gradient(90deg, #dc2626, #f87171); width: 20%;"></div>
+      </div>
+      <span class="gauge-desc">Triggers system freeze if &gt; 80%</span>
+    </div>
+
+    <!-- Willpower Battery -->
+    <div class="bio-gauge" style="margin-top: 4px;">
+      <div class="gauge-header">
+        <span style="color: #e2e8f0; font-weight: bold;">Kinetic Momentum</span>
+        <span id="val-momentum" style="color: #e2e8f0; font-weight: bold;">30%</span>
+      </div>
+      <div class="gauge-bar-bg" style="height: 10px;">
+        <div class="gauge-bar-fill" id="bar-momentum" style="background: linear-gradient(90deg, #10b981, #6ee7b7); width: 30%;"></div>
+      </div>
+      <span class="gauge-desc">Reduces energetic friction of adult tasks</span>
+    </div>
+  </div>
+
+  <!-- RIGHT HUD: SHIFTS & SCENARIOS -->
+  <div class="right-hud glass-panel">
+    <div class="panel-heading">
+      <span>Operational Shifts</span>
+    </div>
+    <button class="scenario-btn active" onclick="loadShift('morning')">
+      ðŸŒ… Shift 1: The 05:00 Morning Ignition
+    </button>
+    <button class="scenario-btn" onclick="loadShift('breakdown')">
+      ðŸš¨ Shift 2: Homestead Emergency Breakdown
+    </button>
+    <button class="scenario-btn" onclick="loadShift('gauntlet')">
+      âš” Shift 3: The 90-Min Deep Work Gauntlet
+    </button>
+    <button class="scenario-btn" onclick="loadShift('endless')">
+      â™¾ Shift 4: Endless Consciousness Field
+    </button>
+
+    <div class="panel-heading" style="margin-top: 6px;">
+      <span>Human Engine Rules</span>
+    </div>
+    <div style="font-size: 10px; color: #9ca3af; line-height: 1.4; display: flex; flex-direction: column; gap: 6px;">
+      <p>ðŸŽ¯ <strong>Gaze Laser</strong>: Lock eyes on a task to melt friction.</p>
+      <p>ðŸ« <strong>Vagal Sigh</strong>: Flush Cortisol when redlined into freeze.</p>
+      <p>ðŸ”ª <strong>Chunk Slicer</strong>: Cut big tasks into micro-wins for dopamine.</p>
+      <p>âš¡ <strong>Flow State</strong>: Chain 3 tasks to unlock unstoppable hyper-drive.</p>
+    </div>
+  </div>
+
+  <!-- BOTTOM TACTICAL TOOLBAR -->
+  <div class="bottom-hud glass-panel">
+    <button class="tool-btn active" id="tool-gaze" onclick="selectTool('gaze')">
+      <span>ðŸŽ¯ Gaze Laser</span>
+      <span class="tool-hotkey">[Key 1 / Click Drag]</span>
+    </button>
+    <button class="tool-btn" id="tool-sigh" onclick="triggerPhysiologicalSigh()">
+      <span>ðŸ« Vagal Sigh</span>
+      <span class="tool-hotkey">[Key 2 / Space]</span>
+    </button>
+    <button class="tool-btn" id="tool-slice" onclick="selectTool('slice')">
+      <span>ðŸ”ª Chunk Slicer</span>
+      <span class="tool-hotkey">[Key 3]</span>
+    </button>
+    <button class="tool-btn" id="tool-somatic" onclick="triggerSomaticKick()">
+      <span>ðŸ‘Ÿ Somatic Kick</span>
+      <span class="tool-hotkey">[Key 4]</span>
+    </button>
+    <button class="tool-btn" id="tool-emp" onclick="triggerDistractionEmp()">
+      <span>ðŸ›¡ Focus EMP</span>
+      <span class="tool-hotkey">[Key 5]</span>
+    </button>
+
+    <div style="display: flex; gap: 8px; margin-left: 6px;">
+      <button class="btn-icon" id="sound-btn" onclick="toggleAudio()" title="Sound On/Off">
+        ðŸ”Š
+      </button>
+      <button class="btn-icon" onclick="resetShift()" title="Restart Shift">
+        ðŸ”„
+      </button>
+    </div>
+  </div>
+
+  <!-- HINT BANNER -->
+  <div class="tip-banner" id="tip-banner">
+    Drag Gaze Laser from Subject Alpha to a Task â€¢ Press Space for Physiological Sigh
+  </div>
+
+  <!-- BIO-COMMAND ENGINE SCRIPT -->
+  <script>
+    /* ==========================================================
+       BIO-COMMAND: THE HUMAN ENGINE SIMULATOR SCRIPT
+       ========================================================== */
+    const canvas = document.getElementById('bioCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let width, height;
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Sound Synthesizer (Native Web Audio API)
+    let audioCtx = null;
+    let audioEnabled = false;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      const btn = document.getElementById('sound-btn');
+      if (audioEnabled) {
+        initAudio();
+        btn.classList.remove('muted');
+        btn.innerText = 'ðŸ”Š';
+        playSound('laser', 300, 600, 0.15);
+      } else {
+        btn.classList.add('muted');
+        btn.innerText = 'ðŸ”‡';
+      }
+    }
+
+    function playSound(type, freq1 = 200, freq2 = 400, dur = 0.2) {
+      if (!audioEnabled || !audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        const now = audioCtx.currentTime;
+        if (type === 'heartbeat') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(75, now);
+          osc.frequency.exponentialRampToValueAtTime(30, now + 0.12);
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.linearRampToValueAtTime(0.001, now + 0.12);
+          osc.start();
+          osc.stop(now + 0.12);
+        } else if (type === 'laser') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(freq1, now);
+          osc.frequency.exponentialRampToValueAtTime(freq2, now + dur);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.linearRampToValueAtTime(0.001, now + dur);
+          osc.start();
+          osc.stop(now + dur);
+        } else if (type === 'dopamine') {
+          // Major chord chime
+          [440, 554.37, 659.25].forEach((f, idx) => {
+            const o = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            o.type = 'triangle';
+            o.frequency.setValueAtTime(f, now + idx * 0.05);
+            g.gain.setValueAtTime(0.1, now + idx * 0.05);
+            g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.05 + 0.35);
+            o.connect(g);
+            g.connect(audioCtx.destination);
+            o.start(now + idx * 0.05);
+            o.stop(now + idx * 0.05 + 0.35);
+          });
+        } else if (type === 'sigh') {
+          // Soft rushing breath
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(140, now);
+          osc.frequency.exponentialRampToValueAtTime(60, now + 0.6);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.linearRampToValueAtTime(0.001, now + 0.6);
+          osc.start();
+          osc.stop(now + 0.6);
+        } else if (type === 'emp') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(800, now);
+          osc.frequency.exponentialRampToValueAtTime(50, now + 0.45);
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.linearRampToValueAtTime(0.001, now + 0.45);
+          osc.start();
+          osc.stop(now + 0.45);
+        }
+      } catch (e) {}
+    }
+
+    /* ==========================================================
+       SUBJECT ALPHA BIOLOGICAL STATE MODEL
+       ========================================================== */
+    const alpha = {
+      x: 0,
+      y: 0,
+      radius: 22,
+      // Biometrics (0 - 100 scale)
+      dopamine: 65,
+      acetylcholine: 50,
+      adrenaline: 40,
+      cortisol: 20,
+      momentum: 30,
+      heartRate: 68,
+      isFrozen: false,
+      isFlowState: false,
+      flowStreak: 0,
+      gazeTarget: null,
+      breathCycle: 0,
+      pulseAnim: 0
+    };
+
+    let activeTool = 'gaze'; // 'gaze' or 'slice'
+    let currentShift = 'morning';
+    let tasksCompleted = 0;
+    let score = 0;
+
+    // Entities in the field
+    let tasks = [];
+    let distractions = [];
+    let particles = [];
+    let shockwaves = [];
+
+    /* ==========================================================
+       ENTITY DEFINITIONS
+       ========================================================== */
+    class TaskEntity {
+      constructor(name, x, y, hp, type = 'normal') {
+        this.name = name;
+        this.x = x;
+        this.y = y;
+        this.maxHp = hp;
+        this.hp = hp;
+        this.type = type; // 'normal', 'heavy', 'crisis'
+        this.radius = Math.max(24, Math.min(50, Math.sqrt(hp) * 4.5));
+        this.frictionArmor = type === 'heavy' ? 0.7 : 0.3; // % damage resisted
+        this.color = type === 'crisis' ? '#ef4444' : (type === 'heavy' ? '#f59e0b' : '#38bdf8');
+        this.driftAngle = Math.random() * Math.PI * 2;
+        this.driftSpeed = 0.25;
+        this.isLocked = false;
+      }
+
+      update() {
+        this.x += Math.cos(this.driftAngle) * this.driftSpeed;
+        this.y += Math.sin(this.driftAngle) * this.driftSpeed;
+
+        // Bounce gently inside canvas bounds
+        if (this.x < 100 || this.x > width - 100) this.driftAngle = Math.PI - this.driftAngle;
+        if (this.y < 120 || this.y > height - 120) this.driftAngle = -this.driftAngle;
+      }
+
+      draw(ctx) {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+
+        // Target Aura / Lock highlight
+        if (alpha.gazeTarget === this) {
+          ctx.beginPath();
+          ctx.arc(0, 0, this.radius + 8, 0, Math.PI * 2);
+          ctx.strokeStyle = '#22c55e';
+          ctx.lineWidth = 2.5;
+          ctx.setLineDash([6, 6]);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+
+        // Monolith Disk
+        ctx.beginPath();
+        ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = '#0f172a';
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = 2.5;
+        ctx.fill();
+        ctx.stroke();
+
+        // Inner HP Bar ring
+        const hpPct = Math.max(0, this.hp / this.maxHp);
+        ctx.beginPath();
+        ctx.arc(0, 0, this.radius - 4, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * hpPct);
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = 4;
+        ctx.stroke();
+
+        // Title text
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = 'bold 11px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(this.name, 0, 4);
+
+        // HP read
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '9px monospace';
+        ctx.fillText(`${Math.ceil(this.hp)} HP`, 0, 16);
+
+        ctx.restore();
+      }
+    }
+
+    class DistractionSinkhole {
+      constructor(name, x, y, pullRadius = 180) {
+        this.name = name;
+        this.x = x;
+        this.y = y;
+        this.radius = 26;
+        this.pullRadius = pullRadius;
+        this.color = '#c084fc';
+        this.rot = 0;
+      }
+
+      update() {
+        this.rot += 0.04;
+        // Gravitational pull on Alpha if Alpha has low Acetylcholine/Dopamine
+        const dx = this.x - alpha.x;
+        const dy = this.y - alpha.y;
+        const dist = Math.hypot(dx, dy);
+
+        if (dist < this.pullRadius && !alpha.isFlowState) {
+          const resistance = (alpha.acetylcholine + alpha.momentum) / 160.0;
+          const pullForce = (1.0 - Math.min(0.9, resistance)) * 0.45;
+          alpha.x += (dx / dist) * pullForce;
+          alpha.y += (dy / dist) * pullForce;
+
+          // Drain dopamine if Alpha is trapped in the center
+          if (dist < this.radius + alpha.radius) {
+            alpha.dopamine = Math.max(5, alpha.dopamine - 0.25);
+            alpha.cortisol = Math.min(100, alpha.cortisol + 0.15);
+            alpha.momentum = Math.max(0, alpha.momentum - 0.3);
+          }
+        }
+      }
+
+      draw(ctx) {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+
+        // Pull field radius
+        ctx.beginPath();
+        ctx.arc(0, 0, this.pullRadius, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(192, 132, 252, 0.12)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Swirling vortex spiral
+        ctx.rotate(this.rot);
+        for (let i = 0; i < 3; i++) {
+          ctx.beginPath();
+          ctx.arc(0, 0, this.radius - i * 6, (i * Math.PI) / 1.5, (i * Math.PI) / 1.5 + Math.PI);
+          ctx.strokeStyle = 'rgba(216, 180, 254, 0.7)';
+          ctx.lineWidth = 2.5;
+          ctx.stroke();
+        }
+
+        ctx.beginPath();
+        ctx.arc(0, 0, this.radius * 0.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#2e1065';
+        ctx.fill();
+
+        ctx.fillStyle = '#f3e8ff';
+        ctx.font = 'bold 10px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(this.name, 0, this.radius + 14);
+
+        ctx.restore();
+      }
+    }
+
+    class Particle {
+      constructor(x, y, vx, vy, color, size = 3, life = 1.0) {
+        this.x = x;
+        this.y = y;
+        this.vx = vx;
+        this.vy = vy;
+        this.color = color;
+        this.size = size;
+        this.life = life;
+        this.decay = Math.random() * 0.03 + 0.02;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.life -= this.decay;
+      }
+      draw(ctx) {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = Math.max(0, this.life);
+        ctx.fill();
+        ctx.globalAlpha = 1.0;
+      }
+    }
+
+    /* ==========================================================
+       TACTICAL LEVERS & ACTIONS
+       ========================================================== */
+    function selectTool(toolName) {
+      activeTool = toolName;
+      document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById('tool-' + toolName);
+      if (activeBtn) activeBtn.classList.add('active');
+    }
+
+    // Physiological Sigh (Two Sniffs In + Long Exhale)
+    function triggerPhysiologicalSigh() {
+      initAudio();
+      playSound('sigh');
+
+      // Immediate Cortisol Flush & Heart Rate Drop
+      alpha.cortisol = Math.max(10, alpha.cortisol - 35);
+      alpha.heartRate = Math.max(62, alpha.heartRate - 18);
+      alpha.acetylcholine = Math.min(100, alpha.acetylcholine + 15);
+      alpha.isFrozen = false;
+
+      // Expand visual calming shockwave
+      shockwaves.push({
+        x: alpha.x,
+        y: alpha.y,
+        radius: 10,
+        maxRadius: 240,
+        color: '#34d399'
+      });
+
+      showTip('ðŸ« Vagal Reset: Cortisol dumped (-35%) â€¢ Heart rate calmed');
+    }
+
+    // Somatic Kick (Motor Override)
+    function triggerSomaticKick() {
+      initAudio();
+      playSound('laser', 150, 400, 0.2);
+
+      // Force kinetic velocity
+      alpha.momentum = Math.min(100, alpha.momentum + 30);
+      alpha.adrenaline = Math.min(85, alpha.adrenaline + 20);
+      alpha.isFrozen = false;
+
+      // Scatter sparks
+      for (let i = 0; i < 20; i++) {
+        const a = Math.random() * Math.PI * 2;
+        const spd = Math.random() * 4 + 2;
+        particles.push(new Particle(alpha.x, alpha.y, Math.cos(a) * spd, Math.sin(a) * spd, '#fbbf24', 3));
+      }
+
+      showTip('ðŸ‘Ÿ Somatic Kick: Physical motor cortex engaged â€¢ Momentum +30%');
+    }
+
+    // Focus EMP (Purge Distractions)
+    function triggerDistractionEmp() {
+      initAudio();
+      playSound('emp');
+
+      // Purge nearby distractions
+      distractions = distractions.filter(d => {
+        const dist = Math.hypot(d.x - alpha.x, d.y - alpha.y);
+        if (dist < 320) {
+          for (let i = 0; i < 15; i++) {
+            const a = Math.random() * Math.PI * 2;
+            const spd = Math.random() * 3 + 1;
+            particles.push(new Particle(d.x, d.y, Math.cos(a) * spd, Math.sin(a) * spd, '#c084fc', 3.5));
+          }
+          return false;
+        }
+        return true;
+      });
+
+      shockwaves.push({
+        x: alpha.x,
+        y: alpha.y,
+        radius: 10,
+        maxRadius: 320,
+        color: '#60a5fa'
+      });
+
+      alpha.acetylcholine = Math.min(100, alpha.acetylcholine + 25);
+      showTip('ðŸ›¡ Focus EMP: Digital distractions vaporized â€¢ Focus restored');
+    }
+
+    // Slice Task (Micro-Chunking)
+    function sliceTask(targetTask) {
+      if (!targetTask || targetTask.hp <= 30) return;
+      initAudio();
+      playSound('laser', 600, 900, 0.15);
+
+      const subHp = targetTask.hp / 3;
+      const idx = tasks.indexOf(targetTask);
+      if (idx !== -1) {
+        tasks.splice(idx, 1);
+        for (let i = 0; i < 3; i++) {
+          const ang = (i * Math.PI * 2) / 3;
+          const sub = new TaskEntity(
+            `Part ${i + 1}`,
+            targetTask.x + Math.cos(ang) * 35,
+            targetTask.y + Math.sin(ang) * 35,
+            subHp,
+            'normal'
+          );
+          tasks.push(sub);
+        }
+      }
+
+      showTip('ðŸ”ª Chunk Slicer: Colossal task broken into 3 bite-sized wins');
+    }
+
+    /* ==========================================================
+       USER INPUT LISTENERS
+       ========================================================== */
+    let isDraggingGaze = false;
+
+    canvas.addEventListener('mousedown', (e) => {
+      initAudio();
+      const clickX = e.clientX;
+      const clickY = e.clientY;
+
+      // Find clicked task
+      let hitTask = null;
+      for (let t of tasks) {
+        if (Math.hypot(t.x - clickX, t.y - clickY) < t.radius + 8) {
+          hitTask = t;
+          break;
+        }
+      }
+
+      if (activeTool === 'slice' && hitTask) {
+        sliceTask(hitTask);
+        return;
+      }
+
+      // Check click on Alpha to start Gaze Laser drag
+      if (Math.hypot(alpha.x - clickX, alpha.y - clickY) < alpha.radius + 15 || hitTask) {
+        isDraggingGaze = true;
+        if (hitTask) {
+          alpha.gazeTarget = hitTask;
+          playSound('laser', 400, 750, 0.12);
+        }
+      }
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (isDraggingGaze) {
+        // Find if hovering a task
+        let found = null;
+        for (let t of tasks) {
+          if (Math.hypot(t.x - e.clientX, t.y - e.clientY) < t.radius + 10) {
+            found = t;
+            break;
+          }
+        }
+        alpha.gazeTarget = found;
+      }
+    });
+
+    window.addEventListener('mouseup', () => {
+      isDraggingGaze = false;
+    });
+
+    // Keyboard Shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Digit1') selectTool('gaze');
+      else if (e.code === 'Digit2' || e.code === 'Space') {
+        e.preventDefault();
+        triggerPhysiologicalSigh();
+      } else if (e.code === 'Digit3') selectTool('slice');
+      else if (e.code === 'Digit4') triggerSomaticKick();
+      else if (e.code === 'Digit5') triggerDistractionEmp();
+    });
+
+    function showTip(text) {
+      const banner = document.getElementById('tip-banner');
+      banner.innerText = text;
+      banner.style.opacity = '1';
+      clearTimeout(banner._timer);
+      banner._timer = setTimeout(() => { banner.style.opacity = '0.7'; }, 3500);
+    }
+
+    /* ==========================================================
+       SHIFTS & SCENARIOS LOADER
+       ========================================================== */
+    function resetShift() {
+      loadShift(currentShift);
+    }
+
+    function loadShift(shiftName) {
+      currentShift = shiftName;
+      initAudio();
+
+      document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.scenario-btn')).find(b => b.getAttribute('onclick').includes(shiftName));
+      if (activeBtn) activeBtn.classList.add('active');
+
+      // Reset Alpha
+      alpha.x = width / 2;
+      alpha.y = height / 2;
+      alpha.dopamine = 65;
+      alpha.acetylcholine = 50;
+      alpha.adrenaline = 40;
+      alpha.cortisol = 20;
+      alpha.momentum = 30;
+      alpha.heartRate = 68;
+      alpha.isFrozen = false;
+      alpha.isFlowState = false;
+      alpha.flowStreak = 0;
+      alpha.gazeTarget = null;
+
+      tasks = [];
+      distractions = [];
+      particles = [];
+      shockwaves = [];
+
+      if (shiftName === 'morning') {
+        // Shift 1: The 05:00 Morning Ignition
+        tasks.push(new TaskEntity('Cold Water Hydration', width * 0.35, height * 0.38, 40));
+        tasks.push(new TaskEntity('Physical Mobility Drill', width * 0.65, height * 0.38, 60));
+        tasks.push(new TaskEntity('Review Daily Targets', width * 0.5, height * 0.25, 75));
+
+        distractions.push(new DistractionSinkhole('Doom Scroll Phone', width * 0.28, height * 0.65, 160));
+        distractions.push(new DistractionSinkhole('News Headlines Loop', width * 0.72, height * 0.65, 160));
+      }
+      else if (shiftName === 'breakdown') {
+        // Shift 2: Homestead Emergency Breakdown
+        alpha.cortisol = 72;
+        alpha.heartRate = 112;
+
+        tasks.push(new TaskEntity('Skid Steer Hydraulic Leak', width * 0.35, height * 0.32, 140, 'crisis'));
+        tasks.push(new TaskEntity('Breached Paddock 2 Fence', width * 0.65, height * 0.32, 120, 'crisis'));
+        tasks.push(new TaskEntity('Source Replacement Fittings', width * 0.5, height * 0.22, 90));
+
+        distractions.push(new DistractionSinkhole('Frantic Panic Spiral', width * 0.5, height * 0.72, 210));
+        distractions.push(new DistractionSinkhole('Endless Phone Forum Search', width * 0.25, height * 0.55, 150));
+      }
+      else if (shiftName === 'gauntlet') {
+        // Shift 3: The 90-Min Deep Work Gauntlet
+        tasks.push(new TaskEntity('Quarterly Financial Audit', width * 0.32, height * 0.3, 220, 'heavy'));
+        tasks.push(new TaskEntity('Security Clearance Dossier', width * 0.68, height * 0.3, 260, 'heavy'));
+        tasks.push(new TaskEntity('Technical White Paper Draft', width * 0.5, height * 0.2, 300, 'heavy'));
+
+        distractions.push(new DistractionSinkhole('Email Inbox Vacuum', width * 0.25, height * 0.65, 190));
+        distractions.push(new DistractionSinkhole('Tab Hoarding Mirage', width * 0.75, height * 0.65, 190));
+        distractions.push(new DistractionSinkhole('Procrastination Snacking', width * 0.5, height * 0.78, 170));
+      }
+      else if (shiftName === 'endless') {
+        // Shift 4: Endless Field
+        spawnRandomTask();
+        spawnRandomTask();
+        spawnRandomDistraction();
+      }
+
+      showTip(`Loaded: ${shiftName.toUpperCase()} SHIFT â€¢ Take Command`);
+    }
+
+    function spawnRandomTask() {
+      const names = ['Field Inspection', 'W2 Report', 'Trailer Bearing Grease', 'Paddock Move', 'Lesson Plan', 'Code Commit'];
+      const name = names[Math.floor(Math.random() * names.length)];
+      const x = Math.random() * (width - 240) + 120;
+      const y = Math.random() * (height - 240) + 120;
+      tasks.push(new TaskEntity(name, x, y, Math.random() * 80 + 40));
+    }
+
+    function spawnRandomDistraction() {
+      const names = ['Doom Scroll', 'Clickbait Trap', 'Rumination Loop', 'Phone Ping'];
+      const name = names[Math.floor(Math.random() * names.length)];
+      const x = Math.random() * (width - 240) + 120;
+      const y = Math.random() * (height - 240) + 120;
+      distractions.push(new DistractionSinkhole(name, x, y, 170));
+    }
+
+    /* ==========================================================
+       MAIN SIMULATION & PHYSICS LOOP
+       ========================================================== */
+    let lastTime = performance.now();
+
+    function updateSimulation(dt) {
+      // 1. Check Cortisol Freeze condition
+      if (alpha.cortisol >= 85) {
+        alpha.isFrozen = true;
+        alpha.momentum = Math.max(0, alpha.momentum - 0.5);
+      } else {
+        alpha.isFrozen = false;
+      }
+
+      // 2. Heart rate tracking
+      const targetHr = 60 + (alpha.cortisol * 0.6) + (alpha.adrenaline * 0.4) - (alpha.acetylcholine * 0.2);
+      alpha.heartRate = alpha.heartRate * 0.95 + targetHr * 0.05;
+
+      // 3. Flow State tracking
+      if (alpha.flowStreak >= 3 && alpha.cortisol < 35 && alpha.momentum > 50) {
+        if (!alpha.isFlowState) {
+          alpha.isFlowState = true;
+          document.getElementById('flow-banner').style.display = 'block';
+          playSound('dopamine');
+        }
+      } else {
+        if (alpha.isFlowState && alpha.cortisol > 50) {
+          alpha.isFlowState = false;
+          document.getElementById('flow-banner').style.display = 'none';
+        }
+      }
+
+      // 4. Update Gaze Laser Attack on Task
+      if (alpha.gazeTarget && tasks.includes(alpha.gazeTarget) && !alpha.isFrozen) {
+        const target = alpha.gazeTarget;
+
+        // Damage formula: scaled by Acetylcholine & Momentum, modified by Adrenaline
+        const flowMult = alpha.isFlowState ? 2.5 : 1.0;
+        const dps = ((alpha.acetylcholine * 0.4 + alpha.momentum * 0.3 + alpha.adrenaline * 0.3) / 8.0) * flowMult;
+        target.hp -= dps * dt;
+
+        // Spark particles flying toward target
+        const dx = target.x - alpha.x;
+        const dy = target.y - alpha.y;
+        const dist = Math.hypot(dx, dy);
+        particles.push(new Particle(
+          alpha.x + (dx / dist) * alpha.radius,
+          alpha.y + (dy / dist) * alpha.radius,
+          (dx / dist) * 7 + (Math.random() - 0.5) * 2,
+          (dy / dist) * 7 + (Math.random() - 0.5) * 2,
+          alpha.isFlowState ? '#fef08a' : '#22c55e',
+          3
+        ));
+
+        // Task Destroyed!
+        if (target.hp <= 0) {
+          tasksCompleted++;
+          score += Math.round(target.maxHp * 10);
+          alpha.flowStreak++;
+
+          // Dopamine Rush & Momentum Surge
+          alpha.dopamine = Math.min(100, alpha.dopamine + 22);
+          alpha.momentum = Math.min(100, alpha.momentum + 25);
+          alpha.cortisol = Math.max(10, alpha.cortisol - 15);
+
+          // SFX
+          playSound('dopamine');
+
+          // Burst particles
+          for (let i = 0; i < 28; i++) {
+            const a = Math.random() * Math.PI * 2;
+            const spd = Math.random() * 5 + 2;
+            particles.push(new Particle(target.x, target.y, Math.cos(a) * spd, Math.sin(a) * spd, target.color, 4));
+          }
+
+          tasks = tasks.filter(t => t !== target);
+          alpha.gazeTarget = null;
+
+          // Auto-spawn in endless
+          if (currentShift === 'endless') {
+            spawnRandomTask();
+            if (Math.random() < 0.4) spawnRandomDistraction();
+          }
+
+          showTip(`ðŸŽ¯ Task Cleared! Clean Dopamine (+22%) â€¢ Kinetic Momentum (+25%)`);
+        }
+      }
+
+      // 5. Update Tasks & Distractions
+      for (let t of tasks) t.update();
+      for (let d of distractions) d.update();
+
+      // 6. Update Particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        particles[i].update();
+        if (particles[i].life <= 0) particles.splice(i, 1);
+      }
+
+      // 7. Update Shockwaves
+      for (let i = shockwaves.length - 1; i >= 0; i--) {
+        const sw = shockwaves[i];
+        sw.radius += 8;
+        if (sw.radius >= sw.maxRadius) shockwaves.splice(i, 1);
+      }
+
+      // Update Telemetry HUD elements
+      updateHudElements();
+    }
+
+    function updateHudElements() {
+      document.getElementById('tel-hr').innerText = Math.round(alpha.heartRate) + ' BPM';
+      document.getElementById('tel-tasks').innerText = tasksCompleted;
+      document.getElementById('tel-score').innerText = score;
+
+      const stateEl = document.getElementById('tel-state');
+      if (alpha.isFrozen) {
+        stateEl.innerText = 'FREEZE (CORTISOL CRIT)';
+        stateEl.className = 'tel-val crit';
+      } else if (alpha.isFlowState) {
+        stateEl.innerText = 'HYPER-DRIVE FLOW';
+        stateEl.className = 'tel-val warn';
+      } else {
+        stateEl.innerText = 'ENGAGED';
+        stateEl.className = 'tel-val';
+      }
+
+      // Gauges
+      function setGauge(id, val) {
+        document.getElementById(`val-${id}`).innerText = Math.round(val) + '%';
+        document.getElementById(`bar-${id}`).style.width = Math.min(100, Math.max(0, val)) + '%';
+      }
+      setGauge('dopamine', alpha.dopamine);
+      setGauge('ach', alpha.acetylcholine);
+      setGauge('adrenaline', alpha.adrenaline);
+      setGauge('cortisol', alpha.cortisol);
+      setGauge('momentum', alpha.momentum);
+    }
+
+    /* ==========================================================
+       RENDERING PIPELINE
+       ========================================================== */
+    function render() {
+      ctx.fillStyle = '#030712';
+      ctx.fillRect(0, 0, width, height);
+
+      // 1. Subtle Consciousness Grid
+      ctx.strokeStyle = 'rgba(34, 197, 94, 0.05)';
+      ctx.lineWidth = 1;
+      const grid = 60;
+      for (let x = 0; x < width; x += grid) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+        ctx.stroke();
+      }
+      for (let y = 0; y < height; y += grid) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+      }
+
+      // 2. Draw Distractions
+      for (let d of distractions) d.draw(ctx);
+
+      // 3. Draw Tasks
+      for (let t of tasks) t.draw(ctx);
+
+      // 4. Draw Gaze Laser Beam
+      if (alpha.gazeTarget && !alpha.isFrozen) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(alpha.x, alpha.y);
+        ctx.lineTo(alpha.gazeTarget.x, alpha.gazeTarget.y);
+        ctx.strokeStyle = alpha.isFlowState ? 'rgba(254, 240, 138, 0.85)' : 'rgba(34, 197, 94, 0.8)';
+        ctx.lineWidth = alpha.isFlowState ? 5 : 3;
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // 5. Draw Shockwaves
+      for (let sw of shockwaves) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = sw.color;
+        ctx.lineWidth = 2.5;
+        ctx.globalAlpha = Math.max(0, 1.0 - sw.radius / sw.maxRadius);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // 6. Draw Particles
+      for (let p of particles) p.draw(ctx);
+
+      // 7. Draw Subject Alpha (Avatar)
+      ctx.save();
+      ctx.translate(alpha.x, alpha.y);
+
+      // Pulsing Bio Aura
+      alpha.pulseAnim += 0.05;
+      const auraPulse = Math.sin(alpha.pulseAnim) * 5;
+      ctx.beginPath();
+      ctx.arc(0, 0, alpha.radius + 12 + auraPulse, 0, Math.PI * 2);
+      ctx.fillStyle = alpha.isFrozen ? 'rgba(239, 68, 68, 0.2)' : (alpha.isFlowState ? 'rgba(234, 179, 8, 0.25)' : 'rgba(34, 197, 94, 0.15)');
+      ctx.fill();
+
+      // Body Core
+      ctx.beginPath();
+      ctx.arc(0, 0, alpha.radius, 0, Math.PI * 2);
+      ctx.fillStyle = alpha.isFrozen ? '#7f1d1d' : (alpha.isFlowState ? '#854d0e' : '#065f46');
+      ctx.strokeStyle = alpha.isFrozen ? '#ef4444' : (alpha.isFlowState ? '#fde047' : '#4ade80');
+      ctx.lineWidth = 3;
+      ctx.fill();
+      ctx.stroke();
+
+      // Kinetic Momentum Ring
+      ctx.beginPath();
+      ctx.arc(0, 0, alpha.radius + 4, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * (alpha.momentum / 100)));
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      // Avatar Label
+      ctx.fillStyle = '#f0fdf4';
+      ctx.font = 'bold 9px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('ALPHA', 0, 3);
+
+      ctx.restore();
+    }
+
+    // Animation Loop
+    function loop(currentTime) {
+      const dt = Math.min(0.1, (currentTime - lastTime) / 1000);
+      lastTime = currentTime;
+
+      updateSimulation(dt);
+      render();
+
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+
+    // Initial load
+    window.addEventListener('DOMContentLoaded', () => {
+      loadShift('morning');
+    });
+  </script>
+  <script src="telemetry.js"></script>
+</body>
+</html>

@@ -3,14 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>PastureOps - Testing: Poultry Time-Motion Simulator</title>
+<title>PastureOps - Testing: Single-Operator Poultry Enterprise</title>
 <style>
   :root {
-    --bg-dark: #0f1411;
-    --canvas-bg: #090d0b;
-    --panel-bg: #161e18;
-    --panel-sub: #1e2922;
-    --panel-border: #28372d;
+    --bg-dark: #0a0e0c;
+    --canvas-bg: #060907;
+    --panel-bg: #141b16;
+    --panel-sub: #1b241e;
+    --panel-card: #101612;
+    --panel-border: #243328;
     --text-primary: #e6ede8;
     --text-muted: #8ea394;
     --accent-green: #48bb78;
@@ -19,11 +20,7 @@
     --accent-cyan: #38b2ac;
     --accent-red: #f56565;
     --accent-blue: #4299e1;
-    --pasture-fresh: #1e3822;
-    --pasture-fresh-alt: #1a321e;
-    --pasture-grazed: #4a3c22;
-    --farmstead-bg: #1e2621;
-    --target-color: #ecc94b;
+    --accent-purple: #9f7aea;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
@@ -41,33 +38,129 @@
   /* TOP STATUS HUD */
   #hud {
     background: var(--panel-bg);
-    border-bottom: 2px solid var(--panel-border);
-    padding: 8px 12px;
+    border-bottom: 1px solid var(--panel-border);
+    padding: 6px 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     z-index: 10;
     flex-shrink: 0;
   }
-  .hud-stat { display: flex; align-items: center; gap: 5px; }
+  .hud-stats-group { display: flex; align-items: center; gap: 8px; }
+  .hud-stat { display: flex; align-items: center; gap: 4px; }
   .hud-badge {
     background: #000;
-    padding: 2px 7px;
+    padding: 2px 6px;
     border-radius: 4px;
     border: 1px solid var(--panel-border);
     color: var(--accent-green);
     font-family: monospace;
+    font-weight: bold;
   }
+  .hud-badge-amber { color: var(--accent-amber); }
+  .hud-badge-blue { color: var(--accent-blue); }
   .hud-tag {
     background: #742a2a;
     color: #feb2b2;
     padding: 2px 5px;
     border-radius: 3px;
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 800;
     letter-spacing: 0.5px;
+  }
+
+  /* TIMELINE HORIZON & TARGET MARKER RIBBON */
+  #timeline-ribbon {
+    background: #0e1410;
+    border-bottom: 2px solid var(--panel-border);
+    padding: 4px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    z-index: 9;
+    flex-shrink: 0;
+  }
+  .timeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+  }
+  .timeline-next-badge {
+    background: rgba(236, 201, 75, 0.15);
+    border: 1px solid var(--accent-amber);
+    color: var(--accent-amber);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-weight: 700;
+    font-size: 10px;
+  }
+  .timeline-track-wrap {
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--panel-border) transparent;
+    padding-bottom: 2px;
+  }
+  .timeline-track-wrap::-webkit-scrollbar { height: 3px; }
+  .timeline-track-wrap::-webkit-scrollbar-thumb { background: var(--panel-border); border-radius: 2px; }
+  .timeline-track {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: max-content;
+    padding: 2px 0;
+  }
+  .t-node {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--panel-sub);
+    border: 1px solid var(--panel-border);
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .t-node:active { transform: scale(0.96); }
+  .t-node.node-today {
+    background: #233b2a;
+    border-color: var(--accent-green);
+    color: #fff;
+    box-shadow: 0 0 8px rgba(72, 187, 120, 0.4);
+  }
+  .t-node.node-met {
+    border-color: var(--accent-green);
+    color: var(--accent-green-bright);
+    background: rgba(72, 187, 120, 0.1);
+  }
+  .t-node.node-amber {
+    border-color: var(--accent-amber);
+    color: var(--accent-amber);
+    background: rgba(236, 201, 75, 0.12);
+  }
+  .t-node.node-urgent {
+    border-color: var(--accent-red);
+    color: #feb2b2;
+    background: rgba(245, 101, 101, 0.2);
+    animation: pulseRed 1.5s infinite;
+  }
+  .t-node.node-future { opacity: 0.65; }
+  @keyframes pulseRed {
+    0%, 100% { box-shadow: 0 0 0 rgba(245, 101, 101, 0); }
+    50% { box-shadow: 0 0 8px rgba(245, 101, 101, 0.6); }
+  }
+  .t-line {
+    width: 14px;
+    height: 2px;
+    background: var(--panel-border);
+    flex-shrink: 0;
   }
 
   /* WORKSPACE LAYOUT */
@@ -86,7 +179,7 @@
     overflow: hidden;
     touch-action: none;
   }
-  canvas { display: block; width: 100%; height: 100%; }
+  canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
 
   /* FLOATING MAP CONTROLS OVERLAY */
   #map-overlay-controls {
@@ -99,7 +192,7 @@
     z-index: 5;
   }
   .map-btn {
-    background: rgba(22, 30, 24, 0.88);
+    background: rgba(20, 27, 22, 0.9);
     backdrop-filter: blur(4px);
     border: 1px solid var(--panel-border);
     color: var(--text-primary);
@@ -109,7 +202,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: 15px;
     cursor: pointer;
     box-shadow: 0 2px 6px rgba(0,0,0,0.4);
   }
@@ -120,7 +213,7 @@
     position: absolute;
     top: 10px;
     left: 10px;
-    background: rgba(18, 24, 20, 0.92);
+    background: rgba(16, 22, 18, 0.94);
     backdrop-filter: blur(6px);
     border: 1px solid var(--accent-amber);
     border-radius: 6px;
@@ -133,51 +226,116 @@
     flex-direction: column;
     gap: 2px;
   }
-  #target-banner strong { color: var(--accent-amber); font-size: 12px; }
+  #target-banner strong { color: var(--accent-amber); }
+
+  /* FLOATING OPERATIONAL TICKER */
+  #event-ticker {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    max-width: 380px;
+    background: rgba(14, 20, 16, 0.92);
+    backdrop-filter: blur(6px);
+    border: 1px solid var(--panel-border);
+    border-left: 3px solid var(--accent-cyan);
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 11px;
+    color: var(--text-muted);
+    z-index: 5;
+    pointer-events: none;
+  }
 
   /* DESKTOP SIDEBAR */
   #sidebar {
-    width: 320px;
+    width: 380px;
     background: var(--panel-bg);
     border-left: 2px solid var(--panel-border);
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
+    overflow: hidden;
     flex-shrink: 0;
   }
 
-  .panel-section {
-    padding: 12px;
-    border-bottom: 1px solid var(--panel-border);
+  /* SIDEBAR TABS */
+  .tab-nav {
+    display: flex;
+    background: #0d130f;
+    border-bottom: 2px solid var(--panel-border);
+    overflow-x: auto;
+    flex-shrink: 0;
   }
-  .panel-title {
+  .tab-btn {
+    flex: 1;
+    min-width: 60px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 10px 4px;
+    cursor: pointer;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .tab-btn.active {
+    color: var(--accent-green);
+    border-bottom-color: var(--accent-green);
+    background: rgba(72, 187, 120, 0.08);
+  }
+
+  .tab-pane {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+    display: none;
+  }
+  .tab-pane.active { display: flex; flex-direction: column; gap: 12px; }
+
+  /* COMMON CARD & ROW STYLES */
+  .card-box {
+    background: var(--panel-card);
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .card-title {
     font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.8px;
     color: var(--text-muted);
-    margin-bottom: 8px;
     display: flex;
     justify-content: space-between;
     font-weight: 700;
   }
+  .data-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    padding: 3px 0;
+    border-bottom: 1px dashed rgba(255,255,255,0.05);
+  }
+  .data-row span:last-child { font-weight: bold; font-family: monospace; }
 
-  /* STAMINA GAUGE */
-  .gauge-container {
+  /* PROGRESS BARS */
+  .pbar-wrap {
     background: #050806;
     border: 1px solid var(--panel-border);
-    height: 20px;
-    border-radius: 10px;
+    height: 16px;
+    border-radius: 8px;
     overflow: hidden;
     position: relative;
-    margin-bottom: 6px;
   }
-  #stamina-bar {
+  .pbar-fill {
     height: 100%;
-    width: 100%;
-    background: linear-gradient(90deg, var(--accent-green), var(--accent-amber));
-    transition: width 0.25s ease, background 0.25s ease;
+    background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
+    transition: width 0.2s ease;
   }
-  .gauge-label {
+  .pbar-label {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
     display: flex;
@@ -189,20 +347,10 @@
     text-shadow: 0 1px 2px #000;
   }
 
-  /* TICKET LIST */
-  .ticket-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    padding: 3px 0;
-    border-bottom: 1px dashed rgba(255,255,255,0.06);
-  }
-  .ticket-row span:last-child { font-weight: bold; font-family: monospace; }
-
   /* BUTTONS */
   .btn {
     background: var(--panel-sub);
-    border: 1px solid var(--accent-green);
+    border: 1px solid var(--panel-border);
     color: var(--text-primary);
     padding: 8px 12px;
     font-size: 12px;
@@ -217,49 +365,42 @@
     gap: 6px;
   }
   .btn:active { background: var(--accent-green); color: #000; }
-  .btn-accent {
-    background: #22543d;
-    border-color: var(--accent-green);
-    color: #fff;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-  }
+  .btn-accent { background: #22543d; border-color: var(--accent-green); color: #fff; }
   .btn-accent:active { background: var(--accent-green); color: #000; }
-  .btn-amber {
-    background: #5d4a17;
-    border-color: var(--accent-amber);
-    color: #fff;
-  }
+  .btn-amber { background: #5d4a17; border-color: var(--accent-amber); color: #fff; }
   .btn-amber:active { background: var(--accent-amber); color: #000; }
+  .btn-blue { background: #2a4365; border-color: var(--accent-blue); color: #fff; }
+  .btn-blue:active { background: var(--accent-blue); color: #000; }
+  .btn-red { background: #742a2a; border-color: var(--accent-red); color: #fff; }
+  .btn-red:active { background: var(--accent-red); color: #000; }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
-  /* BOTTOM RACKS / CONTROL TRAY (Desktop) */
-  #bottom-tray {
-    height: 120px;
-    background: var(--panel-bg);
-    border-top: 2px solid var(--panel-border);
-    display: flex;
-    padding: 8px 12px;
-    gap: 12px;
-    flex-shrink: 0;
+  /* DIRECTIONAL STEP-PULL PAD */
+  .dpad-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 4px;
+    margin-top: 6px;
   }
-  .tray-card {
-    flex: 1;
-    background: #121814;
-    border: 1px solid var(--panel-border);
+  .dpad-btn {
+    background: #17221a;
+    border: 1px solid var(--accent-amber);
+    color: var(--accent-amber);
+    padding: 8px 4px;
+    font-size: 12px;
+    font-weight: bold;
     border-radius: 6px;
-    padding: 8px 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    cursor: pointer;
+    text-align: center;
   }
-  .tray-title { font-size: 11px; color: var(--text-muted); font-weight: 700; }
-  .tray-val { font-size: 16px; font-weight: 800; color: var(--text-primary); font-family: monospace; }
+  .dpad-btn:active { background: var(--accent-amber); color: #000; }
 
   /* MOBILE STICKY THUMB DECK */
   #mobile-thumb-deck {
     display: none;
     background: var(--panel-bg);
     border-top: 2px solid var(--panel-border);
-    padding: 10px 14px;
+    padding: 8px 10px;
     flex-shrink: 0;
     z-index: 20;
     box-shadow: 0 -4px 16px rgba(0,0,0,0.6);
@@ -268,28 +409,43 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 12px;
-    margin-bottom: 8px;
+    font-size: 11px;
+    margin-bottom: 5px;
     font-family: monospace;
   }
+  .thumb-deck-dpad {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+  .thumb-deck-dpad button {
+    flex: 1;
+    background: #162018;
+    border: 1px solid var(--accent-amber);
+    color: var(--accent-amber);
+    font-weight: bold;
+    font-size: 11px;
+    padding: 6px 2px;
+    border-radius: 4px;
+  }
+  .thumb-deck-dpad button:active { background: var(--accent-amber); color: #000; }
+  
   .thumb-deck-actions {
     display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 8px;
+    grid-template-columns: 1fr 1fr 2.2fr;
+    gap: 6px;
   }
   .thumb-deck-actions .btn {
-    padding: 12px 10px;
-    font-size: 13px;
-    border-radius: 8px;
+    padding: 10px 4px;
+    font-size: 11px;
+    border-radius: 6px;
   }
 
-  /* MOBILE DRAWER SHEET (Ticket + Inventory) */
+  /* MOBILE SLIDE-UP DRAWER */
   #mobile-drawer {
     display: none;
     position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    left: 0; right: 0; bottom: 0;
     background: var(--panel-bg);
     border-top: 2px solid var(--panel-border);
     border-radius: 16px 16px 0 0;
@@ -305,27 +461,15 @@
     to { transform: translateY(0); }
   }
   .drawer-handle {
-    width: 40px;
-    height: 4px;
+    width: 40px; height: 4px;
     background: var(--panel-border);
     border-radius: 2px;
     margin: 0 auto 12px auto;
   }
   .drawer-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 12px; padding-bottom: 8px;
     border-bottom: 1px solid var(--panel-border);
-  }
-  .drawer-close {
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    font-size: 20px;
-    cursor: pointer;
-    padding: 4px 8px;
   }
 
   /* MODAL OVERLAY */
@@ -350,13 +494,12 @@
   .param-group label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
   .param-group input[type="range"] { width: 100%; accent-color: var(--accent-green); height: 24px; }
 
-  /* RESPONSIVE MEDIA QUERIES FOR MOBILE */
   @media (max-width: 768px) {
     #sidebar { display: none; }
-    #bottom-tray { display: none; }
     #mobile-thumb-deck { display: block; }
-    #hud { font-size: 12px; padding: 6px 10px; }
-    .hud-badge { padding: 2px 5px; }
+    #hud { font-size: 11px; padding: 5px 8px; }
+    .hud-badge { padding: 1px 4px; }
+    .hud-stats-group { gap: 6px; }
   }
 </style>
 </head>
@@ -364,15 +507,28 @@
 
 <!-- TOP STATUS HUD -->
 <div id="hud">
-  <div class="hud-stat">
+  <div class="hud-stats-group">
     <span class="hud-tag">TESTING</span>
-    <span>📅</span> <span id="hud-day">Day 1</span>
+    <div class="hud-stat">📅 <span id="hud-day">Day 1</span></div>
+    <div class="hud-stat">🪙 <span id="hud-cash" class="hud-badge">$650.00</span></div>
   </div>
-  <div class="hud-stat">🪙 <span id="hud-cash" class="hud-badge">$1,500</span></div>
-  <div class="hud-stat">⚡ <span id="hud-labor">120m</span></div>
-  <div style="display:flex; gap:6px;">
-    <a href="index.html" class="btn" style="padding:2px 7px; font-size:11px;">&larr; Arcade</a>
-    <button class="btn" style="padding:2px 7px; font-size:11px;" onclick="toggleInspector()">⚙️</button>
+  <div class="hud-stats-group">
+    <div class="hud-stat">⚡ <span id="hud-labor" class="hud-badge hud-badge-amber">120m Left</span></div>
+    <div class="hud-stat">👨‍👩‍👧 <span id="hud-fatigue" class="hud-badge hud-badge-blue">Fresh</span></div>
+    <button class="btn" style="padding:2px 6px; font-size:10px;" onclick="toggleInspector()">⚙️</button>
+  </div>
+</div>
+
+<!-- TIMELINE HORIZON & TARGET MARKER RIBBON -->
+<div id="timeline-ribbon">
+  <div class="timeline-header">
+    <span style="font-weight:700;">🎯 OPERATIONAL PLANNING HORIZON</span>
+    <span class="timeline-next-badge" id="horizon-next-action">Next Target: Pull Tractor Forward</span>
+  </div>
+  <div class="timeline-track-wrap">
+    <div class="timeline-track" id="timeline-track">
+      <!-- Injected Milestone Target Nodes -->
+    </div>
   </div>
 </div>
 
@@ -383,13 +539,18 @@
 
     <!-- FLOATING TARGET CALLOUT BANNER -->
     <div id="target-banner">
-      <div><strong>TARGET:</strong> <span id="tb-coord">[6, 12]</span> (<span id="tb-status">On Station</span>)</div>
-      <div style="color:var(--text-muted);">Est. Chore Time: <span id="tb-time" style="color:var(--accent-amber); font-weight:bold;">20.0m</span></div>
+      <div><strong>TARGET:</strong> <span id="tb-coord">[7, 12]</span> (<span id="tb-status">Plan Move</span>)</div>
+      <div style="color:var(--text-muted);">Transit + Pull Burn: <span id="tb-time" style="color:var(--accent-amber); font-weight:bold;">20.0m</span></div>
+    </div>
+
+    <!-- FLOATING OPERATIONAL NEWS TICKER -->
+    <div id="event-ticker">
+      <strong>LOG:</strong> <span id="ticker-msg">Tractor 1 deployed on pasture at [6, 12]. Tap any pasture tile to set target or use D-Pad.</span>
     </div>
 
     <!-- FLOATING MAP CONTROLS OVERLAY -->
     <div id="map-overlay-controls">
-      <button class="map-btn" title="Focus Tractor" onclick="focusOnTractor()">🎯</button>
+      <button class="map-btn" title="Focus Active Flock" onclick="focusOnFlock()">🎯</button>
       <button class="map-btn" title="Fit Pasture Overview" onclick="fitPasture()">🗺️</button>
       <button class="map-btn" title="Zoom In" onclick="adjustZoom(1.25)">➕</button>
       <button class="map-btn" title="Zoom Out" onclick="adjustZoom(0.8)">➖</button>
@@ -398,129 +559,246 @@
 
   <!-- DESKTOP DISPATCH SIDEBAR -->
   <div id="sidebar">
-    <div class="panel-section">
-      <div class="panel-title">OPERATOR STAMINA BUDGET</div>
-      <div class="gauge-container">
-        <div id="stamina-bar"></div>
-        <div class="gauge-label" id="stamina-label">120m / 120m REMAINING</div>
-      </div>
-    </div>
+    <nav class="tab-nav">
+      <button class="tab-btn active" onclick="switchTab('tab-pasture')">🚜 Pasture</button>
+      <button class="tab-btn" onclick="switchTab('tab-flock')">🐥 Flock</button>
+      <button class="tab-btn" onclick="switchTab('tab-workshop')">🔨 Shop</button>
+      <button class="tab-btn" onclick="switchTab('tab-logistics')">📦 Supply</button>
+      <button class="tab-btn" onclick="switchTab('tab-market')">🪙 Sales</button>
+    </nav>
 
-    <div class="panel-section" style="flex:1;">
-      <div class="panel-title">MOTION STUDY TICKET (TAP TO TARGET)</div>
-      <div class="ticket-row"><span>Target Cell</span><span id="tk-target-cell">[6, 12]</span></div>
-      <div class="ticket-row"><span>Transit Distance</span><span id="tk-dist">0 ft</span></div>
-      <div class="ticket-row"><span>Haul Velocity</span><span id="tk-vel">150 ft/min</span></div>
-      <div class="ticket-row"><span>Transit Burn</span><span id="tk-transit">0.0 mins</span></div>
-      <div class="ticket-row"><span>Water/Feed Service</span><span id="tk-service">12.0 mins</span></div>
-      <div class="ticket-row"><span>Tractor Drag Pull</span><span id="tk-drag">8.0 mins</span></div>
-      <div class="ticket-row" style="color:var(--accent-amber); margin-top:6px; border-top:1px solid #444; padding-top:4px;">
-        <span>Total Chore Time</span><span id="tk-total">20.0 mins</span>
+    <!-- TAB 1: PASTURE & MOTION STUDY -->
+    <div id="tab-pasture" class="tab-pane active">
+      <div class="card-box">
+        <div class="card-title">OPERATOR DAILY LABOR ENVELOPE</div>
+        <div class="pbar-wrap">
+          <div id="stamina-bar" class="pbar-fill" style="width:100%; background:linear-gradient(90deg, var(--accent-green), var(--accent-amber));"></div>
+          <div class="pbar-label" id="stamina-label">120m / 120m REMAINING</div>
+        </div>
       </div>
 
-      <div style="margin-top:14px; display:flex; flex-direction:column; gap:8px;">
-        <button class="btn btn-accent" style="width:100%; padding:10px;" onclick="executeChores()">
-          ▶ EXECUTE MOVE &amp; CHORES
+      <div class="card-box">
+        <div class="card-title">TACTICAL PULL CONTROL (TAP OR STEP)</div>
+        <div style="font-size:11px; color:var(--text-muted);">
+          Tap any cell on the pasture map, or use 1-cell step pull buttons:
+        </div>
+        <div class="dpad-grid">
+          <button class="dpad-btn" onclick="stepTarget(-1, 0)">⬅️ West</button>
+          <button class="dpad-btn" onclick="stepTarget(0, -1)">⬆️ North</button>
+          <button class="dpad-btn" onclick="stepTarget(0, 1)">⬇️ South</button>
+          <button class="dpad-btn" style="border-color:var(--accent-green); color:var(--accent-green);" onclick="stepTarget(1, 0)">➡️ East (+1)</button>
+        </div>
+      </div>
+
+      <div class="card-box">
+        <div class="card-title">MOTION STUDY TICKET</div>
+        <div class="data-row"><span>Current Tractor Cell</span><span id="flock-cell">[6, 12]</span></div>
+        <div class="data-row"><span>Target Destination</span><span id="tk-target-cell" style="color:var(--accent-amber);">[7, 12] (Plan Move)</span></div>
+        <div class="data-row"><span>Round-Trip Transit</span><span id="tk-dist">240 ft</span></div>
+        <div class="data-row"><span>Walking Transit Burn</span><span id="tk-transit">1.6 mins</span></div>
+        <div class="data-row"><span>Water/Feed Service</span><span id="tk-service">12.0 mins</span></div>
+        <div class="data-row"><span>Tractor Drag Pull</span><span id="tk-drag">8.0 mins</span></div>
+        <div class="data-row" style="color:var(--accent-amber); border-top:1px solid #444; padding-top:4px;">
+          <span>Total Chore Commitment</span><span id="tk-total">21.6 mins</span>
+        </div>
+
+        <button class="btn btn-accent" style="width:100%; margin-top:6px; padding:11px;" onclick="executeChores()">
+          ▶ COMMIT PULL &amp; CHORES
         </button>
-        <button class="btn" style="width:100%;" onclick="resetTargetToTractor()">
-          ↺ Reset Target to Tractor
+      </div>
+
+      <div class="card-box">
+        <div class="card-title">PASTURE STATUS</div>
+        <div class="data-row"><span>Days on Current Tile</span><span id="d-flock-days">0 Days</span></div>
+        <div class="data-row"><span>Target Tile Forage</span><span id="d-forage-status" style="color:var(--accent-green);">Prime Grass (-15% Feed)</span></div>
+      </div>
+    </div>
+
+    <!-- TAB 2: FLOCK BIOLOGICAL DOSSIER -->
+    <div id="tab-flock" class="tab-pane">
+      <div class="card-box">
+        <div class="card-title">BATCH 1: CORNISH CROSS BROILERS</div>
+        <div class="data-row"><span>Lifecycle Stage</span><span id="bio-stage" style="color:var(--accent-cyan);">PASTURE</span></div>
+        <div class="data-row"><span>Flock Headcount</span><span id="bio-count">50 Birds</span></div>
+        <div class="data-row"><span>Bird Age</span><span id="bio-age">21 Days</span></div>
+        <div class="data-row"><span>Avg Weight / Bird</span><span id="bio-weight">1.60 lbs</span></div>
+        <div class="data-row"><span>Total Biomass</span><span id="bio-biomass">80.0 lbs</span></div>
+        <div class="data-row"><span>Daily Feed Burn</span><span id="bio-feed-burn" style="color:var(--accent-amber);">9.0 lbs/day</span></div>
+      </div>
+
+      <div class="card-box">
+        <div class="card-title">BIOLOGICAL MATURATION CURVE</div>
+        <div style="font-size:11px; color:var(--text-muted); line-height:1.4;">
+          Cornish Cross broilers grow from <strong>0.09 lbs</strong> at mail arrival to <strong>5.80 lbs</strong> at Day 56 harvest. Feed burn starts at 0.08 lbs/bird in brooder, skyrocketing to 0.48 lbs/bird/day during finish!
+        </div>
+        <div class="pbar-wrap" style="height:14px; margin-top:4px;">
+          <div id="bio-maturation-bar" class="pbar-fill" style="width:38%;"></div>
+          <div class="pbar-label" id="bio-maturation-label">38% MATURE (21/56d)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: WORKSHOP & CAPITAL BUILDS -->
+    <div id="tab-workshop" class="tab-pane">
+      <div class="card-box">
+        <div class="card-title">FABRICATE 2ND FIELD TRACTOR</div>
+        <div style="font-size:11px; color:var(--text-muted);">
+          Tractor 1 is active on pasture. Build a 2nd tractor to scale capacity for successive batches!
+        </div>
+        <div class="data-row"><span>Capital Needed</span><span>$380.00</span></div>
+        <div class="data-row"><span>Total Man-Hours</span><span>240 mins</span></div>
+        <div class="pbar-wrap">
+          <div id="build-tractor-bar" class="pbar-fill" style="width:0%;"></div>
+          <div class="pbar-label" id="build-tractor-label">0 / 240 mins</div>
+        </div>
+        <button class="btn btn-blue" id="btn-build-tractor" onclick="workOnTractor(60)">
+          🔨 Build Tractor 2 (Work 60m • $380)
+        </button>
+      </div>
+
+      <div class="card-box">
+        <div class="card-title">WATER LINE EXTENSION HOSE REEL</div>
+        <div style="font-size:11px; color:var(--text-muted);">
+          500ft poly line &amp; quick-connect manifold. Eliminates manual bucket hauling from well spigot!
+        </div>
+        <div class="data-row"><span>Capital Needed</span><span>$140.00</span></div>
+        <div class="data-row"><span>Labor Commitment</span><span>60 mins</span></div>
+        <button class="btn btn-blue" id="btn-build-water" onclick="buildWaterLine()">
+          💧 Install Hose Reel (60m • $140)
         </button>
       </div>
     </div>
 
-    <div class="panel-section">
-      <div class="panel-title">TRACTOR 1 [50 CORNISH CROSS]</div>
-      <div class="ticket-row"><span>Current Cell</span><span id="flock-cell">[6, 12]</span></div>
-      <div class="ticket-row"><span>Forage Status</span><span id="flock-forage" style="color:var(--accent-green);">Prime Grass</span></div>
-      <div class="ticket-row"><span>Days on Tile</span><span id="flock-days">0 Days</span></div>
-    </div>
-  </div>
-</div>
+    <!-- TAB 4: SUPPLY CHAIN & LOGISTICS -->
+    <div id="tab-logistics" class="tab-pane">
+      <div class="card-box">
+        <div class="card-title">FEED DEPOT INVENTORY</div>
+        <div class="data-row"><span>Non-GMO Feed Sacks</span><span id="log-feed-bags">10 Bags (500 lbs)</span></div>
+        <div class="data-row"><span>Depot Storage Cap</span><span>20 Sacks Max</span></div>
+        <div style="font-size:11px; color:var(--text-muted);">
+          Single-operator chore: requires a 45-minute town round-trip supply run with the farm truck.
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:4px;">
+          <button class="btn btn-amber" onclick="buyFeed(3)">
+            🌾 Buy 3 Bags ($58.50 • 45m)
+          </button>
+          <button class="btn btn-amber" onclick="buyFeed(8)">
+            🌾 Buy 8 Bags ($156.00 • 45m)
+          </button>
+        </div>
+      </div>
 
-<!-- BOTTOM INVENTORY TRAY (Desktop) -->
-<div id="bottom-tray">
-  <div class="tray-card">
-    <div class="tray-title">FEED DEPOT (50lb SACKS)</div>
-    <div class="tray-val" id="inv-feed">10 Bags</div>
-    <div style="font-size:10px; color:var(--text-muted);">$18.50/bag • Non-GMO Broiler</div>
-  </div>
-  <div class="tray-card">
-    <div class="tray-title">WATER INFRASTRUCTURE</div>
-    <div class="tray-val">Manual Haul</div>
-    <div style="font-size:10px; color:var(--text-muted);">Spigot at [0, 15] • No Pipe Run</div>
-  </div>
-  <div class="tray-card">
-    <div class="tray-title">COLD STORAGE / FREEZER</div>
-    <div class="tray-val">0 / 250 lbs</div>
-    <div style="font-size:10px; color:var(--text-muted);">Capacity: 50 Harvested Birds</div>
+      <div class="card-box">
+        <div class="card-title">BATCH 2 CHICK RESERVATION</div>
+        <div style="font-size:11px; color:var(--text-muted);">
+          Order 50 day-old chicks for next rotation ($162.50).
+        </div>
+        <button class="btn btn-accent" id="btn-order-chicks" onclick="orderChicks()">
+          📦 Order Batch 2 via Mail ($162.50)
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 5: MARKETING & HARVEST -->
+    <div id="tab-market" class="tab-pane">
+      <div class="card-box">
+        <div class="card-title">PROCESSING DAY (BUTCHERING)</div>
+        <div style="font-size:11px; color:var(--text-muted);">
+          Scalder, rotary plucker, evisceration, chill tank &amp; shrink-bagging. Available once birds reach Day 49–56.
+        </div>
+        <div class="data-row"><span>Dressing Carcass Yield</span><span>73% (Live to Dressed)</span></div>
+        <div class="data-row"><span>Labor: Solo Processing</span><span>300 mins</span></div>
+        <div class="data-row"><span>Labor: With Hired Helper</span><span>150 mins ($80 cash)</span></div>
+        <div style="display:flex; flex-direction:column; gap:6px; margin-top:4px;">
+          <button class="btn btn-red" id="btn-butcher-solo" onclick="executeHarvest(false)" disabled>
+            🔪 Solo Processing Day (300m)
+          </button>
+          <button class="btn btn-red" id="btn-butcher-helper" onclick="executeHarvest(true)" disabled>
+            🔪 Hire Helper &amp; Process (150m • $80)
+          </button>
+        </div>
+      </div>
+
+      <div class="card-box">
+        <div class="card-title">COLD STORAGE &amp; DIRECT SALES</div>
+        <div class="data-row"><span>Packaged Frozen Roasters</span><span id="mkt-freezer-lbs">0 / 250 lbs</span></div>
+        <div class="data-row"><span>Retail Value ($5.75/lb)</span><span id="mkt-freezer-val">$0.00</span></div>
+        <div class="data-row"><span>Pre-Orders Secured</span><span id="mkt-preorders">0 Birds</span></div>
+        
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:6px;">
+          <button class="btn btn-blue" onclick="runMarketingCampaign()">
+            📣 Pre-Sales Push (30m • +5 Orders)
+          </button>
+          <button class="btn btn-accent" id="btn-sell-birds" onclick="sellFrozenBirds()" disabled>
+            🪙 Deliver &amp; Cash Out
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- MOBILE STICKY THUMB DECK -->
 <div id="mobile-thumb-deck">
-  <div class="gauge-container" style="height:14px; margin-bottom:8px;">
-    <div id="mobile-stamina-bar" style="height:100%; width:100%; background:linear-gradient(90deg, var(--accent-green), var(--accent-amber));"></div>
+  <div class="pbar-wrap" style="height:12px; margin-bottom:5px;">
+    <div id="mobile-stamina-bar" class="pbar-fill" style="width:100%; background:linear-gradient(90deg, var(--accent-green), var(--accent-amber));"></div>
   </div>
+
   <div class="thumb-deck-summary">
-    <div>⚡ <span id="m-chore-time">20.0m</span> Chore Burn</div>
-    <div>🎯 Target: <span id="m-target-cell" style="color:var(--accent-amber); font-weight:bold;">[6, 12]</span></div>
-    <div>👣 <span id="m-transit-dist">0 ft</span></div>
+    <div>⚡ <span id="m-chore-time">21.6m</span></div>
+    <div>🎯 Target: <span id="m-target-cell" style="color:var(--accent-amber); font-weight:bold;">[7, 12]</span></div>
+    <div>🪙 <span id="m-cash-disp" style="color:var(--accent-green); font-weight:bold;">$650</span></div>
   </div>
+
+  <!-- STEP-PULL D-PAD STRIP -->
+  <div class="thumb-deck-dpad">
+    <button onclick="stepTarget(-1, 0)">⬅️ W</button>
+    <button onclick="stepTarget(0, -1)">⬆️ N</button>
+    <button onclick="stepTarget(0, 1)">⬇️ S</button>
+    <button style="border-color:var(--accent-green); color:var(--accent-green);" onclick="stepTarget(1, 0)">➡️ +1 East</button>
+  </div>
+
   <div class="thumb-deck-actions">
-    <button class="btn" onclick="openMobileDrawer()">
-      📋 Details
-    </button>
-    <button class="btn btn-accent" id="m-execute-btn" onclick="executeChores()">
-      ▶ EXECUTE CHORES
-    </button>
+    <button class="btn" onclick="openDrawerTab('tab-workshop')">🔨 Shop</button>
+    <button class="btn" onclick="openDrawerTab('tab-flock')">🐥 Flock</button>
+    <button class="btn btn-accent" id="m-execute-btn" onclick="executeChores()">▶ PULL TRACTOR</button>
   </div>
 </div>
 
-<!-- MOBILE DRAWER SHEET (Deep Ticket & Racks) -->
+<!-- MOBILE SLIDE-UP DRAWER (Contains all Sidebar Tabs) -->
 <div id="mobile-drawer">
   <div class="drawer-handle"></div>
   <div class="drawer-header">
-    <h3 style="font-size:14px; color:var(--accent-green);">DAILY CHORE &amp; RACK MANIFEST</h3>
-    <button class="drawer-close" onclick="closeMobileDrawer()">&times;</button>
+    <h3 style="font-size:13px; color:var(--accent-green); text-transform:uppercase;" id="drawer-title">ENTERPRISE CONSOLE</h3>
+    <button style="background:none; border:none; color:var(--text-muted); font-size:22px; cursor:pointer;" onclick="closeMobileDrawer()">&times;</button>
   </div>
-
-  <div class="panel-section" style="padding:8px 0;">
-    <div class="panel-title">MOTION STUDY DETAILS</div>
-    <div class="ticket-row"><span>Target Cell</span><span id="m-drawer-target">[6, 12]</span></div>
-    <div class="ticket-row"><span>Transit Distance</span><span id="m-drawer-dist">0 ft</span></div>
-    <div class="ticket-row"><span>Transit Time</span><span id="m-drawer-transit">0.0 mins</span></div>
-    <div class="ticket-row"><span>Water/Feed Service</span><span id="m-drawer-service">12.0 mins</span></div>
-    <div class="ticket-row"><span>Tractor Drag Pull</span><span id="m-drawer-drag">8.0 mins</span></div>
-    <div class="ticket-row" style="color:var(--accent-amber); font-weight:bold;"><span>Total Chore Time</span><span id="m-drawer-total">20.0 mins</span></div>
-  </div>
-
-  <div class="panel-section" style="padding:10px 0;">
-    <div class="panel-title">PHYSICAL INVENTORY &amp; STOCKS</div>
-    <div class="ticket-row"><span>Feed Depot (50lb Bags)</span><span id="m-drawer-feed">10 Bags</span></div>
-    <div class="ticket-row"><span>Water Spigot</span><span>Wellhead [0, 15] (Manual Haul)</span></div>
-    <div class="ticket-row"><span>Chest Freezer Cap</span><span>0 / 250 lbs (50 Birds)</span></div>
-    <div class="ticket-row"><span>Flock Status</span><span>50 Cornish Cross (Day on tile: <span id="m-drawer-days">0</span>)</span></div>
-  </div>
-
-  <div style="margin-top:14px;">
-    <button class="btn btn-amber" style="width:100%; padding:10px;" onclick="closeMobileDrawer(); toggleInspector();">
-      ⚙️ Open Engine Live Configuration
-    </button>
-  </div>
+  <nav class="tab-nav" style="margin-bottom:12px;">
+    <button class="tab-btn active" onclick="switchDrawerTab('tab-pasture')">🚜 Chores</button>
+    <button class="tab-btn" onclick="switchDrawerTab('tab-flock')">🐥 Flock</button>
+    <button class="tab-btn" onclick="switchDrawerTab('tab-workshop')">🔨 Build</button>
+    <button class="tab-btn" onclick="switchDrawerTab('tab-logistics')">📦 Supply</button>
+    <button class="tab-btn" onclick="switchDrawerTab('tab-market')">🪙 Sales</button>
+  </nav>
+  <div id="drawer-content-container"></div>
 </div>
 
 <!-- VARIABLE INSPECTOR (MODAL) -->
 <div id="inspector-overlay">
   <div class="inspector-card">
-    <div class="panel-title" style="font-size:14px; margin-bottom:12px;">LIVE ENGINE CONFIGURATION (TESTING)</div>
+    <div class="card-title" style="font-size:13px; margin-bottom:12px;">LIVE ENGINE CONFIGURATION (TESTING)</div>
     
     <div class="param-group">
+      <label>Daily Operator Labor Budget: <span id="v-budget-val">120</span> mins</label>
+      <input type="range" id="v-budget" min="60" max="240" step="15" value="120" oninput="updateConfig()">
+    </div>
+
+    <div class="param-group">
       <label>Loaded Haul Walk Speed: <span id="v-speed-val">150</span> ft/min</label>
-      <input type="range" id="v-speed" min="80" max="300" value="150" oninput="updateConfig()">
+      <input type="range" id="v-speed" min="80" max="300" step="10" value="150" oninput="updateConfig()">
     </div>
     
     <div class="param-group">
-      <label>Tractor Pull Time: <span id="v-pull-val">8</span> mins</label>
+      <label>Tractor Pull Friction Time: <span id="v-pull-val">8</span> mins</label>
       <input type="range" id="v-pull" min="2" max="25" value="8" oninput="updateConfig()">
     </div>
 
@@ -529,59 +807,78 @@
       <input type="range" id="v-serv" min="5" max="30" value="12" oninput="updateConfig()">
     </div>
 
-    <div class="param-group">
-      <label>OPFOR Threat Aggression: <span id="v-opfor-val">25</span>%</label>
-      <input type="range" id="v-opfor" min="0" max="100" value="25" oninput="updateConfig()">
-    </div>
-
     <button class="btn" style="width:100%; margin-top:12px; padding:10px;" onclick="toggleInspector()">SAVE &amp; CLOSE</button>
   </div>
 </div>
 
 <script>
 /* =====================================================================
- * PASTUREOPS - TESTING ENGINE - SPRINT 1.0 (TAP-TO-TARGET MOBILE)
+ * PASTUREOPS ENGINE - SPRINT 2.2 (TACTICAL PULL & TARGETING FIX)
  * ===================================================================== */
 
 const CONFIG = {
-  gridSize: 30,         // 30x30 tiles
-  cellSizeFt: 20,       // 20ft per cell (600ft x 600ft field)
-  farmsteadWidth: 3,    // First 3 columns are base structures
-  walkSpeedFtMin: 150,  // Loaded walking speed
-  tractorPullMins: 8,   // Base friction to move shelter
-  serviceMins: 12,      // Fixed time to service feed/water
-  dailyBudgetMins: 120, // 2-hour part-time homestead baseline
-  opforAggression: 25,
+  gridSize: 30,
+  cellSizeFt: 20,
+  farmsteadWidth: 3,
+  walkSpeedFtMin: 150,
+  tractorPullMins: 8,
+  serviceMins: 12,
+  dailyBudgetMins: 120,
   minZoom: 10,
-  maxZoom: 60
+  maxZoom: 60,
+  tractorLaborRequired: 240,
+  tractorMaterialCost: 380.00,
+  waterHoseCost: 140.00,
+  chickBatchCost: 162.50,
+  feedBagCost: 19.50,
+  retailPricePerLb: 5.75
 };
 
 const STATE = {
   day: 1,
-  cash: 1500.00,
-  feedBags: 10,
+  cash: 650.00,
   laborRemaining: 120,
+  laborBudgetToday: 120,
+  feedBags: 8,
+  feedLbsInBags: 400,
   structures: {
     garage: { x: 0, y: 14, label: "Garage / Shop", color: "#4a5568", icon: "🏠" },
     depot:  { x: 1, y: 13, label: "Feed Depot",    color: "#d69e2e", icon: "🌾" },
     well:   { x: 0, y: 15, label: "Well Spigot",   color: "#3182ce", icon: "💧" }
   },
-  tractor: {
-    x: 6,
-    y: 12,
-    daysOnTile: 0
+  infrastructure: {
+    brooderBuilt: true,
+    tractorsBuilt: 1,
+    tractorMinsWorked: 0,
+    waterLineInstalled: false
   },
-  target: {
+  flock: {
+    stage: "PASTURE", // Active pasture grazing
+    count: 50,
+    initialCount: 50,
+    ageDays: 21,
+    avgWeightLbs: 1.60,
+    daysOnTile: 0,
+    preOrders: 0
+  },
+  freezer: {
+    packagedLbs: 0,
+    birdsHarvested: 0
+  },
+  tractor: {
     x: 6,
     y: 12
   },
-  cellWear: {} // Key: "x,y" -> integer days grazed recovery
+  target: {
+    x: 7,
+    y: 12
+  },
+  cellWear: {}
 };
 
 const canvas = document.getElementById('farmMap');
 const ctx = canvas.getContext('2d');
-let camera = { x: 0, y: 0, zoom: 24 };
-
+let camera = { x: 0, y: 0, zoom: 28 };
 let animFrame = 0;
 let reticlePulse = 0;
 
@@ -589,8 +886,8 @@ function init() {
   resize();
   window.addEventListener('resize', resize);
   setupTouchAndMouse();
-  focusOnTractor();
-  recalculateMotion();
+  focusOnFlock();
+  recalculateAll();
   startAnimationLoop();
 }
 
@@ -604,16 +901,708 @@ function resize() {
 function startAnimationLoop() {
   function loop() {
     animFrame++;
-    reticlePulse = (Math.sin(animFrame * 0.08) + 1) / 2; // 0 to 1 pulse
+    reticlePulse = (Math.sin(animFrame * 0.1) + 1) / 2;
     render();
     requestAnimationFrame(loop);
   }
   requestAnimationFrame(loop);
 }
 
-function focusOnTractor() {
-  const isMobile = window.innerWidth <= 768;
-  camera.zoom = isMobile ? 32 : 28; // Large tactile tiles
+function logEvent(msg) {
+  document.getElementById('ticker-msg').innerText = msg;
+}
+
+/* =====================================================================
+ * TACTICAL TARGETING & STEP-PULL MECHANICS
+ * ===================================================================== */
+
+function setTargetTile(tx, ty) {
+  if (tx >= CONFIG.farmsteadWidth && tx < CONFIG.gridSize && ty >= 0 && ty < CONFIG.gridSize) {
+    STATE.target.x = tx;
+    STATE.target.y = ty;
+
+    if (navigator.vibrate) navigator.vibrate(25);
+    
+    const isMove = (tx !== STATE.tractor.x || ty !== STATE.tractor.y);
+    const dist = calculateDistance(STATE.tractor.x, STATE.tractor.y, tx, ty);
+    logEvent(isMove 
+      ? `TARGET SET: Cell [${tx}, ${ty}] (${dist.toFixed(0)} ft pull). Tap COMMIT to execute move.` 
+      : `TARGET SET: Staying on Cell [${tx}, ${ty}] (Service only).`);
+    
+    recalculateAll();
+  }
+}
+
+function stepTarget(dx, dy) {
+  const nx = Math.max(CONFIG.farmsteadWidth, Math.min(CONFIG.gridSize - 1, STATE.tractor.x + dx));
+  const ny = Math.max(0, Math.min(CONFIG.gridSize - 1, STATE.tractor.y + dy));
+  setTargetTile(nx, ny);
+}
+
+/* =====================================================================
+ * TIMELINE HORIZON & TARGET MARKS
+ * ===================================================================== */
+
+function updateTimelineRibbon() {
+  const f = STATE.flock;
+  const currentDay = STATE.day;
+
+  const dailyFeedLbs = f.count * getDailyFeedPerBird(f.ageDays);
+  const daysOfFeedLeft = (dailyFeedLbs > 0) ? Math.floor(STATE.feedLbsInBags / dailyFeedLbs) : 999;
+  const feedRunoutDay = currentDay + daysOfFeedLeft;
+
+  const milestones = [
+    {
+      id: "today",
+      day: currentDay,
+      label: `Day ${currentDay}`,
+      icon: "📍",
+      type: "node-today",
+      tab: "tab-pasture",
+      tooltip: "Today's Active Operational Shift"
+    },
+    {
+      id: "feed",
+      day: feedRunoutDay,
+      label: `D${feedRunoutDay}: Feed Out`,
+      icon: (daysOfFeedLeft <= 2) ? "🚨" : "🌾",
+      type: (daysOfFeedLeft <= 2) ? "node-urgent" : "node-amber",
+      tab: "tab-logistics",
+      tooltip: `Feed depot runs out in ${daysOfFeedLeft} days!`
+    },
+    {
+      id: "marketing",
+      day: 42,
+      label: "D42: Pre-Orders",
+      icon: (f.preOrders >= 20) ? "✅" : "📣",
+      type: (f.preOrders >= 20) ? "node-met" : (currentDay >= 35 ? "node-amber" : "node-future"),
+      tab: "tab-market",
+      tooltip: "Target: 20+ birds pre-sold before processing day"
+    },
+    {
+      id: "harvest",
+      day: 49,
+      label: "D49-56: Harvest Window",
+      icon: (f.stage === "HARVESTED") ? "✅" : "🔪",
+      type: (f.stage === "HARVESTED") ? "node-met" : (f.ageDays >= 49 ? "node-urgent" : "node-future"),
+      tab: "tab-market",
+      tooltip: "Finish weight reached (5.5+ lbs); slaughter window opens"
+    }
+  ];
+
+  milestones.sort((a, b) => a.day - b.day);
+
+  let nextActionText = "Rotate tractor forward to fresh pasture tile.";
+  if (daysOfFeedLeft <= 2) {
+    nextActionText = `🚨 CRITICAL: Feed runs out in ${daysOfFeedLeft}d! Schedule Town Run`;
+  } else if (f.ageDays >= 49) {
+    nextActionText = `🔪 TARGET: Harvest Window Open! Schedule Processing Day`;
+  } else if (f.preOrders < 15) {
+    nextActionText = `📣 TARGET: Secure customer pre-orders (${f.preOrders}/15 sold)`;
+  }
+  document.getElementById('horizon-next-action').innerText = nextActionText;
+
+  const track = document.getElementById('timeline-track');
+  let html = "";
+  milestones.forEach((m, idx) => {
+    html += `
+      <div class="t-node ${m.type}" onclick="handleMilestoneClick('${m.tab}', '${m.tooltip}')" title="${m.tooltip}">
+        <span>${m.icon}</span>
+        <span>${m.label}</span>
+      </div>
+    `;
+    if (idx < milestones.length - 1) html += `<div class="t-line"></div>`;
+  });
+  track.innerHTML = html;
+}
+
+function handleMilestoneClick(tabId, tooltip) {
+  logEvent(`TARGET MARK: ${tooltip}`);
+  if (window.innerWidth <= 768) {
+    openDrawerTab(tabId);
+  } else {
+    switchTab(tabId);
+  }
+}
+
+/* =====================================================================
+ * BIOLOGICAL MATURATION & MOTION STUDY ENGINE
+ * ===================================================================== */
+
+function getCornishWeight(age) {
+  if (age <= 0) return 0.09;
+  const maxWeight = 6.2;
+  const k = 0.09;
+  const t0 = 36;
+  return parseFloat((maxWeight / (1 + Math.exp(-k * (age - t0)))).toFixed(2));
+}
+
+function getDailyFeedPerBird(age) {
+  if (age <= 7) return 0.07;
+  if (age <= 14) return 0.12;
+  if (age <= 21) return 0.18;
+  if (age <= 28) return 0.26;
+  if (age <= 35) return 0.34;
+  if (age <= 42) return 0.42;
+  return 0.48;
+}
+
+function recalculateAll() {
+  const f = STATE.flock;
+  f.avgWeightLbs = getCornishWeight(f.ageDays);
+
+  const isTargetFresh = (!STATE.cellWear[`${STATE.target.x},${STATE.target.y}`] || STATE.cellWear[`${STATE.target.x},${STATE.target.y}`] === 0);
+  const pastureFeedDiscount = isTargetFresh ? 0.85 : 1.0;
+  const dailyFeedLbs = parseFloat((f.count * getDailyFeedPerBird(f.ageDays) * pastureFeedDiscount).toFixed(1));
+
+  // Motion Study to Target
+  const destX = STATE.target.x;
+  const destY = STATE.target.y;
+  const isMove = (destX !== STATE.tractor.x || destY !== STATE.tractor.y);
+
+  const d1 = calculateDistance(STATE.structures.depot.x, STATE.structures.depot.y, destX, destY);
+  const dWell = STATE.infrastructure.waterLineInstalled ? 0 : calculateDistance(STATE.structures.well.x, STATE.structures.well.y, destX, destY);
+  const totalDist = Math.round((d1 + dWell) * 2);
+  const transitMins = parseFloat((totalDist / CONFIG.walkSpeedFtMin).toFixed(1));
+
+  const dragMins = isMove ? CONFIG.tractorPullMins : 0;
+  const serviceMins = CONFIG.serviceMins;
+  const choreBurn = parseFloat((transitMins + serviceMins + dragMins).toFixed(1));
+
+  // Update HUD
+  document.getElementById('hud-day').innerText = `Day ${STATE.day}`;
+  document.getElementById('hud-cash').innerText = `$${STATE.cash.toFixed(2)}`;
+  document.getElementById('m-cash-disp').innerText = `$${Math.round(STATE.cash)}`;
+  document.getElementById('hud-labor').innerText = `${STATE.laborRemaining.toFixed(0)}m Left`;
+
+  const fatiguePct = STATE.laborRemaining / STATE.laborBudgetToday;
+  const fatigueElem = document.getElementById('hud-fatigue');
+  if (fatiguePct < 0.2) {
+    fatigueElem.innerText = "Burnout Risk";
+    fatigueElem.className = "hud-badge hud-tag";
+  } else if (fatiguePct < 0.5) {
+    fatigueElem.innerText = "Fatigued";
+    fatigueElem.className = "hud-badge hud-badge-amber";
+  } else {
+    fatigueElem.innerText = "Fresh";
+    fatigueElem.className = "hud-badge hud-badge-blue";
+  }
+
+  // Update Motion Study UI
+  document.getElementById('tb-coord').innerText = `[${destX}, ${destY}]`;
+  document.getElementById('tb-status').innerText = isMove ? "Plan Move" : "Stationary";
+  document.getElementById('tb-time').innerText = `${choreBurn}m`;
+  document.getElementById('flock-cell').innerText = `[${STATE.tractor.x}, ${STATE.tractor.y}]`;
+  document.getElementById('tk-target-cell').innerText = `[${destX}, ${destY}] ${isMove ? '(Plan Move)' : '(Stationary)'}`;
+  document.getElementById('tk-dist').innerText = `${totalDist} ft`;
+  document.getElementById('tk-transit').innerText = `${transitMins} mins`;
+  document.getElementById('tk-service').innerText = `${serviceMins} mins`;
+  document.getElementById('tk-drag').innerText = `${dragMins} mins`;
+  document.getElementById('tk-total').innerText = `${choreBurn} mins`;
+  document.getElementById('d-flock-days').innerText = `${f.daysOnTile} Days`;
+  document.getElementById('d-forage-status').innerText = isTargetFresh ? "Prime Green Grass (-15% Feed)" : "Grazed Thatch (Full Feed)";
+
+  // Mobile Thumb Deck
+  document.getElementById('m-target-cell').innerText = `[${destX}, ${destY}]`;
+  document.getElementById('m-chore-time').innerText = `${choreBurn}m`;
+  document.getElementById('m-execute-btn').innerText = isMove ? `▶ PULL TRACTOR (${choreBurn}m)` : `▶ SERVICE TILE (${choreBurn}m)`;
+
+  // Stamina Bars
+  const staminaPct = Math.max(0, (STATE.laborRemaining / STATE.laborBudgetToday) * 100);
+  const staminaColor = staminaPct < 25 ? 'var(--accent-red)' : 'linear-gradient(90deg, var(--accent-green), var(--accent-amber))';
+  document.getElementById('stamina-bar').style.width = `${staminaPct}%`;
+  document.getElementById('stamina-bar').style.background = staminaColor;
+  document.getElementById('stamina-label').innerText = `${STATE.laborRemaining.toFixed(0)}m / ${STATE.laborBudgetToday}m REMAINING`;
+  
+  const mBar = document.getElementById('mobile-stamina-bar');
+  if (mBar) {
+    mBar.style.width = `${staminaPct}%`;
+    mBar.style.background = staminaColor;
+  }
+
+  // Flock Dossier Tab UI
+  document.getElementById('bio-stage').innerText = f.stage;
+  document.getElementById('bio-count').innerText = `${f.count} Birds`;
+  document.getElementById('bio-age').innerText = `${f.ageDays} Days`;
+  document.getElementById('bio-weight').innerText = `${f.avgWeightLbs.toFixed(2)} lbs`;
+  document.getElementById('bio-biomass').innerText = `${(f.count * f.avgWeightLbs).toFixed(1)} lbs`;
+  document.getElementById('bio-feed-burn').innerText = `${dailyFeedLbs} lbs/day`;
+
+  const matPct = Math.min(100, Math.round((f.ageDays / 56) * 100));
+  document.getElementById('bio-maturation-bar').style.width = `${matPct}%`;
+  document.getElementById('bio-maturation-label').innerText = `${matPct}% MATURE (${f.ageDays}/56d)`;
+
+  // Logistics Tab UI
+  document.getElementById('log-feed-bags').innerText = `${STATE.feedBags} Bags (${STATE.feedLbsInBags} lbs)`;
+
+  // Marketing & Sales Tab UI
+  const canHarvest = (f.ageDays >= 49);
+  document.getElementById('btn-butcher-solo').disabled = !canHarvest;
+  document.getElementById('btn-butcher-helper').disabled = !canHarvest || STATE.cash < 80;
+
+  document.getElementById('mkt-freezer-lbs').innerText = `${STATE.freezer.packagedLbs.toFixed(1)} / 250 lbs`;
+  document.getElementById('mkt-freezer-val').innerText = `$${(STATE.freezer.packagedLbs * CONFIG.retailPricePerLb).toFixed(2)}`;
+  document.getElementById('mkt-preorders').innerText = `${f.preOrders} Birds (${(f.preOrders * 4.25 * CONFIG.retailPricePerLb).toFixed(0)} est revenue)`;
+  document.getElementById('btn-sell-birds').disabled = STATE.freezer.packagedLbs <= 0;
+
+  updateTimelineRibbon();
+  return choreBurn;
+}
+
+function calculateDistance(x1, y1, x2, y2) {
+  const dx = (x2 - x1) * CONFIG.cellSizeFt;
+  const dy = (y2 - y1) * CONFIG.cellSizeFt;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+/* =====================================================================
+ * ENTERPRISE ACTIONS
+ * ===================================================================== */
+
+function workOnTractor(mins) {
+  if (STATE.laborRemaining < mins) {
+    alert("Insufficient labor budget remaining today!");
+    return;
+  }
+  if (STATE.infrastructure.tractorMinsWorked === 0) {
+    if (STATE.cash < CONFIG.tractorMaterialCost) {
+      alert(`Insufficient capital! Tractor materials cost $${CONFIG.tractorMaterialCost}.`);
+      return;
+    }
+    STATE.cash -= CONFIG.tractorMaterialCost;
+  }
+
+  STATE.laborRemaining -= mins;
+  STATE.infrastructure.tractorMinsWorked += mins;
+
+  if (STATE.infrastructure.tractorMinsWorked >= CONFIG.tractorLaborRequired) {
+    STATE.infrastructure.tractorsBuilt++;
+    STATE.infrastructure.tractorMinsWorked = 0;
+    logEvent("TARGET MET: Pasture Chicken Tractor 2 fabricated!");
+  } else {
+    logEvent(`Shop session: Tractor progress ${STATE.infrastructure.tractorMinsWorked}/${CONFIG.tractorLaborRequired} mins.`);
+  }
+
+  if (navigator.vibrate) navigator.vibrate(20);
+  recalculateAll();
+}
+
+function buildWaterLine() {
+  if (STATE.cash < CONFIG.waterHoseCost) {
+    alert(`Insufficient capital! Hose reel costs $${CONFIG.waterHoseCost}.`);
+    return;
+  }
+  if (STATE.laborRemaining < 60) {
+    alert("Need at least 60m of labor remaining to run water line!");
+    return;
+  }
+  STATE.cash -= CONFIG.waterHoseCost;
+  STATE.laborRemaining -= 60;
+  STATE.infrastructure.waterLineInstalled = true;
+  logEvent("INFRASTRUCTURE UPGRADE: 500ft Poly water line connected! Eliminates manual bucket hauling.");
+  recalculateAll();
+}
+
+function orderChicks() {
+  if (STATE.cash < CONFIG.chickBatchCost) {
+    alert("Insufficient capital to order chicks!");
+    return;
+  }
+  STATE.cash -= CONFIG.chickBatchCost;
+  logEvent("ORDER CONFIRMED: 50 day-old chicks reserved for next flock batch.");
+  recalculateAll();
+}
+
+function buyFeed(bags) {
+  const cost = bags * CONFIG.feedBagCost;
+  if (STATE.cash < cost) {
+    alert(`Insufficient capital! ${bags} bags cost $${cost.toFixed(2)}.`);
+    return;
+  }
+  if (STATE.laborRemaining < 45) {
+    alert("Need at least 45 minutes of labor for the town feed supply run!");
+    return;
+  }
+  STATE.cash -= cost;
+  STATE.laborRemaining -= 45;
+  STATE.feedBags += bags;
+  STATE.feedLbsInBags += bags * 50;
+  logEvent(`TOWN LOGISTICS RUN: Picked up ${bags} bags of Non-GMO feed from mill. 45m labor burned.`);
+  recalculateAll();
+}
+
+function runMarketingCampaign() {
+  if (STATE.laborRemaining < 30) {
+    alert("Need at least 30 mins of evening desk time for customer outreach!");
+    return;
+  }
+  STATE.laborRemaining -= 30;
+  STATE.flock.preOrders += 5;
+  STATE.cash += 25.00;
+  logEvent("MARKETING SPRINT: Posted farm update & recipes. Secured 5 new customer pre-orders + $25 deposit!");
+  recalculateAll();
+}
+
+function executeHarvest(withHelper) {
+  const f = STATE.flock;
+  const laborNeed = withHelper ? 150 : 300;
+  if (withHelper && STATE.cash < 80) {
+    alert("Need $80 cash to pay processing helper!");
+    return;
+  }
+  if (STATE.laborRemaining < laborNeed) {
+    alert(`Processing day requires ${laborNeed} minutes of dedicated labor!`);
+    return;
+  }
+
+  if (withHelper) STATE.cash -= 80;
+  STATE.laborRemaining -= laborNeed;
+
+  const liveLbsTotal = f.count * f.avgWeightLbs;
+  const dressedYieldLbs = liveLbsTotal * 0.73;
+  STATE.freezer.packagedLbs += dressedYieldLbs;
+  STATE.freezer.birdsHarvested += f.count;
+
+  logEvent(`HARVEST COMPLETE: Processed ${f.count} birds! Packed ${dressedYieldLbs.toFixed(1)} lbs of prime pasture chicken into chest freezers.`);
+
+  f.stage = "HARVESTED";
+  f.count = 0;
+  f.ageDays = 0;
+  recalculateAll();
+}
+
+function sellFrozenBirds() {
+  const lbsToSell = Math.min(STATE.freezer.packagedLbs, 100);
+  const revenue = lbsToSell * CONFIG.retailPricePerLb;
+  STATE.freezer.packagedLbs -= lbsToSell;
+  STATE.cash += revenue;
+  logEvent(`SALES REVENUE: Delivered ${lbsToSell.toFixed(0)} lbs of frozen broilers! Banked $${revenue.toFixed(2)} in cash.`);
+  recalculateAll();
+}
+
+/* =====================================================================
+ * DISPATCH & DAY ADVANCEMENT
+ * ===================================================================== */
+
+function executeChores() {
+  const choreBurn = recalculateAll();
+  if (choreBurn > STATE.laborRemaining) {
+    alert("WARNING: Today's chores exceed remaining labor budget! Working into exhaustion burns family margin.");
+  }
+
+  STATE.laborRemaining = Math.max(0, STATE.laborRemaining - choreBurn);
+
+  const f = STATE.flock;
+  const isMove = (STATE.target.x !== STATE.tractor.x || STATE.target.y !== STATE.tractor.y);
+  
+  // Apply movement to tractor!
+  STATE.tractor.x = STATE.target.x;
+  STATE.tractor.y = STATE.target.y;
+
+  // Set default next target to +1 East
+  STATE.target.x = Math.min(CONFIG.gridSize - 1, STATE.tractor.x + 1);
+  STATE.target.y = STATE.tractor.y;
+
+  // Grazed tile wear
+  const key = `${STATE.tractor.x},${STATE.tractor.y}`;
+  STATE.cellWear[key] = 21;
+
+  if (isMove) {
+    f.daysOnTile = 1;
+    logEvent(`TRACTOR PULLED: Moved to Cell [${STATE.tractor.x}, ${STATE.tractor.y}]. Fresh forage grazing active.`);
+  } else {
+    f.daysOnTile++;
+    logEvent(`STATIONARY DAY: Serviced Cell [${STATE.tractor.x}, ${STATE.tractor.y}].`);
+  }
+
+  // Feed consumption
+  if (f.count > 0 && f.stage !== "HARVESTED") {
+    const dailyBurnLbs = f.count * getDailyFeedPerBird(f.ageDays);
+    STATE.feedLbsInBags = Math.max(0, STATE.feedLbsInBags - Math.round(dailyBurnLbs));
+    STATE.feedBags = Math.ceil(STATE.feedLbsInBags / 50);
+
+    if (STATE.feedLbsInBags <= 0) {
+      logEvent("CRITICAL ALERT: Feed depot is EMPTY! Flock is starving. High mortality risk.");
+      f.count = Math.max(0, f.count - 2);
+    }
+  }
+
+  // Recover resting pasture tiles
+  Object.keys(STATE.cellWear).forEach(k => {
+    if (STATE.cellWear[k] > 0) STATE.cellWear[k]--;
+  });
+
+  // Advance bird age
+  f.ageDays++;
+  if (f.ageDays >= 49 && f.stage !== "HARVESTED") {
+    logEvent("HARVEST WINDOW OPEN: Flock has reached finish weight (5.5+ lbs). Ready for processing day!");
+  }
+
+  STATE.day++;
+  STATE.laborRemaining = CONFIG.dailyBudgetMins;
+  STATE.laborBudgetToday = CONFIG.dailyBudgetMins;
+
+  if (navigator.vibrate) navigator.vibrate([30, 45, 30]);
+  recalculateAll();
+}
+
+/* =====================================================================
+ * RENDERING ENGINE (TACTICAL MAP + RETICLE + TRACTOR)
+ * ===================================================================== */
+
+function render() {
+  ctx.fillStyle = '#060907';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const z = camera.zoom;
+  const ox = camera.x;
+  const oy = camera.y;
+
+  const startX = Math.max(0, Math.floor(-ox / z));
+  const endX = Math.min(CONFIG.gridSize, Math.ceil((canvas.width - ox) / z));
+  const startY = Math.max(0, Math.floor(-oy / z));
+  const endY = Math.min(CONFIG.gridSize, Math.ceil((canvas.height - oy) / z));
+
+  // Render Grid
+  for (let x = startX; x < endX; x++) {
+    for (let y = startY; y < endY; y++) {
+      const px = ox + x * z;
+      const py = oy + y * z;
+
+      if (x < CONFIG.farmsteadWidth) {
+        ctx.fillStyle = ((x + y) % 2 === 0) ? '#161e18' : '#1a241d';
+      } else {
+        const wear = STATE.cellWear[`${x},${y}`] || 0;
+        if (wear > 0) {
+          ctx.fillStyle = '#42361e';
+        } else {
+          ctx.fillStyle = ((x + y) % 2 === 0) ? '#1c3620' : '#18301c';
+        }
+      }
+      ctx.fillRect(px, py, z - 1, z - 1);
+    }
+  }
+
+  // Demarcation Line
+  ctx.strokeStyle = '#3a4a3f';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(ox + CONFIG.farmsteadWidth * z, oy);
+  ctx.lineTo(ox + CONFIG.farmsteadWidth * z, oy + CONFIG.gridSize * z);
+  ctx.stroke();
+
+  // Water Line
+  if (STATE.infrastructure.waterLineInstalled) {
+    ctx.strokeStyle = 'rgba(66, 153, 225, 0.7)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(ox + (STATE.structures.well.x + 0.5) * z, oy + (STATE.structures.well.y + 0.5) * z);
+    ctx.lineTo(ox + CONFIG.farmsteadWidth * z, oy + (STATE.structures.well.y + 0.5) * z);
+    ctx.stroke();
+  }
+
+  // Base Structures
+  Object.values(STATE.structures).forEach(struct => {
+    ctx.fillStyle = struct.color;
+    ctx.fillRect(ox + struct.x * z, oy + struct.y * z, z - 1, z - 1);
+    if (z >= 18) {
+      ctx.font = `${Math.floor(z * 0.5)}px sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(struct.icon, ox + (struct.x + 0.5) * z, oy + (struct.y + 0.5) * z);
+    }
+  });
+
+  // Depot Feed Alert Badge
+  if (STATE.feedBags <= 1) {
+    const dx = ox + (STATE.structures.depot.x + 0.5) * z;
+    const dy = oy + (STATE.structures.depot.y + 0.5) * z;
+    drawMapBadge(dx, dy - z * 0.7, "🚨 FEED CRITICAL", "#f56565", "#fff");
+  }
+
+  // PLANNED PATH VECTOR & TARGET RETICLE (ALWAYS RENDERED)
+  const isMove = (STATE.target.x !== STATE.tractor.x || STATE.target.y !== STATE.tractor.y);
+  const curPx = ox + (STATE.tractor.x + 0.5) * z;
+  const curPy = oy + (STATE.tractor.y + 0.5) * z;
+  const tgtPx = ox + (STATE.target.x + 0.5) * z;
+  const tgtPy = oy + (STATE.target.y + 0.5) * z;
+
+  if (isMove) {
+    ctx.strokeStyle = '#ecc94b';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([5, 4]);
+    ctx.beginPath();
+    ctx.moveTo(curPx, curPy);
+    ctx.lineTo(tgtPx, tgtPy);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Glowing Target Reticle
+    const tpx = ox + STATE.target.x * z;
+    const tpy = oy + STATE.target.y * z;
+    ctx.strokeStyle = `rgba(236, 201, 75, ${0.5 + reticlePulse * 0.5})`;
+    ctx.lineWidth = 3;
+    ctx.strokeRect(tpx - 2, tpy - 2, z + 3, z + 3);
+
+    // Ghost Tractor Glyph
+    ctx.globalAlpha = 0.5 + reticlePulse * 0.35;
+    ctx.font = `${Math.floor(z * 0.55)}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('🚜', tpx + z * 0.5, tpy + z * 0.5);
+    ctx.globalAlpha = 1.0;
+  }
+
+  // ACTIVE FIELD TRACTOR (ALWAYS RENDERED)
+  const trPx = ox + STATE.tractor.x * z;
+  const trPy = oy + STATE.tractor.y * z;
+  ctx.fillStyle = '#e53e3e';
+  ctx.fillRect(trPx, trPy, z - 1, z - 1);
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(trPx, trPy, z - 1, z - 1);
+
+  ctx.fillStyle = '#fff';
+  ctx.font = `${Math.floor(z * 0.55)}px sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('🚜', trPx + z * 0.5, trPy + z * 0.5);
+}
+
+function drawMapBadge(x, y, text, bgColor, textColor) {
+  ctx.save();
+  ctx.font = 'bold 9px monospace';
+  const metrics = ctx.measureText(text);
+  const w = metrics.width + 8;
+  const h = 14;
+
+  ctx.fillStyle = bgColor;
+  ctx.beginPath();
+  ctx.roundRect(x - w / 2, y - h / 2, w, h, 3);
+  ctx.fill();
+
+  ctx.fillStyle = textColor;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, x, y);
+  ctx.restore();
+}
+
+/* =====================================================================
+ * BULLETPROOF TOUCH & CLICK ENGINE
+ * ===================================================================== */
+
+function setupTouchAndMouse() {
+  let isDown = false;
+  let startX = 0, startY = 0;
+  let lastX = 0, lastY = 0;
+  let startTime = 0;
+  let isPanning = false;
+  let initialPinchDist = null;
+  let initialPinchZoom = 28;
+
+  function getClientPos(e) {
+    if (e.touches && e.touches.length > 0) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    if (e.changedTouches && e.changedTouches.length > 0) return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+    return { x: e.clientX, y: e.clientY };
+  }
+
+  function getTileFromPos(clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    const mx = clientX - rect.left - camera.x;
+    const my = clientY - rect.top - camera.y;
+    return {
+      x: Math.floor(mx / camera.zoom),
+      y: Math.floor(my / camera.zoom)
+    };
+  }
+
+  function handleStart(e) {
+    if (e.touches && e.touches.length === 2) {
+      isDown = false;
+      isPanning = false;
+      const t1 = e.touches[0];
+      const t2 = e.touches[1];
+      initialPinchDist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+      initialPinchZoom = camera.zoom;
+      return;
+    }
+
+    isDown = true;
+    isPanning = false;
+    startTime = performance.now();
+    const pos = getClientPos(e);
+    startX = pos.x; startY = pos.y;
+    lastX = pos.x; lastY = pos.y;
+  }
+
+  function handleMove(e) {
+    if (e.touches && e.touches.length === 2 && initialPinchDist) {
+      if (e.cancelable) e.preventDefault();
+      const t1 = e.touches[0];
+      const t2 = e.touches[1];
+      const currentDist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+      const scale = currentDist / initialPinchDist;
+      camera.zoom = Math.max(CONFIG.minZoom, Math.min(CONFIG.maxZoom, initialPinchZoom * scale));
+      return;
+    }
+
+    if (!isDown) return;
+    const pos = getClientPos(e);
+    const totalDist = Math.hypot(pos.x - startX, pos.y - startY);
+
+    if (totalDist > 16) {
+      isPanning = true;
+      const dx = pos.x - lastX;
+      const dy = pos.y - lastY;
+      camera.x += dx;
+      camera.y += dy;
+      lastX = pos.x;
+      lastY = pos.y;
+    }
+  }
+
+  function handleEnd(e) {
+    if (e.touches && e.touches.length < 2) initialPinchDist = null;
+    if (!isDown) return;
+    isDown = false;
+
+    const elapsed = performance.now() - startTime;
+    const pos = getClientPos(e);
+    const totalDist = Math.hypot(pos.x - startX, pos.y - startY);
+
+    // If released within 500ms and minimal movement: IT IS A TAP!
+    if (!isPanning && totalDist < 24 && elapsed < 500) {
+      const tile = getTileFromPos(startX, startY);
+      setTargetTile(tile.x, tile.y);
+    }
+  }
+
+  // Native click handler (Desktop and synthesized mobile clicks)
+  canvas.addEventListener('click', (e) => {
+    if (!isPanning) {
+      const tile = getTileFromPos(e.clientX, e.clientY);
+      setTargetTile(tile.x, tile.y);
+    }
+  });
+
+  canvas.addEventListener('mousedown', handleStart);
+  window.addEventListener('mousemove', handleMove);
+  window.addEventListener('mouseup', handleEnd);
+
+  canvas.addEventListener('touchstart', handleStart, { passive: true });
+  window.addEventListener('touchmove', handleMove, { passive: false });
+  window.addEventListener('touchend', handleEnd, { passive: true });
+
+  canvas.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const factor = e.deltaY < 0 ? 1.15 : 0.85;
+    adjustZoom(factor);
+  }, { passive: false });
+}
+
+function focusOnFlock() {
+  camera.zoom = (window.innerWidth <= 768) ? 32 : 28;
   camera.x = Math.floor(canvas.width / 2 - (STATE.tractor.x + 0.5) * camera.zoom);
   camera.y = Math.floor(canvas.height / 2 - (STATE.tractor.y + 0.5) * camera.zoom);
   render();
@@ -637,414 +1626,62 @@ function adjustZoom(factor) {
   render();
 }
 
-/* TIME MOTION STUDY ENGINE */
-function calculateDistance(x1, y1, x2, y2) {
-  const dx = (x2 - x1) * CONFIG.cellSizeFt;
-  const dy = (y2 - y1) * CONFIG.cellSizeFt;
-  return Math.sqrt(dx * dx + dy * dy);
-}
+/* =====================================================================
+ * TABS & MOBILE DRAWER NAVIGATION
+ * ===================================================================== */
 
-function recalculateMotion() {
-  // Destination is the target cell
-  const destX = STATE.target.x;
-  const destY = STATE.target.y;
-
-  const isMove = (destX !== STATE.tractor.x || destY !== STATE.tractor.y);
-
-  // Transit route: Depot -> Target -> Well -> Target -> Garage
-  const d1 = calculateDistance(STATE.structures.depot.x, STATE.structures.depot.y, destX, destY);
-  const d2 = calculateDistance(STATE.structures.well.x, STATE.structures.well.y, destX, destY);
-  const totalDist = Math.round((d1 + d2) * 2); // Round trip runs
-
-  const transitMins = parseFloat((totalDist / CONFIG.walkSpeedFtMin).toFixed(1));
-  const dragMins = isMove ? CONFIG.tractorPullMins : 0; // 0 drag pull time if staying on tile
-  const totalChoreTime = parseFloat((transitMins + CONFIG.serviceMins + dragMins).toFixed(1));
-
-  // Update Target Banner
-  document.getElementById('tb-coord').innerText = `[${destX}, ${destY}]`;
-  const wear = STATE.cellWear[`${destX},${destY}`] || 0;
-  const statusStr = isMove ? (wear > 0 ? `Grazed (Needs ${wear}d)` : `Fresh Grass`) : `Stationary`;
-  document.getElementById('tb-status').innerText = statusStr;
-  document.getElementById('tb-time').innerText = `${totalChoreTime}m`;
-
-  // Update Desktop Ticket Elements
-  document.getElementById('tk-target-cell').innerText = `[${destX}, ${destY}] ${isMove ? '(Plan Move)' : '(Stationary)'}`;
-  document.getElementById('tk-dist').innerText = `${totalDist} ft`;
-  document.getElementById('tk-vel').innerText = `${CONFIG.walkSpeedFtMin} ft/min`;
-  document.getElementById('tk-transit').innerText = `${transitMins} mins`;
-  document.getElementById('tk-service').innerText = `${CONFIG.serviceMins} mins`;
-  document.getElementById('tk-drag').innerText = `${dragMins} mins`;
-  document.getElementById('tk-total').innerText = `${totalChoreTime} mins`;
-  document.getElementById('flock-cell').innerText = `[${STATE.tractor.x}, ${STATE.tractor.y}]`;
-  document.getElementById('flock-days').innerText = `${STATE.tractor.daysOnTile} Days`;
-
-  // Update Mobile Thumb Deck Elements
-  document.getElementById('m-target-cell').innerText = `[${destX}, ${destY}]`;
-  document.getElementById('m-chore-time').innerText = `${totalChoreTime}m`;
-  document.getElementById('m-transit-dist').innerText = `${totalDist} ft`;
-  document.getElementById('m-execute-btn').innerText = isMove ? `▶ PULL & CHORE (${totalChoreTime}m)` : `▶ SERVICE TILE (${totalChoreTime}m)`;
-
-  // Update Drawer Elements
-  document.getElementById('m-drawer-target').innerText = `[${destX}, ${destY}]`;
-  document.getElementById('m-drawer-dist').innerText = `${totalDist} ft`;
-  document.getElementById('m-drawer-transit').innerText = `${transitMins} mins`;
-  document.getElementById('m-drawer-service').innerText = `${CONFIG.serviceMins} mins`;
-  document.getElementById('m-drawer-drag').innerText = `${dragMins} mins`;
-  document.getElementById('m-drawer-total').innerText = `${totalChoreTime} mins`;
-  document.getElementById('m-drawer-feed').innerText = `${STATE.feedBags} Bags`;
-  document.getElementById('m-drawer-days').innerText = `${STATE.tractor.daysOnTile}`;
-
-  // Stamina Gauges
-  const pct = Math.max(0, ((CONFIG.dailyBudgetMins - totalChoreTime) / CONFIG.dailyBudgetMins) * 100);
-  const staminaColor = pct < 25 ? 'var(--accent-red)' : 'linear-gradient(90deg, var(--accent-green), var(--accent-amber))';
+function switchTab(tabId) {
+  document.querySelectorAll('#sidebar .tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('#sidebar .tab-pane').forEach(p => p.classList.remove('active'));
   
-  const dBar = document.getElementById('stamina-bar');
-  if (dBar) {
-    dBar.style.width = `${pct}%`;
-    dBar.style.background = staminaColor;
-    document.getElementById('stamina-label').innerText = `${(CONFIG.dailyBudgetMins - totalChoreTime).toFixed(1)}m / ${CONFIG.dailyBudgetMins}m REMAINING`;
-  }
-  
-  const mBar = document.getElementById('mobile-stamina-bar');
-  if (mBar) {
-    mBar.style.width = `${pct}%`;
-    mBar.style.background = staminaColor;
-  }
+  const pane = document.getElementById(tabId);
+  if (pane) pane.classList.add('active');
 
-  return totalChoreTime;
-}
-
-function setTargetTile(tx, ty) {
-  // Boundary check & must be pasture
-  if (tx >= CONFIG.farmsteadWidth && tx < CONFIG.gridSize && ty >= 0 && ty < CONFIG.gridSize) {
-    STATE.target.x = tx;
-    STATE.target.y = ty;
-    if (navigator.vibrate) {
-      navigator.vibrate(15); // Tactile haptic feedback
-    }
-    recalculateMotion();
+  const btnIndex = ['tab-pasture', 'tab-flock', 'tab-workshop', 'tab-logistics', 'tab-market'].indexOf(tabId);
+  if (btnIndex >= 0) {
+    document.querySelectorAll('#sidebar .tab-btn')[btnIndex].classList.add('active');
   }
 }
 
-function resetTargetToTractor() {
-  setTargetTile(STATE.tractor.x, STATE.tractor.y);
-}
-
-/* RENDERING ENGINE */
-function render() {
-  ctx.fillStyle = '#090d0b';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  const z = camera.zoom;
-  const ox = camera.x;
-  const oy = camera.y;
-
-  // Grid bounds culling
-  const startX = Math.max(0, Math.floor(-ox / z));
-  const endX = Math.min(CONFIG.gridSize, Math.ceil((canvas.width - ox) / z));
-  const startY = Math.max(0, Math.floor(-oy / z));
-  const endY = Math.min(CONFIG.gridSize, Math.ceil((canvas.height - oy) / z));
-
-  // Render Base & Pasture Tiles
-  for (let x = startX; x < endX; x++) {
-    for (let y = startY; y < endY; y++) {
-      const px = ox + x * z;
-      const py = oy + y * z;
-
-      if (x < CONFIG.farmsteadWidth) {
-        ctx.fillStyle = ((x + y) % 2 === 0) ? '#1a221d' : '#1e2621'; // Gravel pattern
-      } else {
-        const wear = STATE.cellWear[`${x},${y}`] || 0;
-        if (wear > 0) {
-          ctx.fillStyle = '#4a3c22'; // Grazed thatch
-        } else {
-          ctx.fillStyle = ((x + y) % 2 === 0) ? '#1e3822' : '#1b331f'; // Lush pasture checker
-        }
-      }
-      ctx.fillRect(px, py, z - 1, z - 1);
-    }
-  }
-
-  // Farmstead Border Line
-  ctx.strokeStyle = '#4a5568';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(ox + CONFIG.farmsteadWidth * z, oy);
-  ctx.lineTo(ox + CONFIG.farmsteadWidth * z, oy + CONFIG.gridSize * z);
-  ctx.stroke();
-
-  // Render Base Structures
-  Object.values(STATE.structures).forEach(struct => {
-    ctx.fillStyle = struct.color;
-    ctx.fillRect(ox + struct.x * z, oy + struct.y * z, z - 1, z - 1);
-    if (z >= 18) {
-      ctx.font = `${Math.floor(z * 0.5)}px sans-serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(struct.icon, ox + (struct.x + 0.5) * z, oy + (struct.y + 0.5) * z);
-    }
-  });
-
-  // Planned Path Vector (From Tractor to Target)
-  const isMove = (STATE.target.x !== STATE.tractor.x || STATE.target.y !== STATE.tractor.y);
-  if (isMove) {
-    const curPx = ox + (STATE.tractor.x + 0.5) * z;
-    const curPy = oy + (STATE.tractor.y + 0.5) * z;
-    const tgtPx = ox + (STATE.target.x + 0.5) * z;
-    const tgtPy = oy + (STATE.target.y + 0.5) * z;
-
-    ctx.strokeStyle = '#ecc94b';
-    ctx.lineWidth = 3;
-    ctx.setLineDash([6, 4]);
-    ctx.beginPath();
-    ctx.moveTo(curPx, curPy);
-    ctx.lineTo(tgtPx, tgtPy);
-    ctx.stroke();
-    ctx.setLineDash([]);
-  }
-
-  // Chore Transit Path (Well -> Target)
-  const destPx = ox + (STATE.target.x + 0.5) * z;
-  const destPy = oy + (STATE.target.y + 0.5) * z;
-  const wellPx = ox + (STATE.structures.well.x + 0.5) * z;
-  const wellPy = oy + (STATE.structures.well.y + 0.5) * z;
-
-  ctx.strokeStyle = 'rgba(66, 153, 225, 0.45)';
-  ctx.lineWidth = 2;
-  ctx.setLineDash([4, 4]);
-  ctx.beginPath();
-  ctx.moveTo(wellPx, wellPy);
-  ctx.lineTo(destPx, destPy);
-  ctx.stroke();
-  ctx.setLineDash([]);
-
-  // Render Target Reticle / Ghost
-  if (isMove) {
-    const tpx = ox + STATE.target.x * z;
-    const tpy = oy + STATE.target.y * z;
-
-    // Glowing reticle ring
-    ctx.strokeStyle = `rgba(236, 201, 75, ${0.4 + reticlePulse * 0.6})`;
-    ctx.lineWidth = 3;
-    ctx.strokeRect(tpx - 2, tpy - 2, z + 3, z + 3);
-
-    // Target corner crosshairs
-    const arm = Math.max(4, z * 0.25);
-    ctx.strokeStyle = '#ecc94b';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    // Top-left
-    ctx.moveTo(tpx, tpy + arm); ctx.lineTo(tpx, tpy); ctx.lineTo(tpx + arm, tpy);
-    // Top-right
-    ctx.moveTo(tpx + z - 1 - arm, tpy); ctx.lineTo(tpx + z - 1, tpy); ctx.lineTo(tpx + z - 1, tpy + arm);
-    // Bottom-left
-    ctx.moveTo(tpx, tpy + z - 1 - arm); ctx.lineTo(tpx, tpy + z - 1); ctx.lineTo(tpx + arm, tpy + z - 1);
-    // Bottom-right
-    ctx.moveTo(tpx + z - 1 - arm, tpy + z - 1); ctx.lineTo(tpx + z - 1, tpy + z - 1); ctx.lineTo(tpx + z - 1, tpy + z - 1 - arm);
-    ctx.stroke();
-
-    // Ghost Tractor Glyph
-    ctx.globalAlpha = 0.5 + reticlePulse * 0.3;
-    ctx.font = `${Math.floor(z * 0.6)}px sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('🚜', tpx + z * 0.5, tpy + z * 0.5);
-    ctx.globalAlpha = 1.0;
-  }
-
-  // Render Current Tractor
-  const trPx = ox + STATE.tractor.x * z;
-  const trPy = oy + STATE.tractor.y * z;
-  ctx.fillStyle = '#e53e3e';
-  ctx.fillRect(trPx, trPy, z - 1, z - 1);
-  ctx.strokeStyle = '#fff';
-  ctx.lineWidth = 1.5;
-  ctx.strokeRect(trPx, trPy, z - 1, z - 1);
-
-  // Tractor Icon glyph
-  ctx.fillStyle = '#fff';
-  ctx.font = `${Math.floor(z * 0.6)}px sans-serif`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('🚜', trPx + z * 0.5, trPy + z * 0.5);
-}
-
-/* TAP-TO-TARGET & SMOOTH PAN/ZOOM TOUCH ENGINE */
-function setupTouchAndMouse() {
-  let isPointerDown = false;
-  let startX = 0, startY = 0;
-  let lastX = 0, lastY = 0;
-  let hasMoved = false;
-  let initialPinchDist = null;
-  let initialPinchZoom = 24;
-
-  function getClientPos(e) {
-    if (e.touches && e.touches.length > 0) {
-      return { x: e.touches[0].clientX, y: e.touches[0].clientY };
-    }
-    return { x: e.clientX, y: e.clientY };
-  }
-
-  function getTileFromPos(clientX, clientY) {
-    const rect = canvas.getBoundingClientRect();
-    const mx = clientX - rect.left - camera.x;
-    const my = clientY - rect.top - camera.y;
-    return {
-      x: Math.floor(mx / camera.zoom),
-      y: Math.floor(my / camera.zoom)
-    };
-  }
-
-  function handleStart(e) {
-    if (e.touches && e.touches.length === 2) {
-      // Pinch to Zoom start
-      const t1 = e.touches[0];
-      const t2 = e.touches[1];
-      initialPinchDist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
-      initialPinchZoom = camera.zoom;
-      return;
-    }
-
-    isPointerDown = true;
-    hasMoved = false;
-    const pos = getClientPos(e);
-    startX = pos.x;
-    startY = pos.y;
-    lastX = pos.x;
-    lastY = pos.y;
-  }
-
-  function handleMove(e) {
-    if (e.touches && e.touches.length === 2 && initialPinchDist) {
-      // Handle Pinch to Zoom
-      const t1 = e.touches[0];
-      const t2 = e.touches[1];
-      const currentDist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
-      const scale = currentDist / initialPinchDist;
-      camera.zoom = Math.max(CONFIG.minZoom, Math.min(CONFIG.maxZoom, initialPinchZoom * scale));
-      return;
-    }
-
-    if (!isPointerDown) return;
-    const pos = getClientPos(e);
-    const dx = pos.x - lastX;
-    const dy = pos.y - lastY;
-
-    if (Math.hypot(pos.x - startX, pos.y - startY) > 8) {
-      hasMoved = true; // Drag panning
-      camera.x += dx;
-      camera.y += dy;
-      lastX = pos.x;
-      lastY = pos.y;
-    }
-  }
-
-  function handleEnd(e) {
-    if (e.touches && e.touches.length < 2) {
-      initialPinchDist = null;
-    }
-
-    if (!isPointerDown) return;
-    isPointerDown = false;
-
-    // If minimal movement occurred, interpret as TAP TO TARGET!
-    if (!hasMoved) {
-      const tile = getTileFromPos(startX, startY);
-      setTargetTile(tile.x, tile.y);
-    }
-  }
-
-  canvas.addEventListener('mousedown', handleStart);
-  window.addEventListener('mousemove', handleMove);
-  window.addEventListener('mouseup', handleEnd);
-
-  canvas.addEventListener('touchstart', handleStart, { passive: false });
-  window.addEventListener('touchmove', handleMove, { passive: false });
-  window.addEventListener('touchend', handleEnd);
-
-  // Mouse wheel zoom
-  canvas.addEventListener('wheel', (e) => {
-    e.preventDefault();
-    const factor = e.deltaY < 0 ? 1.15 : 0.85;
-    adjustZoom(factor);
-  }, { passive: false });
-}
-
-/* DISPATCH & CHORE EXECUTION */
-function executeChores() {
-  const timeExpended = recalculateMotion();
-  if (timeExpended > CONFIG.dailyBudgetMins) {
-    alert("CRITICAL WARNING: Chore routine exceeds daily labor budget! High operator fatigue risk.");
-  }
-
-  // Move tractor to target cell
-  const isMove = (STATE.target.x !== STATE.tractor.x || STATE.target.y !== STATE.tractor.y);
-  STATE.tractor.x = STATE.target.x;
-  STATE.tractor.y = STATE.target.y;
-
-  // Mark tile as grazed (21 day recovery period)
-  const key = `${STATE.tractor.x},${STATE.tractor.y}`;
-  STATE.cellWear[key] = 21;
-
-  // Advance recovery on all grazed tiles
-  Object.keys(STATE.cellWear).forEach(k => {
-    if (k !== key && STATE.cellWear[k] > 0) {
-      STATE.cellWear[k]--;
-    }
-  });
-
-  // Advance day & flock tracking
-  STATE.day++;
-  if (isMove) {
-    STATE.tractor.daysOnTile = 1;
-  } else {
-    STATE.tractor.daysOnTile++;
-  }
-
-  // Feed sack consumption (50 birds burn ~0.35 bags/day)
-  if (STATE.day % 3 === 0 && STATE.feedBags > 0) {
-    STATE.feedBags--;
-    document.getElementById('inv-feed').innerText = `${STATE.feedBags} Bags`;
-  }
-
-  // Update HUD
-  document.getElementById('hud-day').innerText = `Day ${STATE.day}`;
-
-  if (navigator.vibrate) {
-    navigator.vibrate([30, 50, 30]); // Satisfying execution haptic pulse
-  }
-
-  recalculateMotion();
-  closeMobileDrawer();
-}
-
-/* MOBILE DRAWER TOGGLES */
-function openMobileDrawer() {
+function openDrawerTab(tabId) {
   document.getElementById('mobile-drawer').style.display = 'block';
+  switchDrawerTab(tabId);
+}
+
+function switchDrawerTab(tabId) {
+  document.querySelectorAll('#mobile-drawer .tab-btn').forEach(b => b.classList.remove('active'));
+  const btnIndex = ['tab-pasture', 'tab-flock', 'tab-workshop', 'tab-logistics', 'tab-market'].indexOf(tabId);
+  if (btnIndex >= 0) {
+    document.querySelectorAll('#mobile-drawer .tab-btn')[btnIndex].classList.add('active');
+  }
+
+  const sourcePane = document.getElementById(tabId);
+  if (sourcePane) {
+    document.getElementById('drawer-content-container').innerHTML = sourcePane.innerHTML;
+  }
 }
 
 function closeMobileDrawer() {
   document.getElementById('mobile-drawer').style.display = 'none';
 }
 
-/* VARIABLE INSPECTOR MODAL */
 function toggleInspector() {
   const el = document.getElementById('inspector-overlay');
-  el.style.display = el.style.display === 'block' ? 'none' : 'block';
+  el.style.display = (el.style.display === 'block') ? 'none' : 'block';
 }
 
 function updateConfig() {
+  CONFIG.dailyBudgetMins = parseInt(document.getElementById('v-budget').value);
   CONFIG.walkSpeedFtMin = parseInt(document.getElementById('v-speed').value);
   CONFIG.tractorPullMins = parseInt(document.getElementById('v-pull').value);
   CONFIG.serviceMins = parseInt(document.getElementById('v-serv').value);
-  CONFIG.opforAggression = parseInt(document.getElementById('v-opfor').value);
 
+  document.getElementById('v-budget-val').innerText = CONFIG.dailyBudgetMins;
   document.getElementById('v-speed-val').innerText = CONFIG.walkSpeedFtMin;
   document.getElementById('v-pull-val').innerText = CONFIG.tractorPullMins;
   document.getElementById('v-serv-val').innerText = CONFIG.serviceMins;
-  document.getElementById('v-opfor-val').innerText = CONFIG.opforAggression;
 
-  recalculateMotion();
+  recalculateAll();
 }
 
 window.onload = init;

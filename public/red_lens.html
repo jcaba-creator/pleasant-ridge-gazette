@@ -1,0 +1,2002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RED LENS: OPFOR Reconnaissance-Strike & Infiltration Sandbox</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    :root {
+      --bg: #07090e;
+      --panel: #0d121c;
+      --card: #121927;
+      --card-hover: #192337;
+      --border: #1e293b;
+      --border-bright: #334155;
+      --header: #0a0e17;
+
+      --red-primary: #f43f5e;
+      --red-glow: rgba(244, 63, 94, 0.25);
+      --red-dim: #881337;
+      --amber: #f59e0b;
+      --amber-glow: rgba(245, 158, 11, 0.2);
+      --green: #10b981;
+      --cyan: #06b6d4;
+      --cyan-glow: rgba(6, 182, 212, 0.2);
+      --blue: #38bdf8;
+      --blue-dim: #0369a1;
+
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    /* TOP HEADER */
+    #top-bar {
+      height: 48px;
+      background: var(--header);
+      border-bottom: 1px solid var(--border-bright);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      flex-shrink: 0;
+      z-index: 30;
+    }
+
+    .badge-opfor {
+      background: var(--red-dim);
+      color: #fff;
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 3px;
+      border: 1px solid var(--red-primary);
+      letter-spacing: 1px;
+    }
+
+    .title-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .title-text {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--text);
+    }
+    .title-sub {
+      color: var(--text-muted);
+      font-size: 11px;
+      font-family: var(--mono);
+    }
+
+    .top-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .time-display {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--amber);
+      background: rgba(245, 158, 11, 0.1);
+      padding: 4px 10px;
+      border-radius: 4px;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn {
+      background: var(--card);
+      border: 1px solid var(--border-bright);
+      color: var(--text);
+      padding: 5px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      font-family: var(--mono);
+    }
+    .btn:hover {
+      background: var(--card-hover);
+      border-color: var(--cyan);
+      color: #fff;
+    }
+    .btn.active {
+      background: var(--red-dim);
+      border-color: var(--red-primary);
+      color: #fff;
+    }
+    .btn-fire {
+      background: #7f1d1d;
+      border-color: #ef4444;
+      color: #fecaca;
+    }
+    .btn-fire:hover {
+      background: #991b1b;
+      border-color: #f87171;
+      color: #fff;
+    }
+
+    /* MAIN APP WORKSPACE */
+    #workspace {
+      flex: 1;
+      display: flex;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* LEFT SIDEBAR: OPFOR ASSETS & ORDERS */
+    #sidebar-left {
+      width: 320px;
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      z-index: 20;
+    }
+
+    .sidebar-header {
+      padding: 10px 14px;
+      background: rgba(0,0,0,0.2);
+      border-bottom: 1px solid var(--border);
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--red-primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .asset-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .asset-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 10px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      position: relative;
+    }
+    .asset-card:hover {
+      border-color: var(--border-bright);
+      background: var(--card-hover);
+    }
+    .asset-card.selected {
+      border-color: var(--red-primary);
+      background: rgba(244, 63, 94, 0.08);
+      box-shadow: 0 0 10px var(--red-glow);
+    }
+
+    .asset-card-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 700;
+      font-family: var(--mono);
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+    .asset-tag {
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .tag-sigint { background: rgba(6, 182, 212, 0.2); color: var(--cyan); border: 1px solid rgba(6, 182, 212, 0.4); }
+    .tag-recce { background: rgba(244, 63, 94, 0.2); color: var(--red-primary); border: 1px solid rgba(244, 63, 94, 0.4); }
+    .tag-uav { background: rgba(245, 158, 11, 0.2); color: var(--amber); border: 1px solid rgba(245, 158, 11, 0.4); }
+    .tag-fires { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+
+    .asset-details {
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      font-family: var(--mono);
+    }
+
+    /* CENTER: INTERACTIVE TACTICAL CANVAS */
+    #map-viewport {
+      flex: 1;
+      position: relative;
+      background: #03060a;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+
+    #tactical-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* SENSOR OVERLAYS TOGGLE BAR */
+    #overlay-bar {
+      position: absolute;
+      top: 14px;
+      left: 16px;
+      display: flex;
+      gap: 8px;
+      background: rgba(13, 18, 28, 0.85);
+      backdrop-filter: blur(8px);
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-bright);
+      z-index: 10;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+
+    .overlay-toggle {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s;
+    }
+    .overlay-toggle:hover {
+      color: #fff;
+    }
+    .overlay-toggle.on {
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      border-color: var(--border-bright);
+    }
+    .overlay-toggle.on.sigint { border-color: var(--cyan); color: var(--cyan); }
+    .overlay-toggle.on.thermal { border-color: var(--amber); color: var(--amber); }
+    .overlay-toggle.on.radar { border-color: var(--red-primary); color: var(--red-primary); }
+    .overlay-toggle.on.boundaries { border-color: var(--green); color: var(--green); }
+
+    /* SCENARIO BAR */
+    #scenario-bar {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      display: flex;
+      gap: 6px;
+      background: rgba(13, 18, 28, 0.85);
+      backdrop-filter: blur(8px);
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-bright);
+      z-index: 10;
+    }
+
+    /* BOTTOM DRAWER: SPECTRUM WATERFALL & LOGS */
+    #bottom-drawer {
+      height: 160px;
+      background: var(--panel);
+      border-top: 1px solid var(--border-bright);
+      display: flex;
+      flex-shrink: 0;
+      z-index: 25;
+    }
+
+    .drawer-col-waterfall {
+      width: 380px;
+      border-right: 1px solid var(--border);
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+    }
+    .waterfall-header {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--cyan);
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+    }
+    #waterfall-canvas {
+      flex: 1;
+      width: 100%;
+      background: #040810;
+      border: 1px solid rgba(6, 182, 212, 0.2);
+      border-radius: 3px;
+    }
+
+    .drawer-col-logs {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 8px 12px;
+    }
+    .log-header {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    #intel-feed {
+      flex: 1;
+      overflow-y: auto;
+      font-family: var(--mono);
+      font-size: 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .feed-item {
+      padding: 3px 6px;
+      border-radius: 3px;
+      background: rgba(255,255,255,0.02);
+      border-left: 3px solid var(--text-dim);
+      display: flex;
+      gap: 8px;
+    }
+    .feed-time { color: var(--amber); font-weight: 700; }
+    .feed-sigint { border-color: var(--cyan); }
+    .feed-thermal { border-color: var(--amber); }
+    .feed-seam { border-color: var(--green); }
+    .feed-strike { border-color: var(--red-primary); background: rgba(244, 63, 94, 0.08); }
+
+    /* RIGHT SIDEBAR: DOCTRINE & EXPLANATION INSPECTOR */
+    #sidebar-right {
+      width: 360px;
+      background: var(--panel);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      z-index: 20;
+    }
+
+    .inspector-header {
+      padding: 10px 14px;
+      background: rgba(0,0,0,0.2);
+      border-bottom: 1px solid var(--border);
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--cyan);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .inspector-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .doctrine-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+    }
+    .doctrine-title {
+      font-weight: 700;
+      font-size: 12px;
+      margin-bottom: 6px;
+      color: var(--amber);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .doctrine-rule {
+      font-size: 10px;
+      font-family: var(--mono);
+      color: var(--cyan);
+      margin-bottom: 8px;
+    }
+    .doctrine-content {
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .control-group {
+      margin-bottom: 12px;
+    }
+    .control-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .slider {
+      width: 100%;
+      height: 4px;
+      background: var(--border-bright);
+      outline: none;
+      -webkit-appearance: none;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--cyan);
+      cursor: pointer;
+      box-shadow: 0 0 8px var(--cyan-glow);
+    }
+
+    /* ACTION CALLOUT POPUP */
+    #action-hud {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(13, 18, 28, 0.95);
+      border: 1px solid var(--border-bright);
+      border-radius: 6px;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      z-index: 15;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.7);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <div id="top-bar">
+    <div class="title-group">
+      <a href="/arcade/" class="btn" style="text-decoration:none; margin-right:4px; border-color: var(--amber); color: var(--amber); font-weight:700;">&#8592; 449 ARCADE</a>
+      <span class="badge-opfor">OPFOR COMMAND</span>
+      <div class="title-text">RED LENS</div>
+      <div class="title-sub">RECONNAISSANCE-STRIKE & INFILTRATION SANDBOX // FM 3-0 / TC 7-100</div>
+    </div>
+
+    <div class="top-controls">
+      <div class="time-display" id="clock-display">
+        <span>T+</span><span id="game-clock">00:00:00</span>
+      </div>
+      <button class="btn" id="btn-pause-play">❚❚ PAUSE</button>
+      <button class="btn" id="btn-speed-1x">1x</button>
+      <button class="btn" id="btn-speed-3x">3x</button>
+      <button class="btn" id="btn-audio-toggle">🔊 SFX ON</button>
+    </div>
+  </div>
+
+  <!-- WORKSPACE -->
+  <div id="workspace">
+
+    <!-- LEFT SIDEBAR: OPFOR ASSETS -->
+    <div id="sidebar-left">
+      <div class="sidebar-header">
+        <span>RED SENSORS & FIRES</span>
+        <span style="color:var(--text-dim);" id="asset-count">6 ASSETS</span>
+      </div>
+      <div class="asset-scroll" id="asset-list">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+    <!-- CENTER MAP -->
+    <div id="map-viewport">
+      <canvas id="tactical-canvas"></canvas>
+
+      <!-- OVERLAYS BAR -->
+      <div id="overlay-bar">
+        <button class="overlay-toggle on sigint" id="tog-sigint">📡 SIGINT / RF</button>
+        <button class="overlay-toggle on thermal" id="tog-thermal">🔥 THERMAL BLOOMS</button>
+        <button class="overlay-toggle on radar" id="tog-radar">🛡️ BLUE RADAR DOME</button>
+        <button class="overlay-toggle on boundaries" id="tog-boundary">📐 BOUNDARY SEAMS</button>
+        <button class="overlay-toggle on" id="tog-elevation">⛰️ TOPOGRAPHY</button>
+      </div>
+
+      <!-- SCENARIOS PRESETS -->
+      <div id="scenario-bar">
+        <button class="btn active" id="scen-1">1: The Seam at Dawn</button>
+        <button class="btn" id="scen-2">2: Blind the Firefinder</button>
+        <button class="btn" id="scen-3">3: TOC Jump Trap</button>
+      </div>
+
+      <!-- CONTEXT HUD FOR SELECTED ASSET -->
+      <div id="action-hud" style="display: none;">
+        <span id="hud-name" style="font-family: var(--mono); font-weight:700; color:var(--text);">ASSET</span>
+        <div id="hud-actions" style="display: flex; gap: 8px;"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT SIDEBAR: DOCTRINE & EXPLANATION INSPECTOR -->
+    <div id="sidebar-right">
+      <div class="inspector-header">
+        <span>EPISTEMIC & DOCTRINE INSPECTOR</span>
+        <span>BLUE LSCO</span>
+      </div>
+      <div class="inspector-body" id="inspector-content">
+        <!-- Dynamic doctrinal card explaining current selection or battlefield state -->
+        <div class="doctrine-box" id="doctrine-main-box">
+          <div class="doctrine-title" id="doc-title">Select an Object or Event</div>
+          <div class="doctrine-rule" id="doc-ref">FM 3-0 / ATP 3-90 / TC 7-100</div>
+          <div class="doctrine-content" id="doc-text">
+            Click on any radar fan, radio spike, Blue unit, or Red infiltration team to analyze <strong>how Red detects it</strong>, the underlying physical signature, and the Blue doctrinal vulnerability.
+          </div>
+        </div>
+
+        <!-- BLUE DOCTRINAL PARAMETER SLIDERS -->
+        <div class="doctrine-box">
+          <div class="doctrine-title" style="color:var(--blue);">Blue Doctrinal Parameters (Sandbox)</div>
+          
+          <div class="control-group">
+            <div class="control-label">
+              <span>EMCON (Emission Control)</span>
+              <span id="val-emcon" style="color:var(--cyan);">Free (Chatty)</span>
+            </div>
+            <input type="range" class="slider" id="slide-emcon" min="1" max="3" value="1">
+          </div>
+
+          <div class="control-group">
+            <div class="control-label">
+              <span>Boundary Seam Coordination</span>
+              <span id="val-coordination" style="color:var(--amber);">Sloppy (Gaps Present)</span>
+            </div>
+            <input type="range" class="slider" id="slide-coordination" min="1" max="3" value="1">
+          </div>
+
+          <div class="control-group">
+            <div class="control-label">
+              <span>TOC Displacement Rhythms</span>
+              <span id="val-tocjump" style="color:var(--text);">Doctrinal (12h)</span>
+            </div>
+            <input type="range" class="slider" id="slide-tocjump" min="1" max="3" value="2">
+          </div>
+
+          <div class="control-group">
+            <div class="control-label">
+              <span>Weather / Thermal Degradation</span>
+              <span id="val-weather" style="color:var(--green);">Clear Daylight</span>
+            </div>
+            <input type="range" class="slider" id="slide-weather" min="1" max="4" value="1">
+          </div>
+
+          <div class="control-group">
+            <div class="control-label">
+              <span>AN/TPQ-53 Firefinder Radar</span>
+              <span id="val-firefinder" style="color:var(--red-primary);">Active (Automated CB)</span>
+            </div>
+            <input type="range" class="slider" id="slide-firefinder" min="0" max="1" value="1">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM DRAWER: WATERFALL & INTEL LOG -->
+  <div id="bottom-drawer">
+    <div class="drawer-col-waterfall">
+      <div class="waterfall-header">
+        <span>RF SPECTRUM WATERFALL (30-512 MHz)</span>
+        <span id="rf-activity-status">MONITORING</span>
+      </div>
+      <canvas id="waterfall-canvas"></canvas>
+    </div>
+
+    <div class="drawer-col-logs">
+      <div class="log-header">
+        <span>RED RECONNAISSANCE INTEL FEED & TARGET ACQUISITION LOG</span>
+        <button class="btn" style="padding:2px 6px; font-size:9px;" id="btn-clear-feed">CLEAR</button>
+      </div>
+      <div id="intel-feed">
+        <!-- Log entries -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       RED LENS: SYSTEMIC SIMULATION ENGINE (JS)
+       ========================================================================== */
+
+    // Audio SFX Engine using Web Audio API
+    class AudioSystem {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+      }
+      beep(freq, type = 'sine', duration = 0.08, gainVal = 0.05) {
+        if (!this.enabled) return;
+        this.init();
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + duration);
+        } catch(e){}
+      }
+      radioChirp() {
+        if (!this.enabled) return;
+        this.beep(850, 'sawtooth', 0.04, 0.03);
+        setTimeout(() => this.beep(1200, 'sine', 0.05, 0.02), 50);
+      }
+      strikeRumble() {
+        if (!this.enabled) return;
+        this.init();
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(90, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(30, this.ctx.currentTime + 0.8);
+          gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.8);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.8);
+        } catch(e){}
+      }
+    }
+    const audio = new AudioSystem();
+
+    // GAME STATE & CONSTANTS
+    const STATE = {
+      paused: false,
+      speed: 1,
+      simTime: 0,
+      selectedAssetId: 'recce_1',
+      selectedTargetId: null,
+      inspectingObject: null,
+      overlays: {
+        sigint: true,
+        thermal: true,
+        radar: true,
+        boundaries: true,
+        elevation: true
+      },
+      blueSettings: {
+        emcon: 1,           // 1: Free (Chatty), 2: Restricted, 3: Silent
+        coordination: 1,    // 1: Sloppy (Gaps), 2: Standard, 3: Rigorous
+        tocJumpInterval: 180,// Seconds until TOC displacement
+        weather: 1,         // 1: Clear, 2: Ground Fog, 3: Heavy Rain, 4: Night
+        firefinderActive: 1 // 1: Active, 0: Disabled
+      },
+      tocState: {
+        currentTOC: 'main', // 'main' or 'tac'
+        jumping: false,
+        jumpProgress: 0,
+        jumpTimer: 180
+      },
+      counterBattery: {
+        active: false,
+        timer: 0,
+        targetCoord: null
+      }
+    };
+
+    // TERRAIN ELEVATION MAP (Simulated 2D Ridges)
+    // Blue is in the South, Red is in the North.
+    // Major ridgeline runs horizontally across center (y=340 to 420) with a pass down the boundary seam (x=500 to 560).
+    function getElevation(x, y) {
+      // Natural rolling hills + a strategic ridge
+      let h = Math.sin(x * 0.005) * 40 + Math.cos(y * 0.004) * 50;
+      // Central East-West Ridge
+      let ridgeDist = Math.abs(y - 380);
+      if (ridgeDist < 90) {
+        h += (90 - ridgeDist) * 1.8;
+      }
+      // Pass at the boundary seam (x ~ 520)
+      let seamDist = Math.abs(x - 520);
+      if (seamDist < 80) {
+        h -= (80 - seamDist) * 1.4;
+      }
+      return Math.max(10, h + 100);
+    }
+
+    // RED ASSETS
+    const RED_ASSETS = [
+      {
+        id: 'ew_1',
+        name: 'TORN-MDM SIGINT Post (Northwest)',
+        type: 'SIGINT',
+        x: 180,
+        y: 80,
+        status: 'MONITORING',
+        range: 850,
+        azimuth: 0,
+        desc: 'Automated direction-finding receiver (30-3000 MHz). Intercepts VHF tactical radio networks and radars.'
+      },
+      {
+        id: 'ew_2',
+        name: 'LEER-3 EW Station (North)',
+        type: 'SIGINT',
+        x: 520,
+        y: 60,
+        status: 'MONITORING',
+        range: 900,
+        azimuth: 0,
+        desc: 'UAV-assisted cellular & tactical radio direction finding. Intersects LOBs with Northwest post.'
+      },
+      {
+        id: 'ew_3',
+        name: 'BORISOGLEBSK-2 Station (Northeast)',
+        type: 'SIGINT',
+        x: 840,
+        y: 90,
+        status: 'MONITORING',
+        range: 850,
+        azimuth: 0,
+        desc: 'High-frequency baseline triangulation station for locating Blue radar & TOC command nodes.'
+      },
+      {
+        id: 'recce_1',
+        name: '45th Spetsnaz Detachment Alpha',
+        type: 'RECCE',
+        x: 480,
+        y: 200,
+        targetX: 520,
+        targetY: 420,
+        speed: 1.2,
+        stance: 'SNEAK', // SNEAK, CRAWL, SPRINT
+        stealth: 92,
+        status: 'INFILTRATING SEAM',
+        laserEquipped: true,
+        ugsCount: 3,
+        detected: false,
+        desc: '6-man dismounted special reconnaissance team infiltrating along the Inter-Brigade Boundary seam.'
+      },
+      {
+        id: 'recce_2',
+        name: 'Reconnaissance Patrol Bravo',
+        type: 'RECCE',
+        x: 240,
+        y: 190,
+        targetX: 260,
+        targetY: 340,
+        speed: 1.0,
+        stance: 'CRAWL',
+        stealth: 95,
+        status: 'OBSERVING 1st ABCT SCREEN',
+        laserEquipped: true,
+        ugsCount: 2,
+        detected: false,
+        desc: 'Forward scout team probing the 1st ABCT cavalry screen and monitoring fuel bowsers.'
+      },
+      {
+        id: 'uav_1',
+        name: 'Orlan-10 Recon Drone "Falcon-1"',
+        type: 'UAV',
+        x: 420,
+        y: 140,
+        targetX: 520,
+        targetY: 480,
+        altitude: 400, // meters
+        speed: 2.2,
+        status: 'LOITERING RADAR SHADOW',
+        cameraFOV: 140,
+        detected: false,
+        desc: 'Tactical reconnaissance UAV with high-resolution gyro-stabilized thermal camera.'
+      },
+      {
+        id: 'fires_msta',
+        name: '2S19 Msta-S 152mm Battery',
+        type: 'FIRES',
+        x: 200,
+        y: 40,
+        ready: true,
+        reloadTimer: 0,
+        status: 'STANDBY (SHOOT & SCOOT READY)',
+        ammo: 48,
+        desc: 'Self-propelled 152mm howitzers with automated fire control. Vulnerable to Blue counter-battery fire if fired while Q-53 radar is up.'
+      },
+      {
+        id: 'fires_smerch',
+        name: 'BM-30 Smerch 300mm MLRS',
+        type: 'FIRES',
+        x: 780,
+        y: 40,
+        ready: true,
+        reloadTimer: 0,
+        status: 'STANDBY (CLUSTER MIGRATION)',
+        ammo: 12,
+        desc: 'Heavy 300mm rocket launcher capable of catastrophic area destruction of TOCs and logistics parks.'
+      }
+    ];
+
+    // BLUE DOCTRINAL FORCE (FM 3-0 LSCO BCT Disposition)
+    const BLUE_UNITS = [
+      {
+        id: 'blue_toc_main',
+        name: '1st BCT Main TOC (Command Post)',
+        role: 'C2_NODE',
+        x: 440,
+        y: 680,
+        rfEmission: 95,      // Continuous radio bursts, microwave, SATCOM
+        thermalBloom: 85,    // Multiple 15kW generators
+        rfTimer: 0,
+        detectedByRed: false,
+        redConfidence: 0.1,  // 0 to 1
+        lastEstimatedPos: {x: 430, y: 690},
+        desc: 'Primary Tactical Operations Center. High RF signature from dozens of tactical radios (SINCGARS/CNR), WIN-T satellite uplinks, and generator heat plumes.',
+        destroyed: false
+      },
+      {
+        id: 'blue_toc_tac',
+        name: '1st BCT Tactical CP (TAC CP)',
+        role: 'C2_NODE',
+        x: 620,
+        y: 720,
+        rfEmission: 20,
+        thermalBloom: 30,
+        rfTimer: 0,
+        detectedByRed: false,
+        redConfidence: 0.0,
+        lastEstimatedPos: null,
+        desc: 'Expeditionary command post prepared to assume operational control when Main TOC displaces.',
+        destroyed: false
+      },
+      {
+        id: 'blue_radar_q53',
+        name: 'AN/TPQ-53 Firefinder Radar',
+        role: 'COUNTER_BATTERY',
+        x: 490,
+        y: 610,
+        rfEmission: 98,      // Massive active radar strobe
+        thermalBloom: 70,
+        detectedByRed: false,
+        redConfidence: 0.2,
+        lastEstimatedPos: {x: 480, y: 620},
+        sweepAngle: 0,
+        desc: 'High-power active counter-battery radar. Immediately detects incoming artillery projectiles and calculates Red firing point within 90 seconds.',
+        destroyed: false
+      },
+      {
+        id: 'blue_shorad',
+        name: 'M-SHORAD Air Defense Battery',
+        role: 'AIR_DEFENSE',
+        x: 380,
+        y: 560,
+        radarRadius: 260,
+        rfEmission: 80,
+        thermalBloom: 50,
+        detectedByRed: false,
+        redConfidence: 0.1,
+        desc: 'Avenger & Stryker M-SHORAD providing short-range air defense with Sentinel radar. Engages any Red drone in line-of-sight.',
+        destroyed: false
+      },
+      {
+        id: 'blue_bsa',
+        name: 'Brigade Support Area (BSA)',
+        role: 'LOGISTICS',
+        x: 320,
+        y: 740,
+        rfEmission: 40,
+        thermalBloom: 90,    // High vehicle activity, fuel bladders
+        detectedByRed: false,
+        redConfidence: 0.15,
+        desc: 'Class III (Fuel) and Class V (Ammunition) forward logistics distribution hub.',
+        destroyed: false
+      },
+      // Screen line OPs
+      {
+        id: 'blue_op_alpha',
+        name: '1st ABCT OP Alpha (Cav Screen)',
+        role: 'SCREEN',
+        x: 220,
+        y: 390,
+        rfEmission: 15,
+        thermalBloom: 20,
+        visionRange: 130,
+        detectedByRed: false,
+        redConfidence: 0.05,
+        desc: 'Cavalry scout observation post overlooking primary western avenue of approach.',
+        destroyed: false
+      },
+      {
+        id: 'blue_op_bravo',
+        name: '1st ABCT OP Bravo (Hill 402)',
+        role: 'SCREEN',
+        x: 360,
+        y: 380,
+        rfEmission: 15,
+        thermalBloom: 20,
+        visionRange: 140,
+        detectedByRed: false,
+        redConfidence: 0.05,
+        desc: 'Elevated observation post on ridgeline observing secondary valley.',
+        destroyed: false
+      },
+      {
+        id: 'blue_op_charlie',
+        name: '2nd SBCT OP Charlie (Ridge)',
+        role: 'SCREEN',
+        x: 680,
+        y: 380,
+        rfEmission: 15,
+        thermalBloom: 20,
+        visionRange: 140,
+        detectedByRed: false,
+        redConfidence: 0.05,
+        desc: 'Stryker reconnaissance observation post covering eastern sector.',
+        destroyed: false
+      },
+      {
+        id: 'blue_contact_pt',
+        name: 'Boundary Contact Point 101',
+        role: 'SEAM_COORDINATION',
+        x: 520,
+        y: 400,
+        patrolTimer: 0,
+        patrolPresent: true,
+        desc: 'Doctrinal contact point where 1st ABCT and 2nd SBCT patrols must link up to close the boundary seam.',
+        destroyed: false
+      }
+    ];
+
+    // LOGPAC Convoys moving on MSR Arrowhead
+    const BLUE_CONVOYS = [
+      {
+        id: 'convoy_1',
+        name: 'LOGPAC Fuel/Ammo Resupply',
+        x: 330,
+        y: 730,
+        startX: 330,
+        startY: 730,
+        targetX: 490,
+        targetY: 600,
+        progress: 0,
+        speed: 0.4,
+        thermalBloom: 80,
+        rfEmission: 25,
+        active: true
+      }
+    ];
+
+    // INCOMING STRIKES
+    const INCOMING_STRIKES = [];
+
+    // INTEL FEED ENTRIES
+    const INTEL_LOG = [];
+
+    function addIntelLog(type, text) {
+      const timeStr = formatSimTime(STATE.simTime);
+      INTEL_LOG.unshift({ time: timeStr, type, text });
+      if (INTEL_LOG.length > 50) INTEL_LOG.pop();
+      renderIntelFeed();
+    }
+
+    function formatSimTime(totalSec) {
+      const h = Math.floor(totalSec / 3600).toString().padStart(2, '0');
+      const m = Math.floor((totalSec % 3600) / 60).toString().padStart(2, '0');
+      const s = Math.floor(totalSec % 60).toString().padStart(2, '0');
+      return `${h}:${m}:${s}`;
+    }
+
+    // CANVAS SETUP
+    const canvas = document.getElementById('tactical-canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+
+    const wfCanvas = document.getElementById('waterfall-canvas');
+    const wfCtx = wfCanvas.getContext('2d');
+
+    function resizeCanvas() {
+      width = canvas.parentElement.clientWidth;
+      height = canvas.parentElement.clientHeight;
+      canvas.width = width;
+      canvas.height = height;
+
+      wfCanvas.width = wfCanvas.parentElement.clientWidth;
+      wfCanvas.height = wfCanvas.parentElement.clientHeight - 24;
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    // WATERFALL SIMULATION BUFFER
+    const wfHistory = [];
+    const wfChannels = 100;
+    for (let i = 0; i < 40; i++) {
+      wfHistory.push(new Float32Array(wfChannels));
+    }
+
+    function updateWaterfall() {
+      const currentSpectrum = new Float32Array(wfChannels);
+      // Background thermal noise
+      for (let i = 0; i < wfChannels; i++) {
+        currentSpectrum[i] = Math.random() * 0.15;
+      }
+
+      // Add spikes from active Blue emitters
+      BLUE_UNITS.forEach(unit => {
+        if (unit.destroyed) return;
+        if (unit.role === 'C2_NODE' && unit.rfEmission > 30) {
+          // Multiple VHF SINCGARS frequency hops around ch 30 to 45
+          const ch = 35 + Math.floor(Math.sin(STATE.simTime * 2 + unit.x) * 8);
+          if (ch >= 0 && ch < wfChannels) currentSpectrum[ch] = Math.min(1.0, currentSpectrum[ch] + 0.8);
+        }
+        if (unit.role === 'COUNTER_BATTERY' && STATE.blueSettings.firefinderActive) {
+          // Radar pulse around ch 75
+          currentSpectrum[75] = 0.95;
+          currentSpectrum[76] = 0.7;
+        }
+      });
+
+      wfHistory.unshift(currentSpectrum);
+      if (wfHistory.length > 50) wfHistory.pop();
+
+      // Render Waterfall
+      wfCtx.fillStyle = '#040810';
+      wfCtx.fillRect(0, 0, wfCanvas.width, wfCanvas.height);
+      const rowHeight = wfCanvas.height / wfHistory.length;
+      const colWidth = wfCanvas.width / wfChannels;
+
+      for (let r = 0; r < wfHistory.length; r++) {
+        const row = wfHistory[r];
+        for (let c = 0; c < wfChannels; c++) {
+          const val = row[c];
+          if (val > 0.2) {
+            if (val > 0.7) wfCtx.fillStyle = `rgba(244, 63, 94, ${val})`;
+            else if (val > 0.4) wfCtx.fillStyle = `rgba(245, 158, 11, ${val})`;
+            else wfCtx.fillStyle = `rgba(6, 182, 212, ${val})`;
+            wfCtx.fillRect(c * colWidth, r * rowHeight, colWidth, rowHeight);
+          }
+        }
+      }
+    }
+
+    /* ==========================================================================
+       SIMULATION LOGIC
+       ========================================================================== */
+
+    function updateSimulation(dt) {
+      STATE.simTime += dt;
+      document.getElementById('game-clock').innerText = formatSimTime(STATE.simTime);
+
+      // 1. BLUE EMISSION CYCLE & TOC JUMP STATE MACHINE
+      STATE.tocState.jumpTimer -= dt;
+      if (STATE.tocState.jumpTimer <= 0) {
+        if (!STATE.tocState.jumping) {
+          // Initiate Doctrinal TOC Jump
+          STATE.tocState.jumping = true;
+          STATE.tocState.jumpProgress = 0;
+          addIntelLog('seam', 'BLUE DOCTRINAL EVENT: 1st BCT Main TOC initiated displacement jump to TAC CP. Command latency quadrupled; radio handover chatter active.');
+          audio.radioChirp();
+        } else {
+          STATE.tocState.jumpProgress += dt / 25; // 25s jump window
+          if (STATE.tocState.jumpProgress >= 1) {
+            STATE.tocState.jumping = false;
+            STATE.tocState.currentTOC = (STATE.tocState.currentTOC === 'main') ? 'tac' : 'main';
+            STATE.tocState.jumpTimer = STATE.blueSettings.tocJumpInterval;
+            addIntelLog('sigint', `BLUE DOCTRINAL EVENT: TOC jump complete. Operational command assumed by ${STATE.tocState.currentTOC === 'main' ? 'Main TOC' : 'TAC CP'}.`);
+          }
+        }
+      }
+
+      // Update Blue Unit Emission States based on EMCON
+      BLUE_UNITS.forEach(unit => {
+        if (unit.destroyed) return;
+
+        // Base RF modulated by EMCON
+        let emconFactor = STATE.blueSettings.emcon === 1 ? 1.0 : (STATE.blueSettings.emcon === 2 ? 0.35 : 0.05);
+
+        if (unit.role === 'C2_NODE') {
+          // If jumping, emission spikes
+          if (STATE.tocState.jumping) {
+            unit.rfEmission = 95;
+          } else {
+            unit.rfEmission = (unit.id.includes(STATE.tocState.currentTOC) ? 80 : 15) * emconFactor;
+          }
+        } else if (unit.role === 'COUNTER_BATTERY') {
+          unit.rfEmission = STATE.blueSettings.firefinderActive ? 95 : 0;
+          unit.sweepAngle = (unit.sweepAngle + dt * 1.5) % (Math.PI * 2);
+        }
+
+        // Thermal modulated by weather
+        let weatherThermalLoss = STATE.blueSettings.weather === 1 ? 1.0 : (STATE.blueSettings.weather === 2 ? 0.45 : (STATE.blueSettings.weather === 3 ? 0.3 : 0.8));
+        unit.currentThermal = unit.thermalBloom * weatherThermalLoss;
+
+        // SIGINT Triangulation from 3 Red EW stations
+        if (unit.rfEmission > 20) {
+          const ew1 = RED_ASSETS[0];
+          const ew2 = RED_ASSETS[1];
+          const ew3 = RED_ASSETS[2];
+
+          // Confidence increases over time
+          unit.redConfidence = Math.min(1.0, unit.redConfidence + (unit.rfEmission / 100) * dt * 0.05);
+          if (unit.redConfidence > 0.4 && !unit.detectedByRed) {
+            unit.detectedByRed = true;
+            addIntelLog('sigint', `SIGINT CONTACT: Triangulated high RF emitter at bearing 184°. Probable ${unit.name}. Error ellipse: ${Math.round((1 - unit.redConfidence)*120)}m.`);
+            audio.radioChirp();
+          }
+        } else {
+          unit.redConfidence = Math.max(0.0, unit.redConfidence - dt * 0.02);
+        }
+      });
+
+      // 2. BOUNDARY SEAM & CONTACT POINT LOGIC
+      const contactPt = BLUE_UNITS.find(u => u.id === 'blue_contact_pt');
+      contactPt.patrolTimer += dt;
+      // Depending on coordination slider, patrol presence cycles
+      const cyclePeriod = STATE.blueSettings.coordination === 1 ? 40 : (STATE.blueSettings.coordination === 2 ? 25 : 15);
+      const isAbsent = (contactPt.patrolTimer % cyclePeriod) > (cyclePeriod * 0.5);
+      contactPt.patrolPresent = !isAbsent;
+
+      // 3. RED ASSET MOVEMENT & SENSING
+      RED_ASSETS.forEach(asset => {
+        if (asset.type === 'RECCE') {
+          // Move towards target
+          const dx = asset.targetX - asset.x;
+          const dy = asset.targetY - asset.y;
+          const dist = Math.hypot(dx, dy);
+
+          if (dist > 5) {
+            let speedMultiplier = asset.stance === 'CRAWL' ? 0.4 : (asset.stance === 'SNEAK' ? 0.8 : 1.8);
+            asset.x += (dx / dist) * asset.speed * speedMultiplier;
+            asset.y += (dy / dist) * asset.speed * speedMultiplier;
+          }
+
+          // Infiltration detection check against Blue OPs
+          BLUE_UNITS.filter(u => u.role === 'SCREEN' && !u.destroyed).forEach(op => {
+            const opDist = Math.hypot(op.x - asset.x, op.y - asset.y);
+            let elevRed = getElevation(asset.x, asset.y);
+            let elevBlue = getElevation(op.x, op.y);
+            let hasLOS = (elevBlue >= elevRed - 20); // Ridgeline masking
+
+            if (opDist < op.visionRange && hasLOS) {
+              let detectionChance = (asset.stance === 'SPRINT' ? 0.8 : (asset.stance === 'SNEAK' ? 0.2 : 0.05));
+              // Ground fog or night reduces detection
+              if (STATE.blueSettings.weather >= 2) detectionChance *= 0.4;
+
+              if (Math.random() < detectionChance * dt * 0.1 && !asset.detected) {
+                asset.detected = true;
+                addIntelLog('strike', `CRITICAL WARNING: ${asset.name} detected by ${op.name}! Blue Security reaction force alerted.`);
+                audio.beep(300, 'sawtooth', 0.2, 0.1);
+              }
+            }
+          });
+
+          // Check if Recce reached boundary seam without detection
+          if (Math.abs(asset.x - 520) < 40 && asset.y > 420 && !asset.seamPassed) {
+            asset.seamPassed = true;
+            addIntelLog('seam', `TACTICAL SUCCESS: ${asset.name} infiltrated through Inter-Brigade Boundary Seam into Blue rear echelon unobserved!`);
+            audio.beep(900, 'sine', 0.15, 0.05);
+          }
+
+          // Close-range thermal/visual detection by Recce
+          BLUE_UNITS.forEach(target => {
+            if (target.destroyed) return;
+            const tDist = Math.hypot(target.x - asset.x, target.y - asset.y);
+            if (tDist < 160) {
+              target.redConfidence = 1.0;
+              target.detectedByRed = true;
+              target.lastEstimatedPos = { x: target.x, y: target.y };
+            }
+          });
+        }
+
+        if (asset.type === 'UAV') {
+          // Loiter & move
+          const dx = asset.targetX - asset.x;
+          const dy = asset.targetY - asset.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist > 10) {
+            asset.x += (dx / dist) * asset.speed;
+            asset.y += (dy / dist) * asset.speed;
+          }
+
+          // Check against Blue SHORAD radar coverage
+          const shorad = BLUE_UNITS.find(u => u.role === 'AIR_DEFENSE' && !u.destroyed);
+          if (shorad) {
+            const shoradDist = Math.hypot(shorad.x - asset.x, shorad.y - asset.y);
+            let elevUAV = getElevation(asset.x, asset.y) + asset.altitude * 0.1;
+            let elevShorad = getElevation(shorad.x, shorad.y);
+            // Check if terrain masks the drone
+            let inLOS = true;
+            let midX = (asset.x + shorad.x) / 2;
+            let midY = (asset.y + shorad.y) / 2;
+            if (getElevation(midX, midY) > Math.min(elevUAV, elevShorad) + 20) {
+              inLOS = false; // Masked behind ridge
+            }
+
+            if (shoradDist < shorad.radarRadius && inLOS && !asset.detected) {
+              asset.detected = true;
+              addIntelLog('strike', `RADAR LOCK: ${asset.name} entered Blue Sentinel radar coverage! Threat of immediate engagement.`);
+              audio.beep(400, 'square', 0.1, 0.08);
+            }
+          }
+        }
+
+        if (asset.type === 'FIRES') {
+          if (asset.reloadTimer > 0) {
+            asset.reloadTimer -= dt;
+            if (asset.reloadTimer <= 0) asset.ready = true;
+          }
+        }
+      });
+
+      // 4. INCOMING STRIKES & BLUE COUNTER-BATTERY AUTOMATION
+      for (let i = INCOMING_STRIKES.length - 1; i >= 0; i--) {
+        const strike = INCOMING_STRIKES[i];
+        strike.flightTime -= dt;
+
+        if (strike.flightTime <= 0) {
+          // Impact!
+          executeStrikeImpact(strike);
+          INCOMING_STRIKES.splice(i, 1);
+        }
+      }
+
+      // Blue Counter-Battery Countdown
+      if (STATE.counterBattery.active) {
+        STATE.counterBattery.timer -= dt;
+        if (STATE.counterBattery.timer <= 0) {
+          executeBlueCounterBattery();
+          STATE.counterBattery.active = false;
+        }
+      }
+
+      // Update LOGPAC convoy
+      BLUE_CONVOYS.forEach(c => {
+        if (!c.active) return;
+        c.progress += dt * 0.02 * c.speed;
+        if (c.progress >= 1) c.progress = 0;
+        c.x = c.startX + (c.targetX - c.startX) * c.progress;
+        c.y = c.startY + (c.targetY - c.startY) * c.progress;
+      });
+
+      // Update waterfall
+      updateWaterfall();
+    }
+
+    // STRIKE EXECUTION
+    function executeStrikeImpact(strike) {
+      audio.strikeRumble();
+      addIntelLog('strike', `KINETIC IMPACT: Heavy artillery barrage detonated at Target Grid (${Math.round(strike.targetX)}, ${Math.round(strike.targetY)}).`);
+
+      // Damage check against Blue Units
+      BLUE_UNITS.forEach(target => {
+        if (target.destroyed) return;
+        const d = Math.hypot(target.x - strike.targetX, target.y - strike.targetY);
+        if (d < strike.blastRadius) {
+          target.destroyed = true;
+          target.rfEmission = 0;
+          target.thermalBloom = 0;
+          addIntelLog('strike', `TARGET DESTROYED: ${target.name} neutralised! Decapitation objective achieved.`);
+          audio.beep(200, 'square', 0.4, 0.15);
+        }
+      });
+    }
+
+    function executeBlueCounterBattery() {
+      addIntelLog('strike', 'INCOMING BLUE COUNTER-BATTERY: Automated MLRS rockets impacting Red battery launch position!');
+      audio.strikeRumble();
+      const redBattery = RED_ASSETS.find(a => a.id === 'fires_msta');
+      if (redBattery && redBattery.status !== 'SCOOTING') {
+        redBattery.ready = false;
+        redBattery.status = 'DAMAGED BY COUNTER-BATTERY';
+        addIntelLog('strike', 'CASUALTY: 2S19 Msta-S battery took direct hits from Blue Q-53 automated counter-battery fire! Failed to shoot and scoot.');
+      } else {
+        addIntelLog('seam', 'COUNTER-BATTERY DODGED: Red battery completed Shoot & Scoot prior to impact. Blue counter-battery hit empty berms.');
+      }
+    }
+
+    /* ==========================================================================
+       RENDERING LOGIC (CANVAS TACTICAL DISPLAY)
+       ========================================================================== */
+
+    function renderTacticalMap() {
+      ctx.clearRect(0, 0, width, height);
+
+      // 1. TOPOGRAPHY & CONTOURS
+      if (STATE.overlays.elevation) {
+        ctx.fillStyle = '#060a12';
+        ctx.fillRect(0, 0, width, height);
+
+        // Draw subtle contour bands
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+        ctx.lineWidth = 1;
+        for (let y = 0; y < height; y += 40) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          for (let x = 0; x < width; x += 30) {
+            let elev = getElevation(x, y);
+            ctx.lineTo(x, y - (elev - 100) * 0.15);
+          }
+          ctx.stroke();
+        }
+
+        // Central Ridge representation
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.02)';
+        ctx.fillRect(0, 340, width, 80);
+        ctx.fillStyle = 'rgba(148, 163, 184, 0.2)';
+        ctx.font = '10px monospace';
+        ctx.fillText('RIDGELINE ALPHA (ELEV 220m) - TERRAIN MASKING ZONE', 40, 360);
+      } else {
+        ctx.fillStyle = '#05070c';
+        ctx.fillRect(0, 0, width, height);
+      }
+
+      // 2. BOUNDARY SEAMS & COORDINATION POINTS (DOUTRINAL LAYER)
+      if (STATE.overlays.boundaries) {
+        // Inter-Brigade Boundary Line (North-South through center)
+        ctx.strokeStyle = 'rgba(16, 185, 129, 0.4)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([8, 6]);
+        ctx.beginPath();
+        ctx.moveTo(520, 260);
+        ctx.lineTo(520, height);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Labels for Brigades
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.3)';
+        ctx.font = '11px monospace';
+        ctx.fillText('◄ 1st ABCT "IRONHORSE" SECTOR', 280, 480);
+        ctx.fillText('2nd SBCT "WARRIOR" SECTOR ►', 560, 480);
+
+        // Boundary line title
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.8)';
+        ctx.fillText('INTER-BRIGADE BOUNDARY SEAM (BOUNDARY LINE WOLVERINE)', 530, 310);
+
+        // Contact Point 101 visualizer
+        const cp = BLUE_UNITS.find(u => u.id === 'blue_contact_pt');
+        ctx.beginPath();
+        ctx.arc(cp.x, cp.y, cp.patrolPresent ? 18 : 26, 0, Math.PI * 2);
+        ctx.strokeStyle = cp.patrolPresent ? '#10b981' : '#f59e0b';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.fillStyle = cp.patrolPresent ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)';
+        ctx.fill();
+
+        ctx.fillStyle = cp.patrolPresent ? '#10b981' : '#f59e0b';
+        ctx.font = '9px monospace';
+        ctx.fillText(`CP 101: ${cp.patrolPresent ? 'PATROL LINKED' : 'SEAM OPEN (UNOBSERVED)'}`, cp.x + 22, cp.y + 4);
+      }
+
+      // 3. BLUE RADAR COVERAGE & AIR DEFENSE DOME
+      if (STATE.overlays.radar) {
+        const shorad = BLUE_UNITS.find(u => u.role === 'AIR_DEFENSE' && !u.destroyed);
+        if (shorad) {
+          ctx.beginPath();
+          ctx.arc(shorad.x, shorad.y, shorad.radarRadius, 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(239, 68, 68, 0.3)';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+          ctx.fillStyle = 'rgba(239, 68, 68, 0.04)';
+          ctx.fill();
+
+          ctx.fillStyle = 'rgba(239, 68, 68, 0.6)';
+          ctx.font = '10px monospace';
+          ctx.fillText('SENTINEL AIR DEFENSE RADAR DOME (260m)', shorad.x - 120, shorad.y - shorad.radarRadius - 6);
+        }
+
+        // AN/TPQ-53 Firefinder Active Sweep
+        const q53 = BLUE_UNITS.find(u => u.role === 'COUNTER_BATTERY' && !u.destroyed);
+        if (q53 && STATE.blueSettings.firefinderActive) {
+          ctx.beginPath();
+          ctx.moveTo(q53.x, q53.y);
+          ctx.arc(q53.x, q53.y, 450, q53.sweepAngle - 0.25, q53.sweepAngle + 0.25);
+          ctx.closePath();
+          ctx.fillStyle = 'rgba(244, 63, 94, 0.12)';
+          ctx.fill();
+        }
+      }
+
+      // 4. SIGINT LINES OF BEARING (LOB) & ERROR ELLIPSES
+      if (STATE.overlays.sigint) {
+        BLUE_UNITS.forEach(unit => {
+          if (unit.destroyed || unit.rfEmission < 20 || !unit.detectedByRed) return;
+
+          // Lines from 3 EW stations to target
+          ctx.strokeStyle = 'rgba(6, 182, 212, 0.4)';
+          ctx.lineWidth = 1;
+          RED_ASSETS.filter(a => a.type === 'SIGINT').forEach(ew => {
+            ctx.beginPath();
+            ctx.moveTo(ew.x, ew.y);
+            ctx.lineTo(unit.x, unit.y);
+            ctx.stroke();
+          });
+
+          // Draw Circular Error Probable (CEP) Ellipse
+          const cepRadius = Math.max(16, (1.0 - unit.redConfidence) * 110);
+          ctx.beginPath();
+          ctx.ellipse(unit.x, unit.y, cepRadius * 1.3, cepRadius * 0.8, 0.4, 0, Math.PI * 2);
+          ctx.strokeStyle = '#06b6d4';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+          ctx.fillStyle = 'rgba(6, 182, 212, 0.12)';
+          ctx.fill();
+
+          ctx.fillStyle = '#06b6d4';
+          ctx.font = '10px monospace';
+          ctx.fillText(`SIGINT CLUSTER: ${Math.round(unit.rfEmission)}% RF // CEP ${Math.round(cepRadius)}m`, unit.x - 50, unit.y - cepRadius - 6);
+        });
+      }
+
+      // 5. THERMAL BLOOMS
+      if (STATE.overlays.thermal) {
+        BLUE_UNITS.forEach(unit => {
+          if (unit.destroyed || !unit.currentThermal || unit.currentThermal < 25) return;
+          const radius = (unit.currentThermal / 100) * 35;
+          const grad = ctx.createRadialGradient(unit.x, unit.y, 2, unit.x, unit.y, radius);
+          grad.addColorStop(0, 'rgba(245, 158, 11, 0.4)');
+          grad.addColorStop(1, 'rgba(245, 158, 11, 0)');
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(unit.x, unit.y, radius, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      }
+
+      // 6. DRAW BLUE UNITS (OR RED'S ESTIMATION OF THEM)
+      BLUE_UNITS.forEach(unit => {
+        if (unit.destroyed) {
+          ctx.fillStyle = '#64748b';
+          ctx.font = '16px monospace';
+          ctx.fillText('✖', unit.x - 6, unit.y + 6);
+          ctx.font = '9px monospace';
+          ctx.fillText(`[DESTROYED] ${unit.name}`, unit.x + 10, unit.y + 4);
+          return;
+        }
+
+        // Draw indicator if detected
+        if (unit.detectedByRed || unit.role === 'SEAM_COORDINATION') {
+          ctx.fillStyle = '#38bdf8';
+          ctx.strokeStyle = '#0284c7';
+          ctx.lineWidth = 2;
+
+          // Box symbol for Blue
+          ctx.beginPath();
+          ctx.rect(unit.x - 8, unit.y - 8, 16, 16);
+          ctx.stroke();
+          ctx.fill();
+
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '10px monospace';
+          ctx.fillText(unit.name, unit.x + 12, unit.y + 4);
+        }
+      });
+
+      // Draw LOGPAC Convoys
+      BLUE_CONVOYS.forEach(c => {
+        if (!c.active) return;
+        ctx.fillStyle = '#f59e0b';
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = '9px monospace';
+        ctx.fillText(c.name, c.x + 8, c.y + 3);
+      });
+
+      // 7. DRAW RED ASSETS
+      RED_ASSETS.forEach(asset => {
+        const isSelected = (asset.id === STATE.selectedAssetId);
+
+        if (asset.type === 'SIGINT') {
+          ctx.fillStyle = '#06b6d4';
+          ctx.beginPath();
+          ctx.arc(asset.x, asset.y, 6, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = isSelected ? '#f43f5e' : '#0891b2';
+          ctx.lineWidth = isSelected ? 3 : 1.5;
+          ctx.stroke();
+
+          ctx.fillStyle = '#f8fafc';
+          ctx.font = '10px monospace';
+          ctx.fillText(asset.name, asset.x + 10, asset.y + 4);
+        } else if (asset.type === 'RECCE') {
+          // Diamond symbol for OPFOR Recon
+          ctx.fillStyle = asset.detected ? '#ef4444' : '#f43f5e';
+          ctx.beginPath();
+          ctx.moveTo(asset.x, asset.y - 8);
+          ctx.lineTo(asset.x + 8, asset.y);
+          ctx.lineTo(asset.x, asset.y + 8);
+          ctx.lineTo(asset.x - 8, asset.y);
+          ctx.closePath();
+          ctx.fill();
+          ctx.strokeStyle = isSelected ? '#ffffff' : '#881337';
+          ctx.lineWidth = isSelected ? 2 : 1;
+          ctx.stroke();
+
+          // Waypoint target path
+          ctx.strokeStyle = 'rgba(244, 63, 94, 0.4)';
+          ctx.setLineDash([4, 4]);
+          ctx.beginPath();
+          ctx.moveTo(asset.x, asset.y);
+          ctx.lineTo(asset.targetX, asset.targetY);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          ctx.fillStyle = '#fecaca';
+          ctx.font = '10px monospace';
+          ctx.fillText(`${asset.name} [${asset.stance}]`, asset.x + 12, asset.y + 4);
+        } else if (asset.type === 'UAV') {
+          // Drone symbol
+          ctx.fillStyle = asset.detected ? '#ef4444' : '#f59e0b';
+          ctx.beginPath();
+          ctx.arc(asset.x, asset.y, 7, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.strokeStyle = 'rgba(245, 158, 11, 0.5)';
+          ctx.setLineDash([4, 4]);
+          ctx.beginPath();
+          ctx.moveTo(asset.x, asset.y);
+          ctx.lineTo(asset.targetX, asset.targetY);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          ctx.fillStyle = '#fde68a';
+          ctx.font = '10px monospace';
+          ctx.fillText(`${asset.name} (Alt ${asset.altitude}m)`, asset.x + 10, asset.y + 4);
+        } else if (asset.type === 'FIRES') {
+          ctx.fillStyle = asset.ready ? '#f87171' : '#64748b';
+          ctx.beginPath();
+          ctx.rect(asset.x - 7, asset.y - 7, 14, 14);
+          ctx.fill();
+          ctx.strokeStyle = isSelected ? '#ffffff' : '#7f1d1d';
+          ctx.lineWidth = isSelected ? 2 : 1;
+          ctx.stroke();
+
+          ctx.fillStyle = '#fca5a5';
+          ctx.font = '10px monospace';
+          ctx.fillText(asset.name, asset.x + 10, asset.y + 4);
+        }
+      });
+
+      // 8. DRAW INCOMING PROJECTILE TRAJECTORIES
+      INCOMING_STRIKES.forEach(strike => {
+        ctx.strokeStyle = '#f43f5e';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(strike.startX, strike.startY);
+        ctx.lineTo(strike.targetX, strike.targetY);
+        ctx.stroke();
+
+        ctx.fillStyle = '#f43f5e';
+        ctx.beginPath();
+        ctx.arc(strike.targetX, strike.targetY, strike.blastRadius, 0, Math.PI * 2);
+        ctx.strokeStyle = '#ef4444';
+        ctx.setLineDash([4, 2]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      });
+    }
+
+    /* ==========================================================================
+       USER INTERACTION & CONTROLS
+       ========================================================================== */
+
+    function selectAsset(id) {
+      STATE.selectedAssetId = id;
+      renderAssetList();
+      updateActionHUD();
+
+      const asset = RED_ASSETS.find(a => a.id === id);
+      if (asset) {
+        showDoctrineInspector('asset', asset);
+      }
+    }
+
+    function renderAssetList() {
+      const container = document.getElementById('asset-list');
+      container.innerHTML = '';
+
+      RED_ASSETS.forEach(asset => {
+        const card = document.createElement('div');
+        card.className = `asset-card ${asset.id === STATE.selectedAssetId ? 'selected' : ''}`;
+        card.onclick = () => selectAsset(asset.id);
+
+        let tagClass = 'tag-recce';
+        if (asset.type === 'SIGINT') tagClass = 'tag-sigint';
+        if (asset.type === 'UAV') tagClass = 'tag-uav';
+        if (asset.type === 'FIRES') tagClass = 'tag-fires';
+
+        card.innerHTML = `
+          <div class="asset-card-title">
+            <span>${asset.name}</span>
+            <span class="asset-tag ${tagClass}">${asset.type}</span>
+          </div>
+          <div class="asset-details">
+            <span>STATUS: <strong style="color:#fff;">${asset.status}</strong></span>
+            ${asset.type === 'RECCE' ? `<span>STANCE: ${asset.stance} // STEALTH: ${asset.stealth}%</span>` : ''}
+            ${asset.type === 'FIRES' ? `<span>READY: ${asset.ready ? 'YES' : 'RELOADING'} // AMMO: ${asset.ammo}</span>` : ''}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function updateActionHUD() {
+      const hud = document.getElementById('action-hud');
+      const name = document.getElementById('hud-name');
+      const actions = document.getElementById('hud-actions');
+      const asset = RED_ASSETS.find(a => a.id === STATE.selectedAssetId);
+
+      if (!asset) {
+        hud.style.display = 'none';
+        return;
+      }
+
+      hud.style.display = 'flex';
+      name.innerText = asset.name.toUpperCase();
+      actions.innerHTML = '';
+
+      if (asset.type === 'RECCE') {
+        const btnCrawl = document.createElement('button');
+        btnCrawl.className = `btn ${asset.stance === 'CRAWL' ? 'active' : ''}`;
+        btnCrawl.innerText = 'CRAWL (MAX STEALTH)';
+        btnCrawl.onclick = () => { asset.stance = 'CRAWL'; updateActionHUD(); };
+
+        const btnSneak = document.createElement('button');
+        btnSneak.className = `btn ${asset.stance === 'SNEAK' ? 'active' : ''}`;
+        btnSneak.innerText = 'SNEAK (NORMAL)';
+        btnSneak.onclick = () => { asset.stance = 'SNEAK'; updateActionHUD(); };
+
+        const btnSprint = document.createElement('button');
+        btnSprint.className = `btn ${asset.stance === 'SPRINT' ? 'active' : ''}`;
+        btnSprint.innerText = 'SPRINT (FAST)';
+        btnSprint.onclick = () => { asset.stance = 'SPRINT'; updateActionHUD(); };
+
+        actions.appendChild(btnCrawl);
+        actions.appendChild(btnSneak);
+        actions.appendChild(btnSprint);
+      } else if (asset.type === 'FIRES') {
+        const btnFire = document.createElement('button');
+        btnFire.className = 'btn btn-fire';
+        btnFire.innerText = '🔥 EXECUTE FIRE MISSION';
+        btnFire.onclick = () => promptFireMission(asset);
+
+        const btnScoot = document.createElement('button');
+        btnScoot.className = 'btn';
+        btnScoot.innerText = '⚡ SHOOT & SCOOT (DISPLACE)';
+        btnScoot.onclick = () => {
+          asset.status = 'SCOOTING';
+          addIntelLog('seam', `${asset.name} displacing to alternate firing berms to evade Blue counter-battery fire.`);
+        };
+
+        actions.appendChild(btnFire);
+        actions.appendChild(btnScoot);
+      }
+    }
+
+    // CANVAS CLICK HANDLER (Move orders or select target)
+    canvas.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+
+      // Check if user clicked a Blue unit
+      let clickedBlue = null;
+      BLUE_UNITS.forEach(u => {
+        if (Math.hypot(u.x - clickX, u.y - clickY) < 24) {
+          clickedBlue = u;
+        }
+      });
+
+      if (clickedBlue) {
+        showDoctrineInspector('blue_unit', clickedBlue);
+        return;
+      }
+
+      // Check if user clicked Contact Point 101
+      const cp = BLUE_UNITS.find(u => u.id === 'blue_contact_pt');
+      if (Math.hypot(cp.x - clickX, cp.y - clickY) < 30) {
+        showDoctrineInspector('contact_pt', cp);
+        return;
+      }
+
+      // Otherwise, dispatch move order to selected Red asset
+      const asset = RED_ASSETS.find(a => a.id === STATE.selectedAssetId);
+      if (asset && (asset.type === 'RECCE' || asset.type === 'UAV')) {
+        asset.targetX = clickX;
+        asset.targetY = clickY;
+        addIntelLog('seam', `VECTOR ORDER: ${asset.name} reassigned waypoint to Grid (${Math.round(clickX)}, ${Math.round(clickY)}).`);
+        audio.radioChirp();
+      }
+    });
+
+    function promptFireMission(firesAsset) {
+      if (!firesAsset.ready) {
+        alert('Battery is reloading or displacing!');
+        return;
+      }
+
+      // Find highest confidence detected Blue target
+      const validTargets = BLUE_UNITS.filter(u => !u.destroyed && u.detectedByRed);
+      if (validTargets.length === 0) {
+        alert('No confirmed targets! Use SIGINT or Recce to locate Blue HPTs first.');
+        return;
+      }
+
+      // Target selection dialog
+      let msg = 'SELECT HIGH-PAYOFF TARGET TO ENGAGE:\n';
+      validTargets.forEach((t, idx) => {
+        msg += `${idx + 1}: ${t.name} (Confidence: ${Math.round(t.redConfidence * 100)}%)\n`;
+      });
+
+      const choice = prompt(msg, '1');
+      const idx = parseInt(choice) - 1;
+      if (idx >= 0 && idx < validTargets.length) {
+        const target = validTargets[idx];
+        launchFireMission(firesAsset, target);
+      }
+    }
+
+    function launchFireMission(firesAsset, target) {
+      firesAsset.ready = false;
+      firesAsset.reloadTimer = 25;
+      firesAsset.ammo -= (firesAsset.type === 'FIRES' ? 6 : 1);
+      audio.strikeRumble();
+
+      addIntelLog('strike', `FIRE MISSION LAUNCHED: ${firesAsset.name} salvo en route to ${target.name}. Time of Flight: 4 seconds.`);
+
+      INCOMING_STRIKES.push({
+        startX: firesAsset.x,
+        startY: firesAsset.y,
+        targetX: target.x + (Math.random() - 0.5) * (1 - target.redConfidence) * 40,
+        targetY: target.y + (Math.random() - 0.5) * (1 - target.redConfidence) * 40,
+        flightTime: 4.0,
+        blastRadius: firesAsset.type === 'FIRES' ? 45 : 85
+      });
+
+      // TRIGGER BLUE COUNTER-BATTERY DETECTION
+      if (STATE.blueSettings.firefinderActive) {
+        const q53 = BLUE_UNITS.find(u => u.role === 'COUNTER_BATTERY' && !u.destroyed);
+        if (q53) {
+          STATE.counterBattery.active = true;
+          STATE.counterBattery.timer = 12.0; // 12 seconds in game time
+          addIntelLog('strike', 'WARNING: Blue AN/TPQ-53 Firefinder acquired launch trajectory! Automated counter-battery strike inbound in 12s!');
+          audio.beep(350, 'sawtooth', 0.25, 0.1);
+        }
+      }
+    }
+
+    /* ==========================================================================
+       DOCTRINE & EXPLANATION INSPECTOR CONTENT
+       ========================================================================== */
+
+    function showDoctrineInspector(type, data) {
+      const title = document.getElementById('doc-title');
+      const ref = document.getElementById('doc-ref');
+      const text = document.getElementById('doc-text');
+
+      if (type === 'blue_unit') {
+        title.innerText = data.name;
+        ref.innerText = `FM 3-0 LSCO / ATP 3-90.1 / EMISSION: ${Math.round(data.rfEmission)}% RF`;
+        text.innerHTML = `
+          <p><strong>Physical Signature:</strong> ${data.desc}</p>
+          <br>
+          <p><strong>How Red Senses It:</strong> ${data.rfEmission > 50 ? 'Heavy VHF/UHF tactical radio spikes detected by TORN SIGINT direction-finders.' : 'Masked under low EMCON; requires dismounted Recce or drone thermal detection.'}</p>
+          <br>
+          <p><strong>Doctrinal Vulnerability:</strong> Under FM 6-0, this node must regularly coordinate with subordinate echelons. When jumping or executing resupply, emissions spike, creating optimal sensor-to-shooter windows.</p>
+        `;
+      } else if (type === 'contact_pt') {
+        title.innerText = 'Boundary Contact Point 101';
+        ref.innerText = 'ATP 3-90.1 § 4-12: Inter-Unit Boundary Seam Coordination';
+        text.innerHTML = `
+          <p><strong>Doctrinal Principle:</strong> Adjacent brigades (1st ABCT and 2nd SBCT) are separated by Phase Line Wolverine. Doctrine mandates physical coordination at designated Contact Points.</p>
+          <br>
+          <p><strong>Systemic Vulnerability:</strong> When coordination timing slips or units suffer friction, a multi-kilometer observation seam opens up. OPFOR infiltration doctrine (TC 7-100) dictates routing reconnaissance teams directly through this seam.</p>
+        `;
+      } else if (type === 'asset') {
+        title.innerText = data.name;
+        ref.innerText = `OPFOR TACTICS (TC 7-100) // ROLE: ${data.type}`;
+        text.innerHTML = `
+          <p><strong>Tactical Role:</strong> ${data.desc}</p>
+          <br>
+          <p><strong>Operational Rule:</strong> Never engage frontline armor directly. Locate and vector fires against Blue C2 (TOCs), radars, and logistics hubs.</p>
+        `;
+      }
+    }
+
+    function renderIntelFeed() {
+      const feed = document.getElementById('intel-feed');
+      feed.innerHTML = '';
+      INTEL_LOG.slice(0, 15).forEach(item => {
+        const div = document.createElement('div');
+        div.className = `feed-item feed-${item.type}`;
+        div.innerHTML = `<span class="feed-time">${item.time}</span> <span>${item.text}</span>`;
+        feed.appendChild(div);
+      });
+    }
+
+    /* ==========================================================================
+       SETUP SLIDERS & EVENT LISTENERS
+       ========================================================================== */
+
+    // Overlay Toggles
+    const toggles = [
+      { id: 'tog-sigint', key: 'sigint' },
+      { id: 'tog-thermal', key: 'thermal' },
+      { id: 'tog-radar', key: 'radar' },
+      { id: 'tog-boundary', key: 'boundaries' },
+      { id: 'tog-elevation', key: 'elevation' }
+    ];
+    toggles.forEach(t => {
+      const btn = document.getElementById(t.id);
+      btn.onclick = () => {
+        STATE.overlays[t.key] = !STATE.overlays[t.key];
+        btn.classList.toggle('on', STATE.overlays[t.key]);
+      };
+    });
+
+    // Pause/Play & Speed
+    const btnPause = document.getElementById('btn-pause-play');
+    btnPause.onclick = () => {
+      STATE.paused = !STATE.paused;
+      btnPause.innerText = STATE.paused ? '▶ PLAY' : '❚❚ PAUSE';
+      btnPause.classList.toggle('active', STATE.paused);
+    };
+
+    document.getElementById('btn-speed-1x').onclick = (e) => {
+      STATE.speed = 1;
+      document.getElementById('btn-speed-1x').classList.add('active');
+      document.getElementById('btn-speed-3x').classList.remove('active');
+    };
+    document.getElementById('btn-speed-3x').onclick = (e) => {
+      STATE.speed = 3;
+      document.getElementById('btn-speed-3x').classList.add('active');
+      document.getElementById('btn-speed-1x').classList.remove('active');
+    };
+
+    // Audio Mute Toggle
+    const btnAudio = document.getElementById('btn-audio-toggle');
+    btnAudio.onclick = () => {
+      audio.enabled = !audio.enabled;
+      btnAudio.innerText = audio.enabled ? '🔊 SFX ON' : '🔇 SFX MUTED';
+    };
+
+    document.getElementById('btn-clear-feed').onclick = () => {
+      INTEL_LOG.length = 0;
+      renderIntelFeed();
+    };
+
+    // BLUE DOCTRINAL SLIDERS
+    document.getElementById('slide-emcon').oninput = (e) => {
+      STATE.blueSettings.emcon = parseInt(e.target.value);
+      const labels = ['', 'Free (Chatty)', 'Restricted (Bursts)', 'Strict Radio Silence'];
+      document.getElementById('val-emcon').innerText = labels[STATE.blueSettings.emcon];
+      addIntelLog('sigint', `DOCTRINE UPDATE: Blue EMCON shifted to level: ${labels[STATE.blueSettings.emcon]}.`);
+    };
+
+    document.getElementById('slide-coordination').oninput = (e) => {
+      STATE.blueSettings.coordination = parseInt(e.target.value);
+      const labels = ['', 'Sloppy (Gaps Present)', 'Standard Routine', 'Rigorous (Zero Gaps)'];
+      document.getElementById('val-coordination').innerText = labels[STATE.blueSettings.coordination];
+      addIntelLog('seam', `DOCTRINE UPDATE: Blue boundary coordination set to: ${labels[STATE.blueSettings.coordination]}.`);
+    };
+
+    document.getElementById('slide-weather').oninput = (e) => {
+      STATE.blueSettings.weather = parseInt(e.target.value);
+      const labels = ['', 'Clear Daylight', 'Dense Ground Fog', 'Heavy Rainstorm', 'Night Thermal Crossover'];
+      document.getElementById('val-weather').innerText = labels[STATE.blueSettings.weather];
+      addIntelLog('thermal', `ENVIRONMENT UPDATE: Weather changed to: ${labels[STATE.blueSettings.weather]}. Thermal FLIR detection ranges altered.`);
+    };
+
+    document.getElementById('slide-firefinder').oninput = (e) => {
+      STATE.blueSettings.firefinderActive = parseInt(e.target.value);
+      document.getElementById('val-firefinder').innerText = STATE.blueSettings.firefinderActive ? 'Active (Automated CB)' : 'Disabled / Blinded';
+      addIntelLog('strike', `RADAR UPDATE: Blue AN/TPQ-53 Firefinder status: ${STATE.blueSettings.firefinderActive ? 'ACTIVE' : 'OFFLINE'}.`);
+    };
+
+    // SCENARIO PRESETS
+    document.getElementById('scen-1').onclick = () => {
+      setActiveScenarioBtn('scen-1');
+      document.getElementById('slide-coordination').value = 1;
+      document.getElementById('slide-coordination').oninput({ target: { value: 1 } });
+      const recce = RED_ASSETS.find(a => a.id === 'recce_1');
+      recce.x = 520; recce.y = 220; recce.targetX = 520; recce.targetY = 460;
+      recce.stance = 'SNEAK';
+      addIntelLog('seam', 'SCENARIO 1 LOADED: Infiltrate 45th Spetsnaz through Boundary Line Wolverine into Blue rear echelon.');
+    };
+
+    document.getElementById('scen-2').onclick = () => {
+      setActiveScenarioBtn('scen-2');
+      document.getElementById('slide-firefinder').value = 1;
+      document.getElementById('slide-firefinder').oninput({ target: { value: 1 } });
+      addIntelLog('sigint', 'SCENARIO 2 LOADED: Track and blind the AN/TPQ-53 Firefinder radar before ordering artillery barrage.');
+    };
+
+    document.getElementById('scen-3').onclick = () => {
+      setActiveScenarioBtn('scen-3');
+      STATE.tocState.jumpTimer = 5; // Trigger jump immediately
+      addIntelLog('sigint', 'SCENARIO 3 LOADED: 1st BCT TOC jump imminent! Locate moving command post and strike during handover.');
+    };
+
+    function setActiveScenarioBtn(id) {
+      ['scen-1', 'scen-2', 'scen-3'].forEach(bId => {
+        document.getElementById(bId).classList.toggle('active', bId === id);
+      });
+    }
+
+    // MAIN GAME LOOP
+    let lastTime = performance.now();
+    function gameLoop(now) {
+      const dt = Math.min(0.1, (now - lastTime) / 1000);
+      lastTime = now;
+
+      if (!STATE.paused) {
+        updateSimulation(dt * STATE.speed);
+      }
+      renderTacticalMap();
+      requestAnimationFrame(gameLoop);
+    }
+
+    // INITIALIZATION
+    window.onload = () => {
+      resizeCanvas();
+      renderAssetList();
+      updateActionHUD();
+      addIntelLog('seam', 'SYSTEM INITIALISED: OPFOR Reconnaissance-Strike C2 online. Triangulating Blue VHF/UHF tactical radio emitters.');
+      requestAnimationFrame(gameLoop);
+    };
+  </script>
+<script src="telemetry.js"></script>
+  <script>if(window.GazetteTelemetry)window.GazetteTelemetry.track("game_session",{game:"red_lens"});</script>
+</body>
+</html>

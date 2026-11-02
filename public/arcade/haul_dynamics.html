@@ -1,0 +1,1198 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>HaulDynamics: Tongue Weight & Trailer Sway Simulator</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #0f172a;
+      color: #f1f5f9;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    #sim-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* TOP COMMAND BAR */
+    .top-hud {
+      position: absolute;
+      top: 14px;
+      left: 20px;
+      right: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+      z-index: 20;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      padding: 8px 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+      pointer-events: auto;
+    }
+    .brand-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fbbf24, #d97706 70%, #78350f);
+      box-shadow: 0 0 14px rgba(245, 158, 11, 0.7);
+      position: relative;
+    }
+    .brand-icon::after {
+      content: '';
+      position: absolute;
+      top: -3px;
+      left: -3px;
+      right: -3px;
+      bottom: -3px;
+      border-radius: 50%;
+      border: 1.5px dashed rgba(245, 158, 11, 0.6);
+      animation: spin 14s linear infinite;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    .brand-text h1 {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: #f8fafc;
+    }
+    .brand-text p {
+      font-size: 10px;
+      color: #fcd34d;
+      opacity: 0.85;
+      letter-spacing: 0.5px;
+    }
+
+    /* TELEMETRY READOUT */
+    .telemetry-bar {
+      display: flex;
+      gap: 18px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-family: monospace;
+      font-size: 12px;
+      pointer-events: auto;
+    }
+    .tel-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .tel-label {
+      color: #94a3b8;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .tel-val {
+      font-weight: bold;
+      color: #38bdf8;
+    }
+    .tel-val.safe { color: #4ade80; }
+    .tel-val.warn { color: #fbbf24; }
+    .tel-val.danger { color: #ef4444; animation: blink 0.8s infinite; }
+    @keyframes blink { 50% { opacity: 0.35; } }
+
+    /* GLASS PANELS */
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      border-radius: 14px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+      pointer-events: auto;
+    }
+
+    /* LEFT HUD: WEIGHT & BALANCE DISTRIBUTION */
+    .left-hud {
+      position: absolute;
+      left: 20px;
+      top: 80px;
+      width: 255px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 20;
+    }
+    .panel-heading {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #fcd34d;
+      border-bottom: 1px solid rgba(245, 158, 11, 0.2);
+      padding-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .slider-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-family: monospace;
+    }
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #1e293b;
+      outline: none;
+      -webkit-appearance: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #f59e0b;
+      cursor: pointer;
+      box-shadow: 0 0 8px #f59e0b;
+    }
+
+    /* WEIGHT DISTRIBUTION VISUALIZER */
+    .weight-meter {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: #090d16;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-family: monospace;
+      font-size: 11px;
+    }
+    .weight-bar-bg {
+      width: 100%;
+      height: 10px;
+      background: #1e293b;
+      border-radius: 5px;
+      position: relative;
+      overflow: hidden;
+    }
+    .weight-zone-green {
+      position: absolute;
+      left: 10%;
+      width: 5%;
+      height: 100%;
+      background: rgba(74, 222, 128, 0.4);
+      border-left: 1px dashed #4ade80;
+      border-right: 1px dashed #4ade80;
+    }
+    .weight-needle {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: #f59e0b;
+      border-radius: 2px;
+      box-shadow: 0 0 6px #f59e0b;
+      transition: left 0.1s ease;
+    }
+
+    /* RIGHT HUD: SCENARIOS & INTERVENTIONS */
+    .right-hud {
+      position: absolute;
+      right: 20px;
+      top: 80px;
+      width: 250px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 20;
+      max-height: calc(100vh - 170px);
+      overflow-y: auto;
+    }
+    .scenario-btn {
+      width: 100%;
+      text-align: left;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(245, 158, 11, 0.15);
+      color: #cbd5e1;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .scenario-btn:hover {
+      background: rgba(245, 158, 11, 0.15);
+      color: #ffffff;
+      border-color: #f59e0b;
+    }
+    .scenario-btn.active {
+      background: rgba(245, 158, 11, 0.25);
+      border-color: #f59e0b;
+      color: #fcd34d;
+      font-weight: bold;
+    }
+
+    /* DYNAMIC DISTURBANCE BUTTONS */
+    .hazard-btn {
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid #ef4444;
+      color: #fca5a5;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+    .hazard-btn:hover {
+      background: #ef4444;
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.5);
+    }
+
+    /* BOTTOM CONTROLS & EMERGENCY INTERVENTIONS */
+    .bottom-hud {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 20px;
+      z-index: 20;
+    }
+    .control-btn {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: #f8fafc;
+      padding: 9px 15px;
+      border-radius: 10px;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      transition: all 0.15s;
+      min-width: 110px;
+    }
+    .control-btn:hover {
+      background: rgba(245, 158, 11, 0.2);
+      border-color: #f59e0b;
+      box-shadow: 0 0 14px rgba(245, 158, 11, 0.3);
+    }
+    .control-btn.lifesaver {
+      background: rgba(34, 197, 94, 0.25);
+      border-color: #22c55e;
+      color: #86efac;
+      font-weight: bold;
+    }
+    .control-btn.lifesaver:hover {
+      background: #16a34a;
+      color: #ffffff;
+      box-shadow: 0 0 16px rgba(34, 197, 94, 0.6);
+    }
+    .control-btn.fatal {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: #ef4444;
+      color: #fca5a5;
+    }
+    .control-btn.fatal:hover {
+      background: #dc2626;
+      color: #ffffff;
+      box-shadow: 0 0 16px rgba(239, 68, 68, 0.6);
+    }
+    .control-hotkey {
+      font-size: 9px;
+      color: #94a3b8;
+      font-family: monospace;
+    }
+
+    /* SOUND & RESTART BUTTONS */
+    .btn-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: #f59e0b;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.15s;
+    }
+    .btn-icon:hover {
+      background: rgba(245, 158, 11, 0.25);
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+    }
+    .btn-icon.muted {
+      color: #64748b;
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    /* OSCILLOSCOPE SWAY GRAPH OVERLAY */
+    .graph-hud {
+      position: absolute;
+      bottom: 84px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 380px;
+      height: 55px;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      border-radius: 8px;
+      padding: 4px 8px;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .graph-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      font-family: monospace;
+      color: #94a3b8;
+    }
+    #swayCanvas {
+      width: 100%;
+      height: 38px;
+      display: block;
+    }
+
+    /* JACKKNIFE ALERT BANNER */
+    .jackknife-banner {
+      position: absolute;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(220, 38, 38, 0.3);
+      border: 2px solid #ef4444;
+      box-shadow: 0 0 35px rgba(239, 68, 68, 0.7);
+      color: #fecaca;
+      padding: 8px 24px;
+      border-radius: 20px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-size: 13px;
+      display: none;
+      animation: pulse-alert 0.8s infinite;
+      pointer-events: none;
+      z-index: 30;
+    }
+    @keyframes pulse-alert {
+      0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.9; }
+      50% { transform: translateX(-50%) scale(1.06); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIMULATION CANVAS -->
+  <div id="sim-container">
+    <canvas id="roadCanvas"></canvas>
+  </div>
+
+  <!-- TOP HUD BAR -->
+  <div class="top-hud">
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <a href="index.html" style="text-decoration: none; color: #fcd34d; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(245, 158, 11, 0.35); padding: 8px 14px; border-radius: 12px; font-size: 11px; font-weight: bold; pointer-events: auto; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+        &larr; 449 Field Arcade
+      </a>
+      <div class="brand">
+        <div class="brand-icon"></div>
+        <div class="brand-text">
+          <h1>HAULDYNAMICS</h1>
+          <p>Tongue Weight &amp; Trailer Sway Sandbox</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="telemetry-bar">
+      <div class="tel-item">
+        <span class="tel-label">Road Speed</span>
+        <span class="tel-val" id="tel-speed">65 MPH</span>
+      </div>
+      <div class="tel-item">
+        <span class="tel-label">Tongue Weight</span>
+        <span class="tel-val safe" id="tel-tw">12.5%</span>
+      </div>
+      <div class="tel-item">
+        <span class="tel-label">Sway Angle</span>
+        <span class="tel-val" id="tel-sway">0.0&deg;</span>
+      </div>
+      <div class="tel-item">
+        <span class="tel-label">Rig Stability</span>
+        <span class="tel-val safe" id="tel-stability">DAMPED (STABLE)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- JACKKNIFE ALERT BANNER -->
+  <div class="jackknife-banner" id="jackknife-banner">ðŸš¨ CATASTROPHIC JACKKNIFE / LOSS OF CONTROL ðŸš¨</div>
+
+  <!-- LEFT HUD: WEIGHT & BALANCE DISTRIBUTION -->
+  <div class="left-hud glass-panel">
+    <div class="panel-heading">
+      <span>Weight &amp; Balance</span>
+      <span style="font-size: 9px; opacity: 0.6;">Bumper Pull</span>
+    </div>
+
+    <!-- Payload Position Slider -->
+    <div class="slider-group">
+      <div class="slider-header">
+        <span>Cargo Position</span>
+        <span id="cargo-pos-label" style="color: #fcd34d;">Centered (+10%)</span>
+      </div>
+      <input type="range" id="cargo-slider" min="-100" max="100" value="25" step="1">
+      <div style="display: flex; justify-content: space-between; font-size: 8px; color: #94a3b8; font-family: monospace;">
+        <span>â—€ REAR-HEAVY (FATAL)</span>
+        <span>AXLE</span>
+        <span>TONGUE-HEAVY â–¶</span>
+      </div>
+    </div>
+
+    <!-- Tongue Weight Gauge Meter -->
+    <div class="weight-meter">
+      <div style="display: flex; justify-content: space-between;">
+        <span>Tongue Downforce:</span>
+        <span id="tw-lbs-read" style="color: #fcd34d; font-weight: bold;">875 lbs</span>
+      </div>
+      <div class="weight-bar-bg">
+        <!-- Safe 10% - 15% green window -->
+        <div class="weight-zone-green" style="left: 33%; width: 17%;"></div>
+        <div class="weight-needle" id="weight-needle" style="left: 41%;"></div>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-size: 8px; color: #94a3b8;">
+        <span>0%</span>
+        <span style="color: #4ade80;">10% - 15% SAFE</span>
+        <span>30%</span>
+      </div>
+    </div>
+
+    <!-- Road Speed Slider -->
+    <div class="slider-group">
+      <div class="slider-header">
+        <span>Highway Speed</span>
+        <span id="speed-label" style="color: #38bdf8;">65 MPH</span>
+      </div>
+      <input type="range" id="speed-slider" min="20" max="85" value="65" step="1">
+    </div>
+
+    <!-- Axle Load Telemetry -->
+    <div style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; font-family: monospace; color: #cbd5e1; background: #090d16; padding: 6px 8px; border-radius: 6px;">
+      <div style="display: flex; justify-content: space-between;">
+        <span style="color: #94a3b8;">F-150 Steer Axle:</span>
+        <span id="steer-load">3,150 lbs</span>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <span style="color: #94a3b8;">F-150 Drive Axle:</span>
+        <span id="drive-load">3,850 lbs</span>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <span style="color: #94a3b8;">Trailer Tandem:</span>
+        <span id="trailer-load">6,125 lbs</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT HUD: SCENARIOS & DISTURBANCES -->
+  <div class="right-hud glass-panel">
+    <div class="panel-heading">
+      <span>Load Scenarios</span>
+    </div>
+    <button class="scenario-btn active" onclick="loadScenario('ideal')">
+      ðŸŸ¢ Preset 1: Ideal 12.5% Balanced Haul
+    </button>
+    <button class="scenario-btn" onclick="loadScenario('fatal_rear')">
+      ðŸ”´ Preset 2: Deadly 4% Rear-Heavy Load
+    </button>
+    <button class="scenario-btn" onclick="loadScenario('squat')">
+      ðŸŸ  Preset 3: Overloaded 24% Tongue Squat
+    </button>
+
+    <div class="panel-heading" style="margin-top: 6px;">
+      <span>Inject Disturbances</span>
+    </div>
+    <button class="hazard-btn" onclick="triggerDisturbance('gust')">
+      ðŸ’¨ 45 MPH Semi-Truck Passing Gust
+    </button>
+    <button class="hazard-btn" onclick="triggerDisturbance('swerve')" style="margin-top: 4px;">
+      ðŸ¦Œ Emergency Deer Evasion Swerve
+    </button>
+    <button class="hazard-btn" onclick="triggerDisturbance('pothole')" style="margin-top: 4px;">
+      ðŸ•³ Shoulder Drop / Pothole Strike
+    </button>
+  </div>
+
+  <!-- OSCILLOSCOPE SWAY GRAPH OVERLAY -->
+  <div class="graph-hud">
+    <div class="graph-header">
+      <span>TRAILER YAW OSCILLATION &theta;(t)</span>
+      <span id="graph-damping">DAMPING: +0.42 (CONVERGING)</span>
+    </div>
+    <canvas id="swayCanvas" width="360" height="38"></canvas>
+  </div>
+
+  <!-- BOTTOM CONTROLS & EMERGENCY INTERVENTIONS -->
+  <div class="bottom-hud glass-panel">
+    <button class="control-btn" onclick="steerPulse(-1)">
+      <span>â—€ Steer Left</span>
+      <span class="control-hotkey">[Key A / Left]</span>
+    </button>
+    <button class="control-btn" onclick="steerPulse(1)">
+      <span>Steer Right â–¶</span>
+      <span class="control-hotkey">[Key D / Right]</span>
+    </button>
+
+    <!-- THE LIFE SAVER: TRAILER BRAKE CONTROLLER -->
+    <button class="control-btn lifesaver" id="btn-tbc" onmousedown="engageTBC()" onmouseup="releaseTBC()" ontouchstart="engageTBC()" ontouchend="releaseTBC()">
+      <span>ðŸ›‘ Squeeze TBC</span>
+      <span class="control-hotkey">[Space / Hold]</span>
+    </button>
+
+    <!-- THE FATAL MISTAKE: STOMP TRUCK BRAKES -->
+    <button class="control-btn fatal" onclick="stompTruckBrakes()">
+      <span>âš ï¸ Stomp Truck Brake</span>
+      <span class="control-hotkey">[Key B] (Fatal!)</span>
+    </button>
+
+    <div style="display: flex; gap: 8px; margin-left: 6px;">
+      <button class="btn-icon" id="sound-btn" onclick="toggleAudio()" title="Sound On/Off">
+        ðŸ”Š
+      </button>
+      <button class="btn-icon" onclick="resetSim()" title="Reset Rig">
+        ðŸ”„
+      </button>
+    </div>
+  </div>
+
+  <!-- SIMULATION ENGINE SCRIPT -->
+  <script>
+    /* ==========================================================
+       HAULDYNAMICS: TONGUE WEIGHT & TRAILER SWAY ENGINE
+       ========================================================== */
+    const canvas = document.getElementById('roadCanvas');
+    const ctx = canvas.getContext('2d');
+    const swayCanvas = document.getElementById('swayCanvas');
+    const swayCtx = swayCanvas.getContext('2d');
+
+    let width, height;
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+      swayCanvas.width = 360;
+      swayCanvas.height = 38;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Sound Synthesizer (Native Web Audio API)
+    let audioCtx = null;
+    let audioEnabled = false;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      const btn = document.getElementById('sound-btn');
+      if (audioEnabled) {
+        initAudio();
+        btn.classList.remove('muted');
+        btn.innerText = 'ðŸ”Š';
+        playTone(300, 0.15, 'sine');
+      } else {
+        btn.classList.add('muted');
+        btn.innerText = 'ðŸ”‡';
+      }
+    }
+
+    function playTone(freq, dur = 0.2, type = 'sine', gainVal = 0.1) {
+      if (!audioEnabled || !audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + dur);
+      } catch (e) {}
+    }
+
+    /* ==========================================================
+       PHYSICAL VEHICLE & TRAILER RIG MODEL
+       ========================================================== */
+    const rig = {
+      // Truck parameters (2024 Ford F-150 SuperCrew)
+      truck: {
+        x: 0,
+        y: 0,
+        width: 36,
+        length: 74,
+        wheelbase: 50,
+        overhang: 24, // Distance from rear axle to hitch ball
+        steerAngle: 0,
+        yaw: 0,
+        vx: 0,
+        curbWeight: 5100
+      },
+      // Trailer parameters (Tandem Axle 18ft Bumper Pull)
+      trailer: {
+        width: 38,
+        length: 120, // Total trailer body
+        tongueLength: 42, // Coupler to front of deck
+        axleDist: 105, // Coupler to tandem axle center
+        emptyWeight: 3200,
+        cargoWeight: 4500,
+        cargoPos: 0.25, // -1.0 (Extreme Rear) to +1.0 (Extreme Tongue)
+        angle: 0, // Sway articulation angle (radians)
+        angularVel: 0,
+        angularAcc: 0,
+        isJackknifed: false
+      },
+      roadSpeed: 65, // MPH
+      roadOffset: 0,
+      tbcActive: false, // Trailer Brake Controller
+      swayHistory: [] // Telemetry points for oscilloscope
+    };
+
+    /* ==========================================================
+       WEIGHT & BALANCE CALCULATIONS
+       ========================================================== */
+    function computeWeights() {
+      const t = rig.trailer;
+      const totalTrailerWeight = t.emptyWeight + t.cargoWeight;
+
+      // Cargo offset from trailer axle (inches / scale units)
+      // Positive = forward of axle; Negative = behind axle
+      const cargoOffsetFromAxle = (t.cargoPos * 45) + 8; // Normal neutral is slightly forward
+      const cargoTorque = t.cargoWeight * cargoOffsetFromAxle;
+      const emptyTorque = t.emptyWeight * 12; // Empty trailer center of mass is slightly forward
+
+      // Tongue weight (downforce on hitch ball)
+      const tongueWeightLbs = Math.max(-200, (emptyTorque + cargoTorque) / t.axleDist);
+      const tongueWeightPct = Math.max(0, (tongueWeightLbs / totalTrailerWeight) * 100);
+
+      // Axle load distribution on F-150
+      const truckWheelbase = rig.truck.wheelbase;
+      const truckOverhang = rig.truck.overhang;
+
+      // Hitch downforce transfers weight off front steer axle via lever arm
+      const steerAxleTransfer = tongueWeightLbs * (truckOverhang / truckWheelbase);
+      const steerLoad = 3200 - steerAxleTransfer;
+      const driveLoad = 1900 + tongueWeightLbs + steerAxleTransfer;
+      const trailerAxleLoad = totalTrailerWeight - tongueWeightLbs;
+
+      return {
+        totalTrailerWeight,
+        tongueWeightLbs,
+        tongueWeightPct,
+        steerLoad,
+        driveLoad,
+        trailerAxleLoad
+      };
+    }
+
+    /* ==========================================================
+       DYNAMIC SWAY PHYSICS (VELOCITY-DEPENDENT DAMPING)
+       ========================================================== */
+    function updatePhysics(dt) {
+      if (rig.trailer.isJackknifed) return;
+
+      const weights = computeWeights();
+      const speedFps = (rig.roadSpeed * 5280) / 3600; // ft/sec equivalent
+
+      // Critical sway stability parameter:
+      // Positive tongue weight (>10%) provides stabilizing restoring moment.
+      // Negative / low tongue weight (<9%) creates negative damping that AMPLIFIES sway!
+      const stabilityFactor = (weights.tongueWeightPct - 9.5) / 5.0; // Positive = stable; Negative = death wobble
+      const speedFactor = Math.pow(rig.roadSpeed / 55.0, 2);
+
+      // Natural restoring frequency
+      const kRestoring = 8.5;
+
+      // Damping coefficient:
+      // High speed + rear heavy = NEGATIVE DAMPING (exponential amplification!)
+      let damping = (stabilityFactor * 1.8) - (speedFactor * 0.45);
+
+      // Trailer Brake Controller (TBC) Electric Brake straightens trailer
+      if (rig.tbcActive) {
+        damping += 6.5; // Massive tension straightens the pendulum
+        rig.roadSpeed = Math.max(25, rig.roadSpeed - 0.4);
+      }
+
+      // Restoring angular acceleration
+      const restoringTorque = -kRestoring * rig.trailer.angle;
+      const dampingTorque = -damping * rig.trailer.angularVel;
+
+      rig.trailer.angularAcc = restoringTorque + dampingTorque;
+
+      // Numerical integration
+      rig.trailer.angularVel += rig.trailer.angularAcc * dt;
+      rig.trailer.angle += rig.trailer.angularVel * dt;
+
+      // Truck lateral drift reaction from trailer pushing the hitch
+      const hitchForceY = Math.sin(rig.trailer.angle) * weights.totalTrailerWeight * 0.00035;
+      rig.truck.x += hitchForceY * 4.0;
+
+      // Auto-centering steer to stay in lane
+      rig.truck.x += (width / 2 - rig.truck.x) * 0.04;
+
+      // Tire skid audio on heavy sway
+      if (Math.abs(rig.trailer.angle) > 0.15 && Math.random() < 0.2) {
+        playTone(180 + Math.abs(rig.trailer.angle) * 400, 0.08, 'sawtooth', 0.06);
+      }
+
+      // Check Jackknife Condition (> 52 degrees or 0.9 radians)
+      if (Math.abs(rig.trailer.angle) > 0.88) {
+        rig.trailer.isJackknifed = true;
+        document.getElementById('jackknife-banner').style.display = 'block';
+        playTone(85, 0.6, 'triangle', 0.35);
+      }
+
+      // Record Sway History for Oscilloscope
+      rig.swayHistory.push(rig.trailer.angle);
+      if (rig.swayHistory.length > 200) rig.swayHistory.shift();
+
+      // Road Scroll
+      rig.roadOffset = (rig.roadOffset + rig.roadSpeed * 0.25) % 80;
+    }
+
+    /* ==========================================================
+       USER INTERVENTIONS & ACTIONS
+       ========================================================== */
+    function triggerDisturbance(type) {
+      initAudio();
+      if (rig.trailer.isJackknifed) resetSim();
+
+      if (type === 'gust') {
+        // 45 MPH crosswind gust hits trailer side
+        rig.trailer.angularVel += 1.85;
+        playTone(110, 0.4, 'sine', 0.2);
+      } else if (type === 'swerve') {
+        // Sudden jerk left then right
+        rig.truck.x -= 45;
+        rig.trailer.angularVel -= 2.4;
+        playTone(220, 0.25, 'sawtooth', 0.15);
+      } else if (type === 'pothole') {
+        // Drop trailer tire into shoulder
+        rig.trailer.angularVel += 1.3;
+        playTone(90, 0.3, 'square', 0.2);
+      }
+    }
+
+    function steerPulse(dir) {
+      initAudio();
+      rig.truck.x += dir * 25;
+      rig.trailer.angularVel -= dir * 0.65;
+    }
+
+    // THE LIFE SAVER: Trailer Brake Controller (Squeeze TBC)
+    function engageTBC() {
+      initAudio();
+      rig.tbcActive = true;
+      document.getElementById('btn-tbc').style.background = '#22c55e';
+      playTone(480, 0.1, 'sine', 0.15);
+    }
+    function releaseTBC() {
+      rig.tbcActive = false;
+      document.getElementById('btn-tbc').style.background = '';
+    }
+
+    // THE FATAL MISTAKE: Stomping Truck Brakes during sway
+    function stompTruckBrakes() {
+      initAudio();
+      // Decelerating the truck pushes trailer inertia forward against the hitch,
+      // violently amplifying any existing sway angle!
+      if (Math.abs(rig.trailer.angle) > 0.05) {
+        rig.trailer.angularVel += Math.sign(rig.trailer.angle) * 3.5;
+        playTone(140, 0.45, 'sawtooth', 0.3);
+      }
+    }
+
+    // Preset Scenarios
+    function loadScenario(preset) {
+      resetSim();
+      document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.scenario-btn')).find(b => b.getAttribute('onclick').includes(preset));
+      if (activeBtn) activeBtn.classList.add('active');
+
+      if (preset === 'ideal') {
+        // 12.5% Balanced Tongue Weight
+        rig.trailer.cargoPos = 0.25;
+        rig.roadSpeed = 65;
+      } else if (preset === 'fatal_rear') {
+        // 4% Fatal Rear Heavy Load
+        rig.trailer.cargoPos = -0.75;
+        rig.roadSpeed = 65;
+      } else if (preset === 'squat') {
+        // 24% Overloaded Tongue Squat
+        rig.trailer.cargoPos = 0.85;
+        rig.roadSpeed = 55;
+      }
+
+      // Update UI sliders
+      document.getElementById('cargo-slider').value = rig.trailer.cargoPos * 100;
+      document.getElementById('speed-slider').value = rig.roadSpeed;
+      updateHudTele();
+    }
+
+    function resetSim() {
+      rig.trailer.angle = 0;
+      rig.trailer.angularVel = 0;
+      rig.trailer.angularAcc = 0;
+      rig.trailer.isJackknifed = false;
+      rig.truck.x = width / 2;
+      rig.truck.y = height * 0.45;
+      rig.swayHistory = [];
+      document.getElementById('jackknife-banner').style.display = 'none';
+    }
+
+    // Keyboard controls
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'KeyA' || e.code === 'ArrowLeft') steerPulse(-1);
+      else if (e.code === 'KeyD' || e.code === 'ArrowRight') steerPulse(1);
+      else if (e.code === 'Space') {
+        e.preventDefault();
+        engageTBC();
+      } else if (e.code === 'KeyB') {
+        stompTruckBrakes();
+      } else if (e.code === 'KeyR') {
+        resetSim();
+      }
+    });
+
+    window.addEventListener('keyup', (e) => {
+      if (e.code === 'Space') releaseTBC();
+    });
+
+    // Slider inputs
+    document.getElementById('cargo-slider').addEventListener('input', (e) => {
+      rig.trailer.cargoPos = parseFloat(e.target.value) / 100;
+      updateHudTele();
+    });
+
+    document.getElementById('speed-slider').addEventListener('input', (e) => {
+      rig.roadSpeed = parseInt(e.target.value);
+      updateHudTele();
+    });
+
+    /* ==========================================================
+       HUD & TELEMETRY UPDATES
+       ========================================================== */
+    function updateHudTele() {
+      const weights = computeWeights();
+
+      document.getElementById('tel-speed').innerText = rig.roadSpeed + ' MPH';
+      document.getElementById('speed-label').innerText = rig.roadSpeed + ' MPH';
+
+      const twPct = weights.tongueWeightPct.toFixed(1);
+      const twEl = document.getElementById('tel-tw');
+      twEl.innerText = twPct + '%';
+
+      // Status indicator
+      const stabEl = document.getElementById('tel-stability');
+      if (rig.trailer.isJackknifed) {
+        stabEl.innerText = 'JACKKNIFE';
+        stabEl.className = 'tel-val danger';
+        twEl.className = 'tel-val danger';
+      } else if (weights.tongueWeightPct < 9.0) {
+        stabEl.innerText = 'FATAL SWAY RISK';
+        stabEl.className = 'tel-val danger';
+        twEl.className = 'tel-val danger';
+      } else if (weights.tongueWeightPct > 18.0) {
+        stabEl.innerText = 'HEAVY TONGUE SQUAT';
+        stabEl.className = 'tel-val warn';
+        twEl.className = 'tel-val warn';
+      } else {
+        stabEl.innerText = 'STABLE (DAMPED)';
+        stabEl.className = 'tel-val safe';
+        twEl.className = 'tel-val safe';
+      }
+
+      document.getElementById('tw-lbs-read').innerText = Math.round(weights.tongueWeightLbs) + ' lbs';
+      document.getElementById('tel-sway').innerText = (rig.trailer.angle * (180 / Math.PI)).toFixed(1) + 'Â°';
+
+      // Move weight gauge needle
+      const needlePos = Math.min(95, Math.max(5, (weights.tongueWeightPct / 30) * 100));
+      document.getElementById('weight-needle').style.left = needlePos + '%';
+
+      // Label
+      const posLabel = document.getElementById('cargo-pos-label');
+      if (rig.trailer.cargoPos < -0.3) posLabel.innerText = 'Rear-Heavy (Hazardous)';
+      else if (rig.trailer.cargoPos > 0.5) posLabel.innerText = 'Front-Heavy (Squat)';
+      else posLabel.innerText = 'Balanced Over Tandem Axle';
+
+      // Axle Loads
+      document.getElementById('steer-load').innerText = Math.round(weights.steerLoad) + ' lbs';
+      document.getElementById('drive-load').innerText = Math.round(weights.driveLoad) + ' lbs';
+      document.getElementById('trailer-load').innerText = Math.round(weights.trailerAxleLoad) + ' lbs';
+
+      // Damping graph readout
+      const dmpEl = document.getElementById('graph-damping');
+      if (weights.tongueWeightPct < 9.5) {
+        dmpEl.innerText = 'DAMPING: -0.65 (EXPONENTIALLY AMPLIFYING)';
+        dmpEl.style.color = '#ef4444';
+      } else {
+        dmpEl.innerText = 'DAMPING: +0.42 (CONVERGING SELF-CENTER)';
+        dmpEl.style.color = '#4ade80';
+      }
+    }
+
+    /* ==========================================================
+       RENDERING PIPELINE (TOP-DOWN HIGHWAY & RIG)
+       ========================================================== */
+    function renderRoad() {
+      // Highway asphalt
+      ctx.fillStyle = '#1e293b';
+      const roadWidth = 320;
+      const roadLeft = (width - roadWidth) / 2;
+      ctx.fillRect(roadLeft, 0, roadWidth, height);
+
+      // Grass Shoulders
+      ctx.fillStyle = '#064e3b';
+      ctx.fillRect(0, 0, roadLeft, height);
+      ctx.fillRect(roadLeft + roadWidth, 0, width - (roadLeft + roadWidth), height);
+
+      // Shoulder White Lines
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(roadLeft + 6, 0, 4, height);
+      ctx.fillRect(roadLeft + roadWidth - 10, 0, 4, height);
+
+      // Center Dashed Yellow Lines
+      ctx.fillStyle = '#f59e0b';
+      const dashH = 35;
+      const gap = 45;
+      for (let y = -dashH + rig.roadOffset; y < height; y += dashH + gap) {
+        ctx.fillRect(roadLeft + roadWidth / 2 - 2, y, 4, dashH);
+      }
+    }
+
+    function renderRig() {
+      const trk = rig.truck;
+      const trl = rig.trailer;
+
+      // 1. Hitch position (overhang behind truck rear axle)
+      const hitchX = trk.x;
+      const hitchY = trk.y + trk.length / 2 + trk.overhang;
+
+      // 2. Render Tandem Axle Trailer
+      ctx.save();
+      ctx.translate(hitchX, hitchY);
+      ctx.rotate(trl.angle);
+
+      // Trailer Coupler / Tongue A-Frame
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(0, 0); // Hitch ball
+      ctx.lineTo(-trl.width / 2, trl.tongueLength);
+      ctx.moveTo(0, 0);
+      ctx.lineTo(trl.width / 2, trl.tongueLength);
+      ctx.stroke();
+
+      // Trailer Deck Body
+      ctx.fillStyle = '#0f172a';
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(-trl.width / 2, trl.tongueLength, trl.width, trl.length);
+      ctx.fillRect(-trl.width / 2, trl.tongueLength, trl.width, trl.length);
+
+      // Tandem Axles & Tires (2 on each side)
+      const axleY = trl.axleDist;
+      ctx.fillStyle = '#000000';
+      [-trl.width / 2 - 5, trl.width / 2 + 1].forEach(sideX => {
+        ctx.fillRect(sideX, axleY - 14, 5, 12);
+        ctx.fillRect(sideX, axleY + 2, 5, 12);
+      });
+
+      // Movable Cargo (e.g. Skid Steer / Horse Payload)
+      // Map cargoPos (-1 to +1) to physical trailer bed (tongueLength to tongueLength + length)
+      const cargoMinY = trl.tongueLength + 16;
+      const cargoMaxY = trl.tongueLength + trl.length - 24;
+      const cargoActualY = cargoMinY + ((trl.cargoPos + 1.0) / 2.0) * (cargoMaxY - cargoMinY);
+
+      // Render Cargo Block
+      ctx.fillStyle = trl.cargoPos < -0.3 ? '#ef4444' : (trl.cargoPos > 0.5 ? '#f97316' : '#22c55e');
+      ctx.fillRect(-trl.width / 2 + 4, cargoActualY - 14, trl.width - 8, 28);
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(-trl.width / 2 + 4, cargoActualY - 14, trl.width - 8, 28);
+
+      // Cargo Label
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 9px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('CARGO', 0, cargoActualY + 3);
+
+      // Center of Gravity (CG) Marker
+      const weights = computeWeights();
+      const cgY = trl.tongueLength + (trl.length / 2) - (trl.cargoPos * 25);
+      ctx.beginPath();
+      ctx.arc(0, cgY, 6, 0, Math.PI * 2);
+      ctx.fillStyle = '#fbbf24';
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.restore();
+
+      // 3. Render Tow Vehicle (2024 Ford F-150)
+      ctx.save();
+      ctx.translate(trk.x, trk.y);
+
+      // Truck Body
+      ctx.fillStyle = '#1e3a8a'; // F-150 Blue
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2.5;
+      ctx.fillRect(-trk.width / 2, -trk.length / 2, trk.width, trk.length);
+      ctx.strokeRect(-trk.width / 2, -trk.length / 2, trk.width, trk.length);
+
+      // Windshield & Cab glass
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(-trk.width / 2 + 4, -trk.length / 2 + 16, trk.width - 8, 24);
+
+      // Front & Rear Tires
+      ctx.fillStyle = '#000000';
+      // Front Steer Tires
+      ctx.fillRect(-trk.width / 2 - 4, -trk.length / 2 + 8, 4, 14);
+      ctx.fillRect(trk.width / 2, -trk.length / 2 + 8, 4, 14);
+      // Rear Tires
+      ctx.fillRect(-trk.width / 2 - 4, trk.length / 2 - 20, 4, 14);
+      ctx.fillRect(trk.width / 2, trk.length / 2 - 20, 4, 14);
+
+      // Hitch Receiver & Ball
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillRect(-3, trk.length / 2, 6, trk.overhang);
+      ctx.beginPath();
+      ctx.arc(0, trk.length / 2 + trk.overhang, 5, 0, Math.PI * 2);
+      ctx.fillStyle = '#f59e0b';
+      ctx.fill();
+
+      // Headlight Beams
+      ctx.fillStyle = 'rgba(254, 240, 138, 0.15)';
+      ctx.beginPath();
+      ctx.moveTo(-12, -trk.length / 2);
+      ctx.lineTo(-45, -trk.length / 2 - 90);
+      ctx.lineTo(45, -trk.length / 2 - 90);
+      ctx.lineTo(12, -trk.length / 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    // Render Sway Oscilloscope Graph
+    function renderSwayGraph() {
+      swayCtx.fillStyle = '#090d16';
+      swayCtx.fillRect(0, 0, swayCanvas.width, swayCanvas.height);
+
+      // Centerline zero sway
+      swayCtx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+      swayCtx.lineWidth = 1;
+      swayCtx.beginPath();
+      swayCtx.moveTo(0, swayCanvas.height / 2);
+      swayCtx.lineTo(swayCanvas.width, swayCanvas.height / 2);
+      swayCtx.stroke();
+
+      // Sway Waveform
+      if (rig.swayHistory.length > 1) {
+        swayCtx.beginPath();
+        const weights = computeWeights();
+        swayCtx.strokeStyle = weights.tongueWeightPct < 9.0 ? '#ef4444' : '#4ade80';
+        swayCtx.lineWidth = 2;
+
+        for (let i = 0; i < rig.swayHistory.length; i++) {
+          const x = (i / 200) * swayCanvas.width;
+          const y = swayCanvas.height / 2 + (rig.swayHistory[i] * 32);
+          if (i === 0) swayCtx.moveTo(x, y);
+          else swayCtx.lineTo(x, y);
+        }
+        swayCtx.stroke();
+      }
+    }
+
+    /* ==========================================================
+       MAIN ANIMATION LOOP
+       ========================================================== */
+    let lastTime = performance.now();
+
+    function loop(currentTime) {
+      const dt = Math.min(0.05, (currentTime - lastTime) / 1000);
+      lastTime = currentTime;
+
+      updatePhysics(dt);
+
+      renderRoad();
+      renderRig();
+      renderSwayGraph();
+      updateHudTele();
+
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+
+    // Initial setup
+    window.addEventListener('DOMContentLoaded', () => {
+      resetSim();
+      loadScenario('ideal');
+    });
+  </script>
+  <script src="telemetry.js"></script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 @echo off
-title The 449 Field Arcade — Educational & Platformer Gaming Commons
+title The 449 Field Arcade -- Educational & Platformer Gaming Commons
 color 0B
 
 echo ======================================================================
@@ -17,6 +17,9 @@ echo   [Plate V]    Enchanted Phonics Safari
 echo   [Plate VI]   Homestead Critter Match
 echo   [Plate VII]  The Breaker Vault: Sector 4 (Horror Escape)
 echo   [Plate VIII] Project K9-Volt: 16-Level Cyber-Corgi Platformer
+echo   [Plate XII]  PastureOps - Testing (Pastured Poultry Time-Motion Sim)
+echo   [Plate XV]   Celestial Slingshot (N-Body Gravitational Physics Toy)
+echo   [Plate XVI]  The Molecular Flavor Matrix (Computational Gastronomy Alchemist)
 echo.
 
 if exist "%~dp0449-arcade\index.html" (

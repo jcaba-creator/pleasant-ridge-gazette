@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Molecular Flavor Matrix: Computational Gastronomy Alchemist | 449 Arcade</title>
+  <!-- Tailwind CSS -->
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <!-- Arcade Telemetry -->
+  <script src="telemetry.js"></script>
+  <style>
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); }
+      50% { box-shadow: 0 0 25px rgba(168, 85, 247, 0.7); }
+    }
+    .glow-active {
+      animation: pulse-glow 2s infinite ease-in-out;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(100, 116, 139, 0.5);
+      border-radius: 3px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(148, 163, 184, 0.8);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans select-none overflow-x-hidden">
+
+  <!-- TOP NAV HEADER -->
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md px-6 py-3 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-50">
+    <div class="flex items-center space-x-3">
+      <a href="index.html" class="px-2.5 py-1.5 text-xs rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-800/60 font-semibold transition flex items-center gap-1.5 whitespace-nowrap shadow-sm mr-1" title="Return to 449 Field Arcade">
+        <span>&larr;</span> 449 Arcade
+      </a>
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-indigo-500 to-fuchsia-500 flex items-center justify-center shadow-lg shadow-cyan-500/20 text-white font-bold text-xl">
+        ⚗️
+      </div>
+      <div>
+        <h1 class="text-lg font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-200 to-fuchsia-400">
+          The Molecular Flavor Matrix
+        </h1>
+        <p class="text-xs text-slate-400 flex items-center gap-1.5">
+          <span>Computational Gastronomy Alchemist</span>
+          <span class="inline-block w-1 h-1 rounded-full bg-cyan-400"></span>
+          <span class="text-cyan-400 font-mono">Sensory Organic Chemistry</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Quick Presets -->
+    <div class="flex items-center gap-2 overflow-x-auto py-1 custom-scrollbar">
+      <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider whitespace-nowrap mr-1">Avant-Garde Presets:</span>
+      <button onclick="loadPreset('blumenthal')" class="px-2.5 py-1 text-xs rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5 whitespace-nowrap">
+        <span>🍫🐟 White Choc + Caviar</span>
+      </button>
+      <button onclick="loadPreset('choc_cheese')" class="px-2.5 py-1 text-xs rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5 whitespace-nowrap">
+        <span>🧀🍫 Blue Cheese + Cocoa</span>
+      </button>
+      <button onclick="loadPreset('strawberry_garlic')" class="px-2.5 py-1 text-xs rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5 whitespace-nowrap">
+        <span>🍓🧄 Strawberry + Garlic</span>
+      </button>
+      <button onclick="loadPreset('nordic_anise')" class="px-2.5 py-1 text-xs rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5 whitespace-nowrap">
+        <span>🌿🍣 Licorice + Smoked Salmon</span>
+      </button>
+      <button onclick="loadPreset('bourbon_bacon')" class="px-2.5 py-1 text-xs rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5 whitespace-nowrap">
+        <span>🥓🥃 Smoked Bourbon + Bacon</span>
+      </button>
+      <button onclick="randomAlchemicalBlend()" class="px-3 py-1 text-xs rounded-lg bg-gradient-to-r from-amber-500 to-purple-600 hover:from-amber-400 hover:to-purple-500 text-white font-medium shadow transition flex items-center gap-1 whitespace-nowrap">
+        <span>🎲 Randomizer</span>
+      </button>
+    </div>
+
+    <!-- Right Controls -->
+    <div class="flex items-center gap-3">
+      <button onclick="toggleCodexModal()" class="px-3 py-1.5 rounded-lg bg-cyan-950/60 hover:bg-cyan-900/60 text-cyan-300 border border-cyan-800/60 text-xs font-semibold flex items-center gap-1.5 transition">
+        <span>🔬 Volatile Molecule Codex</span>
+      </button>
+      <button id="soundToggle" onclick="toggleAudio()" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs border border-slate-700" title="Audio Synthesis Feedback">
+        🔊
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN APP CONTAINER -->
+  <main class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-0 overflow-hidden relative">
+
+    <!-- LEFT & CENTER: FORCE-DIRECTED MOLECULAR GRAPH (7 COLS ON LARGE SCREEN) -->
+    <section class="lg:col-span-7 flex flex-col border-r border-slate-800 relative bg-slate-950 overflow-hidden">
+      
+      <!-- Graph Control Bar -->
+      <div class="p-3 bg-slate-900/80 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs z-10 backdrop-blur-sm">
+        <div class="flex items-center gap-2 flex-1 min-w-[200px]">
+          <div class="relative w-full max-w-xs">
+            <input type="text" id="searchInput" placeholder="Search ingredients or molecules..." 
+              oninput="handleSearch(this.value)"
+              class="w-full pl-8 pr-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500 text-xs transition">
+            <span class="absolute left-2.5 top-2 text-slate-500">🔍</span>
+          </div>
+          <select id="compoundFilter" onchange="filterByCompound(this.value)" class="px-2.5 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700 text-slate-300 text-xs focus:outline-none focus:border-cyan-500 max-w-[180px]">
+            <option value="">Filter by Volatile Molecule...</option>
+          </select>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <!-- Category Pills -->
+          <div class="flex items-center gap-1">
+            <button onclick="filterCategory('all')" class="cat-pill active px-2 py-1 rounded bg-cyan-900/60 border border-cyan-500 text-cyan-300 text-[11px] font-medium" data-cat="all">All</button>
+            <button onclick="filterCategory('dairy')" class="cat-pill px-2 py-1 rounded bg-slate-800/80 border border-slate-700 text-slate-400 hover:text-slate-200 text-[11px]" data-cat="dairy">Dairy</button>
+            <button onclick="filterCategory('roast')" class="cat-pill px-2 py-1 rounded bg-slate-800/80 border border-slate-700 text-slate-400 hover:text-slate-200 text-[11px]" data-cat="roast">Roast/Choc</button>
+            <button onclick="filterCategory('fruit')" class="cat-pill px-2 py-1 rounded bg-slate-800/80 border border-slate-700 text-slate-400 hover:text-slate-200 text-[11px]" data-cat="fruit">Fruit</button>
+            <button onclick="filterCategory('marine')" class="cat-pill px-2 py-1 rounded bg-slate-800/80 border border-slate-700 text-slate-400 hover:text-slate-200 text-[11px]" data-cat="marine">Marine/Meat</button>
+            <button onclick="filterCategory('spice')" class="cat-pill px-2 py-1 rounded bg-slate-800/80 border border-slate-700 text-slate-400 hover:text-slate-200 text-[11px]" data-cat="spice">Spices/Allium</button>
+          </div>
+
+          <!-- Zoom & Physics Reset -->
+          <div class="flex items-center gap-1 border-l border-slate-700 pl-2">
+            <button onclick="zoomGraph(1.2)" class="w-7 h-7 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center font-bold" title="Zoom In">+</button>
+            <button onclick="zoomGraph(0.8)" class="w-7 h-7 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center font-bold" title="Zoom Out">-</button>
+            <button onclick="resetGraphView()" class="px-2 h-7 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-[11px]" title="Reset View">Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Canvas Graph Viewport -->
+      <div class="relative flex-1 w-full h-[540px] lg:h-auto bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black overflow-hidden cursor-grab active:cursor-grabbing" id="canvasContainer">
+        <canvas id="graphCanvas" class="w-full h-full block"></canvas>
+
+        <!-- Canvas HUD Overlay -->
+        <div class="absolute bottom-3 left-3 bg-slate-900/80 backdrop-blur-md border border-slate-800 rounded-lg p-2.5 text-[11px] text-slate-400 space-y-1 pointer-events-none max-w-xs shadow-lg">
+          <div class="flex items-center justify-between gap-4 font-mono text-slate-300">
+            <span>NODES: <strong id="hudNodeCount" class="text-cyan-400">0</strong></span>
+            <span>LINKS: <strong id="hudLinkCount" class="text-fuchsia-400">0</strong></span>
+            <span>ACTIVE MOLECULES: <strong id="hudMoleculeCount" class="text-amber-400">0</strong></span>
+          </div>
+          <div class="text-[10px] text-slate-500">
+            • Click node to illuminate shared volatile links<br>
+            • Drag node to inspect / Click (+) to add to Crucible<br>
+            • Scroll wheel to zoom, drag empty space to pan
+          </div>
+        </div>
+
+        <!-- Node Hover Floating Card -->
+        <div id="hoverTooltip" class="absolute pointer-events-none hidden bg-slate-900/95 border border-cyan-500/50 rounded-xl p-3 shadow-2xl backdrop-blur-md z-30 max-w-xs transition-opacity duration-150">
+          <div class="flex items-center justify-between gap-2 border-b border-slate-800 pb-1.5 mb-1.5">
+            <div class="flex items-center gap-1.5">
+              <span id="tooltipIcon" class="text-lg"></span>
+              <h4 id="tooltipName" class="font-bold text-slate-100 text-sm"></h4>
+            </div>
+            <span id="tooltipCategory" class="text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-semibold"></span>
+          </div>
+          <p id="tooltipSensory" class="text-xs text-slate-300 mb-2 italic"></p>
+          <div class="space-y-1">
+            <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">Key Volatiles:</span>
+            <div id="tooltipCompounds" class="flex flex-wrap gap-1"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT: THE CRUCIBLE & COMPUTATIONAL GASTRONOMY LAB (5 COLS) -->
+    <section class="lg:col-span-5 flex flex-col bg-slate-900/70 overflow-y-auto custom-scrollbar p-5 space-y-5 border-l border-slate-800">
+
+      <!-- THE CRUCIBLE DROP DOCK -->
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl relative overflow-hidden">
+        <div class="absolute -right-10 -top-10 w-36 h-36 bg-gradient-to-br from-cyan-500/10 to-fuchsia-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">⚡</span>
+            <h2 class="font-bold text-sm tracking-wide text-slate-200 uppercase">The Reaction Crucible</h2>
+            <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full border border-slate-700">Max 4 Reactants</span>
+          </div>
+          <button onclick="clearCrucible()" class="text-xs text-rose-400 hover:text-rose-300 transition hover:underline">Clear All</button>
+        </div>
+
+        <!-- 4 Crucible Slots -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4" id="crucibleSlotsContainer">
+          <!-- Slots rendered dynamically -->
+        </div>
+
+        <!-- Chemical Harmony Meter & Score -->
+        <div class="bg-slate-950/70 rounded-xl p-3 border border-slate-800/80 flex items-center justify-between gap-4">
+          <div class="flex-1">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-semibold text-slate-400">Chemical Harmony Index</span>
+              <span id="harmonyBadge" class="text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider bg-slate-800 text-slate-400">Awaiting Reactants</span>
+            </div>
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden p-0.5">
+              <div id="harmonyBar" class="h-full bg-gradient-to-r from-cyan-500 via-teal-400 to-fuchsia-500 rounded-full w-0 transition-all duration-500"></div>
+            </div>
+          </div>
+          <div class="text-right">
+            <span id="harmonyScore" class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-br from-cyan-400 to-fuchsia-400 font-mono">0%</span>
+          </div>
+        </div>
+
+        <!-- Bridging Molecules Detected -->
+        <div id="bridgingBox" class="mt-3 pt-3 border-t border-slate-800/60 hidden">
+          <div class="flex items-center gap-1.5 text-xs text-amber-300 font-medium mb-1.5">
+            <span>🔗</span>
+            <span>Bridging Volatile Compounds Detected:</span>
+          </div>
+          <div id="bridgingList" class="flex flex-wrap gap-1.5 text-xs"></div>
+        </div>
+      </div>
+
+      <!-- FLAVOR PROFILE RADAR CHART (6/8 AXES) -->
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <span class="text-base">🕸️</span>
+            <h3 class="font-bold text-xs uppercase tracking-wider text-slate-300">Volatile Sensory Radar Chart</h3>
+          </div>
+          <span class="text-[10px] text-slate-500 font-mono">Umami • Terpene • Pyrazine • Lactone • Aldehyde • Phenol</span>
+        </div>
+
+        <div class="relative w-full h-[220px] flex items-center justify-center">
+          <canvas id="radarCanvas" width="400" height="220" class="max-w-full max-h-full"></canvas>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2 mt-2 pt-2 border-t border-slate-800/80 text-[11px] text-slate-400 text-center font-mono">
+          <div class="bg-slate-950/50 p-1.5 rounded">
+            <span class="text-amber-400 block font-bold text-xs" id="statPyrazine">0.0</span>
+            <span class="text-[10px] text-slate-500">Pyrazine (Roast)</span>
+          </div>
+          <div class="bg-slate-950/50 p-1.5 rounded">
+            <span class="text-cyan-400 block font-bold text-xs" id="statLactone">0.0</span>
+            <span class="text-[10px] text-slate-500">Lactone (Cream)</span>
+          </div>
+          <div class="bg-slate-950/50 p-1.5 rounded">
+            <span class="text-emerald-400 block font-bold text-xs" id="statTerpene">0.0</span>
+            <span class="text-[10px] text-slate-500">Terpene (Citrus/Pine)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- AVANT-GARDE DISH CONCEPT GENERATOR -->
+      <div class="bg-gradient-to-b from-slate-900 via-slate-900/90 to-slate-950 border border-slate-800 rounded-2xl p-4 shadow-2xl relative">
+        <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2.5">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🍴</span>
+            <div>
+              <h3 class="font-bold text-xs uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-orange-400">
+                Avant-Garde Culinary Conception
+              </h3>
+              <p class="text-[10px] text-slate-400">Real-world Modernist Culinary Synthesis</p>
+            </div>
+          </div>
+          <button onclick="synthesizeDishConcept()" class="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs shadow-md transition flex items-center gap-1">
+            <span>✨ Re-Synthesize</span>
+          </button>
+        </div>
+
+        <!-- Synthesized Card Content -->
+        <div id="dishCard" class="space-y-3">
+          <div class="text-center py-6 text-slate-500 text-xs">
+            Add at least 2 ingredients to the Crucible to unlock the computational gastronomy synthesis.
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- MODAL: VOLATILE MOLECULE CHEMICAL CODEX -->
+  <div id="codexModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">🔬</span>
+          <div>
+            <h3 class="font-bold text-slate-100 text-sm">Volatile Flavor Molecule Codex</h3>
+            <p class="text-[11px] text-slate-400">Chemical structures, Olfactory Receptors & Bizarre Synergy Vectors</p>
+          </div>
+        </div>
+        <button onclick="toggleCodexModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm font-bold">✕</button>
+      </div>
+
+      <div class="p-4 overflow-y-auto custom-scrollbar space-y-3 flex-1 text-xs" id="codexList">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div class="p-3 border-t border-slate-800 bg-slate-950/80 flex justify-end">
+        <button onclick="toggleCodexModal()" class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold">Close Codex</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EMBEDDED MOLECULAR DATA & INTERACTIVE LOGIC -->
+  <script>
+    /* =========================================================================
+       1. EXTENSIVE SENSORY ORGANIC DATABASE (80+ INGREDIENTS & VOLATILE MATRIX)
+       ========================================================================= */
+    const COMPOUNDS_DATA = {
+      "trimethylamine": {
+        name: "Trimethylamine",
+        formula: "N(CH₃)₃",
+        class: "Amine",
+        notes: "Fishy, marine, ammoniacal; creates rich savory-caramel sweetness when micro-dosed with fatty lipids.",
+        receptors: "TAAR5 (Trace Amine-Associated Receptor 5)",
+        threshold: "0.0004 ppm"
+      },
+      "2-acetyl-1-pyrroline": {
+        name: "2-Acetyl-1-pyrroline (2-AP)",
+        formula: "C₆H₉NO",
+        class: "Pyrroline / Heterocycle",
+        notes: "Popcorn, jasmine rice, crusty toasted sourdough, pandan leaf aroma.",
+        receptors: "OR51E1 / Human Olfactory G-protein receptors",
+        threshold: "0.00002 ppm"
+      },
+      "furaneol": {
+        name: "Furaneol (Strawberry Furanone)",
+        formula: "C₆H₈O₃",
+        class: "Furanone",
+        notes: "Sweet, caramel, jammy strawberry, cotton candy, roasted pineapple.",
+        receptors: "OR5M3 / Olfactory Epithelium",
+        threshold: "0.00005 ppm"
+      },
+      "guaiacol": {
+        name: "Guaiacol (2-Methoxyphenol)",
+        formula: "C₇H₈O₂",
+        class: "Methoxyphenol",
+        notes: "Smoky, woody, medicinal, cured bacon, oak barrel char, roasted coffee.",
+        receptors: "OR10G4",
+        threshold: "0.003 ppm"
+      },
+      "2-heptanone": {
+        name: "2-Heptanone (Methyl Amyl Ketone)",
+        formula: "C₇H₁₄O",
+        class: "Ketone",
+        notes: "Blue cheese, pungent gorgonzola, ripe banana, dark cocoa butter undertones.",
+        receptors: "OR2W1",
+        threshold: "0.005 ppm"
+      },
+      "whiskey_lactone": {
+        name: "Whiskey Lactone (Quercus Lactone)",
+        formula: "C₉H₁₆O₂",
+        class: "Lactone",
+        notes: "Toasted oak, coconut, rich bourbon, creamy vanilla woodiness.",
+        receptors: "OR5D18",
+        threshold: "0.001 ppm"
+      },
+      "allyl_isothiocyanate": {
+        name: "Allyl Isothiocyanate (AITC)",
+        formula: "CH₂=CHCH₂NCS",
+        class: "Isothiocyanate",
+        notes: "Pungent, sinus-clearing, wasabi, horseradish, mustard piquant burst.",
+        receptors: "TRPA1 (Ankyrin Trigeminal Pain & Cold Ion Channel)",
+        threshold: "0.02 ppm"
+      },
+      "diallyl_disulfide": {
+        name: "Diallyl Disulfide",
+        formula: "C₆H₁₀S₂",
+        class: "Organosulfur",
+        notes: "Fresh crushed garlic, roasted allium, sulfurous, savory pungency.",
+        receptors: "TRPA1 & OR2B6",
+        threshold: "0.0002 ppm"
+      },
+      "vanillin": {
+        name: "Vanillin (4-Hydroxy-3-methoxybenzaldehyde)",
+        formula: "C₈H₈O₃",
+        class: "Phenolic Aldehyde",
+        notes: "Warm sweet vanilla, creamy balsamic, baked pastry.",
+        receptors: "OR1D2",
+        threshold: "0.0001 ppm"
+      },
+      "limonene": {
+        name: "D-Limonene",
+        formula: "C₁₀H₁₆",
+        class: "Monoterpene",
+        notes: "Crisp citrus peel, bright orange, sparkling yuzu zest, uplifting.",
+        receptors: "OR1A1",
+        threshold: "0.01 ppm"
+      },
+      "linalool": {
+        name: "Linalool",
+        formula: "C₁₀H₁₈O",
+        class: "Terpene Alcohol",
+        notes: "Floral, lavender, bergamot, sweet fresh basil, coriander.",
+        receptors: "OR1A2",
+        threshold: "0.006 ppm"
+      },
+      "dimethyl_sulfide": {
+        name: "Dimethyl Sulfide (DMS)",
+        formula: "(CH₃)₂S",
+        class: "Sulfide",
+        notes: "Marine, ocean breeze, truffle essence, cooked cabbage, seaweed umami.",
+        receptors: "OR2C1",
+        threshold: "0.0001 ppm"
+      },
+      "pyrazine_tm": {
+        name: "Tetramethylpyrazine",
+        formula: "C₈H₁₂N₂",
+        class: "Alkylpyrazine",
+        notes: "Intense roast cocoa, roasted coffee beans, fermented natto, roasted hazelnut.",
+        receptors: "OR52D1",
+        threshold: "0.001 ppm"
+      },
+      "trans_anethole": {
+        name: "trans-Anethole",
+        formula: "C₁₀H₁₂O",
+        class: "Phenylpropene",
+        notes: "Sweet licorice, anise, fennel, pastis, refreshing herbal warmth.",
+        receptors: "OR52M1",
+        threshold: "0.008 ppm"
+      },
+      "sotolon": {
+        name: "Sotolon (Lacton)",
+        formula: "C₆H₈O₃",
+        class: "Lactone / Furanone",
+        notes: "Brown butter (beurre noisette), maple syrup, fenugreek, aged vin jaune.",
+        receptors: "OR4D2",
+        threshold: "0.00001 ppm"
+      },
+      "nonenal": {
+        name: "(E)-2-Nonenal / Nonanal",
+        formula: "C₉H₁₆O",
+        class: "Aldehyde",
+        notes: "Cucumber freshness, fresh oyster salinity, green melon rind, iris.",
+        receptors: "OR2M7",
+        threshold: "0.0001 ppm"
+      },
+      "delta_decalactone": {
+        name: "delta-Decalactone",
+        formula: "C₁₀H₁₈O₂",
+        class: "Lactone",
+        notes: "Creamy, coconut, ripe peach, silky milkfat, sweet butter.",
+        receptors: "OR5K1",
+        threshold: "0.0005 ppm"
+      },
+      "methional": {
+        name: "Methional",
+        formula: "C₄H₈OS",
+        class: "Thioether / Aldehyde",
+        notes: "Baked potato, savory broth, soy sauce, deep umami enhancement.",
+        receptors: "OR51M1",
+        threshold: "0.00005 ppm"
+      },
+      "bis_methylthiomethane": {
+        name: "Bis(methylthio)methane",
+        formula: "C₃H₈S₂",
+        class: "Thioacetal",
+        notes: "White truffle signature aroma, pungent earthy garlic-gasoline nuance.",
+        receptors: "OR2M3",
+        threshold: "0.00001 ppm"
+      },
+      "eugenol": {
+        name: "Eugenol",
+        formula: "C₁₀H₁₂O₂",
+        class: "Allylbenzene",
+        notes: "Spicy clove, warm allspice, cinnamon leaf, aged wood.",
+        receptors: "TRPV1 / OR5D14",
+        threshold: "0.006 ppm"
+      }
+    };
+
+    const INGREDIENTS = [
+      {
+        id: "dark_chocolate",
+        name: "Dark Chocolate (75%)",
+        category: "roast",
+        icon: "🍫",
+        sensory: "Bittersweet, roasted earthy nibs, deep red fruit acidity.",
+        volatiles: ["pyrazine_tm", "2-heptanone", "furaneol", "vanillin", "methional"],
+        radar: [9.2, 3.8, 1.5, 4.2, 5.0, 7.5]
+      },
+      {
+        id: "blue_cheese",
+        name: "Roquefort Blue Cheese",
+        category: "dairy",
+        icon: "🧀",
+        sensory: "Pungent animalic salt, creamy fungal mycelium, sharp ketone tang.",
+        volatiles: ["2-heptanone", "trimethylamine", "dimethyl_sulfide", "delta_decalactone"],
+        radar: [3.1, 8.5, 1.0, 8.9, 3.2, 4.0]
+      },
+      {
+        id: "white_chocolate",
+        name: "Artisan White Chocolate",
+        category: "dairy",
+        icon: "🥛",
+        sensory: "Decadent cocoa butter, sweet cream, bourbon vanilla bean.",
+        volatiles: ["trimethylamine", "vanillin", "delta_decalactone", "whiskey_lactone"],
+        radar: [1.2, 9.5, 1.0, 3.0, 6.0, 3.5]
+      },
+      {
+        id: "caviar",
+        name: "Royal Osetra Caviar",
+        category: "marine",
+        icon: "🐟",
+        sensory: "Oceanic brine, buttery nutty hazelnut pop, deep iodine salinity.",
+        volatiles: ["trimethylamine", "dimethyl_sulfide", "nonenal", "methional"],
+        radar: [2.0, 5.2, 0.5, 9.8, 4.0, 2.1]
+      },
+      {
+        id: "strawberries",
+        name: "Mara des Bois Strawberry",
+        category: "fruit",
+        icon: "🍓",
+        sensory: "Intense jammy wild berry, floral sweetness, refreshing malic crispness.",
+        volatiles: ["furaneol", "linalool", "limonene", "delta_decalactone"],
+        radar: [0.8, 4.0, 7.5, 1.2, 9.6, 1.0]
+      },
+      {
+        id: "garlic",
+        name: "Roasted Confit Garlic",
+        category: "spice",
+        icon: "🧄",
+        sensory: "Caramelized savory allium, mellow sweet sulfur, rich umami depth.",
+        volatiles: ["diallyl_disulfide", "furaneol", "methional", "2-acetyl-1-pyrroline"],
+        radar: [5.0, 2.5, 3.0, 9.5, 2.0, 4.5]
+      },
+      {
+        id: "smoked_bourbon",
+        name: "Charred Oak Smoked Bourbon",
+        category: "roast",
+        icon: "🥃",
+        sensory: "Charred barrel stave smoke, caramel toffee, toasted vanilla.",
+        volatiles: ["guaiacol", "whiskey_lactone", "vanillin", "eugenol"],
+        radar: [6.5, 6.0, 3.2, 2.0, 5.5, 9.8]
+      },
+      {
+        id: "wasabi",
+        name: "Fresh Shizuoka Wasabi",
+        category: "spice",
+        icon: "🌱",
+        sensory: "Explosive sinus floral-heat, sweet herbaceous radish finish.",
+        volatiles: ["allyl_isothiocyanate", "limonene", "nonenal"],
+        radar: [1.5, 1.0, 8.2, 6.0, 4.5, 3.0]
+      },
+      {
+        id: "bacon",
+        name: "Applewood Smoked Bacon",
+        category: "marine",
+        icon: "🥓",
+        sensory: "Crisp cured pork fat, savory hickory woodsmoke, caramelized crust.",
+        volatiles: ["guaiacol", "pyrazine_tm", "2-acetyl-1-pyrroline", "methional"],
+        radar: [8.5, 4.5, 1.0, 9.2, 2.0, 8.9]
+      },
+      {
+        id: "parmesan",
+        name: "24-Month Parmigiano-Reggiano",
+        category: "dairy",
+        icon: "🧀",
+        sensory: "Crystalline umami crunch, rich butyric nuttiness, dried pineapple notes.",
+        volatiles: ["furaneol", "2-heptanone", "delta_decalactone", "methional"],
+        radar: [6.0, 8.0, 1.5, 9.5, 4.5, 3.0]
+      },
+      {
+        id: "jasmine_rice",
+        name: "Steamed Jasmine Rice",
+        category: "roast",
+        icon: "🍚",
+        sensory: "Warm floral toasted pandan, delicate comforting starch aroma.",
+        volatiles: ["2-acetyl-1-pyrroline", "nonenal"],
+        radar: [7.0, 2.0, 3.5, 3.0, 4.0, 1.5]
+      },
+      {
+        id: "white_truffle",
+        name: "Alba White Truffle",
+        category: "spice",
+        icon: "🍄",
+        sensory: "Pungent intoxicating methane-garlic, forest floor, damp moss luxury.",
+        volatiles: ["bis_methylthiomethane", "dimethyl_sulfide", "guaiacol"],
+        radar: [4.0, 3.0, 2.5, 10.0, 2.0, 7.8]
+      },
+      {
+        id: "coffee",
+        name: "Ethiopian Yirgacheffe Coffee",
+        category: "roast",
+        icon: "☕",
+        sensory: "Dark roasted cacao, bergamot jasmine aromatics, toasted hazelnut.",
+        volatiles: ["pyrazine_tm", "guaiacol", "furaneol", "linalool"],
+        radar: [9.6, 2.5, 5.0, 4.0, 4.5, 8.0]
+      },
+      {
+        id: "vanilla",
+        name: "Madagascar Bourbon Vanilla",
+        category: "spice",
+        icon: "🌿",
+        sensory: "Lush creamy floral, sweet resinous balsam, woody warmth.",
+        volatiles: ["vanillin", "guaiacol", "whiskey_lactone"],
+        radar: [2.0, 8.0, 3.0, 1.0, 6.5, 8.5]
+      },
+      {
+        id: "fresh_basil",
+        name: "Genovese Sweet Basil",
+        category: "spice",
+        icon: "🍃",
+        sensory: "Peppery green clove, sweet anise freshness, summer herbs.",
+        volatiles: ["linalool", "eugenol", "trans_anethole", "limonene"],
+        radar: [1.0, 1.5, 9.5, 3.0, 6.0, 6.0]
+      },
+      {
+        id: "grapefruit",
+        name: "Ruby Red Grapefruit",
+        category: "fruit",
+        icon: "🍊",
+        sensory: "Bitter-sweet sulfurous citrus, crisp nootkatone zest, tart vitality.",
+        volatiles: ["limonene", "linalool", "dimethyl_sulfide"],
+        radar: [0.5, 1.2, 9.8, 3.5, 8.0, 1.0]
+      },
+      {
+        id: "oyster",
+        name: "Belon Fresh Oyster",
+        category: "marine",
+        icon: "🦪",
+        sensory: "Cold ocean sea spray, fresh green cucumber notes, mineral zinc finish.",
+        volatiles: ["nonenal", "dimethyl_sulfide", "trimethylamine"],
+        radar: [1.0, 3.0, 1.0, 9.7, 5.0, 1.5]
+      },
+      {
+        id: "kiwi",
+        name: "Golden SunGold Kiwi",
+        category: "fruit",
+        icon: "🥝",
+        sensory: "Tropical sweet melon, vibrant green cucumber-ester tang.",
+        volatiles: ["nonenal", "furaneol", "limonene"],
+        radar: [0.5, 2.0, 6.0, 1.0, 9.0, 0.5]
+      },
+      {
+        id: "licorice",
+        name: "Black Licorice / Star Anise",
+        category: "spice",
+        icon: "⭐",
+        sensory: "Sweet spicy herbal narcotic, intense cooling anethole, dark molasses.",
+        volatiles: ["trans_anethole", "eugenol", "linalool"],
+        radar: [3.0, 2.0, 8.0, 2.0, 6.5, 7.5]
+      },
+      {
+        id: "smoked_salmon",
+        name: "Highland Smoked Salmon",
+        category: "marine",
+        icon: "🍣",
+        sensory: "Silky rich sea fats, smoldering beechwood smoke, delicate salinity.",
+        volatiles: ["guaiacol", "trimethylamine", "dimethyl_sulfide"],
+        radar: [3.0, 5.0, 1.0, 9.2, 2.5, 9.0]
+      },
+      {
+        id: "brown_butter",
+        name: "Beurre Noisette (Brown Butter)",
+        category: "dairy",
+        icon: "🧈",
+        sensory: "Toasted hazelnut, golden maple toffee, decadent caramelized cream.",
+        volatiles: ["sotolon", "delta_decalactone", "pyrazine_tm", "2-heptanone"],
+        radar: [7.5, 9.6, 1.0, 5.0, 4.0, 5.5]
+      },
+      {
+        id: "coconut",
+        name: "Raw Young Coconut",
+        category: "fruit",
+        icon: "🥥",
+        sensory: "Tropical velvety milk, subtle floral fat, soothing lactonic embrace.",
+        volatiles: ["delta_decalactone", "whiskey_lactone", "nonenal"],
+        radar: [1.0, 9.8, 3.0, 1.5, 7.0, 3.0]
+      },
+      {
+        id: "uni",
+        name: "Hokkaido Uni (Sea Urchin)",
+        category: "marine",
+        icon: "🌊",
+        sensory: "Custard-like oceanic cream, intense marine sweetness, delicate kelp.",
+        volatiles: ["trimethylamine", "dimethyl_sulfide", "delta_decalactone"],
+        radar: [1.0, 7.5, 1.0, 9.9, 3.5, 1.5]
+      },
+      {
+        id: "matcha",
+        name: "Ceremonial Uji Matcha",
+        category: "roast",
+        icon: "🍵",
+        sensory: "Vibrant grassy chlorophyll, umami L-theanine broth, toasted nori.",
+        volatiles: ["dimethyl_sulfide", "linalool", "pyrazine_tm"],
+        radar: [6.0, 3.0, 6.5, 8.0, 3.0, 4.0]
+      },
+      {
+        id: "popcorn",
+        name: "Clarified Butter Popcorn",
+        category: "roast",
+        icon: "🍿",
+        sensory: "Crisp puffed toasted corn, warm diacetyl butter, cozy theater nostalgia.",
+        volatiles: ["2-acetyl-1-pyrroline", "pyrazine_tm", "delta_decalactone"],
+        radar: [9.0, 7.0, 1.0, 4.0, 2.5, 4.5]
+      },
+      {
+        id: "cucumber",
+        name: "Japanese Cucumber",
+        category: "fruit",
+        icon: "🥒",
+        sensory: "Ultra-crisp green ozone water, refreshing melon rind chill.",
+        volatiles: ["nonenal", "limonene"],
+        radar: [0.5, 1.0, 5.5, 1.0, 8.8, 0.5]
+      },
+      {
+        id: "green_apple",
+        name: "Granny Smith Apple",
+        category: "fruit",
+        icon: "🍏",
+        sensory: "Electric malic acidity, tart green skin snaps, fresh fruity esters.",
+        volatiles: ["nonenal", "furaneol", "limonene"],
+        radar: [0.5, 1.0, 6.0, 0.5, 9.5, 0.5]
+      },
+      {
+        id: "shiitake",
+        name: "Wild Shiitake Mushroom",
+        category: "spice",
+        icon: "🍄",
+        sensory: "Forest decay, dense meaty umami, sulfurous pan-seared cap richness.",
+        volatiles: ["methional", "dimethyl_sulfide", "pyrazine_tm"],
+        radar: [6.5, 2.0, 2.0, 9.8, 1.5, 5.0]
+      },
+      {
+        id: "yuzu",
+        name: "Mountain Harvest Yuzu",
+        category: "fruit",
+        icon: "🍋",
+        sensory: "Intoxicating blend of mandarin, lime, pine blossom, and floral zest.",
+        volatiles: ["limonene", "linalool", "whiskey_lactone"],
+        radar: [1.0, 2.0, 9.9, 1.0, 8.0, 2.5]
+      },
+      {
+        id: "mango",
+        name: "Alphonso Mango",
+        category: "fruit",
+        icon: "🥭",
+        sensory: "Lush tropical resin, peach-honey nectar, pine-citrus undertone.",
+        volatiles: ["furaneol", "delta_decalactone", "limonene"],
+        radar: [0.5, 5.5, 7.0, 0.8, 9.2, 1.0]
+      },
+      {
+        id: "soy_sauce",
+        name: "Double-Brewed Artisanal Shoyu",
+        category: "roast",
+        icon: "🍶",
+        sensory: "Fermented wheat-soy nectar, roasted malt, dark fungal umami elixir.",
+        volatiles: ["furaneol", "methional", "pyrazine_tm", "2-heptanone"],
+        radar: [7.8, 3.0, 1.5, 10.0, 4.0, 6.0]
+      },
+      {
+        id: "mezcal",
+        name: "Wild Espadín Mezcal",
+        category: "roast",
+        icon: "🌵",
+        sensory: "Earthy pit-roasted agave heart, mineral campfire smoke, herbal citrus.",
+        volatiles: ["guaiacol", "linalool", "limonene", "eugenol"],
+        radar: [4.0, 2.0, 8.0, 3.0, 5.0, 9.9]
+      }
+    ];
+
+    let nodes = [];
+    let links = [];
+    let activeCompoundFilter = "";
+    let activeCategoryFilter = "all";
+    let selectedNodeId = null;
+    let hoveredNode = null;
+    let crucible = [];
+    let audioEnabled = true;
+    let audioCtx = null;
+
+    let zoomLevel = 1.0;
+    let panOffset = { x: 0, y: 0 };
+    let isDraggingCanvas = false;
+    let dragStartPos = { x: 0, y: 0 };
+    let draggedNode = null;
+
+    const canvas = document.getElementById("graphCanvas");
+    const ctx = canvas.getContext("2d");
+    const radarCanvas = document.getElementById("radarCanvas");
+    const radarCtx = radarCanvas.getContext("2d");
+
+    function initializeGraphData() {
+      const width = canvas.clientWidth || 700;
+      const height = canvas.clientHeight || 500;
+
+      nodes = INGREDIENTS.map((item, idx) => {
+        const angle = (idx / INGREDIENTS.length) * Math.PI * 2;
+        const radius = 140 + (idx % 3) * 60;
+        return {
+          ...item,
+          x: width / 2 + Math.cos(angle) * radius + (Math.random() - 0.5) * 40,
+          y: height / 2 + Math.sin(angle) * radius + (Math.random() - 0.5) * 40,
+          vx: 0,
+          vy: 0,
+          radius: 18,
+          targetRadius: 18,
+          highlight: false
+        };
+      });
+
+      links = [];
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const shared = nodes[i].volatiles.filter(v => nodes[j].volatiles.includes(v));
+          if (shared.length > 0) {
+            links.push({
+              source: nodes[i],
+              target: nodes[j],
+              sharedMolecules: shared,
+              weight: shared.length,
+              length: Math.max(90, 220 - shared.length * 40)
+            });
+          }
+        }
+      }
+
+      updateHUD();
+      populateCompoundDropdown();
+      populateCodex();
+      renderCrucibleSlots();
+    }
+
+    function updateHUD() {
+      document.getElementById("hudNodeCount").innerText = nodes.length;
+      document.getElementById("hudLinkCount").innerText = links.length;
+      document.getElementById("hudMoleculeCount").innerText = Object.keys(COMPOUNDS_DATA).length;
+    }
+
+    function populateCompoundDropdown() {
+      const select = document.getElementById("compoundFilter");
+      select.innerHTML = '<option value="">Filter by Volatile Molecule...</option>';
+      Object.keys(COMPOUNDS_DATA).sort().forEach(key => {
+        const opt = document.createElement("option");
+        opt.value = key;
+        opt.innerText = `${COMPOUNDS_DATA[key].name} (${COMPOUNDS_DATA[key].class})`;
+        select.appendChild(opt);
+      });
+    }
+
+    function runPhysicsStep() {
+      const width = canvas.width;
+      const height = canvas.height;
+      const center = { x: width / 2, y: height / 2 };
+
+      for (let i = 0; i < nodes.length; i++) {
+        const n1 = nodes[i];
+        for (let j = i + 1; j < nodes.length; j++) {
+          const n2 = nodes[j];
+          let dx = n2.x - n1.x;
+          let dy = n2.y - n1.y;
+          let dist = Math.hypot(dx, dy) || 1;
+          if (dist < 260) {
+            let force = (260 - dist) / dist * 0.45;
+            n1.vx -= dx * force * 0.05;
+            n1.vy -= dy * force * 0.05;
+            n2.vx += dx * force * 0.05;
+            n2.vy += dy * force * 0.05;
+          }
+        }
+
+        let gdx = center.x - n1.x;
+        let gdy = center.y - n1.y;
+        n1.vx += gdx * 0.0012;
+        n1.vy += gdy * 0.0012;
+      }
+
+      links.forEach(l => {
+        let dx = l.target.x - l.source.x;
+        let dy = l.target.y - l.source.y;
+        let dist = Math.hypot(dx, dy) || 1;
+        let delta = dist - l.length;
+        let force = delta * 0.0035 * l.weight;
+
+        let fx = (dx / dist) * force;
+        let fy = (dy / dist) * force;
+
+        l.source.vx += fx;
+        l.source.vy += fy;
+        l.target.vx -= fx;
+        l.target.vy -= fy;
+      });
+
+      nodes.forEach(n => {
+        if (n === draggedNode) return;
+        n.vx *= 0.88;
+        n.vy *= 0.88;
+        n.x += n.vx;
+        n.y += n.vy;
+
+        const margin = 30;
+        if (n.x < margin) { n.x = margin; n.vx *= -0.5; }
+        if (n.x > width - margin) { n.x = width - margin; n.vx *= -0.5; }
+        if (n.y < margin) { n.y = margin; n.vy *= -0.5; }
+        if (n.y > height - margin) { n.y = height - margin; n.vy *= -0.5; }
+      });
+    }
+
+    const CATEGORY_COLORS = {
+      roast: { fill: "#f59e0b", glow: "rgba(245, 158, 11, 0.4)", text: "#fef3c7" },
+      dairy: { fill: "#38bdf8", glow: "rgba(56, 189, 248, 0.4)", text: "#e0f2fe" },
+      marine: { fill: "#ec4899", glow: "rgba(236, 72, 153, 0.4)", text: "#fce7f3" },
+      fruit: { fill: "#10b981", glow: "rgba(16, 185, 129, 0.4)", text: "#d1fae5" },
+      spice: { fill: "#a855f7", glow: "rgba(168, 85, 247, 0.4)", text: "#f3e8ff" }
+    };
+
+    function drawGraph() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.save();
+      ctx.translate(panOffset.x, panOffset.y);
+      ctx.scale(zoomLevel, zoomLevel);
+
+      links.forEach(link => {
+        const isConnectedToSelected = selectedNodeId && (link.source.id === selectedNodeId || link.target.id === selectedNodeId);
+        const matchesCompound = activeCompoundFilter && link.sharedMolecules.includes(activeCompoundFilter);
+        const inCrucibleLink = crucible.includes(link.source.id) && crucible.includes(link.target.id);
+
+        let strokeColor = "rgba(51, 65, 85, 0.25)";
+        let lineWidth = link.weight * 0.8;
+
+        if (inCrucibleLink) {
+          strokeColor = "rgba(244, 63, 94, 0.9)";
+          lineWidth = link.weight * 2.5 + 2;
+        } else if (isConnectedToSelected) {
+          strokeColor = "rgba(56, 189, 248, 0.85)";
+          lineWidth = link.weight * 2.0 + 1.5;
+        } else if (matchesCompound) {
+          strokeColor = "rgba(251, 191, 36, 0.9)";
+          lineWidth = link.weight * 2.2 + 2;
+        }
+
+        ctx.beginPath();
+        ctx.moveTo(link.source.x, link.source.y);
+        ctx.lineTo(link.target.x, link.target.y);
+        ctx.strokeStyle = strokeColor;
+        ctx.lineWidth = lineWidth;
+        ctx.stroke();
+
+        if (inCrucibleLink || (isConnectedToSelected && link.weight >= 2)) {
+          ctx.beginPath();
+          let midX = (link.source.x + link.target.x) / 2;
+          let midY = (link.source.y + link.target.y) / 2;
+          ctx.arc(midX, midY, 3, 0, Math.PI * 2);
+          ctx.fillStyle = inCrucibleLink ? "#f43f5e" : "#38bdf8";
+          ctx.fill();
+        }
+      });
+
+      nodes.forEach(node => {
+        const isSelected = node.id === selectedNodeId;
+        const isInCrucible = crucible.includes(node.id);
+        const isHovered = hoveredNode && hoveredNode.id === node.id;
+        const matchesCat = activeCategoryFilter === "all" || node.category === activeCategoryFilter;
+        const matchesCompound = activeCompoundFilter ? node.volatiles.includes(activeCompoundFilter) : true;
+        
+        let opacity = (matchesCat && matchesCompound) ? 1.0 : 0.2;
+        if (selectedNodeId && !isSelected) {
+          const connected = links.some(l => 
+            (l.source.id === selectedNodeId && l.target.id === node.id) ||
+            (l.target.id === selectedNodeId && l.source.id === node.id)
+          );
+          if (!connected && !isInCrucible) {
+            opacity = Math.min(opacity, 0.25);
+          }
+        }
+
+        const colors = CATEGORY_COLORS[node.category] || { fill: "#64748b", glow: "rgba(100,116,139,0.3)", text: "#f8fafc" };
+
+        ctx.save();
+        ctx.globalAlpha = opacity;
+
+        if (isInCrucible || isSelected || isHovered) {
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, node.radius + (isInCrucible ? 9 : 6), 0, Math.PI * 2);
+          ctx.fillStyle = isInCrucible ? "rgba(244, 63, 94, 0.35)" : (isSelected ? "rgba(56, 189, 248, 0.35)" : colors.glow);
+          ctx.fill();
+        }
+
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+        ctx.fillStyle = isInCrucible ? "#e11d48" : colors.fill;
+        ctx.fill();
+
+        ctx.lineWidth = isInCrucible ? 3 : (isSelected ? 2.5 : 1.5);
+        ctx.strokeStyle = isInCrucible ? "#ffe4e6" : (isSelected ? "#ffffff" : "rgba(255,255,255,0.2)");
+        ctx.stroke();
+
+        ctx.font = "14px sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(node.icon, node.x, node.y);
+
+        ctx.font = isSelected || isInCrucible ? "bold 11px sans-serif" : "10px sans-serif";
+        ctx.fillStyle = isInCrucible ? "#fda4af" : (isSelected ? "#38bdf8" : "#cbd5e1");
+        ctx.fillText(node.name, node.x, node.y + node.radius + 12);
+
+        ctx.restore();
+      });
+
+      ctx.restore();
+
+      runPhysicsStep();
+      requestAnimationFrame(drawGraph);
+    }
+
+    function resizeCanvas() {
+      const container = document.getElementById("canvasContainer");
+      canvas.width = container.clientWidth;
+      canvas.height = container.clientHeight;
+    }
+
+    window.addEventListener("resize", () => {
+      resizeCanvas();
+      drawRadarChart();
+    });
+
+    function getCanvasCoords(evt) {
+      const rect = canvas.getBoundingClientRect();
+      const screenX = evt.clientX - rect.left;
+      const screenY = evt.clientY - rect.top;
+      return {
+        x: (screenX - panOffset.x) / zoomLevel,
+        y: (screenY - panOffset.y) / zoomLevel,
+        screenX,
+        screenY
+      };
+    }
+
+    function findNodeAt(worldX, worldY) {
+      for (let i = nodes.length - 1; i >= 0; i--) {
+        const n = nodes[i];
+        const dist = Math.hypot(n.x - worldX, n.y - worldY);
+        if (dist <= n.radius + 6) return n;
+      }
+      return null;
+    }
+
+    canvas.addEventListener("mousedown", evt => {
+      const { x, y, screenX, screenY } = getCanvasCoords(evt);
+      const clicked = findNodeAt(x, y);
+
+      if (clicked) {
+        draggedNode = clicked;
+        selectedNodeId = clicked.id;
+        playSyntheticTone(380, "triangle", 0.08);
+      } else {
+        isDraggingCanvas = true;
+        dragStartPos = { x: screenX - panOffset.x, y: screenY - panOffset.y };
+      }
+    });
+
+    canvas.addEventListener("mousemove", evt => {
+      const { x, y, screenX, screenY } = getCanvasCoords(evt);
+
+      if (draggedNode) {
+        draggedNode.x = x;
+        draggedNode.y = y;
+        draggedNode.vx = 0;
+        draggedNode.vy = 0;
+        hideHoverTooltip();
+        return;
+      }
+
+      if (isDraggingCanvas) {
+        panOffset.x = screenX - dragStartPos.x;
+        panOffset.y = screenY - dragStartPos.y;
+        return;
+      }
+
+      const hovered = findNodeAt(x, y);
+      if (hovered !== hoveredNode) {
+        hoveredNode = hovered;
+        if (hoveredNode) {
+          showHoverTooltip(hoveredNode, screenX, screenY);
+        } else {
+          hideHoverTooltip();
+        }
+      }
+    });
+
+    window.addEventListener("mouseup", () => {
+      if (draggedNode) {
+        draggedNode = null;
+      }
+      isDraggingCanvas = false;
+    });
+
+    canvas.addEventListener("click", evt => {
+      const { x, y } = getCanvasCoords(evt);
+      const clicked = findNodeAt(x, y);
+      if (clicked) {
+        toggleCrucibleItem(clicked.id);
+      }
+    });
+
+    canvas.addEventListener("wheel", evt => {
+      evt.preventDefault();
+      const zoomFactor = evt.deltaY < 0 ? 1.1 : 0.9;
+      zoomGraph(zoomFactor);
+    }, { passive: false });
+
+    function zoomGraph(factor) {
+      const newZoom = Math.min(Math.max(0.4, zoomLevel * factor), 2.5);
+      zoomLevel = newZoom;
+    }
+
+    function resetGraphView() {
+      zoomLevel = 1.0;
+      panOffset = { x: 0, y: 0 };
+    }
+
+    const tooltip = document.getElementById("hoverTooltip");
+    function showHoverTooltip(node, sx, sy) {
+      document.getElementById("tooltipIcon").innerText = node.icon;
+      document.getElementById("tooltipName").innerText = node.name;
+      const catEl = document.getElementById("tooltipCategory");
+      catEl.innerText = node.category;
+      catEl.className = `text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-semibold ${
+        node.category === 'roast' ? 'bg-amber-900/60 text-amber-300' :
+        node.category === 'dairy' ? 'bg-sky-900/60 text-sky-300' :
+        node.category === 'marine' ? 'bg-pink-900/60 text-pink-300' :
+        node.category === 'fruit' ? 'bg-emerald-900/60 text-emerald-300' : 'bg-purple-900/60 text-purple-300'
+      }`;
+      document.getElementById("tooltipSensory").innerText = `"${node.sensory}"`;
+
+      const compContainer = document.getElementById("tooltipCompounds");
+      compContainer.innerHTML = node.volatiles.map(v => {
+        const c = COMPOUNDS_DATA[v];
+        return `<span class="bg-slate-800 text-cyan-300 px-1.5 py-0.5 rounded border border-slate-700 font-mono text-[10px]">${c ? c.name : v}</span>`;
+      }).join("");
+
+      tooltip.style.left = `${Math.min(sx + 15, canvas.clientWidth - 260)}px`;
+      tooltip.style.top = `${Math.min(sy + 15, canvas.clientHeight - 160)}px`;
+      tooltip.classList.remove("hidden");
+    }
+
+    function hideHoverTooltip() {
+      tooltip.classList.add("hidden");
+    }
+
+    function handleSearch(query) {
+      const q = query.trim().toLowerCase();
+      if (!q) {
+        selectedNodeId = null;
+        return;
+      }
+      const match = nodes.find(n => n.name.toLowerCase().includes(q) || n.volatiles.some(v => v.includes(q)));
+      if (match) {
+        selectedNodeId = match.id;
+        panOffset.x = (canvas.width / 2) - match.x * zoomLevel;
+        panOffset.y = (canvas.height / 2) - match.y * zoomLevel;
+      }
+    }
+
+    function filterByCompound(compoundKey) {
+      activeCompoundFilter = compoundKey;
+      playSyntheticTone(440, "sine", 0.05);
+    }
+
+    function filterCategory(cat) {
+      activeCategoryFilter = cat;
+      document.querySelectorAll(".cat-pill").forEach(pill => {
+        if (pill.dataset.cat === cat) {
+          pill.className = "cat-pill active px-2 py-1 rounded bg-cyan-900/60 border border-cyan-500 text-cyan-300 text-[11px] font-medium";
+        } else {
+          pill.className = "cat-pill px-2 py-1 rounded bg-slate-800/80 border border-slate-700 text-slate-400 hover:text-slate-200 text-[11px]";
+        }
+      });
+      playSyntheticTone(500, "sine", 0.04);
+    }
+
+    function toggleCrucibleItem(nodeId) {
+      const idx = crucible.indexOf(nodeId);
+      if (idx > -1) {
+        crucible.splice(idx, 1);
+        playSyntheticTone(280, "sawtooth", 0.07);
+      } else {
+        if (crucible.length >= 4) {
+          crucible.shift();
+        }
+        crucible.push(nodeId);
+        playSyntheticTone(580, "triangle", 0.1);
+      }
+      renderCrucibleSlots();
+      calculateCrucibleDynamics();
+    }
+
+    function removeFromCrucible(nodeId) {
+      crucible = crucible.filter(id => id !== nodeId);
+      playSyntheticTone(260, "sine", 0.06);
+      renderCrucibleSlots();
+      calculateCrucibleDynamics();
+    }
+
+    function clearCrucible() {
+      crucible = [];
+      playSyntheticTone(200, "sine", 0.08);
+      renderCrucibleSlots();
+      calculateCrucibleDynamics();
+    }
+
+    function renderCrucibleSlots() {
+      const container = document.getElementById("crucibleSlotsContainer");
+      container.innerHTML = "";
+
+      for (let i = 0; i < 4; i++) {
+        const slotEl = document.createElement("div");
+        const ingredientId = crucible[i];
+        const ing = ingredientId ? INGREDIENTS.find(item => item.id === ingredientId) : null;
+
+        if (ing) {
+          slotEl.className = "h-20 rounded-xl bg-slate-950/80 border border-cyan-500/50 p-2 flex flex-col justify-between relative group hover:border-cyan-400 transition shadow-inner";
+          slotEl.innerHTML = `
+            <div class="flex items-center justify-between">
+              <span class="text-xl">${ing.icon}</span>
+              <button onclick="removeFromCrucible('${ing.id}')" class="text-slate-500 hover:text-rose-400 text-xs font-bold leading-none">✕</button>
+            </div>
+            <div>
+              <p class="font-bold text-[11px] text-slate-200 truncate">${ing.name}</p>
+              <span class="text-[9px] text-cyan-400 uppercase font-mono">${ing.category}</span>
+            </div>
+          `;
+        } else {
+          slotEl.className = "h-20 rounded-xl border border-dashed border-slate-800 bg-slate-950/30 flex flex-col items-center justify-center text-slate-600 hover:border-slate-700 hover:bg-slate-900/30 transition text-center p-2 cursor-pointer";
+          slotEl.innerHTML = `
+            <span class="text-lg opacity-40">+</span>
+            <span class="text-[10px] text-slate-500 mt-1">Empty Crucible Slot</span>
+          `;
+          slotEl.onclick = () => {
+            const next = INGREDIENTS.find(n => !crucible.includes(n.id));
+            if (next) toggleCrucibleItem(next.id);
+          };
+        }
+        container.appendChild(slotEl);
+      }
+    }
+
+    function calculateCrucibleDynamics() {
+      const items = crucible.map(id => INGREDIENTS.find(ing => ing.id === id)).filter(Boolean);
+
+      const scoreEl = document.getElementById("harmonyScore");
+      const barEl = document.getElementById("harmonyBar");
+      const badgeEl = document.getElementById("harmonyBadge");
+      const bridgingBox = document.getElementById("bridgingBox");
+      const bridgingList = document.getElementById("bridgingList");
+
+      if (items.length < 2) {
+        scoreEl.innerText = "0%";
+        barEl.style.width = "0%";
+        badgeEl.innerText = items.length === 1 ? "Add 2nd Reactant" : "Awaiting Reactants";
+        badgeEl.className = "text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider bg-slate-800 text-slate-400";
+        bridgingBox.classList.add("hidden");
+        drawRadarChart([0, 0, 0, 0, 0, 0]);
+        renderEmptyDishCard();
+        return;
+      }
+
+      let totalPairs = 0;
+      let sharedCount = 0;
+      let sharedSet = new Set();
+      let pairDetails = [];
+
+      for (let i = 0; i < items.length; i++) {
+        for (let j = i + 1; j < items.length; j++) {
+          totalPairs++;
+          const common = items[i].volatiles.filter(v => items[j].volatiles.includes(v));
+          sharedCount += common.length;
+          common.forEach(v => sharedSet.add(v));
+          pairDetails.push({ a: items[i], b: items[j], common });
+        }
+      }
+
+      let harmonyScore = Math.min(98, Math.round(35 + (sharedSet.size * 18) + (sharedCount * 7)));
+
+      const blendedRadar = [0, 0, 0, 0, 0, 0];
+      items.forEach(ing => {
+        ing.radar.forEach((val, rIdx) => {
+          blendedRadar[rIdx] = Math.max(blendedRadar[rIdx], val);
+        });
+      });
+
+      scoreEl.innerText = `${harmonyScore}%`;
+      barEl.style.width = `${harmonyScore}%`;
+
+      let badgeText = "Subliminal Congruence";
+      let badgeClass = "bg-sky-900/60 text-sky-300 border border-sky-500/50";
+
+      if (harmonyScore >= 80) {
+        badgeText = "Philosopher's Stone (Hyper-Harmonic)";
+        badgeClass = "bg-gradient-to-r from-amber-500/30 to-fuchsia-500/30 text-amber-300 border border-amber-400/60 glow-active";
+      } else if (harmonyScore >= 65) {
+        badgeText = "Transcendental Avant-Garde";
+        badgeClass = "bg-fuchsia-900/60 text-fuchsia-300 border border-fuchsia-500/50";
+      } else if (harmonyScore >= 50) {
+        badgeText = "Volatile Synergy Matrix";
+        badgeClass = "bg-teal-900/60 text-teal-300 border border-teal-500/50";
+      }
+
+      badgeEl.innerText = badgeText;
+      badgeEl.className = `text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider ${badgeClass}`;
+
+      if (sharedSet.size > 0) {
+        bridgingBox.classList.remove("hidden");
+        bridgingList.innerHTML = Array.from(sharedSet).map(key => {
+          const c = COMPOUNDS_DATA[key];
+          return `<span class="bg-amber-950/60 text-amber-300 border border-amber-700/60 px-2 py-0.5 rounded font-mono text-[10px] shadow-sm flex items-center gap-1">
+            <span>🧬</span><strong>${c ? c.name : key}</strong>
+          </span>`;
+        }).join("");
+      } else {
+        bridgingBox.classList.remove("hidden");
+        bridgingList.innerHTML = `<span class="text-slate-400 italic text-[11px]">No direct volatile shared — complementary contrast pairing via trigeminal receptor excitation.</span>`;
+      }
+
+      drawRadarChart(blendedRadar);
+      synthesizeDishConcept();
+    }
+
+    const RADAR_LABELS = [
+      "Pyrazine (Roast)",
+      "Lactone (Cream/Peach)",
+      "Terpene (Citrus/Pine)",
+      "Umami / Sulfur (Savory)",
+      "Aldehyde / Ester (Fruity)",
+      "Phenolic (Smoke/Clove)"
+    ];
+
+    function drawRadarChart(data = [0, 0, 0, 0, 0, 0]) {
+      const width = radarCanvas.width;
+      const height = radarCanvas.height;
+      const center = { x: width / 2, y: height / 2 };
+      const radius = Math.min(width, height) * 0.38;
+      const totalAxes = RADAR_LABELS.length;
+
+      radarCtx.clearRect(0, 0, width, height);
+
+      const rings = [0.25, 0.5, 0.75, 1.0];
+      rings.forEach(ringScale => {
+        radarCtx.beginPath();
+        for (let i = 0; i < totalAxes; i++) {
+          const angle = (i / totalAxes) * Math.PI * 2 - Math.PI / 2;
+          const rx = center.x + Math.cos(angle) * (radius * ringScale);
+          const ry = center.y + Math.sin(angle) * (radius * ringScale);
+          if (i === 0) radarCtx.moveTo(rx, ry);
+          else radarCtx.lineTo(rx, ry);
+        }
+        radarCtx.closePath();
+        radarCtx.strokeStyle = "rgba(71, 85, 105, 0.3)";
+        radarCtx.lineWidth = 1;
+        radarCtx.stroke();
+      });
+
+      for (let i = 0; i < totalAxes; i++) {
+        const angle = (i / totalAxes) * Math.PI * 2 - Math.PI / 2;
+        const ax = center.x + Math.cos(angle) * radius;
+        const ay = center.y + Math.sin(angle) * radius;
+
+        radarCtx.beginPath();
+        radarCtx.moveTo(center.x, center.y);
+        radarCtx.lineTo(ax, ay);
+        radarCtx.strokeStyle = "rgba(100, 116, 139, 0.4)";
+        radarCtx.stroke();
+
+        const lx = center.x + Math.cos(angle) * (radius + 18);
+        const ly = center.y + Math.sin(angle) * (radius + 18);
+        radarCtx.font = "bold 9px sans-serif";
+        radarCtx.fillStyle = "#94a3b8";
+        radarCtx.textAlign = Math.abs(Math.cos(angle)) < 0.1 ? "center" : (Math.cos(angle) > 0 ? "left" : "right");
+        radarCtx.textBaseline = "middle";
+        radarCtx.fillText(RADAR_LABELS[i].split(" ")[0], lx, ly);
+      }
+
+      if (data.some(v => v > 0)) {
+        radarCtx.beginPath();
+        for (let i = 0; i < totalAxes; i++) {
+          const valNorm = Math.min(10, Math.max(0, data[i])) / 10;
+          const angle = (i / totalAxes) * Math.PI * 2 - Math.PI / 2;
+          const dx = center.x + Math.cos(angle) * (radius * valNorm);
+          const dy = center.y + Math.sin(angle) * (radius * valNorm);
+          if (i === 0) radarCtx.moveTo(dx, dy);
+          else radarCtx.lineTo(dx, dy);
+        }
+        radarCtx.closePath();
+        radarCtx.fillStyle = "rgba(56, 189, 248, 0.35)";
+        radarCtx.fill();
+        radarCtx.strokeStyle = "#38bdf8";
+        radarCtx.lineWidth = 2;
+        radarCtx.stroke();
+
+        for (let i = 0; i < totalAxes; i++) {
+          const valNorm = Math.min(10, Math.max(0, data[i])) / 10;
+          const angle = (i / totalAxes) * Math.PI * 2 - Math.PI / 2;
+          const dx = center.x + Math.cos(angle) * (radius * valNorm);
+          const dy = center.y + Math.sin(angle) * (radius * valNorm);
+
+          radarCtx.beginPath();
+          radarCtx.arc(dx, dy, 3.5, 0, Math.PI * 2);
+          radarCtx.fillStyle = "#f43f5e";
+          radarCtx.fill();
+        }
+
+        document.getElementById("statPyrazine").innerText = data[0].toFixed(1);
+        document.getElementById("statLactone").innerText = data[1].toFixed(1);
+        document.getElementById("statTerpene").innerText = data[2].toFixed(1);
+      } else {
+        document.getElementById("statPyrazine").innerText = "0.0";
+        document.getElementById("statLactone").innerText = "0.0";
+        document.getElementById("statTerpene").innerText = "0.0";
+      }
+    }
+
+    const MODERNIST_TECHNIQUES = [
+      "Liquid Nitrogen Freeze-Fracture & Cryo-Milling",
+      "Ultrasonic Emulsion & Acoustic Cavitation",
+      "Calcium Lactate Reverse Spherification with Sodium Alginate Bath",
+      "Centrifugal Clarification & Rotary Evaporator Distillation",
+      "Agar-Agar Heat-Stable Fluid Gel with Xanthan Suspension",
+      "Sous-Vide Hyperbaric Infusion (64.5°C Precision Bath)",
+      "Isomalt Glass Encapsulation & Smoked Vapor Capture"
+    ];
+
+    function renderEmptyDishCard() {
+      const container = document.getElementById("dishCard");
+      container.innerHTML = `
+        <div class="text-center py-6 text-slate-500 text-xs">
+          Select or drop at least 2 ingredients into the Crucible to compute real-world avant-garde culinary concepts and sensory receptor profiles.
+        </div>
+      `;
+    }
+
+    function synthesizeDishConcept() {
+      const items = crucible.map(id => INGREDIENTS.find(ing => ing.id === id)).filter(Boolean);
+      if (items.length < 2) {
+        renderEmptyDishCard();
+        return;
+      }
+
+      const primary = items[0];
+      const secondary = items[1];
+      const tertiary = items[2] || null;
+      const quaternary = items[3] || null;
+
+      const tech = MODERNIST_TECHNIQUES[(primary.name.length + secondary.name.length) % MODERNIST_TECHNIQUES.length];
+      
+      let title = "";
+      if (items.length === 2) {
+        title = `Textures of ${primary.name.split(" ")[0]} with ${secondary.name.split(" ")[0]} Sphere`;
+      } else if (items.length === 3) {
+        title = `Compressed ${primary.name.split(" ")[0]} & ${secondary.name.split(" ")[0]} with ${tertiary.name.split(" ")[0]} Mist`;
+      } else {
+        title = `Symphony of ${primary.name.split(" ")[0]}, ${secondary.name.split(" ")[0]} Gelée & ${tertiary.name.split(" ")[0]} Crisp with ${quaternary.name.split(" ")[0]} Essence`;
+      }
+
+      let commonVolatiles = [];
+      for (let i = 0; i < items.length; i++) {
+        for (let j = i + 1; j < items.length; j++) {
+          items[i].volatiles.filter(v => items[j].volatiles.includes(v)).forEach(v => {
+            if (!commonVolatiles.includes(v)) commonVolatiles.push(v);
+          });
+        }
+      }
+
+      let chemistryRationale = "";
+      if (commonVolatiles.length > 0) {
+        const topCompound = COMPOUNDS_DATA[commonVolatiles[0]];
+        chemistryRationale = `Bound molecularly by <strong>${topCompound.name}</strong> (${topCompound.formula}), simultaneously engaging human <strong>${topCompound.receptors}</strong>. The fat-soluble volatiles dissolve into lipid phases to suppress bitter perceptions while elevating retrograde aromatic sweet notes.`;
+      } else {
+        chemistryRationale = `Presents a high-contrast dynamic receptor shock: trigeminal pain receptors (TRPA1/TRPV1) modulate the perception threshold of sweet and umami GPCR receptors (TAS1R1/TAS1R3), causing unprecedented perceptual magnification.`;
+      }
+
+      const container = document.getElementById("dishCard");
+      container.innerHTML = `
+        <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-3 space-y-2.5">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <span class="text-[10px] text-amber-400 font-mono uppercase tracking-wider font-semibold">Course: Avant-Garde Intermezzo</span>
+              <h4 class="font-extrabold text-sm text-slate-100 mt-0.5">${title}</h4>
+            </div>
+            <span class="text-xl">🌟</span>
+          </div>
+
+          <div class="text-[11px] text-slate-300 space-y-2">
+            <div>
+              <span class="text-slate-400 font-semibold block text-[10px] uppercase">Modernist Execution Technique:</span>
+              <span class="text-cyan-300 font-medium">${tech}</span>
+            </div>
+
+            <div>
+              <span class="text-slate-400 font-semibold block text-[10px] uppercase">Molecular Chemistry Rationale:</span>
+              <p class="text-slate-300 text-xs leading-relaxed mt-0.5">${chemistryRationale}</p>
+            </div>
+
+            <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-400">
+              <span>Palate Progression: Salty → Lipid → Retronasal Floral</span>
+              <span class="text-fuchsia-400 font-mono font-bold">Crucible Synergized</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function loadPreset(presetKey) {
+      if (presetKey === "blumenthal") {
+        crucible = ["white_chocolate", "caviar", "smoked_bourbon"];
+      } else if (presetKey === "choc_cheese") {
+        crucible = ["dark_chocolate", "blue_cheese", "wasabi", "strawberries"];
+      } else if (presetKey === "strawberry_garlic") {
+        crucible = ["strawberries", "garlic", "parmesan", "fresh_basil"];
+      } else if (presetKey === "nordic_anise") {
+        crucible = ["licorice", "smoked_salmon", "green_apple", "cucumber"];
+      } else if (presetKey === "bourbon_bacon") {
+        crucible = ["smoked_bourbon", "bacon", "vanilla", "brown_butter"];
+      }
+      playSyntheticTone(620, "triangle", 0.12);
+      renderCrucibleSlots();
+      calculateCrucibleDynamics();
+    }
+
+    function randomAlchemicalBlend() {
+      const shuffled = [...INGREDIENTS].sort(() => 0.5 - Math.random());
+      crucible = shuffled.slice(0, 3 + Math.floor(Math.random() * 2)).map(item => item.id);
+      playSyntheticTone(750, "sine", 0.15);
+      renderCrucibleSlots();
+      calculateCrucibleDynamics();
+    }
+
+    function toggleCodexModal() {
+      const modal = document.getElementById("codexModal");
+      modal.classList.toggle("hidden");
+    }
+
+    function populateCodex() {
+      const list = document.getElementById("codexList");
+      list.innerHTML = Object.keys(COMPOUNDS_DATA).map(key => {
+        const c = COMPOUNDS_DATA[key];
+        const occurrences = INGREDIENTS.filter(ing => ing.volatiles.includes(key));
+
+        return `
+          <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-3 space-y-1.5 hover:border-cyan-500/40 transition">
+            <div class="flex items-center justify-between">
+              <h4 class="font-bold text-cyan-300 text-xs">${c.name}</h4>
+              <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">${c.formula}</span>
+            </div>
+            <p class="text-slate-300 text-[11px] leading-relaxed">${c.notes}</p>
+            <div class="grid grid-cols-2 gap-2 text-[10px] text-slate-400 font-mono pt-1">
+              <div><strong>Target Receptor:</strong> <span class="text-fuchsia-300">${c.receptors}</span></div>
+              <div><strong>Odor Threshold:</strong> <span class="text-amber-300">${c.threshold}</span></div>
+            </div>
+            <div class="pt-1.5 flex flex-wrap gap-1 items-center">
+              <span class="text-[10px] text-slate-500 uppercase font-semibold">Found in:</span>
+              ${occurrences.map(ing => `<span class="bg-slate-800/80 text-slate-200 px-1.5 py-0.5 rounded text-[10px]">${ing.icon} ${ing.name}</span>`).join("")}
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function playSyntheticTone(freq = 440, type = "sine", duration = 0.1) {
+      if (!audioEnabled) return;
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (err) {}
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      const btn = document.getElementById("soundToggle");
+      btn.innerText = audioEnabled ? "🔊" : "🔇";
+      btn.title = audioEnabled ? "Audio Synthesis: Enabled" : "Audio Synthesis: Muted";
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      resizeCanvas();
+      initializeGraphData();
+      drawRadarChart();
+      loadPreset("blumenthal");
+      if (window.GazetteTelemetry) {
+        window.GazetteTelemetry.track('game_session_start', { game: 'molecular_flavor_matrix' });
+      }
+      requestAnimationFrame(drawGraph);
+    });
+  </script>
+</body>
+</html>

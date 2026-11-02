@@ -1,0 +1,1108 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>PastureBiome: 365-Day Soil & Grazing Engine</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #022c22;
+      color: #f0fdf4;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    #sim-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* TOP COMMAND BAR */
+    .top-hud {
+      position: absolute;
+      top: 14px;
+      left: 20px;
+      right: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+      z-index: 20;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(6, 44, 34, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(74, 222, 128, 0.35);
+      padding: 8px 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+      pointer-events: auto;
+    }
+    .brand-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #4ade80, #16a34a 70%, #064e3b);
+      box-shadow: 0 0 14px rgba(74, 222, 128, 0.7);
+      position: relative;
+    }
+    .brand-icon::after {
+      content: '';
+      position: absolute;
+      top: -3px;
+      left: -3px;
+      right: -3px;
+      bottom: -3px;
+      border-radius: 50%;
+      border: 1.5px dashed rgba(74, 222, 128, 0.6);
+      animation: spin 16s linear infinite;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    .brand-text h1 {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: #f0fdf4;
+    }
+    .brand-text p {
+      font-size: 10px;
+      color: #86efac;
+      opacity: 0.85;
+      letter-spacing: 0.5px;
+    }
+
+    /* TELEMETRY READOUT */
+    .telemetry-bar {
+      display: flex;
+      gap: 18px;
+      background: rgba(6, 44, 34, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(74, 222, 128, 0.25);
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-family: monospace;
+      font-size: 12px;
+      pointer-events: auto;
+    }
+    .tel-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .tel-label {
+      color: #94a3b8;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .tel-val {
+      font-weight: bold;
+      color: #4ade80;
+    }
+    .tel-val.warn { color: #f59e0b; }
+    .tel-val.crit { color: #ef4444; animation: blink 1s infinite; }
+    @keyframes blink { 50% { opacity: 0.4; } }
+
+    /* GLASS PANELS */
+    .glass-panel {
+      background: rgba(6, 44, 34, 0.85);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(74, 222, 128, 0.25);
+      border-radius: 14px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+      pointer-events: auto;
+    }
+
+    /* LEFT HUD: GRAZING & TIME DIALS */
+    .left-hud {
+      position: absolute;
+      left: 20px;
+      top: 80px;
+      width: 255px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 20;
+    }
+    .panel-heading {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #86efac;
+      border-bottom: 1px solid rgba(74, 222, 128, 0.2);
+      padding-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* SPECIES BUTTONS */
+    .species-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+    .species-btn {
+      padding: 7px 4px;
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(74, 222, 128, 0.2);
+      color: #cbd5e1;
+      font-size: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .species-btn:hover {
+      background: rgba(74, 222, 128, 0.15);
+      color: #fff;
+    }
+    .species-btn.active {
+      background: #15803d;
+      border-color: #4ade80;
+      color: #f0fdf4;
+      font-weight: bold;
+      box-shadow: 0 0 10px rgba(74, 222, 128, 0.4);
+    }
+
+    .slider-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-family: monospace;
+    }
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #0f172a;
+      outline: none;
+      -webkit-appearance: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #4ade80;
+      cursor: pointer;
+      box-shadow: 0 0 8px #4ade80;
+    }
+
+    /* RIGHT HUD: SOIL HEALTH READOUT & SCENARIOS */
+    .right-hud {
+      position: absolute;
+      right: 20px;
+      top: 80px;
+      width: 250px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 20;
+      max-height: calc(100vh - 170px);
+      overflow-y: auto;
+    }
+    .scenario-btn {
+      width: 100%;
+      text-align: left;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(74, 222, 128, 0.15);
+      color: #cbd5e1;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .scenario-btn:hover {
+      background: rgba(74, 222, 128, 0.15);
+      color: #ffffff;
+      border-color: #4ade80;
+    }
+    .scenario-btn.active {
+      background: rgba(22, 163, 74, 0.35);
+      border-color: #4ade80;
+      color: #86efac;
+      font-weight: bold;
+    }
+
+    /* ACTION WEATHER BUTTONS */
+    .weather-btn {
+      width: 100%;
+      padding: 7px;
+      border-radius: 6px;
+      background: rgba(30, 58, 138, 0.35);
+      border: 1px solid #3b82f6;
+      color: #93c5fd;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+    .weather-btn:hover {
+      background: #2563eb;
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
+    }
+
+    /* BOTTOM CONTROLS & TIME WARP */
+    .bottom-hud {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 20px;
+      z-index: 20;
+    }
+    .action-btn {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(74, 222, 128, 0.3);
+      color: #f0fdf4;
+      padding: 9px 15px;
+      border-radius: 10px;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+    .action-btn:hover {
+      background: rgba(74, 222, 128, 0.2);
+      border-color: #4ade80;
+      box-shadow: 0 0 14px rgba(74, 222, 128, 0.3);
+    }
+    .action-btn.primary {
+      background: #15803d;
+      border-color: #4ade80;
+      font-weight: bold;
+    }
+    .btn-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(74, 222, 128, 0.3);
+      color: #4ade80;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.15s;
+    }
+    .btn-icon:hover {
+      background: rgba(74, 222, 128, 0.25);
+      box-shadow: 0 0 12px rgba(74, 222, 128, 0.4);
+    }
+    .btn-icon.muted {
+      color: #64748b;
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    /* IN-CANVAS TIP */
+    .tip-banner {
+      position: absolute;
+      bottom: 84px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      color: #86efac;
+      background: rgba(6, 44, 34, 0.75);
+      padding: 6px 18px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      border: 1px solid rgba(74, 222, 128, 0.2);
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    /* OVERGRAZING ALERT BANNER */
+    .overgraze-banner {
+      position: absolute;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(220, 38, 38, 0.3);
+      border: 2px solid #ef4444;
+      box-shadow: 0 0 35px rgba(239, 68, 68, 0.7);
+      color: #fecaca;
+      padding: 8px 24px;
+      border-radius: 20px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-size: 13px;
+      display: none;
+      animation: pulse-alert 0.8s infinite;
+      pointer-events: none;
+      z-index: 30;
+    }
+    @keyframes pulse-alert {
+      0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.9; }
+      50% { transform: translateX(-50%) scale(1.06); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIMULATION CANVAS -->
+  <div id="sim-container">
+    <canvas id="pastureCanvas"></canvas>
+  </div>
+
+  <!-- TOP HUD BAR -->
+  <div class="top-hud">
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <a href="index.html" style="text-decoration: none; color: #86efac; background: rgba(6, 44, 34, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(74, 222, 128, 0.35); padding: 8px 14px; border-radius: 12px; font-size: 11px; font-weight: bold; pointer-events: auto; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+        &larr; 449 Field Arcade
+      </a>
+      <div class="brand">
+        <div class="brand-icon"></div>
+        <div class="brand-text">
+          <h1>PASTUREBIOME</h1>
+          <p>365-Day Soil &amp; Grazing Engine</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="telemetry-bar">
+      <div class="tel-item">
+        <span class="tel-label">Calendar Day</span>
+        <span class="tel-val" id="tel-day">Day 45 (Spring)</span>
+      </div>
+      <div class="tel-item">
+        <span class="tel-label">Forage Canopy</span>
+        <span class="tel-val" id="tel-canopy">9.5 in</span>
+      </div>
+      <div class="tel-item">
+        <span class="tel-label">Root Depth</span>
+        <span class="tel-val" id="tel-roots">38.2 in</span>
+      </div>
+      <div class="tel-item">
+        <span class="tel-label">Soil Organic Matter</span>
+        <span class="tel-val" id="tel-som">4.2%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- OVERGRAZING ALERT BANNER -->
+  <div class="overgraze-banner" id="overgraze-banner">âš ï¸ ROOT SHED ALERT: PLANTS GRAZED PAST SOLAR THRESHOLD âš ï¸</div>
+
+  <!-- LEFT HUD: GRAZING & ROTATION DIALS -->
+  <div class="left-hud glass-panel">
+    <div class="panel-heading">
+      <span>Livestock Class</span>
+      <span style="font-size: 9px; opacity: 0.6;">Select</span>
+    </div>
+    <div class="species-grid">
+      <button class="species-btn active" onclick="setSpecies('swine')">ðŸ– Swine</button>
+      <button class="species-btn" onclick="setSpecies('cattle')">ðŸ„ Cattle</button>
+      <button class="species-btn" onclick="setSpecies('poultry')">ðŸ” Poultry</button>
+    </div>
+
+    <div class="panel-heading" style="margin-top: 4px;">
+      <span>Rotation Levers</span>
+    </div>
+
+    <!-- Stocking Density -->
+    <div class="slider-group">
+      <div class="slider-header">
+        <span>Stock Density</span>
+        <span id="density-val" style="color: #86efac;">45 head/ac</span>
+      </div>
+      <input type="range" id="density-slider" min="5" max="120" value="45" step="5">
+    </div>
+
+    <!-- Residency Time (Hours / Days in paddock) -->
+    <div class="slider-group">
+      <div class="slider-header">
+        <span>Residency Time</span>
+        <span id="residency-val" style="color: #fcd34d;">2 Days (Paddock Move)</span>
+      </div>
+      <input type="range" id="residency-slider" min="1" max="14" value="2" step="1">
+    </div>
+
+    <!-- Recovery Rest Period -->
+    <div class="slider-group">
+      <div class="slider-header">
+        <span>Rest Interval</span>
+        <span id="rest-val" style="color: #38bdf8;">42 Days</span>
+      </div>
+      <input type="range" id="rest-slider" min="15" max="90" value="42" step="1">
+    </div>
+
+    <!-- Time Warp Speed -->
+    <div class="slider-group">
+      <div class="slider-header">
+        <span>Sim Speed</span>
+        <span id="speed-val" style="color: #cbd5e1;">5 Days/sec</span>
+      </div>
+      <input type="range" id="speed-slider" min="1" max="25" value="5" step="1">
+    </div>
+  </div>
+
+  <!-- RIGHT HUD: SOIL FOOD WEB & PRESETS -->
+  <div class="right-hud glass-panel">
+    <div class="panel-heading">
+      <span>Grazing Scenarios</span>
+    </div>
+    <button class="scenario-btn active" onclick="loadPreset('kunekune')">
+      ðŸ– Preset 1: Kunekune Pasture Rotation
+    </button>
+    <button class="scenario-btn" onclick="loadPreset('mob')">
+      âš¡ Preset 2: High-Density Mob Impact
+    </button>
+    <button class="scenario-btn" onclick="loadPreset('overgrazed')">
+      ðŸ’€ Preset 3: The Continuous Overgraze Trap
+    </button>
+    <button class="scenario-btn" onclick="loadPreset('drought')">
+      â˜€ï¸ Preset 4: 60-Day Summer Drought Test
+    </button>
+
+    <div class="panel-heading" style="margin-top: 4px;">
+      <span>Weather Controls</span>
+    </div>
+    <button class="weather-btn" onclick="triggerWeather('rain')">
+      ðŸŒ§ Trigger 2.5" Rain Infiltration
+    </button>
+    <button class="weather-btn" onclick="triggerWeather('heat')" style="background: rgba(180, 83, 9, 0.35); border-color: #f59e0b; color: #fde68a; margin-top: 4px;">
+      â˜€ï¸ Trigger 98&deg;F Heatwave
+    </button>
+
+    <!-- Subterranean Soil Telemetry -->
+    <div class="panel-heading" style="margin-top: 4px;">
+      <span>Subterranean Telemetry</span>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; font-family: monospace; color: #cbd5e1; background: #032119; padding: 6px 8px; border-radius: 6px;">
+      <div style="display: flex; justify-content: space-between;">
+        <span style="color: #94a3b8;">Water Infiltration:</span>
+        <span id="tel-infil">4.8 in/hr</span>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <span style="color: #94a3b8;">Water Banked:</span>
+        <span id="tel-bank">84,000 gal/ac</span>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <span style="color: #94a3b8;">Mycorrhizal Fungi:</span>
+        <span id="tel-fungi">HIGH (ACTIVE)</span>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <span style="color: #94a3b8;">Worm Biomass:</span>
+        <span id="tel-worms">24 / sq.ft</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM CONTROLS BAR -->
+  <div class="bottom-hud glass-panel">
+    <button class="action-btn primary" id="play-btn" onclick="togglePause()">
+      <span id="play-icon">â¸</span> <span id="play-text">Pause Cycle</span>
+    </button>
+    <button class="action-btn" onclick="rotatePaddockManually()">
+      <span>ðŸ”„ Move Herd Now</span>
+    </button>
+    <button class="action-btn" onclick="resetSim()">
+      <span>ðŸŒ± Reset Pasture</span>
+    </button>
+    <button class="btn-icon" id="sound-btn" onclick="toggleAudio()" title="Sound On/Off">
+      ðŸ”Š
+    </button>
+  </div>
+
+  <!-- TIP BANNER -->
+  <div class="tip-banner" id="tip-banner">
+    Rotate animals before grass drops below 4" to preserve root energy â€¢ Press Space to pause
+  </div>
+
+  <!-- SIMULATION ENGINE SCRIPT -->
+  <script>
+    /* ==========================================================
+       PASTUREBIOME: 365-DAY SOIL & GRAZING ENGINE
+       ========================================================== */
+    const canvas = document.getElementById('pastureCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let width, height;
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Sound Synthesizer (Native Web Audio API)
+    let audioCtx = null;
+    let audioEnabled = false;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      const btn = document.getElementById('sound-btn');
+      if (audioEnabled) {
+        initAudio();
+        btn.classList.remove('muted');
+        btn.innerText = 'ðŸ”Š';
+        playSound(440, 0.15);
+      } else {
+        btn.classList.add('muted');
+        btn.innerText = 'ðŸ”‡';
+      }
+    }
+
+    function playSound(freq, dur = 0.2, type = 'sine', gainVal = 0.1) {
+      if (!audioEnabled || !audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + dur);
+      } catch (e) {}
+    }
+
+    /* ==========================================================
+       ECOLOGICAL SYSTEM STATE MODEL
+       ========================================================== */
+    const biome = {
+      day: 45, // Day of year (1 - 365)
+      species: 'swine', // 'swine', 'cattle', 'poultry'
+      stockDensity: 45, // head/acre
+      residencyDays: 2, // Days animals stay in current paddock
+      paddockTimer: 0, // Days in current paddock
+      restInterval: 42, // Days rest before re-grazing
+      simSpeed: 5, // Days per real-second
+      isPaused: false,
+
+      // Above-ground canopy
+      canopyInches: 9.5, // 2" to 14"
+      targetCanopy: 9.5,
+      biomassLbs: 2800, // lbs dry matter per acre
+
+      // Below-ground root & soil system
+      rootDepthInches: 38.2, // Max depth roots reach
+      rootDensity: 0.85, // 0.0 to 1.0 (density of root branching)
+      soilOrganicMatter: 4.2, // % (SOM)
+      soilMoisture: 65, // %
+      waterInfiltration: 4.8, // in/hr
+
+      // Living biological agents on surface
+      animals: [],
+      manurePats: [],
+      earthworms: [],
+      rainDrops: []
+    };
+
+    /* ==========================================================
+       ANIMAL & SOIL ENTITIES
+       ========================================================== */
+    class Animal {
+      constructor(type, x, y) {
+        this.type = type;
+        this.x = x;
+        this.y = y;
+        this.dir = Math.random() < 0.5 ? 1 : -1;
+        this.speed = 0.4 + Math.random() * 0.3;
+        this.chomping = 0;
+      }
+      update() {
+        this.x += this.dir * this.speed;
+        if (this.x < 120 || this.x > width - 120) this.dir *= -1;
+        this.chomping += 0.1;
+      }
+      draw(ctx, groundY) {
+        ctx.save();
+        ctx.translate(this.x, groundY - 6);
+        ctx.scale(this.dir, 1);
+
+        if (this.type === 'swine') {
+          // Kunekune Pig
+          ctx.fillStyle = '#451a03'; // Dark bristly brown
+          ctx.beginPath();
+          ctx.ellipse(0, -10, 16, 10, 0, 0, Math.PI * 2);
+          ctx.fill();
+          // Snout
+          ctx.fillStyle = '#f472b6';
+          ctx.beginPath();
+          ctx.arc(14, -8, 4, 0, Math.PI * 2);
+          ctx.fill();
+          // Little legs
+          ctx.fillStyle = '#292524';
+          ctx.fillRect(-10, -2, 4, 6);
+          ctx.fillRect(8, -2, 4, 6);
+        } else if (this.type === 'cattle') {
+          // Beef Cow
+          ctx.fillStyle = '#78350f';
+          ctx.fillRect(-22, -26, 38, 20);
+          ctx.fillStyle = '#451a03';
+          ctx.fillRect(14, -28, 12, 14); // Head
+          ctx.fillStyle = '#1c1917';
+          // Legs
+          ctx.fillRect(-18, -6, 5, 12);
+          ctx.fillRect(10, -6, 5, 12);
+        } else if (this.type === 'poultry') {
+          // Chicken / Broiler
+          ctx.fillStyle = '#f8fafc';
+          ctx.beginPath();
+          ctx.arc(0, -8, 7, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#ef4444'; // Comb
+          ctx.fillRect(2, -14, 3, 4);
+          ctx.fillStyle = '#f59e0b'; // Beak
+          ctx.beginPath();
+          ctx.moveTo(6, -8);
+          ctx.lineTo(10, -6);
+          ctx.lineTo(6, -4);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+    }
+
+    class Earthworm {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.angle = Math.random() * Math.PI * 2;
+      }
+      update() {
+        this.angle += (Math.random() - 0.5) * 0.2;
+        this.x += Math.cos(this.angle) * 0.15;
+        this.y += Math.sin(this.angle) * 0.15;
+      }
+      draw(ctx) {
+        ctx.save();
+        ctx.strokeStyle = '#f472b6';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(this.x, this.y);
+        ctx.lineTo(this.x + Math.cos(this.angle) * 12, this.y + Math.sin(this.angle) * 12);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    /* ==========================================================
+       ECOLOGICAL DYNAMICS CALCULATION (PER DAY)
+       ========================================================== */
+    function updateBiome(dt) {
+      if (biome.isPaused) return;
+
+      const daysPassed = (dt * biome.simSpeed);
+      biome.day = (biome.day + daysPassed) % 365;
+      biome.paddockTimer += daysPassed;
+
+      const groundY = height * 0.42;
+
+      // 1. Animal Consumption & Impact on Forage
+      const grazingIntensity = (biome.stockDensity / 45.0) * (biome.species === 'cattle' ? 1.4 : (biome.species === 'swine' ? 0.9 : 0.4));
+
+      // Each day animals consume forage height
+      biome.canopyInches = Math.max(1.2, biome.canopyInches - grazingIntensity * 0.35 * daysPassed);
+
+      // Trampled forage becomes soil armor thatch & manure
+      if (Math.random() < 0.2 * daysPassed) {
+        biome.manurePats.push({
+          x: Math.random() * (width - 160) + 80,
+          y: groundY + (Math.random() - 0.5) * 6,
+          life: 1.0
+        });
+      }
+
+      // 2. The Overgrazing Threshold (< 3.5 inches)
+      // When animals graze grass below solar reserve threshold, roots SHED and die!
+      const overgrazeAlert = document.getElementById('overgraze-banner');
+      if (biome.canopyInches < 3.8) {
+        // Root Dieback
+        biome.rootDepthInches = Math.max(8.0, biome.rootDepthInches - 0.45 * daysPassed);
+        biome.rootDensity = Math.max(0.2, biome.rootDensity - 0.02 * daysPassed);
+        biome.soilOrganicMatter = Math.max(1.5, biome.soilOrganicMatter - 0.005 * daysPassed);
+        overgrazeAlert.style.display = 'block';
+
+        if (Math.random() < 0.08) playSound(140, 0.2, 'sawtooth', 0.1);
+      } else {
+        overgrazeAlert.style.display = 'none';
+
+        // Photosynthesis Recovery: Leaf area pumps carbon down to roots!
+        const solarCapture = Math.min(1.0, (biome.canopyInches - 3.5) / 6.0);
+        biome.rootDepthInches = Math.min(54.0, biome.rootDepthInches + 0.18 * solarCapture * daysPassed);
+        biome.rootDensity = Math.min(0.95, biome.rootDensity + 0.01 * solarCapture * daysPassed);
+
+        // Building Soil Organic Matter (liquid carbon root exudates)
+        biome.soilOrganicMatter = Math.min(8.5, biome.soilOrganicMatter + 0.003 * daysPassed);
+      }
+
+      // 3. Automatic Paddock Rotation Trigger
+      if (biome.paddockTimer >= biome.residencyDays) {
+        // Move herd to fresh rested paddock!
+        rotatePaddock();
+      }
+
+      // Infiltration & Water Banked
+      biome.waterInfiltration = (biome.soilOrganicMatter * 1.15) * biome.rootDensity;
+      const bankedGal = Math.round(biome.soilOrganicMatter * 20000);
+      document.getElementById('tel-bank').innerText = bankedGal.toLocaleString() + ' gal/ac';
+      document.getElementById('tel-infil').innerText = biome.waterInfiltration.toFixed(1) + ' in/hr';
+      document.getElementById('tel-som').innerText = biome.soilOrganicMatter.toFixed(1) + '%';
+      document.getElementById('tel-canopy').innerText = biome.canopyInches.toFixed(1) + ' in';
+      document.getElementById('tel-roots').innerText = biome.rootDepthInches.toFixed(1) + ' in';
+
+      // Calendar Season Readout
+      let seasonName = 'Spring Flush';
+      if (biome.day > 90 && biome.day <= 200) seasonName = 'Summer Stockpile';
+      else if (biome.day > 200 && biome.day <= 300) seasonName = 'Fall Grazing';
+      else seasonName = 'Winter Dormancy';
+      document.getElementById('tel-day').innerText = `Day ${Math.floor(biome.day)} (${seasonName})`;
+
+      // Update Animals & Worms
+      for (let a of biome.animals) a.update();
+      for (let w of biome.earthworms) w.update();
+
+      // Rain particle physics
+      for (let i = biome.rainDrops.length - 1; i >= 0; i--) {
+        const drop = biome.rainDrops[i];
+        drop.y += drop.speed;
+        if (drop.y >= groundY) {
+          biome.soilMoisture = Math.min(95, biome.soilMoisture + 0.1);
+          biome.rainDrops.splice(i, 1);
+        }
+      }
+    }
+
+    /* ==========================================================
+       USER LEVERS & ACTIONS
+       ========================================================== */
+    function rotatePaddock() {
+      biome.paddockTimer = 0;
+      // Fresh rested grass in new paddock!
+      biome.canopyInches = Math.min(13.0, 5.0 + (biome.restInterval / 50.0) * 6.5);
+      playSound(520, 0.25, 'triangle', 0.15);
+      showTip(`ðŸ”„ Moved herd to fresh paddock â€¢ Resting rested paddock for ${biome.restInterval} days`);
+    }
+
+    function rotatePaddockManually() {
+      initAudio();
+      rotatePaddock();
+    }
+
+    function setSpecies(s) {
+      biome.species = s;
+      document.querySelectorAll('.species-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.species-btn')).find(b => b.getAttribute('onclick').includes(s));
+      if (activeBtn) activeBtn.classList.add('active');
+
+      // Populate animals
+      populateAnimals();
+      playSound(350, 0.15);
+    }
+
+    function populateAnimals() {
+      biome.animals = [];
+      const groundY = height * 0.42;
+      const count = Math.min(10, Math.floor(biome.stockDensity / 12) + 2);
+      for (let i = 0; i < count; i++) {
+        biome.animals.push(new Animal(biome.species, Math.random() * (width - 240) + 120, groundY));
+      }
+    }
+
+    function triggerWeather(type) {
+      initAudio();
+      if (type === 'rain') {
+        playSound(200, 0.8, 'sine', 0.2);
+        for (let i = 0; i < 90; i++) {
+          biome.rainDrops.push({
+            x: Math.random() * width,
+            y: Math.random() * (height * 0.35),
+            speed: Math.random() * 8 + 6
+          });
+        }
+        showTip('ðŸŒ§ 2.5" Rain storm: Infiltrating soil sponge through root channels');
+      } else if (type === 'heat') {
+        biome.soilMoisture = Math.max(15, biome.soilMoisture - 28);
+        playSound(650, 0.3, 'sawtooth', 0.1);
+        showTip('â˜€ï¸ 98Â°F Heatwave: High soil armor protects microbes from evaporation');
+      }
+    }
+
+    function togglePause() {
+      biome.isPaused = !biome.isPaused;
+      document.getElementById('play-icon').innerText = biome.isPaused ? 'â–¶' : 'â¸';
+      document.getElementById('play-text').innerText = biome.isPaused ? 'Resume' : 'Pause Cycle';
+      document.getElementById('play-btn').classList.toggle('primary', biome.isPaused);
+    }
+
+    function resetSim() {
+      biome.day = 45;
+      biome.canopyInches = 9.5;
+      biome.rootDepthInches = 38.2;
+      biome.soilOrganicMatter = 4.2;
+      biome.soilMoisture = 65;
+      populateAnimals();
+    }
+
+    function showTip(text) {
+      const banner = document.getElementById('tip-banner');
+      banner.innerText = text;
+      banner.style.opacity = '1';
+      clearTimeout(banner._timer);
+      banner._timer = setTimeout(() => { banner.style.opacity = '0.7'; }, 3500);
+    }
+
+    // Presets
+    function loadPreset(preset) {
+      initAudio();
+      document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.scenario-btn')).find(b => b.getAttribute('onclick').includes(preset));
+      if (activeBtn) activeBtn.classList.add('active');
+
+      if (preset === 'kunekune') {
+        setSpecies('swine');
+        biome.stockDensity = 45;
+        biome.residencyDays = 3;
+        biome.restInterval = 42;
+        biome.canopyInches = 10.0;
+        biome.rootDepthInches = 40.0;
+      } else if (preset === 'mob') {
+        setSpecies('cattle');
+        biome.stockDensity = 100;
+        biome.residencyDays = 1;
+        biome.restInterval = 55;
+        biome.canopyInches = 12.0;
+        biome.rootDepthInches = 48.0;
+      } else if (preset === 'overgrazed') {
+        setSpecies('cattle');
+        biome.stockDensity = 30;
+        biome.residencyDays = 14; // The fatal continuous stay!
+        biome.restInterval = 18;
+        biome.canopyInches = 2.4;
+        biome.rootDepthInches = 12.0;
+      } else if (preset === 'drought') {
+        setSpecies('swine');
+        biome.stockDensity = 40;
+        biome.residencyDays = 2;
+        biome.restInterval = 65;
+        biome.soilMoisture = 20;
+      }
+
+      // Sync sliders
+      document.getElementById('density-slider').value = biome.stockDensity;
+      document.getElementById('density-val').innerText = biome.stockDensity + ' head/ac';
+      document.getElementById('residency-slider').value = biome.residencyDays;
+      document.getElementById('residency-val').innerText = biome.residencyDays + ' Days';
+      document.getElementById('rest-slider').value = biome.restInterval;
+      document.getElementById('rest-val').innerText = biome.restInterval + ' Days';
+      populateAnimals();
+    }
+
+    // Sliders
+    document.getElementById('density-slider').addEventListener('input', (e) => {
+      biome.stockDensity = parseInt(e.target.value);
+      document.getElementById('density-val').innerText = biome.stockDensity + ' head/ac';
+      populateAnimals();
+    });
+    document.getElementById('residency-slider').addEventListener('input', (e) => {
+      biome.residencyDays = parseInt(e.target.value);
+      document.getElementById('residency-val').innerText = biome.residencyDays + ' Days';
+    });
+    document.getElementById('rest-slider').addEventListener('input', (e) => {
+      biome.restInterval = parseInt(e.target.value);
+      document.getElementById('rest-val').innerText = biome.restInterval + ' Days';
+    });
+    document.getElementById('speed-slider').addEventListener('input', (e) => {
+      biome.simSpeed = parseInt(e.target.value);
+      document.getElementById('speed-val').innerText = biome.simSpeed + ' Days/sec';
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        togglePause();
+      }
+    });
+
+    /* ==========================================================
+       RENDERING PIPELINE (CROSS-SECTION OF PASTURE & ROOTS)
+       ========================================================== */
+    function render() {
+      const groundY = height * 0.42;
+
+      // 1. Atmosphere / Sky
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, groundY);
+      skyGrad.addColorStop(0, '#0284c7');
+      skyGrad.addColorStop(0.7, '#38bdf8');
+      skyGrad.addColorStop(1, '#bae6fd');
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, width, groundY);
+
+      // Sun
+      ctx.beginPath();
+      ctx.arc(width - 120, 65, 32, 0, Math.PI * 2);
+      ctx.fillStyle = '#fef08a';
+      ctx.shadowColor = '#facc15';
+      ctx.shadowBlur = 24;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Rain drops
+      ctx.strokeStyle = '#93c5fd';
+      ctx.lineWidth = 1.5;
+      for (let r of biome.rainDrops) {
+        ctx.beginPath();
+        ctx.moveTo(r.x, r.y);
+        ctx.lineTo(r.x, r.y + 10);
+        ctx.stroke();
+      }
+
+      // 2. Subterranean Soil Horizons
+      const soilGrad = ctx.createLinearGradient(0, groundY, 0, height);
+      soilGrad.addColorStop(0, '#271c14'); // Dark A-Horizon humus topsoil
+      soilGrad.addColorStop(0.4, '#3e2723'); // Subsoil
+      soilGrad.addColorStop(1, '#1b120c'); // Deep parent mineral
+      ctx.fillStyle = soilGrad;
+      ctx.fillRect(0, groundY, width, height - groundY);
+
+      // Soil Moisture overlay
+      ctx.fillStyle = `rgba(37, 99, 235, ${biome.soilMoisture * 0.0025})`;
+      ctx.fillRect(0, groundY, width, height - groundY);
+
+      // 3. Root System (Procedural Branching Networks)
+      const rootPixelDepth = (biome.rootDepthInches / 54.0) * (height - groundY - 20);
+      const rootClusters = 14;
+      ctx.strokeStyle = biome.canopyInches < 3.8 ? 'rgba(239, 68, 68, 0.65)' : 'rgba(255, 255, 255, 0.75)';
+      ctx.lineWidth = 1.5;
+
+      for (let i = 0; i < rootClusters; i++) {
+        const rootX = (i / (rootClusters - 1)) * (width - 80) + 40;
+        ctx.beginPath();
+        ctx.moveTo(rootX, groundY);
+
+        // Main Taproot
+        const segments = 12;
+        let cx = rootX;
+        let cy = groundY;
+        for (let s = 0; s < segments; s++) {
+          const depthProgress = (s + 1) / segments;
+          cy = groundY + depthProgress * rootPixelDepth;
+          cx += (Math.sin(s * 1.5 + i) * 6);
+          ctx.lineTo(cx, cy);
+
+          // Side branching hair roots
+          if (Math.random() < biome.rootDensity) {
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(cx + (Math.random() - 0.5) * 24, cy + Math.random() * 12);
+            ctx.moveTo(cx, cy);
+          }
+        }
+        ctx.stroke();
+      }
+
+      // 4. Earthworms Underground
+      for (let w of biome.earthworms) w.draw(ctx);
+
+      // 5. Surface Soil Armor / Thatch & Manure Pats
+      ctx.fillStyle = '#451a03';
+      for (let m of biome.manurePats) {
+        ctx.beginPath();
+        ctx.ellipse(m.x, groundY + 2, 9, 3.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // 6. Grass Canopy Blades (Above Ground)
+      const grassHeightPixels = (biome.canopyInches / 14.0) * 65;
+      const bladeCount = Math.floor(width / 4);
+      ctx.strokeStyle = biome.canopyInches < 3.8 ? '#ca8a04' : '#15803d';
+      ctx.lineWidth = 2.5;
+
+      ctx.beginPath();
+      for (let i = 0; i < bladeCount; i++) {
+        const bx = i * 4;
+        const sway = Math.sin(i * 0.4 + performance.now() * 0.003) * 4;
+        ctx.moveTo(bx, groundY);
+        ctx.lineTo(bx + sway, groundY - grassHeightPixels + (Math.sin(i) * 6));
+      }
+      ctx.stroke();
+
+      // 7. Livestock on pasture
+      for (let a of biome.animals) a.draw(ctx, groundY);
+    }
+
+    /* ==========================================================
+       MAIN ANIMATION LOOP
+       ========================================================= */
+    let lastTime = performance.now();
+
+    function loop(currentTime) {
+      const dt = Math.min(0.05, (currentTime - lastTime) / 1000);
+      lastTime = currentTime;
+
+      updateBiome(dt);
+      render();
+
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+
+    // Initial setup
+    window.addEventListener('DOMContentLoaded', () => {
+      // Seed initial earthworms
+      const groundY = height * 0.42;
+      for (let i = 0; i < 20; i++) {
+        biome.earthworms.push(new Earthworm(Math.random() * width, groundY + Math.random() * 140 + 20));
+      }
+      populateAnimals();
+      loadPreset('kunekune');
+    });
+  </script>
+  <script src="telemetry.js"></script>
+</body>
+</html>
